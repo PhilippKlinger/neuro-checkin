@@ -133,7 +133,29 @@ export const spacing = {
 // ---------------------------------------------------------------------------
 // Typography
 // ---------------------------------------------------------------------------
+export const fonts = {
+  inter: {
+    regular: 'Inter_400Regular',
+    medium: 'Inter_500Medium',
+    semibold: 'Inter_600SemiBold',
+    bold: 'Inter_700Bold',
+  },
+  nunitoSans: {
+    regular: 'NunitoSans_400Regular',
+    medium: 'NunitoSans_500Medium',
+    semibold: 'NunitoSans_600SemiBold',
+    bold: 'NunitoSans_700Bold',
+  },
+} as const;
+
 export const typography = {
+  // Inter for UI elements (buttons, labels, navigation)
+  // Nunito Sans for body text and longer content (softer, more readable)
+  families: {
+    heading: fonts.inter,
+    body: fonts.nunitoSans,
+    ui: fonts.inter,
+  },
   sizes: {
     xs: 12,
     sm: 14,
@@ -141,12 +163,6 @@ export const typography = {
     lg: 20,
     xl: 24,
     xxl: 32,
-  },
-  weights: {
-    regular: '400' as const,
-    medium: '500' as const,
-    semibold: '600' as const,
-    bold: '700' as const,
   },
   lineHeights: {
     tight: 1.2,
