@@ -41,7 +41,8 @@
             "./assets/fonts/NunitoSans_700Bold.ttf"
           ]
         }
-      ]
+      ],
+      "expo-router"
     ]
   }
 }
