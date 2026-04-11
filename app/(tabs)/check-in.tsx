@@ -1,25 +1,36 @@
 import { useState } from 'react';
-import { View, Text, Pressable, StyleSheet } from 'react-native';
+import { View, Text, Pressable, StyleSheet, Alert } from 'react-native';
 import { useTheme } from '../../lib/hooks/useTheme';
-import { CheckInDraft, EMPTY_DRAFT } from '../../lib/types/checkin';
+import { useDatabase } from '../../lib/hooks/useDatabase';
+import { CheckInDraft, EMPTY_DRAFT, EMPTY_BODY_SIGNALS } from '../../lib/types/checkin';
+import { insertCheckIn } from '../../lib/database/checkins';
 import { StepIndicator } from '../../components/check-in/StepIndicator';
 import { StepArrival } from '../../components/check-in/StepArrival';
 import { StepEnergy } from '../../components/check-in/StepEnergy';
 import { StepFocus } from '../../components/check-in/StepFocus';
+import { StepBodySignals } from '../../components/check-in/StepBodySignals';
+import { StepFeelings } from '../../components/check-in/StepFeelings';
+import { StepThoughts } from '../../components/check-in/StepThoughts';
+import { StepSelfCare } from '../../components/check-in/StepSelfCare';
+import { StepSummary } from '../../components/check-in/StepSummary';
 
-const TOTAL_STEPS = 3; // Steps 1-3 for now, will grow to 8
+const TOTAL_STEPS = 8;
 
 export default function CheckInScreen() {
   const { theme, spacing, typography, radii, touchTarget } = useTheme();
+  const db = useDatabase();
   const [step, setStep] = useState(0);
-  const [draft, setDraft] = useState<CheckInDraft>({ ...EMPTY_DRAFT });
+  const [draft, setDraft] = useState<CheckInDraft>({ ...EMPTY_DRAFT, bodySignals: { ...EMPTY_BODY_SIGNALS } });
+  const [isSaving, setIsSaving] = useState(false);
+  const [isDone, setIsDone] = useState(false);
 
   const canGoBack = step > 0;
-  const canGoForward = step < TOTAL_STEPS - 1;
   const isLastStep = step === TOTAL_STEPS - 1;
 
   function handleNext() {
-    if (canGoForward) {
+    if (isLastStep) {
+      handleSave();
+    } else {
       setStep(step + 1);
     }
   }
@@ -28,6 +39,97 @@ export default function CheckInScreen() {
     if (canGoBack) {
       setStep(step - 1);
     }
+  }
+
+  async function handleSave() {
+    setIsSaving(true);
+    try {
+      await insertCheckIn(db, {
+        energyLevel: draft.energyLevel,
+        focusLevel: draft.focusLevel,
+        bodySignals: draft.bodySignals,
+        feelings: draft.feelings,
+        thoughtsType: draft.thoughtsType,
+        thoughtsNote: draft.thoughtsNote || null,
+        selfCareNote: draft.selfCareNote || null,
+        innerPart: draft.innerPart || null,
+        note: draft.note || null,
+      });
+      setIsDone(true);
+    } catch {
+      Alert.alert('Fehler', 'Check-in konnte nicht gespeichert werden.');
+    } finally {
+      setIsSaving(false);
+    }
+  }
+
+  function handleReset() {
+    setStep(0);
+    setDraft({ ...EMPTY_DRAFT, bodySignals: { ...EMPTY_BODY_SIGNALS } });
+    setIsDone(false);
+  }
+
+  if (isDone) {
+    return (
+      <View
+        style={[
+          styles.container,
+          {
+            backgroundColor: theme.colors.background,
+            justifyContent: 'center',
+            alignItems: 'center',
+            padding: spacing.lg,
+          },
+        ]}
+      >
+        <Text
+          style={{
+            fontFamily: typography.families.heading.semibold,
+            fontSize: typography.sizes.xl,
+            color: theme.colors.text,
+            textAlign: 'center',
+            marginBottom: spacing.md,
+          }}
+        >
+          Check-in gespeichert
+        </Text>
+        <Text
+          style={{
+            fontFamily: typography.families.body.regular,
+            fontSize: typography.sizes.md,
+            color: theme.colors.textSecondary,
+            textAlign: 'center',
+            marginBottom: spacing.xl,
+          }}
+        >
+          Gut gemacht. Du hast dir einen Moment fuer dich genommen.
+        </Text>
+        <Pressable
+          onPress={handleReset}
+          style={[
+            styles.navButton,
+            {
+              minHeight: touchTarget.min,
+              borderRadius: radii.md,
+              backgroundColor: theme.colors.primary,
+              paddingHorizontal: spacing.xl,
+            },
+          ]}
+          accessibilityRole="button"
+          accessibilityLabel="Neuer Check-in"
+        >
+          <Text
+            style={{
+              fontFamily: typography.families.ui.semibold,
+              fontSize: typography.sizes.md,
+              color: theme.colors.textInverse,
+            }}
+          >
+            Neuer Check-in
+          </Text>
+        </Pressable>
+      </View>
+    );
   }
 
   function renderStep() {
@@ -48,6 +150,38 @@ export default function CheckInScreen() {
             onValueChange={(v) => setDraft({ ...draft, focusLevel: v })}
           />
         );
+      case 3:
+        return (
+          <StepBodySignals
+            value={draft.bodySignals}
+            onValueChange={(v) => setDraft({ ...draft, bodySignals: v })}
+          />
+        );
+      case 4:
+        return (
+          <StepFeelings
+            value={draft.feelings}
+            onValueChange={(v) => setDraft({ ...draft, feelings: v })}
+          />
+        );
+      case 5:
+        return (
+          <StepThoughts
+            type={draft.thoughtsType}
+            note={draft.thoughtsNote}
+            onTypeChange={(v) => setDraft({ ...draft, thoughtsType: v })}
+            onNoteChange={(v) => setDraft({ ...draft, thoughtsNote: v })}
+          />
+        );
+      case 6:
+        return (
+          <StepSelfCare
+            value={draft.selfCareNote}
+            onValueChange={(v) => setDraft({ ...draft, selfCareNote: v })}
+          />
+        );
+      case 7:
+        return <StepSummary draft={draft} />;
       default:
         return null;
     }
@@ -107,16 +241,19 @@ export default function CheckInScreen() {
 
         <Pressable
           onPress={handleNext}
+          disabled={isSaving}
           style={[
             styles.navButton,
             {
               minHeight: touchTarget.min,
               borderRadius: radii.md,
-              backgroundColor: theme.colors.primary,
+              backgroundColor: isSaving
+                ? theme.colors.border
+                : theme.colors.primary,
             },
           ]}
           accessibilityRole="button"
-          accessibilityLabel={isLastStep ? 'Fertig' : 'Weiter'}
+          accessibilityLabel={isLastStep ? 'Speichern' : 'Weiter'}
         >
           <Text
             style={{
@@ -125,7 +262,7 @@ export default function CheckInScreen() {
               color: theme.colors.textInverse,
             }}
           >
-            {isLastStep ? 'Weiter' : 'Weiter'}
+            {isLastStep ? 'Speichern' : 'Weiter'}
           </Text>
         </Pressable>
       </View>
