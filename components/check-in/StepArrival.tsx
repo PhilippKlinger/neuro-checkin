@@ -31,7 +31,7 @@ export function StepArrival() {
           },
         ]}
       >
-        Nimm ein paar tiefe Atemzuege.
+        Nimm ein paar tiefe Atemzüge.
       </Text>
       <Text
         style={[
