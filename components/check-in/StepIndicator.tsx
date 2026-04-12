@@ -10,10 +10,20 @@ export function StepIndicator({ totalSteps, currentStep }: StepIndicatorProps) {
   const { theme, spacing, radii } = useTheme();
 
   return (
-    <View style={styles.container}>
+    <View
+      style={styles.container}
+      accessibilityRole="progressbar"
+      accessibilityLabel={`Schritt ${currentStep + 1} von ${totalSteps}`}
+      accessibilityValue={{
+        min: 1,
+        max: totalSteps,
+        now: currentStep + 1,
+      }}
+    >
       {Array.from({ length: totalSteps }, (_, i) => (
         <View
           key={i}
+          importantForAccessibility="no"
           style={[
             styles.dot,
             {

@@ -1,28 +1,11 @@
 import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { useTheme } from '../../lib/hooks/useTheme';
 import { CheckIn } from '../../lib/types/checkin';
+import { formatDate, formatTime } from '../../lib/utils/format';
 
 interface CheckInCardProps {
   checkIn: CheckIn;
   onPress: () => void;
-}
-
-function formatDate(iso: string): string {
-  const date = new Date(iso);
-  return date.toLocaleDateString('de-DE', {
-    weekday: 'short',
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-  });
-}
-
-function formatTime(iso: string): string {
-  const date = new Date(iso);
-  return date.toLocaleTimeString('de-DE', {
-    hour: '2-digit',
-    minute: '2-digit',
-  });
 }
 
 export function CheckInCard({ checkIn, onPress }: CheckInCardProps) {

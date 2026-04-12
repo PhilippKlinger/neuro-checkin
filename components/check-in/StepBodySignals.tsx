@@ -117,7 +117,7 @@ export function StepBodySignals({ value, onValueChange }: StepBodySignalsProps) 
               ]}
               accessibilityRole="button"
               accessibilityLabel={`${signal.label}: ${getLabel(state)}`}
-              accessibilityHint={signal.description}
+              accessibilityHint="Tippen zum Wechseln: nicht beantwortet, Ja, Nein"
             >
               <View style={styles.signalTextWrapper}>
                 <Text

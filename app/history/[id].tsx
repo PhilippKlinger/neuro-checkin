@@ -5,19 +5,7 @@ import { useTheme } from '../../lib/hooks/useTheme';
 import { useDatabase } from '../../lib/hooks/useDatabase';
 import { getCheckInById, deleteCheckIn } from '../../lib/database/checkins';
 import { CheckIn } from '../../lib/types/checkin';
-
-function formatDateTime(iso: string): string {
-  const date = new Date(iso);
-  return date.toLocaleDateString('de-DE', {
-    weekday: 'long',
-    day: '2-digit',
-    month: 'long',
-    year: 'numeric',
-  }) + ', ' + date.toLocaleTimeString('de-DE', {
-    hour: '2-digit',
-    minute: '2-digit',
-  });
-}
+import { formatDateTime } from '../../lib/utils/format';
 
 function getThoughtsLabel(type: string | null): string {
   switch (type) {

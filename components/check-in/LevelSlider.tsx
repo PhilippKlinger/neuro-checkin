@@ -83,7 +83,8 @@ export function LevelSlider({
                 },
               ]}
               accessibilityRole="button"
-              accessibilityLabel={`${level}`}
+              accessibilityLabel={`${level} von 10`}
+              accessibilityHint={`${title} auf ${level} setzen`}
               accessibilityState={{ selected: isSelected }}
             >
               <Text

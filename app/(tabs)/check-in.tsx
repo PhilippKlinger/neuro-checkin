@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { View, Text, Pressable, StyleSheet, Alert } from 'react-native';
+import { useState, useRef, useEffect } from 'react';
+import { View, Text, Pressable, StyleSheet, Alert, AccessibilityInfo } from 'react-native';
 import { useTheme } from '../../lib/hooks/useTheme';
 import { useDatabase } from '../../lib/hooks/useDatabase';
 import { CheckInDraft, EMPTY_DRAFT, EMPTY_BODY_SIGNALS } from '../../lib/types/checkin';
@@ -16,6 +16,17 @@ import { StepSummary } from '../../components/check-in/StepSummary';
 
 const TOTAL_STEPS = 8;
 
+const STEP_NAMES = [
+  'Ankommen',
+  'Energie-Level',
+  'Fokus-Level',
+  'Koerpersignale',
+  'Gefuehle',
+  'Gedanken',
+  'Selbstfuersorge',
+  'Zusammenfassung',
+];
+
 export default function CheckInScreen() {
   const { theme, spacing, typography, radii, touchTarget } = useTheme();
   const db = useDatabase();
@@ -23,9 +34,22 @@ export default function CheckInScreen() {
   const [draft, setDraft] = useState<CheckInDraft>({ ...EMPTY_DRAFT, bodySignals: { ...EMPTY_BODY_SIGNALS } });
   const [isSaving, setIsSaving] = useState(false);
   const [isDone, setIsDone] = useState(false);
+  const stepContentRef = useRef<View>(null);
 
   const canGoBack = step > 0;
   const isLastStep = step === TOTAL_STEPS - 1;
+
+  useEffect(() => {
+    AccessibilityInfo.announceForAccessibility(
+      `Schritt ${step + 1} von ${TOTAL_STEPS}: ${STEP_NAMES[step]}`
+    );
+    if (stepContentRef.current) {
+      stepContentRef.current.setNativeProps({ accessible: true });
+      AccessibilityInfo.setAccessibilityFocus(
+        stepContentRef.current as unknown as number
+      );
+    }
+  }, [step]);
 
   function handleNext() {
     if (isLastStep) {
@@ -195,7 +219,12 @@ export default function CheckInScreen() {
         <StepIndicator totalSteps={TOTAL_STEPS} currentStep={step} />
       </View>
 
-      <View style={[styles.stepContent, { padding: spacing.lg }]}>
+      <View
+        ref={stepContentRef}
+        style={[styles.stepContent, { padding: spacing.lg }]}
+        accessibilityLabel={`Schritt ${step + 1} von ${TOTAL_STEPS}: ${STEP_NAMES[step]}`}
+        accessibilityRole="summary"
+      >
         {renderStep()}
       </View>
 
