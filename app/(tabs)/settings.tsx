@@ -224,6 +224,7 @@ export default function SettingsScreen() {
         />
       </View>
 
+<<<<<<< HEAD
       {reminderEnabled && (
         <View
           style={[

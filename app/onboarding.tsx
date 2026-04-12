@@ -3,6 +3,7 @@ import { View, Text, Pressable, StyleSheet, AccessibilityInfo } from 'react-nati
 import { useRouter } from 'expo-router';
 import { useTheme } from '../lib/hooks/useTheme';
 import { useDatabase } from '../lib/hooks/useDatabase';
+import { FadeView } from '../components/ui/FadeView';
 import { updateSettings } from '../lib/database/settings';
 import { StepIndicator } from '../components/check-in/StepIndicator';
 
@@ -78,7 +79,7 @@ export default function OnboardingScreen() {
         )}
       </View>
 
-      <View style={styles.content}>
+      <FadeView triggerKey={step} style={styles.content}>
         <Text
           style={{
             fontFamily: typography.families.heading.bold,
@@ -114,7 +115,7 @@ export default function OnboardingScreen() {
         >
           {current.hint}
         </Text>
-      </View>
+      </FadeView>
 
       <View style={[styles.footer, { gap: spacing.lg, paddingBottom: spacing.xl }]}>
         <StepIndicator totalSteps={STEPS.length} currentStep={step} />
