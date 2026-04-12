@@ -3,6 +3,7 @@ import { View, Text, Pressable, StyleSheet, Alert, AccessibilityInfo } from 'rea
 import { useTheme } from '../../lib/hooks/useTheme';
 import { useDatabase } from '../../lib/hooks/useDatabase';
 import { CheckInDraft, EMPTY_DRAFT, EMPTY_BODY_SIGNALS } from '../../lib/types/checkin';
+import { FadeView } from '../../components/ui/FadeView';
 import { insertCheckIn } from '../../lib/database/checkins';
 import { StepIndicator } from '../../components/check-in/StepIndicator';
 import { StepArrival } from '../../components/check-in/StepArrival';
@@ -219,14 +220,19 @@ export default function CheckInScreen() {
         <StepIndicator totalSteps={TOTAL_STEPS} currentStep={step} />
       </View>
 
-      <View
-        ref={stepContentRef}
+      <FadeView
+        triggerKey={step}
         style={[styles.stepContent, { padding: spacing.lg }]}
-        accessibilityLabel={`Schritt ${step + 1} von ${TOTAL_STEPS}: ${STEP_NAMES[step]}`}
-        accessibilityRole="summary"
       >
-        {renderStep()}
-      </View>
+        <View
+          ref={stepContentRef}
+          accessibilityLabel={`Schritt ${step + 1} von ${TOTAL_STEPS}: ${STEP_NAMES[step]}`}
+          accessibilityRole="summary"
+          style={styles.stepInner}
+        >
+          {renderStep()}
+        </View>
+      </FadeView>
 
       <View
         style={[
@@ -307,6 +313,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   stepContent: {
+    flex: 1,
+  },
+  stepInner: {
     flex: 1,
   },
   navigation: {
