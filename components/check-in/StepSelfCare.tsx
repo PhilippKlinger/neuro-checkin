@@ -67,7 +67,7 @@ export function StepSelfCare({ value, onValueChange }: StepSelfCareProps) {
           fontStyle: 'italic',
         }}
       >
-        Auch kleine Dinge zählen. Du darfst Bedürfnisse haben.
+        Auch „nichts" ist eine Antwort. Kein Druck — kein Muss.
       </Text>
     </View>
   );
