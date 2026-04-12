@@ -67,7 +67,7 @@ export function StepFeelings({ value, onValueChange }: StepFeelingsProps) {
           fontStyle: 'italic',
         }}
       >
-        Stichworte reichen. Es muss kein ganzer Satz sein.
+        Alles ist erlaubt — auch „weiß nicht". Stichworte reichen völlig.
       </Text>
     </View>
   );

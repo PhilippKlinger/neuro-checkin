@@ -143,6 +143,19 @@ export function StepThoughts({
         ]}
         accessibilityLabel="Gedanken-Notiz"
       />
+
+      <Text
+        style={{
+          fontFamily: typography.families.body.regular,
+          fontSize: typography.sizes.xs,
+          color: theme.colors.textSecondary,
+          textAlign: 'center',
+          marginTop: spacing.md,
+          fontStyle: 'italic',
+        }}
+      >
+        Wenn du dir nicht sicher bist — „Gemischt" ist eine gute Antwort.
+      </Text>
     </View>
   );
 }
