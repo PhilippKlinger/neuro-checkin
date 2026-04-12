@@ -2,6 +2,7 @@
   "expo": {
     "name": "neuro-checkin",
     "slug": "neuro-checkin",
+    "scheme": "neuro-checkin",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -42,7 +43,15 @@
           ]
         }
       ],
-      "expo-router"
+      "expo-router",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/icon.png",
+          "color": "#ffffff",
+          "defaultChannel": "daily-reminder"
+        }
+      ]
     ]
   }
 }

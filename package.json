@@ -12,6 +12,7 @@
     "format": "prettier --write \"**/*.{ts,tsx,json}\""
   },
   "dependencies": {
+    "@expo/vector-icons": "^15.1.1",
     "@react-native-community/datetimepicker": "^8.4.4",
     "expo": "~54.0.33",
     "expo-constants": "~18.0.13",
