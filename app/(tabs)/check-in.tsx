@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { View, Text, Pressable, StyleSheet, Alert, AccessibilityInfo } from 'react-native';
+import { View, Text, Pressable, StyleSheet, Alert, AccessibilityInfo, findNodeHandle } from 'react-native';
 import { useTheme } from '../../lib/hooks/useTheme';
 import { useDatabase } from '../../lib/hooks/useDatabase';
 import { CheckInDraft, EMPTY_DRAFT, EMPTY_BODY_SIGNALS } from '../../lib/types/checkin';
@@ -20,10 +20,10 @@ const STEP_NAMES = [
   'Ankommen',
   'Energie-Level',
   'Fokus-Level',
-  'Koerpersignale',
-  'Gefuehle',
+  'Körpersignale',
+  'Gefühle',
   'Gedanken',
-  'Selbstfuersorge',
+  'Selbstfürsorge',
   'Zusammenfassung',
 ];
 
@@ -44,10 +44,10 @@ export default function CheckInScreen() {
       `Schritt ${step + 1} von ${TOTAL_STEPS}: ${STEP_NAMES[step]}`
     );
     if (stepContentRef.current) {
-      stepContentRef.current.setNativeProps({ accessible: true });
-      AccessibilityInfo.setAccessibilityFocus(
-        stepContentRef.current as unknown as number
-      );
+      const handle = findNodeHandle(stepContentRef.current);
+      if (handle !== null) {
+        AccessibilityInfo.setAccessibilityFocus(handle);
+      }
     }
   }, [step]);
 
@@ -126,7 +126,7 @@ export default function CheckInScreen() {
             marginBottom: spacing.xl,
           }}
         >
-          Gut gemacht. Du hast dir einen Moment fuer dich genommen.
+          Gut gemacht. Du hast dir einen Moment für dich genommen.
         </Text>
         <Pressable
           onPress={handleReset}
@@ -252,7 +252,7 @@ export default function CheckInScreen() {
               },
             ]}
             accessibilityRole="button"
-            accessibilityLabel="Zurueck"
+            accessibilityLabel="Zurück"
           >
             <Text
               style={{
@@ -261,7 +261,7 @@ export default function CheckInScreen() {
                 color: theme.colors.text,
               }}
             >
-              Zurueck
+              Zurück
             </Text>
           </Pressable>
         ) : (

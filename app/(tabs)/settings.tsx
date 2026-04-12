@@ -194,7 +194,7 @@ export default function SettingsScreen() {
               color: theme.colors.text,
             }}
           >
-            Taegliche Erinnerung
+            Tägliche Erinnerung
           </Text>
           <Text
             style={{
@@ -204,7 +204,7 @@ export default function SettingsScreen() {
             }}
           >
             {reminderEnabled
-              ? 'Du wirst einmal taeglich erinnert'
+              ? 'Du wirst einmal täglich erinnert'
               : 'Keine Erinnerung aktiv'}
           </Text>
         </View>

@@ -20,7 +20,7 @@ export function StepFeelings({ value, onValueChange }: StepFeelingsProps) {
           marginBottom: spacing.sm,
         }}
       >
-        Gefuehle
+        Gefühle
       </Text>
       <Text
         style={{
@@ -31,13 +31,13 @@ export function StepFeelings({ value, onValueChange }: StepFeelingsProps) {
           marginBottom: spacing.xl,
         }}
       >
-        Welche Gefuehle nimmst du gerade wahr?
+        Welche Gefühle nimmst du gerade wahr?
       </Text>
 
       <TextInput
         value={value}
         onChangeText={onValueChange}
-        placeholder="z.B. muede, angespannt, ruhig, ueberfordert..."
+        placeholder="z.B. müde, angespannt, ruhig, überfordert..."
         placeholderTextColor={theme.colors.textSecondary}
         multiline
         textAlignVertical="top"
@@ -54,7 +54,7 @@ export function StepFeelings({ value, onValueChange }: StepFeelingsProps) {
             lineHeight: typography.sizes.md * 1.5,
           },
         ]}
-        accessibilityLabel="Gefuehle beschreiben"
+        accessibilityLabel="Gefühle beschreiben"
       />
 
       <Text

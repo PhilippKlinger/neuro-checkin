@@ -45,7 +45,7 @@ export function StepArrival() {
           },
         ]}
       >
-        Wie fuehlt sich dein Atem gerade an?{'\n'}
+        Wie fühlt sich dein Atem gerade an?{'\n'}
         Ist er eher schnell oder langsam?{'\n'}
         Atmest du mehr in den Bauch oder in den Brustraum?
       </Text>

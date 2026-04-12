@@ -11,7 +11,7 @@ function getThoughtsLabel(
 ): string {
   switch (type) {
     case 'supportive':
-      return 'Unterstuetzend';
+      return 'Unterstützend';
     case 'burdening':
       return 'Belastend';
     case 'mixed':
@@ -106,7 +106,7 @@ export function StepSummary({ draft }: StepSummaryProps) {
             ]}
           >
             <Text style={sectionTitle(typography, theme, spacing)}>
-              Koerpersignale
+              Körpersignale
             </Text>
             {activeSignals.map((s) => (
               <View
@@ -135,7 +135,7 @@ export function StepSummary({ draft }: StepSummaryProps) {
             ]}
           >
             <Text style={sectionTitle(typography, theme, spacing)}>
-              Gefuehle
+              Gefühle
             </Text>
             <Text style={bodyText(typography, theme)}>{draft.feelings}</Text>
           </View>
@@ -185,7 +185,7 @@ export function StepSummary({ draft }: StepSummaryProps) {
             ]}
           >
             <Text style={sectionTitle(typography, theme, spacing)}>
-              Selbstfuersorge
+              Selbstfürsorge
             </Text>
             <Text style={bodyText(typography, theme)}>
               {draft.selfCareNote}
