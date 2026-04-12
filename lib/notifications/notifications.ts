@@ -16,10 +16,9 @@ Notifications.setNotificationHandler({
   }),
 });
 
-export async function requestNotificationPermission(): Promise<boolean> {
+export async function requestNotificationPermission(): Promise<boolean | 'emulator'> {
   if (!Device.isDevice) {
-    // Emulators/simulators don't support push notifications
-    return false;
+    return 'emulator';
   }
 
   if (Platform.OS === 'android') {
