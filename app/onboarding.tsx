@@ -3,6 +3,7 @@ import { View, Text, Pressable, StyleSheet, AccessibilityInfo } from 'react-nati
 import { useRouter } from 'expo-router';
 import { useTheme } from '../lib/hooks/useTheme';
 import { useDatabase } from '../lib/hooks/useDatabase';
+import { FadeView } from '../components/ui/FadeView';
 import { updateSettings } from '../lib/database/settings';
 import { StepIndicator } from '../components/check-in/StepIndicator';
 
@@ -15,16 +16,16 @@ interface OnboardingStep {
 const STEPS: OnboardingStep[] = [
   {
     title: 'Willkommen',
-    body: 'Neuro Check-in hilft dir, innere Zustaende wahrzunehmen und festzuhalten — in deinem Tempo, ohne Druck.',
-    hint: 'Alles bleibt lokal auf deinem Geraet.',
+    body: 'Neuro Check-in hilft dir, innere Zustände wahrzunehmen und festzuhalten — in deinem Tempo, ohne Druck.',
+    hint: 'Alles bleibt lokal auf deinem Gerät.',
   },
   {
     title: 'So funktioniert es',
-    body: 'Ein Check-in fuehrt dich in 8 ruhigen Schritten durch Koerper, Gefuehle und Gedanken. Du entscheidest, wie tief du gehst.',
+    body: 'Ein Check-in führt dich in 8 ruhigen Schritten durch Körper, Gefühle und Gedanken. Du entscheidest, wie tief du gehst.',
     hint: 'Stichworte reichen. Es muss nicht perfekt sein.',
   },
   {
-    title: 'Fuer dich gemacht',
+    title: 'Für dich gemacht',
     body: 'Keine Streaks, keine Punkte, kein Druck. Diese App ist ein Werkzeug — kein Richter und kein Therapieersatz.',
     hint: 'Du kannst jederzeit in den Einstellungen die Farbpalette anpassen.',
   },
@@ -61,7 +62,7 @@ export default function OnboardingScreen() {
             onPress={finish}
             style={[styles.skipButton, { padding: spacing.sm }]}
             accessibilityRole="button"
-            accessibilityLabel="Onboarding ueberspringen"
+            accessibilityLabel="Onboarding überspringen"
           >
             <Text
               style={{
@@ -70,7 +71,7 @@ export default function OnboardingScreen() {
                 color: theme.colors.textSecondary,
               }}
             >
-              Ueberspringen
+              Überspringen
             </Text>
           </Pressable>
         ) : (
@@ -78,7 +79,7 @@ export default function OnboardingScreen() {
         )}
       </View>
 
-      <View style={styles.content}>
+      <FadeView triggerKey={step} style={styles.content}>
         <Text
           style={{
             fontFamily: typography.families.heading.bold,
@@ -114,7 +115,7 @@ export default function OnboardingScreen() {
         >
           {current.hint}
         </Text>
-      </View>
+      </FadeView>
 
       <View style={[styles.footer, { gap: spacing.lg, paddingBottom: spacing.xl }]}>
         <StepIndicator totalSteps={STEPS.length} currentStep={step} />

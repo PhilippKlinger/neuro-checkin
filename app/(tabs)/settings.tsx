@@ -147,7 +147,7 @@ export default function SettingsScreen() {
               color: theme.colors.text,
             }}
           >
-            Taegliche Erinnerung
+            Tägliche Erinnerung
           </Text>
           <Text
             style={{
@@ -157,7 +157,7 @@ export default function SettingsScreen() {
             }}
           >
             {reminderEnabled
-              ? 'Du wirst einmal taeglich erinnert'
+              ? 'Du wirst einmal täglich erinnert'
               : 'Keine Erinnerung aktiv'}
           </Text>
         </View>
@@ -171,7 +171,7 @@ export default function SettingsScreen() {
           thumbColor={
             reminderEnabled ? theme.colors.primary : theme.colors.surface
           }
-          accessibilityLabel="Taegliche Erinnerung"
+          accessibilityLabel="Tägliche Erinnerung"
           accessibilityRole="switch"
         />
       </View>
@@ -185,7 +185,7 @@ export default function SettingsScreen() {
           fontStyle: 'italic',
         }}
       >
-        Push-Notifications werden in einer spaeteren Version hinzugefuegt.
+        Push-Notifications werden in einer späteren Version hinzugefügt.
       </Text>
     </ScrollView>
   );

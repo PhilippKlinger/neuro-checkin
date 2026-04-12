@@ -3,6 +3,7 @@ import { View, Text, Pressable, StyleSheet, Alert, AccessibilityInfo } from 'rea
 import { useTheme } from '../../lib/hooks/useTheme';
 import { useDatabase } from '../../lib/hooks/useDatabase';
 import { CheckInDraft, EMPTY_DRAFT, EMPTY_BODY_SIGNALS } from '../../lib/types/checkin';
+import { FadeView } from '../../components/ui/FadeView';
 import { insertCheckIn } from '../../lib/database/checkins';
 import { StepIndicator } from '../../components/check-in/StepIndicator';
 import { StepArrival } from '../../components/check-in/StepArrival';
@@ -20,10 +21,10 @@ const STEP_NAMES = [
   'Ankommen',
   'Energie-Level',
   'Fokus-Level',
-  'Koerpersignale',
-  'Gefuehle',
+  'Körpersignale',
+  'Gefühle',
   'Gedanken',
-  'Selbstfuersorge',
+  'Selbstfürsorge',
   'Zusammenfassung',
 ];
 
@@ -126,7 +127,7 @@ export default function CheckInScreen() {
             marginBottom: spacing.xl,
           }}
         >
-          Gut gemacht. Du hast dir einen Moment fuer dich genommen.
+          Gut gemacht. Du hast dir einen Moment für dich genommen.
         </Text>
         <Pressable
           onPress={handleReset}
@@ -219,14 +220,19 @@ export default function CheckInScreen() {
         <StepIndicator totalSteps={TOTAL_STEPS} currentStep={step} />
       </View>
 
-      <View
-        ref={stepContentRef}
+      <FadeView
+        triggerKey={step}
         style={[styles.stepContent, { padding: spacing.lg }]}
-        accessibilityLabel={`Schritt ${step + 1} von ${TOTAL_STEPS}: ${STEP_NAMES[step]}`}
-        accessibilityRole="summary"
       >
-        {renderStep()}
-      </View>
+        <View
+          ref={stepContentRef}
+          accessibilityLabel={`Schritt ${step + 1} von ${TOTAL_STEPS}: ${STEP_NAMES[step]}`}
+          accessibilityRole="summary"
+          style={styles.stepInner}
+        >
+          {renderStep()}
+        </View>
+      </FadeView>
 
       <View
         style={[
@@ -252,7 +258,7 @@ export default function CheckInScreen() {
               },
             ]}
             accessibilityRole="button"
-            accessibilityLabel="Zurueck"
+            accessibilityLabel="Zurück"
           >
             <Text
               style={{
@@ -261,7 +267,7 @@ export default function CheckInScreen() {
                 color: theme.colors.text,
               }}
             >
-              Zurueck
+              Zurück
             </Text>
           </Pressable>
         ) : (
@@ -307,6 +313,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   stepContent: {
+    flex: 1,
+  },
+  stepInner: {
     flex: 1,
   },
   navigation: {

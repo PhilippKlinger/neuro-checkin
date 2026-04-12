@@ -11,6 +11,15 @@ Helps people with autism, ADHD, and high inner complexity capture inner states i
 - **Expo Router** (file-based navigation)
 - **expo-sqlite** (local-first data storage)
 
+## Features
+
+- **8-step guided check-in:** Arrival, energy, focus, body signals, feelings, thoughts, self-care, summary
+- **3 color palettes:** Warm Earth, Cool Mist, Soft Sage — all WCAG AA compliant
+- **History:** Browse and review past check-ins with detail view
+- **Onboarding:** 3-step intro, skippable
+- **Accessibility:** Screen reader support, focus management, semantic roles, 44x44 touch targets
+- **Local-first:** All data stays on device, no account required
+
 ## Setup
 
 ```bash
@@ -28,9 +37,10 @@ npx expo start
 | `npx expo start` | Start Expo dev server |
 | `npx expo start --android` | Start with Android emulator |
 | `npx expo start --ios` | Start with iOS simulator |
-| `npm run web` | Start web version |
-| `npx tsc --noEmit` | TypeScript check |
+| `npm run lint` | ESLint check |
+| `npm run typecheck` | TypeScript strict check |
+| `npm run format` | Prettier formatting |
 
 ## Status
 
-Early development — Phase 0 (Bootstrap).
+Active development — Phase 3 (Polish & Interactivity).

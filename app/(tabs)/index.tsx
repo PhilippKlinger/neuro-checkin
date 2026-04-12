@@ -155,8 +155,8 @@ export default function HomeScreen() {
           fontStyle: 'italic',
         }}
       >
-        Alle Daten bleiben lokal auf deinem Geraet.{'\n'}
-        Kein Therapieersatz — ein Werkzeug fuer dich.
+        Alle Daten bleiben lokal auf deinem Gerät.{'\n'}
+        Kein Therapieersatz — ein Werkzeug für dich.
       </Text>
     </View>
   );
