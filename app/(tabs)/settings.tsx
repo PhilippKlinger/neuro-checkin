@@ -1,10 +1,16 @@
 import { useState, useCallback } from 'react';
-import { View, Text, Switch, Pressable, ScrollView, StyleSheet } from 'react-native';
+import { View, Text, Switch, Pressable, ScrollView, StyleSheet, Platform } from 'react-native';
 import { useFocusEffect } from 'expo-router';
+import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { useTheme } from '../../lib/hooks/useTheme';
 import { useDatabase } from '../../lib/hooks/useDatabase';
 import { getSettings, updateSettings } from '../../lib/database/settings';
 import { themes, ThemeName } from '../../lib/constants/themes';
+import {
+  requestNotificationPermission,
+  scheduleReminderNotification,
+  cancelReminderNotification,
+} from '../../lib/notifications/notifications';
 
 const THEME_OPTIONS: { key: ThemeName; label: string }[] = [
   { key: 'warmEarth', label: 'Warm Earth' },
@@ -12,33 +18,74 @@ const THEME_OPTIONS: { key: ThemeName; label: string }[] = [
   { key: 'softSage', label: 'Soft Sage' },
 ];
 
+function timeStringToDate(time: string | null): Date {
+  const date = new Date();
+  if (time) {
+    const [h, m] = time.split(':').map(Number);
+    date.setHours(h, m, 0, 0);
+  } else {
+    date.setHours(9, 0, 0, 0);
+  }
+  return date;
+}
+
+function dateToTimeString(date: Date): string {
+  const h = String(date.getHours()).padStart(2, '0');
+  const m = String(date.getMinutes()).padStart(2, '0');
+  return `${h}:${m}`;
+}
+
 export default function SettingsScreen() {
   const { theme, themeName, setThemeName, spacing, typography, radii, touchTarget } =
     useTheme();
   const db = useDatabase();
+
   const [reminderEnabled, setReminderEnabled] = useState(false);
+  const [reminderTime, setReminderTime] = useState<string | null>(null);
+  const [showTimePicker, setShowTimePicker] = useState(false);
+
   useFocusEffect(
     useCallback(() => {
       async function load() {
         const settings = await getSettings(db);
         setReminderEnabled(settings.reminderEnabled);
-        if (settings.themeName !== themeName) {
-          setThemeName(settings.themeName as ThemeName);
-        }
+        setReminderTime(settings.reminderTime);
+        setThemeName(settings.themeName as ThemeName);
       }
       load();
-    }, [db])
+    }, [db, setThemeName])
   );
 
   async function handleReminderToggle(value: boolean) {
+    if (value) {
+      const granted = await requestNotificationPermission();
+      if (!granted) return;
+      const time = reminderTime ?? '09:00';
+      await scheduleReminderNotification(time);
+      setReminderTime(time);
+      await updateSettings(db, { reminderEnabled: true, reminderTime: time });
+    } else {
+      await cancelReminderNotification();
+      await updateSettings(db, { reminderEnabled: false });
+    }
     setReminderEnabled(value);
-    await updateSettings(db, { reminderEnabled: value });
+  }
+
+  async function handleTimeChange(_event: DateTimePickerEvent, selected?: Date) {
+    if (Platform.OS === 'android') setShowTimePicker(false);
+    if (!selected) return;
+    const time = dateToTimeString(selected);
+    setReminderTime(time);
+    await updateSettings(db, { reminderTime: time });
+    if (reminderEnabled) await scheduleReminderNotification(time);
   }
 
   async function handleThemeChange(name: ThemeName) {
     setThemeName(name);
     await updateSettings(db, { themeName: name });
   }
+
+  const pickerDate = timeStringToDate(reminderTime);
 
   return (
     <ScrollView
@@ -171,22 +218,85 @@ export default function SettingsScreen() {
           thumbColor={
             reminderEnabled ? theme.colors.primary : theme.colors.surface
           }
-          accessibilityLabel="Taegliche Erinnerung"
+          accessibilityLabel="Tägliche Erinnerung"
           accessibilityRole="switch"
+          accessibilityHint={reminderEnabled ? 'Erinnerung deaktivieren' : 'Erinnerung aktivieren'}
         />
       </View>
 
-      <Text
-        style={{
-          fontFamily: typography.families.body.regular,
-          fontSize: typography.sizes.xs,
-          color: theme.colors.textSecondary,
-          marginTop: spacing.sm,
-          fontStyle: 'italic',
-        }}
-      >
-        Push-Notifications werden in einer spaeteren Version hinzugefuegt.
-      </Text>
+      {reminderEnabled && (
+        <View
+          style={[
+            styles.settingRow,
+            {
+              backgroundColor: theme.colors.surface,
+              borderRadius: radii.md,
+              padding: spacing.md,
+              marginTop: spacing.sm,
+              minHeight: touchTarget.min,
+            },
+          ]}
+        >
+          <Text
+            style={{
+              fontFamily: typography.families.ui.medium,
+              fontSize: typography.sizes.md,
+              color: theme.colors.text,
+              flex: 1,
+            }}
+          >
+            Uhrzeit
+          </Text>
+
+          {Platform.OS === 'ios' ? (
+            <DateTimePicker
+              value={pickerDate}
+              mode="time"
+              display="default"
+              onChange={handleTimeChange}
+              accessibilityLabel="Erinnerungszeit auswählen"
+            />
+          ) : (
+            <>
+              <Pressable
+                onPress={() => setShowTimePicker(true)}
+                style={[
+                  styles.timeButton,
+                  {
+                    backgroundColor: theme.colors.primarySoft,
+                    borderRadius: radii.sm,
+                    paddingHorizontal: spacing.md,
+                    paddingVertical: spacing.sm,
+                    minHeight: touchTarget.min,
+                    justifyContent: 'center',
+                  },
+                ]}
+                accessibilityRole="button"
+                accessibilityLabel={`Uhrzeit: ${reminderTime ?? '09:00'}. Tippen zum Ändern`}
+              >
+                <Text
+                  style={{
+                    fontFamily: typography.families.ui.medium,
+                    fontSize: typography.sizes.md,
+                    color: theme.colors.primary,
+                  }}
+                >
+                  {reminderTime ?? '09:00'}
+                </Text>
+              </Pressable>
+              {showTimePicker && (
+                <DateTimePicker
+                  value={pickerDate}
+                  mode="time"
+                  display="default"
+                  onChange={handleTimeChange}
+                  accessibilityLabel="Erinnerungszeit auswählen"
+                />
+              )}
+            </>
+          )}
+        </View>
+      )}
     </ScrollView>
   );
 }
@@ -217,5 +327,8 @@ const styles = StyleSheet.create({
   },
   settingTextWrapper: {
     flex: 1,
+  },
+  timeButton: {
+    alignItems: 'center',
   },
 });
