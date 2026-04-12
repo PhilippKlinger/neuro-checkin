@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { View, Text, Switch, Pressable, ScrollView, StyleSheet, Platform } from 'react-native';
+import * as Device from 'expo-device';
 import { useFocusEffect } from 'expo-router';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { useTheme } from '../../lib/hooks/useTheme';
@@ -43,6 +44,7 @@ export default function SettingsScreen() {
   const [reminderEnabled, setReminderEnabled] = useState(false);
   const [reminderTime, setReminderTime] = useState<string | null>(null);
   const [showTimePicker, setShowTimePicker] = useState(false);
+  const [isEmulator, setIsEmulator] = useState(false);
 
   useFocusEffect(
     useCallback(() => {
@@ -51,6 +53,7 @@ export default function SettingsScreen() {
         setReminderEnabled(settings.reminderEnabled);
         setReminderTime(settings.reminderTime);
         setThemeName(settings.themeName as ThemeName);
+        setIsEmulator(!Device.isDevice);
       }
       load();
     }, [db, setThemeName])
@@ -58,8 +61,15 @@ export default function SettingsScreen() {
 
   async function handleReminderToggle(value: boolean) {
     if (value) {
-      const granted = await requestNotificationPermission();
-      if (!granted) return;
+      const result = await requestNotificationPermission();
+      if (result === 'emulator') {
+        setReminderEnabled(true);
+        const time = reminderTime ?? '09:00';
+        setReminderTime(time);
+        await updateSettings(db, { reminderEnabled: true, reminderTime: time });
+        return;
+      }
+      if (!result) return;
       const time = reminderTime ?? '09:00';
       await scheduleReminderNotification(time);
       setReminderTime(time);
@@ -223,6 +233,20 @@ export default function SettingsScreen() {
           accessibilityHint={reminderEnabled ? 'Erinnerung deaktivieren' : 'Erinnerung aktivieren'}
         />
       </View>
+
+      {isEmulator && reminderEnabled && (
+        <Text
+          style={{
+            fontFamily: typography.families.body.regular,
+            fontSize: typography.sizes.xs,
+            color: theme.colors.textSecondary,
+            marginTop: spacing.sm,
+            fontStyle: 'italic',
+          }}
+        >
+          Hinweis: Benachrichtigungen funktionieren nur auf einem echten Gerät, nicht im Emulator.
+        </Text>
+      )}
 
       {reminderEnabled && (
         <View
