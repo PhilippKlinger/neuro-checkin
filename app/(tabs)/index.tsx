@@ -77,6 +77,30 @@ export default function HomeScreen() {
         </Pressable>
       </View>
 
+      {!isLoading && !lastCheckIn && (
+        <View
+          style={[
+            styles.emptyHint,
+            {
+              backgroundColor: theme.colors.surface,
+              borderRadius: radii.md,
+              padding: spacing.md,
+            },
+          ]}
+        >
+          <Text
+            style={{
+              fontFamily: typography.families.body.regular,
+              fontSize: typography.sizes.md,
+              color: theme.colors.textSecondary,
+              textAlign: 'center',
+            }}
+          >
+            Nimm dir einen ruhigen Moment und starte deinen ersten Check-in.
+          </Text>
+        </View>
+      )}
+
       {!isLoading && lastCheckIn && (
         <Pressable
           onPress={() => router.push(`/history/${lastCheckIn.id}`)}
@@ -151,6 +175,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  emptyHint: {},
   lastCheckIn: {},
   miniMetrics: {
     flexDirection: 'row',

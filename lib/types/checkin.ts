@@ -28,6 +28,7 @@ export interface UserSettings {
   reminderEnabled: boolean;
   reminderTime: string | null; // HH:mm format
   language: 'de' | 'en';
+  onboardingCompleted: boolean;
 }
 
 export type CheckInInsert = Omit<CheckIn, 'id' | 'createdAt'>;

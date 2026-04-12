@@ -1,6 +1,6 @@
 import type { SQLiteDatabase } from 'expo-sqlite';
 
-const SCHEMA_VERSION = 1;
+const SCHEMA_VERSION = 2;
 
 export async function migrateDatabase(db: SQLiteDatabase): Promise<void> {
   await db.execAsync(`PRAGMA journal_mode = WAL;`);
@@ -36,6 +36,12 @@ export async function migrateDatabase(db: SQLiteDatabase): Promise<void> {
 
       INSERT OR IGNORE INTO user_settings (id) VALUES (1);
     `);
+  }
+
+  if (currentVersion < 2) {
+    await db.execAsync(
+      `ALTER TABLE user_settings ADD COLUMN onboarding_completed INTEGER NOT NULL DEFAULT 0;`
+    );
   }
 
   await db.execAsync(`PRAGMA user_version = ${SCHEMA_VERSION};`);
