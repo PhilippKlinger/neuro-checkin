@@ -29,7 +29,7 @@ export function CheckInCard({ checkIn, onPress }: CheckInCardProps) {
       ]}
       accessibilityRole="button"
       accessibilityLabel={`Check-in vom ${formatDate(checkIn.createdAt)}`}
-      accessibilityHint="Tippen fuer Details"
+      accessibilityHint="Tippen für Details"
     >
       <View style={styles.header}>
         <Text

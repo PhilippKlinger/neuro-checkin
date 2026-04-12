@@ -19,7 +19,7 @@ interface OptionItem {
 const OPTIONS: OptionItem[] = [
   {
     value: 'supportive',
-    label: 'Unterstuetzend',
+    label: 'Unterstützend',
     description: 'Meine Gedanken helfen mir gerade',
   },
   {
@@ -64,7 +64,7 @@ export function StepThoughts({
           marginBottom: spacing.xl,
         }}
       >
-        Wie wuerdest du deine Gedanken gerade beschreiben?
+        Wie würdest du deine Gedanken gerade beschreiben?
       </Text>
 
       <View style={[styles.optionList, { gap: spacing.sm }]}>
@@ -124,7 +124,7 @@ export function StepThoughts({
       <TextInput
         value={note}
         onChangeText={onNoteChange}
-        placeholder="Moechtest du dazu etwas notieren? (optional)"
+        placeholder="Möchtest du dazu etwas notieren? (optional)"
         placeholderTextColor={theme.colors.textSecondary}
         multiline
         textAlignVertical="top"

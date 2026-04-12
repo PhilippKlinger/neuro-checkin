@@ -31,7 +31,7 @@ const SIGNALS: SignalItem[] = [
   {
     key: 'externalStimuli',
     label: 'Reize',
-    description: 'Stoeren dich Licht, Geraeusche oder Gerueche?',
+    description: 'Stören dich Licht, Geräusche oder Gerüche?',
   },
 ];
 
@@ -81,7 +81,7 @@ export function StepBodySignals({ value, onValueChange }: StepBodySignalsProps) 
           marginBottom: spacing.sm,
         }}
       >
-        Koerpersignale
+        Körpersignale
       </Text>
       <Text
         style={{
@@ -92,7 +92,7 @@ export function StepBodySignals({ value, onValueChange }: StepBodySignalsProps) 
           marginBottom: spacing.xl,
         }}
       >
-        Was nimmt dein Koerper gerade wahr?
+        Was nimmt dein Körper gerade wahr?
       </Text>
 
       <View style={[styles.signalList, { gap: spacing.sm }]}>

@@ -21,10 +21,10 @@ const STEP_NAMES = [
   'Ankommen',
   'Energie-Level',
   'Fokus-Level',
-  'Koerpersignale',
-  'Gefuehle',
+  'Körpersignale',
+  'Gefühle',
   'Gedanken',
-  'Selbstfuersorge',
+  'Selbstfürsorge',
   'Zusammenfassung',
 ];
 
@@ -127,7 +127,7 @@ export default function CheckInScreen() {
             marginBottom: spacing.xl,
           }}
         >
-          Gut gemacht. Du hast dir einen Moment fuer dich genommen.
+          Gut gemacht. Du hast dir einen Moment für dich genommen.
         </Text>
         <Pressable
           onPress={handleReset}
@@ -258,7 +258,7 @@ export default function CheckInScreen() {
               },
             ]}
             accessibilityRole="button"
-            accessibilityLabel="Zurueck"
+            accessibilityLabel="Zurück"
           >
             <Text
               style={{
@@ -267,7 +267,7 @@ export default function CheckInScreen() {
                 color: theme.colors.text,
               }}
             >
-              Zurueck
+              Zurück
             </Text>
           </Pressable>
         ) : (

@@ -20,7 +20,7 @@ export function StepSelfCare({ value, onValueChange }: StepSelfCareProps) {
           marginBottom: spacing.sm,
         }}
       >
-        Selbstfuersorge
+        Selbstfürsorge
       </Text>
       <Text
         style={{
@@ -31,7 +31,7 @@ export function StepSelfCare({ value, onValueChange }: StepSelfCareProps) {
           marginBottom: spacing.xl,
         }}
       >
-        Was brauchst du gerade? Was wuerde dir jetzt gut tun?
+        Was brauchst du gerade? Was würde dir jetzt gut tun?
       </Text>
 
       <TextInput
@@ -54,7 +54,7 @@ export function StepSelfCare({ value, onValueChange }: StepSelfCareProps) {
             lineHeight: typography.sizes.md * 1.5,
           },
         ]}
-        accessibilityLabel="Selbstfuersorge-Notiz"
+        accessibilityLabel="Selbstfürsorge-Notiz"
       />
 
       <Text
@@ -67,7 +67,7 @@ export function StepSelfCare({ value, onValueChange }: StepSelfCareProps) {
           fontStyle: 'italic',
         }}
       >
-        Auch kleine Dinge zaehlen. Du darfst Beduerfnisse haben.
+        Auch kleine Dinge zählen. Du darfst Bedürfnisse haben.
       </Text>
     </View>
   );

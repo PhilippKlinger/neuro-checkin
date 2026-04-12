@@ -9,7 +9,7 @@ import { formatDateTime } from '../../lib/utils/format';
 
 function getThoughtsLabel(type: string | null): string {
   switch (type) {
-    case 'supportive': return 'Unterstuetzend';
+    case 'supportive': return 'Unterstützend';
     case 'burdening': return 'Belastend';
     case 'mixed': return 'Gemischt';
     default: return '—';
@@ -47,12 +47,12 @@ export default function CheckInDetailScreen() {
   function handleDelete() {
     if (!checkIn) return;
     Alert.alert(
-      'Check-in loeschen?',
-      'Dieser Check-in wird unwiderruflich geloescht.',
+      'Check-in löschen?',
+      'Dieser Check-in wird unwiderruflich gelöscht.',
       [
         { text: 'Abbrechen', style: 'cancel' },
         {
-          text: 'Loeschen',
+          text: 'Löschen',
           style: 'destructive',
           onPress: async () => {
             await deleteCheckIn(db, checkIn.id);
@@ -165,7 +165,7 @@ export default function CheckInDetailScreen() {
           ]}
         >
           <Text style={sectionTitle(typography, theme, spacing)}>
-            Koerpersignale
+            Körpersignale
           </Text>
           {activeSignals.length > 0 && (
             <Text style={[body(typography, theme), { marginBottom: spacing.xs }]}>
@@ -193,7 +193,7 @@ export default function CheckInDetailScreen() {
             },
           ]}
         >
-          <Text style={sectionTitle(typography, theme, spacing)}>Gefuehle</Text>
+          <Text style={sectionTitle(typography, theme, spacing)}>Gefühle</Text>
           <Text style={body(typography, theme)}>{checkIn.feelings}</Text>
         </View>
       )}
@@ -242,7 +242,7 @@ export default function CheckInDetailScreen() {
           ]}
         >
           <Text style={sectionTitle(typography, theme, spacing)}>
-            Selbstfuersorge
+            Selbstfürsorge
           </Text>
           <Text style={body(typography, theme)}>{checkIn.selfCareNote}</Text>
         </View>
@@ -262,7 +262,7 @@ export default function CheckInDetailScreen() {
           },
         ]}
         accessibilityRole="button"
-        accessibilityLabel="Check-in loeschen"
+        accessibilityLabel="Check-in löschen"
       >
         <Text
           style={{
@@ -272,7 +272,7 @@ export default function CheckInDetailScreen() {
             textAlign: 'center',
           }}
         >
-          Check-in loeschen
+          Check-in löschen
         </Text>
       </Pressable>
     </ScrollView>
