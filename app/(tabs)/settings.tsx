@@ -95,6 +95,10 @@ export default function SettingsScreen() {
     await updateSettings(db, { themeName: name });
   }
 
+  async function handleResetTutorial() {
+    await updateSettings(db, { firstCheckInCompleted: false });
+  }
+
   const pickerDate = timeStringToDate(reminderTime);
 
   return (
@@ -321,6 +325,47 @@ export default function SettingsScreen() {
           )}
         </View>
       )}
+
+      {/* Dev Tools */}
+      <Text
+        style={{
+          fontFamily: typography.families.heading.semibold,
+          fontSize: typography.sizes.lg,
+          color: theme.colors.text,
+          marginBottom: spacing.md,
+          marginTop: spacing.xl,
+        }}
+      >
+        Entwickler
+      </Text>
+
+      <Pressable
+        onPress={handleResetTutorial}
+        style={[
+          styles.devButton,
+          {
+            backgroundColor: theme.colors.surface,
+            borderRadius: radii.md,
+            padding: spacing.md,
+            minHeight: touchTarget.min,
+            borderWidth: 1,
+            borderColor: theme.colors.border,
+          },
+        ]}
+        accessibilityRole="button"
+        accessibilityLabel="Tutorial zurücksetzen"
+        accessibilityHint="Zeigt den geführten ersten Check-in beim nächsten Start erneut an"
+      >
+        <Text
+          style={{
+            fontFamily: typography.families.ui.medium,
+            fontSize: typography.sizes.md,
+            color: theme.colors.textSecondary,
+          }}
+        >
+          Tutorial zurücksetzen
+        </Text>
+      </Pressable>
     </ScrollView>
   );
 }
@@ -344,6 +389,7 @@ const styles = StyleSheet.create({
     width: 16,
     height: 16,
   },
+  devButton: {},
   settingRow: {
     flexDirection: 'row',
     alignItems: 'center',
