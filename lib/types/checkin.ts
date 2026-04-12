@@ -31,3 +31,38 @@ export interface UserSettings {
 }
 
 export type CheckInInsert = Omit<CheckIn, 'id' | 'createdAt'>;
+
+/** State that builds up during the check-in flow */
+export interface CheckInDraft {
+  energyLevel: number;
+  focusLevel: number;
+  bodySignals: BodySignals;
+  feelings: string;
+  thoughtsType: 'supportive' | 'burdening' | 'mixed' | null;
+  thoughtsNote: string;
+  selfCareNote: string;
+  innerPart: string;
+  note: string;
+}
+
+export const EMPTY_BODY_SIGNALS: BodySignals = {
+  hunger: null,
+  thirst: null,
+  temperature: null,
+  pain: null,
+  restroom: null,
+  seating: null,
+  externalStimuli: null,
+};
+
+export const EMPTY_DRAFT: CheckInDraft = {
+  energyLevel: 5,
+  focusLevel: 5,
+  bodySignals: { ...EMPTY_BODY_SIGNALS },
+  feelings: '',
+  thoughtsType: null,
+  thoughtsNote: '',
+  selfCareNote: '',
+  innerPart: '',
+  note: '',
+};
