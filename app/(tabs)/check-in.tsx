@@ -119,32 +119,6 @@ export default function CheckInScreen() {
     }
   }
 
-  function handleSkip() {
-    switch (step) {
-      case 1:
-        setDraft({ ...draft, energyLevel: EMPTY_DRAFT.energyLevel });
-        break;
-      case 2:
-        setDraft({ ...draft, focusLevel: EMPTY_DRAFT.focusLevel });
-        break;
-      case 3:
-        setDraft({ ...draft, bodySignals: { ...EMPTY_BODY_SIGNALS } });
-        break;
-      case 4:
-        setDraft({ ...draft, feelings: '' });
-        break;
-      case 5:
-        setDraft({ ...draft, thoughtsType: null, thoughtsNote: '' });
-        break;
-      case 6:
-        setDraft({ ...draft, selfCareNote: '' });
-        break;
-    }
-    setStep(step + 1);
-  }
-
-  const canSkip = step >= 1 && step <= 6;
-
   async function handleSave() {
     setIsSaving(true);
     try {
@@ -334,26 +308,6 @@ export default function CheckInScreen() {
           </Text>
         </Pressable>
       </View>
-
-      {canSkip && (
-        <Pressable
-          onPress={handleSkip}
-          style={[styles.skipLink, { paddingBottom: spacing.lg, paddingHorizontal: spacing.lg }]}
-          accessibilityRole="button"
-          accessibilityLabel="Diesen Schritt überspringen"
-        >
-          <Text
-            style={{
-              fontFamily: typography.families.body.regular,
-              fontSize: typography.sizes.sm,
-              color: theme.colors.textSecondary,
-              textAlign: 'center',
-            }}
-          >
-            Lieber nicht antworten
-          </Text>
-        </Pressable>
-      )}
     </View>
   );
 }
@@ -378,8 +332,5 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  skipLink: {
-    alignItems: 'center',
   },
 });

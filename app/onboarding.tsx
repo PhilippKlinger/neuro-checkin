@@ -33,9 +33,9 @@ const STEPS: OnboardingStep[] = [
 ];
 
 const PALETTE_LABELS: Record<ThemeName, string> = {
-  warmEarth: 'Warme Erde',
-  coolMist: 'Kühler Nebel',
-  softSage: 'Sanftes Grün',
+  warmEarth: 'Warm Earth',
+  coolMist: 'Cool Mist',
+  softSage: 'Soft Sage',
 };
 
 export default function OnboardingScreen() {
