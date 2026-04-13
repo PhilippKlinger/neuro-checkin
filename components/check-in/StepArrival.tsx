@@ -55,7 +55,7 @@ export function StepArrival() {
           {
             fontFamily: typography.families.body.regular,
             fontSize: typography.sizes.sm,
-            color: theme.colors.primarySoft,
+            color: theme.colors.textSecondary,
             marginTop: spacing.xl,
           },
         ]}

@@ -8,6 +8,7 @@ import { insertCheckIn } from '../../lib/database/checkins';
 import { getSettings, updateSettings } from '../../lib/database/settings';
 import { StepIndicator } from '../../components/check-in/StepIndicator';
 import { TutorialHint } from '../../components/check-in/TutorialHint';
+import { CheckInSuccessView } from '../../components/check-in/CheckInSuccessView';
 import { StepArrival } from '../../components/check-in/StepArrival';
 import { StepEnergy } from '../../components/check-in/StepEnergy';
 import { StepFocus } from '../../components/check-in/StepFocus';
@@ -121,66 +122,7 @@ export default function CheckInScreen() {
   }
 
   if (isDone) {
-    return (
-      <View
-        style={[
-          styles.container,
-          {
-            backgroundColor: theme.colors.background,
-            justifyContent: 'center',
-            alignItems: 'center',
-            padding: spacing.lg,
-          },
-        ]}
-      >
-        <Text
-          style={{
-            fontFamily: typography.families.heading.semibold,
-            fontSize: typography.sizes.xl,
-            color: theme.colors.text,
-            textAlign: 'center',
-            marginBottom: spacing.md,
-          }}
-        >
-          Check-in gespeichert
-        </Text>
-        <Text
-          style={{
-            fontFamily: typography.families.body.regular,
-            fontSize: typography.sizes.md,
-            color: theme.colors.textSecondary,
-            textAlign: 'center',
-            marginBottom: spacing.xl,
-          }}
-        >
-          Gut gemacht. Du hast dir einen Moment für dich genommen.
-        </Text>
-        <Pressable
-          onPress={handleReset}
-          style={[
-            styles.navButton,
-            {
-              minHeight: touchTarget.min,
-              borderRadius: radii.md,
-              backgroundColor: theme.colors.primary,
-              paddingHorizontal: spacing.xl,
-            },
-          ]}
-          accessibilityRole="button"
-          accessibilityLabel="Neuer Check-in"
-        >
-          <Text
-            style={{
-              fontFamily: typography.families.ui.semibold,
-              fontSize: typography.sizes.md,
-              color: theme.colors.textInverse,
-            }}
-          >
-            Neuer Check-in
-          </Text>
-        </Pressable>
-      </View>
-    );
+    return <CheckInSuccessView onReset={handleReset} />;
   }
 
   function renderStep() {

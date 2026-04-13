@@ -40,7 +40,7 @@ export async function updateSettings(
   settings: Partial<Omit<UserSettings, 'id'>>
 ): Promise<void> {
   const updates: string[] = [];
-  const values: (string | number)[] = [];
+  const values: (string | number | null)[] = [];
 
   if (settings.themeName !== undefined) {
     updates.push('theme_name = ?');
@@ -52,7 +52,7 @@ export async function updateSettings(
   }
   if (settings.reminderTime !== undefined) {
     updates.push('reminder_time = ?');
-    values.push(settings.reminderTime ?? '');
+    values.push(settings.reminderTime ?? null);
   }
   if (settings.language !== undefined) {
     updates.push('language = ?');

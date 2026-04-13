@@ -30,7 +30,8 @@ export function FadeView({
       duration,
       useNativeDriver: true,
     }).start();
-  }, [triggerKey]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [triggerKey, reducedMotion]); // opacity is a stable Animated.Value ref; duration is design-time constant
 
   return (
     <Animated.View style={[style, { opacity }]} {...props}>

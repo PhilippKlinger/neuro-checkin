@@ -1,6 +1,7 @@
 import { View, Text, Pressable, StyleSheet, ScrollView } from 'react-native';
 import { useTheme } from '../../lib/hooks/useTheme';
 import { BodySignals } from '../../lib/types/checkin';
+import { spacing as spacingTokens } from '../../lib/constants/themes';
 
 interface StepBodySignalsProps {
   value: BodySignals;
@@ -216,7 +217,7 @@ const styles = StyleSheet.create({
   },
   signalTextWrapper: {
     flex: 1,
-    marginRight: 8,
+    marginRight: spacingTokens.sm,
   },
   buttonGroup: {
     flexDirection: 'row',

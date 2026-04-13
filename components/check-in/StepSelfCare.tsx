@@ -61,7 +61,7 @@ export function StepSelfCare({ value, onValueChange }: StepSelfCareProps) {
         style={{
           fontFamily: typography.families.body.regular,
           fontSize: typography.sizes.xs,
-          color: theme.colors.primarySoft,
+          color: theme.colors.textSecondary,
           textAlign: 'center',
           marginTop: spacing.lg,
           fontStyle: 'italic',

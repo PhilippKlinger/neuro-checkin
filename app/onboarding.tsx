@@ -108,7 +108,7 @@ export default function OnboardingScreen() {
           style={{
             fontFamily: typography.families.body.regular,
             fontSize: typography.sizes.sm,
-            color: theme.colors.primarySoft,
+            color: theme.colors.textSecondary,
             textAlign: 'center',
             fontStyle: 'italic',
           }}

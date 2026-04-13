@@ -24,7 +24,8 @@ function AppStack() {
       setOnboardingChecked(true);
     }
     checkOnboarding();
-  }, [isReady]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isReady]); // db and router are stable refs; segments intentionally omitted (one-time check on ready)
 
   if (!onboardingChecked) return null;
 

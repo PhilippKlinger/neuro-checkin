@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { useTheme } from '../../lib/hooks/useTheme';
+import { touchTarget } from '../../lib/constants/themes';
 
 interface TutorialHintProps {
   text: string;
@@ -69,5 +70,7 @@ const styles = StyleSheet.create({
   container: {},
   dismissButton: {
     alignSelf: 'flex-end',
+    minHeight: touchTarget.min,
+    justifyContent: 'center',
   },
 });
