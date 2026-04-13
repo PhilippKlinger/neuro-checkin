@@ -77,6 +77,10 @@ export async function deleteCheckIn(
   await db.runAsync('DELETE FROM check_ins WHERE id = ?', id);
 }
 
+export async function deleteAllCheckIns(db: SQLiteDatabase): Promise<void> {
+  await db.runAsync('DELETE FROM check_ins');
+}
+
 function mapRowToCheckIn(row: {
   id: number;
   created_at: string;

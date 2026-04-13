@@ -6,6 +6,7 @@ import { useDatabase } from '../lib/hooks/useDatabase';
 import { FadeView } from '../components/ui/FadeView';
 import { updateSettings } from '../lib/database/settings';
 import { StepIndicator } from '../components/check-in/StepIndicator';
+import { themes, ThemeName } from '../lib/constants/themes';
 
 interface OnboardingStep {
   title: string;
@@ -26,19 +27,31 @@ const STEPS: OnboardingStep[] = [
   },
   {
     title: 'Für dich gemacht',
-    body: 'Keine Streaks, keine Punkte, kein Druck. Diese App ist ein Werkzeug — kein Richter und kein Therapieersatz.',
-    hint: 'Du kannst jederzeit in den Einstellungen die Farbpalette anpassen.',
+    body: 'Keine Streaks, keine Punkte, kein Druck. Wähle eine Farbwelt, die sich für dich richtig anfühlt.',
+    hint: 'Du kannst die Palette jederzeit in den Einstellungen ändern.',
   },
 ];
 
+const PALETTE_LABELS: Record<ThemeName, string> = {
+  warmEarth: 'Warm Earth',
+  coolMist: 'Cool Mist',
+  softSage: 'Soft Sage',
+};
+
 export default function OnboardingScreen() {
-  const { theme, spacing, typography, radii, touchTarget } = useTheme();
+  const { theme, themeName, setThemeName, spacing, typography, radii, touchTarget } = useTheme();
   const db = useDatabase();
   const router = useRouter();
   const [step, setStep] = useState(0);
+  const [selectedTheme, setSelectedTheme] = useState<ThemeName>(themeName);
 
   const isLastStep = step === STEPS.length - 1;
   const current = STEPS[step];
+
+  function handleThemeSelect(name: ThemeName) {
+    setSelectedTheme(name);
+    setThemeName(name);
+  }
 
   function handleNext() {
     if (isLastStep) {
@@ -50,7 +63,7 @@ export default function OnboardingScreen() {
   }
 
   async function finish() {
-    await updateSettings(db, { onboardingCompleted: true });
+    await updateSettings(db, { onboardingCompleted: true, themeName: selectedTheme });
     router.replace('/(tabs)');
   }
 
@@ -104,20 +117,79 @@ export default function OnboardingScreen() {
         >
           {current.body}
         </Text>
-        <Text
-          style={{
-            fontFamily: typography.families.body.regular,
-            fontSize: typography.sizes.sm,
-            color: theme.colors.textSecondary,
-            textAlign: 'center',
-            fontStyle: 'italic',
-          }}
-        >
-          {current.hint}
-        </Text>
+
+        {isLastStep ? (
+          <View style={[styles.paletteGrid, { gap: spacing.md }]}>
+            {(Object.keys(themes) as ThemeName[]).map((name) => {
+              const palette = themes[name];
+              const isSelected = selectedTheme === name;
+              return (
+                <Pressable
+                  key={name}
+                  onPress={() => handleThemeSelect(name)}
+                  style={[
+                    styles.paletteCard,
+                    {
+                      borderRadius: radii.md,
+                      borderWidth: 2,
+                      borderColor: isSelected ? palette.colors.primary : palette.colors.border,
+                      backgroundColor: palette.colors.surface,
+                      padding: spacing.md,
+                      minHeight: touchTarget.min,
+                    },
+                  ]}
+                  accessibilityRole="button"
+                  accessibilityLabel={PALETTE_LABELS[name]}
+                  accessibilityState={{ selected: isSelected }}
+                >
+                  <View style={[styles.paletteSwatches, { marginBottom: spacing.sm }]}>
+                    <View style={[styles.swatch, { backgroundColor: palette.colors.primary }]} />
+                    <View style={[styles.swatch, { backgroundColor: palette.colors.accent }]} />
+                    <View style={[styles.swatch, { backgroundColor: palette.colors.background }]} />
+                  </View>
+                  <Text
+                    style={{
+                      fontFamily: typography.families.ui.semibold,
+                      fontSize: typography.sizes.sm,
+                      color: palette.colors.text,
+                      textAlign: 'center',
+                    }}
+                  >
+                    {PALETTE_LABELS[name]}
+                  </Text>
+                </Pressable>
+              );
+            })}
+          </View>
+        ) : (
+          <Text
+            style={{
+              fontFamily: typography.families.body.regular,
+              fontSize: typography.sizes.sm,
+              color: theme.colors.textSecondary,
+              textAlign: 'center',
+              fontStyle: 'italic',
+            }}
+          >
+            {current.hint}
+          </Text>
+        )}
       </FadeView>
 
       <View style={[styles.footer, { gap: spacing.lg, paddingBottom: spacing.xl }]}>
+        {isLastStep && (
+          <Text
+            style={{
+              fontFamily: typography.families.body.regular,
+              fontSize: typography.sizes.sm,
+              color: theme.colors.textSecondary,
+              textAlign: 'center',
+              fontStyle: 'italic',
+            }}
+          >
+            {current.hint}
+          </Text>
+        )}
         <StepIndicator totalSteps={STEPS.length} currentStep={step} />
 
         <Pressable
@@ -169,5 +241,23 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     alignSelf: 'stretch',
+  },
+  paletteGrid: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignSelf: 'stretch',
+  },
+  paletteCard: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  paletteSwatches: {
+    flexDirection: 'row',
+    gap: 4,
+  },
+  swatch: {
+    width: 18,
+    height: 18,
+    borderRadius: 9,
   },
 });

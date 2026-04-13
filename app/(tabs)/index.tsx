@@ -7,6 +7,13 @@ import { getCheckIns } from '../../lib/database/checkins';
 import { CheckIn } from '../../lib/types/checkin';
 import { formatDate, formatTime } from '../../lib/utils/format';
 
+function getGreeting(): string {
+  const hour = new Date().getHours();
+  if (hour >= 5 && hour < 12) return 'Guten Morgen';
+  if (hour >= 12 && hour < 18) return 'Guten Tag';
+  return 'Guten Abend';
+}
+
 export default function HomeScreen() {
   const { theme, spacing, typography, radii, touchTarget } = useTheme();
   const db = useDatabase();
@@ -36,8 +43,9 @@ export default function HomeScreen() {
             textAlign: 'center',
             marginBottom: spacing.sm,
           }}
+          accessibilityRole="header"
         >
-          Neuro Check-in
+          {getGreeting()}
         </Text>
         <Text
           style={{
@@ -96,7 +104,7 @@ export default function HomeScreen() {
               textAlign: 'center',
             }}
           >
-            Nimm dir einen ruhigen Moment und starte deinen ersten Check-in.
+            Wann immer du bereit bist — ein paar Minuten reichen für deinen ersten Check-in.
           </Text>
         </View>
       )}

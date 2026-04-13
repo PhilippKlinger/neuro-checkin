@@ -152,7 +152,13 @@ export default function CheckInScreen() {
   }
 
   if (isDone) {
-    return <CheckInSuccessView onReset={handleReset} />;
+    return (
+      <CheckInSuccessView
+        onReset={handleReset}
+        energyLevel={draft.energyLevel}
+        focusLevel={draft.focusLevel}
+      />
+    );
   }
 
   function renderStep() {
