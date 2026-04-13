@@ -1,5 +1,6 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { View, Text, Pressable, StyleSheet, Alert, AccessibilityInfo, findNodeHandle } from 'react-native';
+import { useFocusEffect } from 'expo-router';
 import { useTheme } from '../../lib/hooks/useTheme';
 import { useDatabase } from '../../lib/hooks/useDatabase';
 import { CheckInDraft, EMPTY_DRAFT, EMPTY_BODY_SIGNALS } from '../../lib/types/checkin';
@@ -19,6 +20,7 @@ import { StepSelfCare } from '../../components/check-in/StepSelfCare';
 import { StepSummary } from '../../components/check-in/StepSummary';
 
 const TOTAL_STEPS = 8;
+const INACTIVITY_TIMEOUT_MS = 60 * 60 * 1000; // 1h
 
 const TUTORIAL_HINTS: string[] = [
   'Hier geht es nur ums Wahrnehmen. Schließ die Augen wenn du magst, atme ein paar Mal tief. Es gibt nichts zu tun.',
@@ -51,6 +53,34 @@ export default function CheckInScreen() {
   const [isDone, setIsDone] = useState(false);
   const [isTutorial, setIsTutorial] = useState(false);
   const stepContentRef = useRef<View>(null);
+  const stepRef = useRef(step);
+  const leftAtRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    stepRef.current = step;
+  }, [step]);
+
+  useFocusEffect(
+    useCallback(() => {
+      // On focus: reset if check-in was abandoned for too long
+      if (leftAtRef.current !== null && stepRef.current > 0) {
+        const elapsed = Date.now() - leftAtRef.current;
+        if (elapsed > INACTIVITY_TIMEOUT_MS) {
+          setStep(0);
+          setDraft({ ...EMPTY_DRAFT, bodySignals: { ...EMPTY_BODY_SIGNALS } });
+          setIsDone(false);
+        }
+      }
+      leftAtRef.current = null;
+
+      return () => {
+        // On blur: record leave time if check-in is in progress
+        if (stepRef.current > 0) {
+          leftAtRef.current = Date.now();
+        }
+      };
+    }, [])
+  );
 
   useEffect(() => {
     async function loadTutorialState() {

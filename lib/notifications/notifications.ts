@@ -24,7 +24,8 @@ export async function requestNotificationPermission(): Promise<boolean | 'emulat
   if (Platform.OS === 'android') {
     await Notifications.setNotificationChannelAsync(REMINDER_CHANNEL_ID, {
       name: 'Tägliche Erinnerung',
-      importance: Notifications.AndroidImportance.DEFAULT,
+      // HIGH importance reduces Doze-related delays on Android
+      importance: Notifications.AndroidImportance.HIGH,
       vibrationPattern: [0, 250, 250, 250],
       sound: null,
     });
