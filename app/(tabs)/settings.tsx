@@ -6,6 +6,7 @@ import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/dat
 import { useTheme } from '../../lib/hooks/useTheme';
 import { useDatabase } from '../../lib/hooks/useDatabase';
 import { getSettings, updateSettings } from '../../lib/database/settings';
+import { deleteAllCheckIns } from '../../lib/database/checkins';
 import { themes, ThemeName } from '../../lib/constants/themes';
 import {
   requestNotificationPermission,
@@ -116,6 +117,36 @@ export default function SettingsScreen() {
           onPress: async () => {
             await updateSettings(db, { firstCheckInCompleted: false });
             Alert.alert('Erledigt', 'Tutorial wird beim nächsten Check-in erneut angezeigt.');
+          },
+        },
+      ]
+    );
+  }
+
+  function handleDeleteAllCheckIns() {
+    Alert.alert(
+      'Alle Check-ins löschen',
+      'Möchtest du wirklich alle gespeicherten Check-ins löschen? Diese Aktion kann nicht rückgängig gemacht werden.',
+      [
+        { text: 'Abbrechen', style: 'cancel' },
+        {
+          text: 'Löschen',
+          style: 'destructive',
+          onPress: () => {
+            Alert.alert(
+              'Sicher?',
+              'Alle Check-ins werden unwiderruflich gelöscht.',
+              [
+                { text: 'Abbrechen', style: 'cancel' },
+                {
+                  text: 'Ja, alles löschen',
+                  style: 'destructive',
+                  onPress: async () => {
+                    await deleteAllCheckIns(db);
+                  },
+                },
+              ]
+            );
           },
         },
       ]
@@ -349,7 +380,7 @@ export default function SettingsScreen() {
         </View>
       )}
 
-      {/* Dev Tools */}
+      {/* Data & Privacy */}
       <Text
         style={{
           fontFamily: typography.families.heading.semibold,
@@ -359,36 +390,66 @@ export default function SettingsScreen() {
           marginTop: spacing.xl,
         }}
       >
-        Entwickler
+        Daten & Datenschutz
       </Text>
 
-      <Pressable
-        onPress={handleResetTutorial}
-        style={[
-          styles.devButton,
-          {
-            backgroundColor: theme.colors.surface,
-            borderRadius: radii.md,
-            padding: spacing.md,
-            minHeight: touchTarget.min,
-            borderWidth: 1,
-            borderColor: theme.colors.border,
-          },
-        ]}
-        accessibilityRole="button"
-        accessibilityLabel="Tutorial zurücksetzen"
-        accessibilityHint="Zeigt den geführten ersten Check-in beim nächsten Start erneut an"
-      >
-        <Text
-          style={{
-            fontFamily: typography.families.ui.medium,
-            fontSize: typography.sizes.md,
-            color: theme.colors.textSecondary,
-          }}
+      <View style={[styles.dataSection, { gap: spacing.sm }]}>
+        <Pressable
+          onPress={handleResetTutorial}
+          style={[
+            styles.dataButton,
+            {
+              backgroundColor: theme.colors.surface,
+              borderRadius: radii.md,
+              padding: spacing.md,
+              minHeight: touchTarget.min,
+              borderWidth: 1,
+              borderColor: theme.colors.border,
+            },
+          ]}
+          accessibilityRole="button"
+          accessibilityLabel="Tutorial zurücksetzen"
+          accessibilityHint="Zeigt den geführten ersten Check-in beim nächsten Start erneut an"
         >
-          Tutorial zurücksetzen
-        </Text>
-      </Pressable>
+          <Text
+            style={{
+              fontFamily: typography.families.ui.medium,
+              fontSize: typography.sizes.md,
+              color: theme.colors.textSecondary,
+            }}
+          >
+            Tutorial zurücksetzen
+          </Text>
+        </Pressable>
+
+        <Pressable
+          onPress={handleDeleteAllCheckIns}
+          style={[
+            styles.dataButton,
+            {
+              backgroundColor: theme.colors.errorSoft,
+              borderRadius: radii.md,
+              padding: spacing.md,
+              minHeight: touchTarget.min,
+              borderWidth: 1,
+              borderColor: theme.colors.error,
+            },
+          ]}
+          accessibilityRole="button"
+          accessibilityLabel="Alle Check-ins löschen"
+          accessibilityHint="Löscht alle gespeicherten Check-ins dauerhaft"
+        >
+          <Text
+            style={{
+              fontFamily: typography.families.ui.medium,
+              fontSize: typography.sizes.md,
+              color: theme.colors.error,
+            }}
+          >
+            Alle Check-ins löschen
+          </Text>
+        </Pressable>
+      </View>
     </ScrollView>
   );
 }
@@ -412,7 +473,8 @@ const styles = StyleSheet.create({
     width: 16,
     height: 16,
   },
-  devButton: {},
+  dataSection: {},
+  dataButton: {},
   settingRow: {
     flexDirection: 'row',
     alignItems: 'center',
