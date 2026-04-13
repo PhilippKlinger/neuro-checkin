@@ -6,9 +6,7 @@ import { useDatabase } from '../../lib/hooks/useDatabase';
 import { CheckInDraft, EMPTY_DRAFT, EMPTY_BODY_SIGNALS } from '../../lib/types/checkin';
 import { FadeView } from '../../components/ui/FadeView';
 import { insertCheckIn } from '../../lib/database/checkins';
-import { getSettings, updateSettings } from '../../lib/database/settings';
 import { StepIndicator } from '../../components/check-in/StepIndicator';
-import { TutorialHint } from '../../components/check-in/TutorialHint';
 import { CheckInSuccessView } from '../../components/check-in/CheckInSuccessView';
 import { StepArrival } from '../../components/check-in/StepArrival';
 import { StepEnergy } from '../../components/check-in/StepEnergy';
@@ -21,17 +19,6 @@ import { StepSummary } from '../../components/check-in/StepSummary';
 
 const TOTAL_STEPS = 8;
 const INACTIVITY_TIMEOUT_MS = 60 * 60 * 1000; // 1h
-
-const TUTORIAL_HINTS: string[] = [
-  'Hier geht es nur ums Wahrnehmen. Schließ die Augen wenn du magst, atme ein paar Mal tief. Es gibt nichts zu tun.',
-  'Tippe auf die Zahl, die sich am passendsten anfühlt. Es gibt keine richtige Antwort — dein Gefühl zählt.',
-  'Wie klar fühlst du dich gerade im Kopf? 1 = ganz vernebelt, 10 = glasklar.',
-  'Geh die Liste durch und tippe Ja oder Nein. Wenn du dir nicht sicher bist, lass es einfach offen.',
-  'Stichworte reichen völlig. Beispiele: müde, unruhig, dankbar, überfordert, ruhig.',
-  'Wähle aus, wie sich deine Gedanken gerade anfühlen. Das muss kein exaktes Urteil sein.',
-  'Was bräuchtest du gerade? Auch kleine Dinge zählen — Wasser, frische Luft, eine kurze Pause.',
-  'Hier siehst du alles auf einen Blick. Tippe auf Speichern wenn du bereit bist.',
-];
 
 const STEP_NAMES = [
   'Ankommen',
@@ -51,7 +38,6 @@ export default function CheckInScreen() {
   const [draft, setDraft] = useState<CheckInDraft>({ ...EMPTY_DRAFT, bodySignals: { ...EMPTY_BODY_SIGNALS } });
   const [isSaving, setIsSaving] = useState(false);
   const [isDone, setIsDone] = useState(false);
-  const [isTutorial, setIsTutorial] = useState(false);
   const stepContentRef = useRef<View>(null);
   const stepRef = useRef(step);
   const leftAtRef = useRef<number | null>(null);
@@ -81,14 +67,6 @@ export default function CheckInScreen() {
       };
     }, [])
   );
-
-  useEffect(() => {
-    async function loadTutorialState() {
-      const settings = await getSettings(db);
-      setIsTutorial(!settings.firstCheckInCompleted);
-    }
-    loadTutorialState();
-  }, [db]);
 
   const canGoBack = step > 0;
   const isLastStep = step === TOTAL_STEPS - 1;
@@ -133,10 +111,6 @@ export default function CheckInScreen() {
         innerPart: draft.innerPart || null,
         note: draft.note || null,
       });
-      if (isTutorial) {
-        await updateSettings(db, { firstCheckInCompleted: true });
-        setIsTutorial(false);
-      }
       setIsDone(true);
     } catch {
       Alert.alert('Fehler', 'Check-in konnte nicht gespeichert werden.');
@@ -234,9 +208,6 @@ export default function CheckInScreen() {
           accessibilityRole="summary"
           style={styles.stepInner}
         >
-          {isTutorial && (
-            <TutorialHint key={step} text={TUTORIAL_HINTS[step]} />
-          )}
           {renderStep()}
         </View>
       </FadeView>

@@ -184,19 +184,6 @@ export function StepBodySignals({ value, onValueChange }: StepBodySignalsProps) 
           })}
         </View>
 
-        <Text
-          style={{
-            fontFamily: typography.families.body.regular,
-            fontSize: typography.sizes.xs,
-            color: theme.colors.textSecondary,
-            textAlign: 'center',
-            marginTop: spacing.md,
-            marginBottom: spacing.sm,
-            fontStyle: 'italic',
-          }}
-        >
-          Du musst nicht alle beantworten. Nur was dir gerade auffällt.
-        </Text>
       </ScrollView>
     </View>
   );

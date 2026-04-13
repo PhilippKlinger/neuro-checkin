@@ -18,9 +18,14 @@ export default function HistoryScreen() {
     useCallback(() => {
       async function load() {
         setIsLoading(true);
-        const data = await getCheckIns(db);
-        setCheckIns(data);
-        setIsLoading(false);
+        try {
+          const data = await getCheckIns(db);
+          setCheckIns(data);
+        } catch {
+          setCheckIns([]);
+        } finally {
+          setIsLoading(false);
+        }
       }
       load();
     }, [db])

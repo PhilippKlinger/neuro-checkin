@@ -57,18 +57,6 @@ export function StepSelfCare({ value, onValueChange }: StepSelfCareProps) {
         accessibilityLabel="Selbstfürsorge-Notiz"
       />
 
-      <Text
-        style={{
-          fontFamily: typography.families.body.regular,
-          fontSize: typography.sizes.xs,
-          color: theme.colors.textSecondary,
-          textAlign: 'center',
-          marginTop: spacing.lg,
-          fontStyle: 'italic',
-        }}
-      >
-        Auch „nichts" ist eine Antwort. Kein Druck — kein Muss.
-      </Text>
     </View>
   );
 }

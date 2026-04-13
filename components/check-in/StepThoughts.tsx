@@ -1,4 +1,4 @@
-import { View, Text, TextInput, Pressable, StyleSheet } from 'react-native';
+import { View, Text, TextInput, Pressable, ScrollView, StyleSheet } from 'react-native';
 import { useTheme } from '../../lib/hooks/useTheme';
 
 type ThoughtsType = 'supportive' | 'burdening' | 'mixed' | null;
@@ -43,7 +43,7 @@ export function StepThoughts({
   const { theme, spacing, typography, radii, touchTarget } = useTheme();
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       <Text
         style={{
           fontFamily: typography.families.heading.semibold,
@@ -144,25 +144,14 @@ export function StepThoughts({
         accessibilityLabel="Gedanken-Notiz"
       />
 
-      <Text
-        style={{
-          fontFamily: typography.families.body.regular,
-          fontSize: typography.sizes.xs,
-          color: theme.colors.textSecondary,
-          textAlign: 'center',
-          marginTop: spacing.md,
-          fontStyle: 'italic',
-        }}
-      >
-        Wenn du dir nicht sicher bist — „Gemischt" ist eine gute Antwort.
-      </Text>
-    </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    flexGrow: 1,
   },
   optionList: {},
   optionButton: {
