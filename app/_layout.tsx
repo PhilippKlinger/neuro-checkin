@@ -4,9 +4,10 @@ import { StatusBar } from 'expo-status-bar';
 import { ThemeProvider, useTheme } from '../lib/hooks/useTheme';
 import { DatabaseProvider, useDatabase, useDatabaseReady } from '../lib/hooks/useDatabase';
 import { getSettings } from '../lib/database/settings';
+import { ThemeName } from '../lib/constants/themes';
 
 function AppStack() {
-  const { theme, typography } = useTheme();
+  const { theme, typography, setThemeName } = useTheme();
   const db = useDatabase();
   const isReady = useDatabaseReady();
   const router = useRouter();
@@ -18,6 +19,7 @@ function AppStack() {
 
     async function checkOnboarding() {
       const settings = await getSettings(db);
+      setThemeName(settings.themeName as ThemeName);
       if (!settings.onboardingCompleted && segments[0] !== 'onboarding') {
         router.replace('/onboarding');
       }

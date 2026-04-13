@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { View, Text, Switch, Pressable, ScrollView, StyleSheet, Platform } from 'react-native';
+import { View, Text, Switch, Pressable, ScrollView, StyleSheet, Platform, Alert } from 'react-native';
 import * as Device from 'expo-device';
 import { useFocusEffect } from 'expo-router';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
@@ -11,6 +11,7 @@ import {
   requestNotificationPermission,
   scheduleReminderNotification,
   cancelReminderNotification,
+  getScheduledReminderTime,
 } from '../../lib/notifications/notifications';
 
 const THEME_OPTIONS: { key: ThemeName; label: string }[] = [
@@ -54,6 +55,15 @@ export default function SettingsScreen() {
         setReminderTime(settings.reminderTime);
         setThemeName(settings.themeName as ThemeName);
         setIsEmulator(!Device.isDevice);
+
+        // Reconcile: if DB says enabled but no notification is scheduled, reschedule
+        if (settings.reminderEnabled && Device.isDevice) {
+          const scheduledTime = await getScheduledReminderTime();
+          if (!scheduledTime) {
+            const time = settings.reminderTime ?? '09:00';
+            await scheduleReminderNotification(time);
+          }
+        }
       }
       load();
     }, [db, setThemeName])
@@ -95,8 +105,21 @@ export default function SettingsScreen() {
     await updateSettings(db, { themeName: name });
   }
 
-  async function handleResetTutorial() {
-    await updateSettings(db, { firstCheckInCompleted: false });
+  function handleResetTutorial() {
+    Alert.alert(
+      'Tutorial zurücksetzen?',
+      'Der geführte erste Check-in wird beim nächsten Start erneut angezeigt.',
+      [
+        { text: 'Abbrechen', style: 'cancel' },
+        {
+          text: 'Zurücksetzen',
+          onPress: async () => {
+            await updateSettings(db, { firstCheckInCompleted: false });
+            Alert.alert('Erledigt', 'Tutorial wird beim nächsten Check-in erneut angezeigt.');
+          },
+        },
+      ]
+    );
   }
 
   const pickerDate = timeStringToDate(reminderTime);
