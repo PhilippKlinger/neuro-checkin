@@ -112,8 +112,10 @@ export default function CheckInScreen() {
         note: draft.note || null,
       });
       setIsDone(true);
-    } catch {
-      Alert.alert('Fehler', 'Check-in konnte nicht gespeichert werden.');
+    } catch (error) {
+      console.error('[CheckIn] save failed:', error);
+      const detail = error instanceof Error ? error.message : String(error);
+      Alert.alert('Fehler beim Speichern', `Check-in konnte nicht gespeichert werden.\n\n${detail}`);
     } finally {
       setIsSaving(false);
     }
