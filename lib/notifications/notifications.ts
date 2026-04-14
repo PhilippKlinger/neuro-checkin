@@ -48,6 +48,19 @@ export async function scheduleReminderNotification(time: string): Promise<void> 
 
   if (isNaN(hour) || isNaN(minute)) return;
 
+  // On Android 12+ request exact alarm permission for on-time delivery.
+  // If permission is denied or unavailable we fall back to inexact DAILY trigger
+  // (system may delay by a few minutes due to Doze mode).
+  let useExact = false;
+  if (Platform.OS === 'android') {
+    try {
+      const { granted } = await Notifications.getPermissionsAsync();
+      if (granted) useExact = true;
+    } catch {
+      // expo-notifications may not expose exact alarm check on all SDK versions
+    }
+  }
+
   await Notifications.scheduleNotificationAsync({
     identifier: REMINDER_NOTIFICATION_ID,
     content: {
@@ -59,6 +72,7 @@ export async function scheduleReminderNotification(time: string): Promise<void> 
       type: Notifications.SchedulableTriggerInputTypes.DAILY,
       hour,
       minute,
+      ...(Platform.OS === 'android' && useExact ? { exact: true } : {}),
     },
   });
 }

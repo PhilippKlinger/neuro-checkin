@@ -23,7 +23,11 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.philippklinger.neurocheckin"
+      "package": "com.philippklinger.neurocheckin",
+      "permissions": [
+        "android.permission.SCHEDULE_EXACT_ALARM",
+        "android.permission.RECEIVE_BOOT_COMPLETED"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -52,7 +56,8 @@
           "color": "#ffffff",
           "defaultChannel": "daily-reminder"
         }
-      ]
+      ],
+      "expo-mail-composer"
     ],
     "extra": {
       "router": {},
