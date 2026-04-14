@@ -31,7 +31,7 @@ export function StepArrival() {
           },
         ]}
       >
-        Nimm ein paar tiefe Atemzüge.
+        Wenn du magst, nimm einen Moment inne — bevor es weitergeht.
       </Text>
       <Text
         style={[
@@ -45,9 +45,8 @@ export function StepArrival() {
           },
         ]}
       >
-        Wie fühlt sich dein Atem gerade an?{'\n'}
-        Ist er eher schnell oder langsam?{'\n'}
-        Atmest du mehr in den Bauch oder in den Brustraum?
+        Vielleicht bemerkst du, wie du gerade atmest — oder wie du sitzt oder stehst.{'\n'}
+        Oder einfach, wie es dir in diesem Moment geht.
       </Text>
       <Text
         style={[
@@ -60,7 +59,7 @@ export function StepArrival() {
           },
         ]}
       >
-        Es gibt kein Richtig oder Falsch. Einfach wahrnehmen.
+        Es gibt kein Richtig oder Falsch. Einfach wahrnehmen, was da ist.
       </Text>
     </View>
   );

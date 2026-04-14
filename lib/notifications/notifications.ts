@@ -51,8 +51,8 @@ export async function scheduleReminderNotification(time: string): Promise<void> 
   await Notifications.scheduleNotificationAsync({
     identifier: REMINDER_NOTIFICATION_ID,
     content: {
-      title: 'Zeit für deinen Check-in',
-      body: 'Wie geht es dir gerade? Nimm dir einen Moment für dich.',
+      title: 'Ein Moment für dich — wenn du magst.',
+      body: 'Wie geht es dir gerade?',
       sound: false,
     },
     trigger: {
