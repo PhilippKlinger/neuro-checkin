@@ -145,6 +145,7 @@ export default function SettingsScreen() {
                   style: 'destructive',
                   onPress: async () => {
                     await deleteAllCheckIns(db);
+                    Alert.alert('Erledigt', 'Alle Check-ins wurden gelöscht.');
                   },
                 },
               ]

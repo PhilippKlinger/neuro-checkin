@@ -24,9 +24,12 @@ export default function HomeScreen() {
   useFocusEffect(
     useCallback(() => {
       async function load() {
-        const data = await getCheckIns(db, 1);
-        setLastCheckIn(data.length > 0 ? data[0] : null);
-        setIsLoading(false);
+        try {
+          const data = await getCheckIns(db, 1);
+          setLastCheckIn(data.length > 0 ? data[0] : null);
+        } finally {
+          setIsLoading(false);
+        }
       }
       load();
     }, [db])
