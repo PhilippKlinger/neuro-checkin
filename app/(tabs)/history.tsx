@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { View, Text, FlatList, StyleSheet } from 'react-native';
+import { View, Text, FlatList, StyleSheet, ListRenderItem } from 'react-native';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { useTheme } from '../../lib/hooks/useTheme';
 import { useDatabase } from '../../lib/hooks/useDatabase';
@@ -34,6 +34,13 @@ export default function HistoryScreen() {
   function handlePress(id: number) {
     router.push(`/history/${id}`);
   }
+
+  const renderItem = useCallback<ListRenderItem<CheckIn>>(
+    ({ item }) => <CheckInCard checkIn={item} onPress={() => handlePress(item.id)} />,
+    // handlePress uses router which is a stable ref; item.id is part of the item itself
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
+  );
 
   if (isLoading) {
     return (
@@ -94,9 +101,7 @@ export default function HistoryScreen() {
       <FlatList
         data={checkIns}
         keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => (
-          <CheckInCard checkIn={item} onPress={() => handlePress(item.id)} />
-        )}
+        renderItem={renderItem}
         contentContainerStyle={{ padding: spacing.md }}
       />
     </View>
