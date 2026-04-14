@@ -1,11 +1,13 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
-import { View, Text, Pressable, StyleSheet, Alert, AccessibilityInfo, findNodeHandle } from 'react-native';
+import { View, Text, Pressable, StyleSheet, Alert, AccessibilityInfo, findNodeHandle, LayoutChangeEvent } from 'react-native';
 import { useFocusEffect } from 'expo-router';
 import { useTheme } from '../../lib/hooks/useTheme';
 import { useDatabase } from '../../lib/hooks/useDatabase';
 import { CheckInDraft, EMPTY_DRAFT, EMPTY_BODY_SIGNALS } from '../../lib/types/checkin';
 import { FadeView } from '../../components/ui/FadeView';
+import { SpotlightOverlay, SpotlightStep } from '../../components/ui/SpotlightOverlay';
 import { insertCheckIn } from '../../lib/database/checkins';
+import { getSettings, updateSettings } from '../../lib/database/settings';
 import { StepIndicator } from '../../components/check-in/StepIndicator';
 import { CheckInSuccessView } from '../../components/check-in/CheckInSuccessView';
 import { StepArrival } from '../../components/check-in/StepArrival';
@@ -42,6 +44,31 @@ export default function CheckInScreen() {
   const stepRef = useRef(step);
   const leftAtRef = useRef<number | null>(null);
 
+  // Spotlight tutorial state
+  const [showSpotlight, setShowSpotlight] = useState(false);
+  const [spotlightStep, setSpotlightStep] = useState(0);
+  const [indicatorLayout, setIndicatorLayout] = useState({ y: 0, height: 0 });
+  const [contentLayout, setContentLayout] = useState({ y: 0, height: 0 });
+  const [navLayout, setNavLayout] = useState({ y: 0, height: 0 });
+
+  const spotlightSteps: SpotlightStep[] = [
+    {
+      targetY: indicatorLayout.y,
+      targetHeight: indicatorLayout.height,
+      hint: 'Hier siehst du, wo du im Check-in gerade bist. Du kannst jederzeit zurückgehen.',
+    },
+    {
+      targetY: contentLayout.y,
+      targetHeight: contentLayout.height,
+      hint: 'Jeder Schritt hat eine einfache Frage. Kein Feld ist Pflicht — beantworte nur, was sich gut anfühlt.',
+    },
+    {
+      targetY: navLayout.y,
+      targetHeight: navLayout.height,
+      hint: 'Mit diesem Button geht es weiter. Am letzten Schritt wird dein Check-in gespeichert.',
+    },
+  ];
+
   useEffect(() => {
     stepRef.current = step;
   }, [step]);
@@ -59,14 +86,37 @@ export default function CheckInScreen() {
       }
       leftAtRef.current = null;
 
+      // Show spotlight tutorial on first visit
+      async function checkTutorial() {
+        const settings = await getSettings(db);
+        if (!settings.firstCheckInCompleted) {
+          setSpotlightStep(0);
+          setShowSpotlight(true);
+        }
+      }
+      checkTutorial();
+
       return () => {
         // On blur: record leave time if check-in is in progress
         if (stepRef.current > 0) {
           leftAtRef.current = Date.now();
         }
       };
-    }, [])
+    }, [db])
   );
+
+  function handleSpotlightNext() {
+    if (spotlightStep < spotlightSteps.length - 1) {
+      setSpotlightStep((s) => s + 1);
+    } else {
+      dismissSpotlight();
+    }
+  }
+
+  async function dismissSpotlight() {
+    setShowSpotlight(false);
+    await updateSettings(db, { firstCheckInCompleted: true });
+  }
 
   const canGoBack = step > 0;
   const isLastStep = step === TOTAL_STEPS - 1;
@@ -196,7 +246,12 @@ export default function CheckInScreen() {
     <View
       style={[styles.container, { backgroundColor: theme.colors.background }]}
     >
-      <View style={[styles.indicatorWrapper, { paddingTop: spacing.lg }]}>
+      <View
+        style={[styles.indicatorWrapper, { paddingTop: spacing.lg }]}
+        onLayout={(e: LayoutChangeEvent) => {
+          setIndicatorLayout({ y: e.nativeEvent.layout.y, height: e.nativeEvent.layout.height });
+        }}
+      >
         <StepIndicator totalSteps={TOTAL_STEPS} currentStep={step} />
       </View>
 
@@ -209,6 +264,9 @@ export default function CheckInScreen() {
           accessibilityLabel={`Schritt ${step + 1} von ${TOTAL_STEPS}: ${STEP_NAMES[step]}`}
           accessibilityRole="summary"
           style={styles.stepInner}
+          onLayout={(e: LayoutChangeEvent) => {
+            setContentLayout({ y: e.nativeEvent.layout.y, height: e.nativeEvent.layout.height });
+          }}
         >
           {renderStep()}
         </View>
@@ -223,6 +281,9 @@ export default function CheckInScreen() {
             gap: spacing.md,
           },
         ]}
+        onLayout={(e: LayoutChangeEvent) => {
+          setNavLayout({ y: e.nativeEvent.layout.y, height: e.nativeEvent.layout.height });
+        }}
       >
         {canGoBack ? (
           <Pressable
@@ -281,6 +342,14 @@ export default function CheckInScreen() {
           </Text>
         </Pressable>
       </View>
+
+      <SpotlightOverlay
+        visible={showSpotlight}
+        steps={spotlightSteps}
+        currentStep={spotlightStep}
+        onNext={handleSpotlightNext}
+        onSkip={dismissSpotlight}
+      />
     </View>
   );
 }
