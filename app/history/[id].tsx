@@ -261,7 +261,7 @@ export default function CheckInDetailScreen() {
             paddingVertical: spacing.md,
             borderRadius: radii.md,
             borderWidth: 1,
-            borderColor: theme.colors.error,
+            borderColor: theme.colors.textSecondary,
           },
         ]}
         accessibilityRole="button"
@@ -271,7 +271,7 @@ export default function CheckInDetailScreen() {
           style={{
             fontFamily: typography.families.ui.medium,
             fontSize: typography.sizes.md,
-            color: theme.colors.error,
+            color: theme.colors.textSecondary,
             textAlign: 'center',
           }}
         >
