@@ -14,6 +14,7 @@ import {
   cancelReminderNotification,
   getScheduledReminderTime,
 } from '../../lib/notifications/notifications';
+import { ConfirmDialog } from '../../components/ui/ConfirmDialog';
 
 const THEME_OPTIONS: { key: ThemeName; label: string }[] = [
   { key: 'warmEarth', label: 'Warm Earth' },
@@ -47,6 +48,9 @@ export default function SettingsScreen() {
   const [reminderTime, setReminderTime] = useState<string | null>(null);
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [isEmulator, setIsEmulator] = useState(false);
+  const [showResetTutorialDialog, setShowResetTutorialDialog] = useState(false);
+  const [showDeleteStep1Dialog, setShowDeleteStep1Dialog] = useState(false);
+  const [showDeleteStep2Dialog, setShowDeleteStep2Dialog] = useState(false);
 
   useFocusEffect(
     useCallback(() => {
@@ -109,51 +113,28 @@ export default function SettingsScreen() {
   }
 
   function handleResetTutorial() {
-    Alert.alert(
-      'Tutorial zurücksetzen?',
-      'Der geführte erste Check-in wird beim nächsten Start erneut angezeigt.',
-      [
-        { text: 'Abbrechen', style: 'cancel' },
-        {
-          text: 'Zurücksetzen',
-          onPress: async () => {
-            await updateSettings(db, { firstCheckInCompleted: false });
-            Alert.alert('Erledigt', 'Tutorial wird beim nächsten Check-in erneut angezeigt.');
-          },
-        },
-      ]
-    );
+    setShowResetTutorialDialog(true);
+  }
+
+  async function confirmResetTutorial() {
+    setShowResetTutorialDialog(false);
+    await updateSettings(db, { firstCheckInCompleted: false });
+    Alert.alert('Erledigt', 'Tutorial wird beim nächsten Check-in erneut angezeigt.');
   }
 
   function handleDeleteAllCheckIns() {
-    Alert.alert(
-      'Alle Check-ins löschen',
-      'Möchtest du wirklich alle gespeicherten Check-ins löschen? Diese Aktion kann nicht rückgängig gemacht werden.',
-      [
-        { text: 'Abbrechen', style: 'cancel' },
-        {
-          text: 'Löschen',
-          style: 'destructive',
-          onPress: () => {
-            Alert.alert(
-              'Sicher?',
-              'Alle Check-ins werden unwiderruflich gelöscht.',
-              [
-                { text: 'Abbrechen', style: 'cancel' },
-                {
-                  text: 'Ja, alles löschen',
-                  style: 'destructive',
-                  onPress: async () => {
-                    await deleteAllCheckIns(db);
-                    Alert.alert('Erledigt', 'Alle Check-ins wurden gelöscht.');
-                  },
-                },
-              ]
-            );
-          },
-        },
-      ]
-    );
+    setShowDeleteStep1Dialog(true);
+  }
+
+  function confirmDeleteStep1() {
+    setShowDeleteStep1Dialog(false);
+    setShowDeleteStep2Dialog(true);
+  }
+
+  async function confirmDeleteStep2() {
+    setShowDeleteStep2Dialog(false);
+    await deleteAllCheckIns(db);
+    Alert.alert('Erledigt', 'Alle Check-ins wurden gelöscht.');
   }
 
   const pickerDate = timeStringToDate(reminderTime);
@@ -453,6 +434,38 @@ export default function SettingsScreen() {
           </Text>
         </Pressable>
       </View>
+
+      <ConfirmDialog
+        visible={showResetTutorialDialog}
+        title="Tutorial zurücksetzen?"
+        message="Der geführte erste Check-in wird beim nächsten Start erneut angezeigt."
+        confirmLabel="Zurücksetzen"
+        cancelLabel="Abbrechen"
+        onConfirm={confirmResetTutorial}
+        onCancel={() => setShowResetTutorialDialog(false)}
+      />
+
+      <ConfirmDialog
+        visible={showDeleteStep1Dialog}
+        title="Alle Check-ins löschen"
+        message="Möchtest du wirklich alle gespeicherten Check-ins löschen? Diese Aktion kann nicht rückgängig gemacht werden."
+        confirmLabel="Löschen"
+        cancelLabel="Abbrechen"
+        destructive
+        onConfirm={confirmDeleteStep1}
+        onCancel={() => setShowDeleteStep1Dialog(false)}
+      />
+
+      <ConfirmDialog
+        visible={showDeleteStep2Dialog}
+        title="Sicher?"
+        message="Alle Check-ins werden unwiderruflich gelöscht."
+        confirmLabel="Ja, alles löschen"
+        cancelLabel="Abbrechen"
+        destructive
+        onConfirm={confirmDeleteStep2}
+        onCancel={() => setShowDeleteStep2Dialog(false)}
+      />
     </ScrollView>
   );
 }
