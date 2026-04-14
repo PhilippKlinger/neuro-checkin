@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { View, Text, Pressable, StyleSheet, AccessibilityInfo, Alert } from 'react-native';
+import { View, Text, Pressable, StyleSheet, AccessibilityInfo, Alert, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTheme } from '../lib/hooks/useTheme';
 import { useDatabase } from '../lib/hooks/useDatabase';
@@ -33,9 +33,9 @@ const STEPS: OnboardingStep[] = [
 ];
 
 const PALETTE_LABELS: Record<ThemeName, string> = {
-  warmEarth: 'Warm Earth',
-  coolMist: 'Cool Mist',
-  softSage: 'Soft Sage',
+  warmEarth: 'Warm\nEarth',
+  coolMist: 'Cool\nMist',
+  softSage: 'Soft\nSage',
 };
 
 export default function OnboardingScreen() {
@@ -97,6 +97,11 @@ export default function OnboardingScreen() {
       </View>
 
       <FadeView triggerKey={step} style={styles.content}>
+        <ScrollView
+          contentContainerStyle={styles.contentScroll}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+        >
         <Text
           style={{
             fontFamily: typography.families.heading.bold,
@@ -178,6 +183,7 @@ export default function OnboardingScreen() {
             {current.hint}
           </Text>
         )}
+        </ScrollView>
       </FadeView>
 
       <View style={[styles.footer, { gap: spacing.lg, paddingBottom: spacing.xl }]}>
@@ -235,8 +241,12 @@ const styles = StyleSheet.create({
   skipButton: {},
   content: {
     flex: 1,
+  },
+  contentScroll: {
+    flexGrow: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    paddingVertical: 8,
   },
   footer: {
     alignItems: 'center',
