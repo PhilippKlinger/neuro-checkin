@@ -5,9 +5,7 @@ import { useTheme } from '../../lib/hooks/useTheme';
 import { useDatabase } from '../../lib/hooks/useDatabase';
 import { CheckInDraft, EMPTY_DRAFT, EMPTY_BODY_SIGNALS } from '../../lib/types/checkin';
 import { FadeView } from '../../components/ui/FadeView';
-import { SpotlightOverlay, SpotlightTarget } from '../../components/ui/SpotlightOverlay';
 import { insertCheckIn } from '../../lib/database/checkins';
-import { getSettings, updateSettings } from '../../lib/database/settings';
 import { StepIndicator } from '../../components/check-in/StepIndicator';
 import { CheckInSuccessView } from '../../components/check-in/CheckInSuccessView';
 import { StepArrival } from '../../components/check-in/StepArrival';
@@ -44,28 +42,6 @@ export default function CheckInScreen() {
   const stepRef = useRef(step);
   const leftAtRef = useRef<number | null>(null);
 
-  // Spotlight tutorial state
-  const [showSpotlight, setShowSpotlight] = useState(false);
-  const [spotlightStep, setSpotlightStep] = useState(0);
-  const indicatorRef = useRef<View>(null);
-  const contentAreaRef = useRef<View>(null);
-  const navRef = useRef<View>(null);
-
-  const spotlightTargets: SpotlightTarget[] = [
-    {
-      ref: indicatorRef,
-      hint: 'Hier siehst du, wo du im Check-in gerade bist. Du kannst jederzeit zurückgehen.',
-    },
-    {
-      ref: contentAreaRef,
-      hint: 'Jeder Schritt hat eine einfache Frage. Kein Feld ist Pflicht — beantworte nur, was sich gut anfühlt.',
-    },
-    {
-      ref: navRef,
-      hint: 'Mit diesem Button geht es weiter. Am letzten Schritt wird dein Check-in gespeichert.',
-    },
-  ];
-
   useEffect(() => {
     stepRef.current = step;
   }, [step]);
@@ -83,16 +59,6 @@ export default function CheckInScreen() {
       }
       leftAtRef.current = null;
 
-      // Show spotlight tutorial on first visit
-      async function checkTutorial() {
-        const settings = await getSettings(db);
-        if (!settings.firstCheckInCompleted) {
-          setSpotlightStep(0);
-          setShowSpotlight(true);
-        }
-      }
-      checkTutorial();
-
       return () => {
         // On blur: record leave time if check-in is in progress
         if (stepRef.current > 0) {
@@ -101,19 +67,6 @@ export default function CheckInScreen() {
       };
     }, [db])
   );
-
-  function handleSpotlightNext() {
-    if (spotlightStep < spotlightTargets.length - 1) {
-      setSpotlightStep((s) => s + 1);
-    } else {
-      dismissSpotlight();
-    }
-  }
-
-  async function dismissSpotlight() {
-    setShowSpotlight(false);
-    await updateSettings(db, { firstCheckInCompleted: true });
-  }
 
   const canGoBack = step > 0;
   const isLastStep = step === TOTAL_STEPS - 1;
@@ -243,10 +196,7 @@ export default function CheckInScreen() {
     <View
       style={[styles.container, { backgroundColor: theme.colors.background }]}
     >
-      <View
-        ref={indicatorRef}
-        style={[styles.indicatorWrapper, { paddingTop: spacing.lg }]}
-      >
+      <View style={[styles.indicatorWrapper, { paddingTop: spacing.lg }]}>
         <StepIndicator totalSteps={TOTAL_STEPS} currentStep={step} />
       </View>
 
@@ -260,14 +210,11 @@ export default function CheckInScreen() {
           accessibilityRole="summary"
           style={styles.stepInner}
         >
-          <View ref={contentAreaRef} style={styles.stepInner}>
-            {renderStep()}
-          </View>
+          {renderStep()}
         </View>
       </FadeView>
 
       <View
-        ref={navRef}
         style={[
           styles.navigation,
           {
@@ -335,13 +282,6 @@ export default function CheckInScreen() {
         </Pressable>
       </View>
 
-      <SpotlightOverlay
-        visible={showSpotlight}
-        targets={spotlightTargets}
-        currentStep={spotlightStep}
-        onNext={handleSpotlightNext}
-        onSkip={dismissSpotlight}
-      />
     </View>
   );
 }

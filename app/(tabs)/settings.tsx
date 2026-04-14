@@ -50,7 +50,6 @@ export default function SettingsScreen() {
   const [reminderTime, setReminderTime] = useState<string | null>(null);
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [isEmulator, setIsEmulator] = useState(false);
-  const [showResetTutorialDialog, setShowResetTutorialDialog] = useState(false);
   const [showDeleteStep1Dialog, setShowDeleteStep1Dialog] = useState(false);
   const [showDeleteStep2Dialog, setShowDeleteStep2Dialog] = useState(false);
 
@@ -112,16 +111,6 @@ export default function SettingsScreen() {
   async function handleThemeChange(name: ThemeName) {
     setThemeName(name);
     await updateSettings(db, { themeName: name });
-  }
-
-  function handleResetTutorial() {
-    setShowResetTutorialDialog(true);
-  }
-
-  async function confirmResetTutorial() {
-    setShowResetTutorialDialog(false);
-    await updateSettings(db, { firstCheckInCompleted: false });
-    Alert.alert('Erledigt', 'Tutorial wird beim nächsten Check-in erneut angezeigt.');
   }
 
   function handleDeleteAllCheckIns() {
@@ -443,34 +432,6 @@ export default function SettingsScreen() {
 
       <View style={[styles.dataSection, { gap: spacing.sm }]}>
         <Pressable
-          onPress={handleResetTutorial}
-          style={[
-            styles.dataButton,
-            {
-              backgroundColor: theme.colors.surface,
-              borderRadius: radii.md,
-              padding: spacing.md,
-              minHeight: touchTarget.min,
-              borderWidth: 1,
-              borderColor: theme.colors.border,
-            },
-          ]}
-          accessibilityRole="button"
-          accessibilityLabel="Tutorial zurücksetzen"
-          accessibilityHint="Zeigt den geführten ersten Check-in beim nächsten Start erneut an"
-        >
-          <Text
-            style={{
-              fontFamily: typography.families.ui.medium,
-              fontSize: typography.sizes.md,
-              color: theme.colors.textSecondary,
-            }}
-          >
-            Tutorial zurücksetzen
-          </Text>
-        </Pressable>
-
-        <Pressable
           onPress={handleDeleteAllCheckIns}
           style={[
             styles.dataButton,
@@ -498,16 +459,6 @@ export default function SettingsScreen() {
           </Text>
         </Pressable>
       </View>
-
-      <ConfirmDialog
-        visible={showResetTutorialDialog}
-        title="Tutorial zurücksetzen?"
-        message="Der geführte erste Check-in wird beim nächsten Start erneut angezeigt."
-        confirmLabel="Zurücksetzen"
-        cancelLabel="Abbrechen"
-        onConfirm={confirmResetTutorial}
-        onCancel={() => setShowResetTutorialDialog(false)}
-      />
 
       <ConfirmDialog
         visible={showDeleteStep1Dialog}

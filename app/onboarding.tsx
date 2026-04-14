@@ -244,9 +244,8 @@ const styles = StyleSheet.create({
   },
   contentScroll: {
     flexGrow: 1,
-    justifyContent: 'center',
     alignItems: 'center',
-    paddingVertical: 8,
+    paddingVertical: 24,
   },
   footer: {
     alignItems: 'center',
