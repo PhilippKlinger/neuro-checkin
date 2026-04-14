@@ -245,7 +245,7 @@ const styles = StyleSheet.create({
   contentScroll: {
     flexGrow: 1,
     alignItems: 'center',
-    paddingVertical: 24,
+    paddingVertical: 24, // spacing.lg — StyleSheet.create runs outside component scope
   },
   footer: {
     alignItems: 'center',
