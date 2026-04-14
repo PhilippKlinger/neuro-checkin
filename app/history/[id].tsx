@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
-import { View, Text, ScrollView, Pressable, StyleSheet, Alert } from 'react-native';
+import { View, Text, ScrollView, Pressable, StyleSheet } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTheme } from '../../lib/hooks/useTheme';
 import { useDatabase } from '../../lib/hooks/useDatabase';
 import { getCheckInById, deleteCheckIn } from '../../lib/database/checkins';
 import { CheckIn } from '../../lib/types/checkin';
 import { formatDateTime } from '../../lib/utils/format';
+import { ConfirmDialog } from '../../components/ui/ConfirmDialog';
 
 function getThoughtsLabel(type: string | null): string {
   switch (type) {
@@ -33,6 +34,7 @@ export default function CheckInDetailScreen() {
   const router = useRouter();
   const [checkIn, setCheckIn] = useState<CheckIn | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   useEffect(() => {
     async function load() {
@@ -49,21 +51,14 @@ export default function CheckInDetailScreen() {
 
   function handleDelete() {
     if (!checkIn) return;
-    Alert.alert(
-      'Check-in löschen?',
-      'Dieser Check-in wird unwiderruflich gelöscht.',
-      [
-        { text: 'Abbrechen', style: 'cancel' },
-        {
-          text: 'Löschen',
-          style: 'destructive',
-          onPress: async () => {
-            await deleteCheckIn(db, checkIn.id);
-            router.back();
-          },
-        },
-      ]
-    );
+    setShowDeleteDialog(true);
+  }
+
+  async function confirmDelete() {
+    if (!checkIn) return;
+    setShowDeleteDialog(false);
+    await deleteCheckIn(db, checkIn.id);
+    router.back();
   }
 
   if (isLoading) {
@@ -107,8 +102,9 @@ export default function CheckInDetailScreen() {
     .map(([key]) => SIGNAL_LABELS[key] || key);
 
   return (
+    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
     <ScrollView
-      style={[styles.container, { backgroundColor: theme.colors.background }]}
+      style={styles.scroll}
       contentContainerStyle={{ padding: spacing.lg, paddingBottom: spacing.xxl }}
     >
       <Text
@@ -279,6 +275,18 @@ export default function CheckInDetailScreen() {
         </Text>
       </Pressable>
     </ScrollView>
+
+    <ConfirmDialog
+      visible={showDeleteDialog}
+      title="Check-in löschen?"
+      message="Dieser Check-in wird unwiderruflich gelöscht."
+      confirmLabel="Löschen"
+      cancelLabel="Abbrechen"
+      destructive
+      onConfirm={confirmDelete}
+      onCancel={() => setShowDeleteDialog(false)}
+    />
+    </View>
   );
 }
 
@@ -330,6 +338,9 @@ function body(
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
+  },
+  scroll: {
     flex: 1,
   },
   centered: {
