@@ -15,6 +15,8 @@ import {
   getScheduledReminderTime,
 } from '../../lib/notifications/notifications';
 import { ConfirmDialog } from '../../components/ui/ConfirmDialog';
+import * as MailComposer from 'expo-mail-composer';
+import Constants from 'expo-constants';
 
 const THEME_OPTIONS: { key: ThemeName; label: string }[] = [
   { key: 'warmEarth', label: 'Warm Earth' },
@@ -135,6 +137,27 @@ export default function SettingsScreen() {
     setShowDeleteStep2Dialog(false);
     await deleteAllCheckIns(db);
     Alert.alert('Erledigt', 'Alle Check-ins wurden gelöscht.');
+  }
+
+  async function handleSendFeedback() {
+    const isAvailable = await MailComposer.isAvailableAsync();
+    if (!isAvailable) {
+      Alert.alert(
+        'Kein Mail-Client gefunden',
+        'Bitte richte eine E-Mail-App ein oder schreib mir direkt: feedback@neuro-checkin.app'
+      );
+      return;
+    }
+
+    const appVersion = Constants.expoConfig?.version ?? '—';
+    const os = `${Device.osName ?? ''} ${Device.osVersion ?? ''}`.trim();
+    const deviceModel = Device.modelName ?? '—';
+
+    await MailComposer.composeAsync({
+      recipients: ['feedback@neuro-checkin.app'],
+      subject: `Neuro Check-in Feedback (v${appVersion})`,
+      body: `Hallo,\n\nhier ist mein Feedback:\n\n\n\n---\nApp-Version: ${appVersion}\nGerät: ${deviceModel}\nBetriebssystem: ${os}`,
+    });
   }
 
   const pickerDate = timeStringToDate(reminderTime);
@@ -364,7 +387,7 @@ export default function SettingsScreen() {
         </View>
       )}
 
-      {/* Data & Privacy */}
+      {/* Feedback */}
       <Text
         style={{
           fontFamily: typography.families.heading.semibold,
@@ -372,6 +395,47 @@ export default function SettingsScreen() {
           color: theme.colors.text,
           marginBottom: spacing.md,
           marginTop: spacing.xl,
+        }}
+      >
+        Feedback
+      </Text>
+
+      <Pressable
+        onPress={handleSendFeedback}
+        style={[
+          {
+            backgroundColor: theme.colors.surface,
+            borderRadius: radii.md,
+            padding: spacing.md,
+            minHeight: touchTarget.min,
+            borderWidth: 1,
+            borderColor: theme.colors.border,
+            marginBottom: spacing.xl,
+            justifyContent: 'center',
+          },
+        ]}
+        accessibilityRole="button"
+        accessibilityLabel="Feedback senden"
+        accessibilityHint="Öffnet eine E-Mail mit vorausgefülltem Betreff"
+      >
+        <Text
+          style={{
+            fontFamily: typography.families.ui.medium,
+            fontSize: typography.sizes.md,
+            color: theme.colors.textSecondary,
+          }}
+        >
+          Feedback senden
+        </Text>
+      </Pressable>
+
+      {/* Data & Privacy */}
+      <Text
+        style={{
+          fontFamily: typography.families.heading.semibold,
+          fontSize: typography.sizes.lg,
+          color: theme.colors.text,
+          marginBottom: spacing.md,
         }}
       >
         Daten & Datenschutz
