@@ -277,7 +277,7 @@ export default function CheckInScreen() {
               color: theme.colors.textInverse,
             }}
           >
-            {isLastStep ? 'Speichern' : 'Weiter'}
+            {isLastStep ? (isSaving ? 'Speichern...' : 'Speichern') : 'Weiter'}
           </Text>
         </Pressable>
       </View>

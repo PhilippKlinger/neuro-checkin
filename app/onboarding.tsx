@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { View, Text, Pressable, StyleSheet, AccessibilityInfo } from 'react-native';
+import { View, Text, Pressable, StyleSheet, AccessibilityInfo, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTheme } from '../lib/hooks/useTheme';
 import { useDatabase } from '../lib/hooks/useDatabase';
@@ -63,8 +63,12 @@ export default function OnboardingScreen() {
   }
 
   async function finish() {
-    await updateSettings(db, { onboardingCompleted: true, themeName: selectedTheme });
-    router.replace('/(tabs)');
+    try {
+      await updateSettings(db, { onboardingCompleted: true, themeName: selectedTheme });
+      router.replace('/(tabs)');
+    } catch {
+      Alert.alert('Fehler', 'Einstellungen konnten nicht gespeichert werden. Bitte versuche es erneut.');
+    }
   }
 
   return (

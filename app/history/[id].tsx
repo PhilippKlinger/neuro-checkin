@@ -37,9 +37,12 @@ export default function CheckInDetailScreen() {
   useEffect(() => {
     async function load() {
       if (!id) return;
-      const data = await getCheckInById(db, Number(id));
-      setCheckIn(data);
-      setIsLoading(false);
+      try {
+        const data = await getCheckInById(db, Number(id));
+        setCheckIn(data);
+      } finally {
+        setIsLoading(false);
+      }
     }
     load();
   }, [db, id]);
