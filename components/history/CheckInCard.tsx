@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { useTheme } from '../../lib/hooks/useTheme';
 import { CheckIn } from '../../lib/types/checkin';
@@ -8,7 +9,7 @@ interface CheckInCardProps {
   onPress: () => void;
 }
 
-export function CheckInCard({ checkIn, onPress }: CheckInCardProps) {
+export const CheckInCard = memo(function CheckInCard({ checkIn, onPress }: CheckInCardProps) {
   const { theme, spacing, typography, radii } = useTheme();
 
   const activeSignals = Object.values(checkIn.bodySignals).filter(
@@ -131,7 +132,7 @@ export function CheckInCard({ checkIn, onPress }: CheckInCardProps) {
       </Text>
     </Pressable>
   );
-}
+});
 
 const styles = StyleSheet.create({
   card: {},

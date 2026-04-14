@@ -17,7 +17,6 @@ Helps people with autism, ADHD, and high inner complexity capture inner states i
 - **8-step guided check-in:** Arrival, energy, focus, body signals, feelings, thoughts, self-care, summary
 - **Quick-select chips** for feelings and self-care (reduces Alexithymia barrier)
 - **3 color palettes:** Warm Earth, Cool Mist, Soft Sage — all WCAG AA compliant
-- **Spotlight tutorial** on first check-in (skippable, respects reduce-motion)
 - **History:** Browse and review past check-ins with detail view
 - **Onboarding:** 3-step intro with live palette preview, skippable
 - **Daily reminder:** Configurable time, pressure-free notification copy
@@ -52,18 +51,3 @@ npx expo start
 | `npx expo lint` | Linting |
 | `npx tsc --noEmit` | TypeScript check |
 | `eas build --platform android` | Production APK/AAB |
-
-## Status
-
-**V1.0 Release Candidate** — device testing, specialist reviews, then tag `v1.0.0`.
-
-### Completed
-- Phase 0–3: Architecture, check-in flow, history, settings, accessibility baseline
-- Phase 4: Device testing, bugfixes (B-01..B-12, R-01..R-05, N-01..N-03, C-01..C-04)
-- V1.0 Sprint: Custom modals (S-07), App icon config (S-08), Exact alarm (S-09), In-app feedback (S-10), Spotlight tutorial (S-11)
-
-### Next
-- Specialist reviews: `/nd-ux` (Opus), `/review`, `/secure`, `/perf` (Sonnet)
-- Final device test after rebuild
-- App icon assets (1024×1024 PNG)
-- `git tag v1.0.0`

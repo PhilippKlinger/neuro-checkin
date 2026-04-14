@@ -65,7 +65,7 @@ export default function CheckInScreen() {
           leftAtRef.current = Date.now();
         }
       };
-    }, [db])
+    }, [])
   );
 
   const canGoBack = step > 0;
