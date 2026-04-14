@@ -1,11 +1,11 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
-import { View, Text, Pressable, StyleSheet, Alert, AccessibilityInfo, findNodeHandle, LayoutChangeEvent } from 'react-native';
+import { View, Text, Pressable, StyleSheet, Alert, AccessibilityInfo, findNodeHandle } from 'react-native';
 import { useFocusEffect } from 'expo-router';
 import { useTheme } from '../../lib/hooks/useTheme';
 import { useDatabase } from '../../lib/hooks/useDatabase';
 import { CheckInDraft, EMPTY_DRAFT, EMPTY_BODY_SIGNALS } from '../../lib/types/checkin';
 import { FadeView } from '../../components/ui/FadeView';
-import { SpotlightOverlay, SpotlightStep } from '../../components/ui/SpotlightOverlay';
+import { SpotlightOverlay, SpotlightTarget } from '../../components/ui/SpotlightOverlay';
 import { insertCheckIn } from '../../lib/database/checkins';
 import { getSettings, updateSettings } from '../../lib/database/settings';
 import { StepIndicator } from '../../components/check-in/StepIndicator';
@@ -47,24 +47,21 @@ export default function CheckInScreen() {
   // Spotlight tutorial state
   const [showSpotlight, setShowSpotlight] = useState(false);
   const [spotlightStep, setSpotlightStep] = useState(0);
-  const [indicatorLayout, setIndicatorLayout] = useState({ y: 0, height: 0 });
-  const [contentLayout, setContentLayout] = useState({ y: 0, height: 0 });
-  const [navLayout, setNavLayout] = useState({ y: 0, height: 0 });
+  const indicatorRef = useRef<View>(null);
+  const contentAreaRef = useRef<View>(null);
+  const navRef = useRef<View>(null);
 
-  const spotlightSteps: SpotlightStep[] = [
+  const spotlightTargets: SpotlightTarget[] = [
     {
-      targetY: indicatorLayout.y,
-      targetHeight: indicatorLayout.height,
+      ref: indicatorRef,
       hint: 'Hier siehst du, wo du im Check-in gerade bist. Du kannst jederzeit zurückgehen.',
     },
     {
-      targetY: contentLayout.y,
-      targetHeight: contentLayout.height,
+      ref: contentAreaRef,
       hint: 'Jeder Schritt hat eine einfache Frage. Kein Feld ist Pflicht — beantworte nur, was sich gut anfühlt.',
     },
     {
-      targetY: navLayout.y,
-      targetHeight: navLayout.height,
+      ref: navRef,
       hint: 'Mit diesem Button geht es weiter. Am letzten Schritt wird dein Check-in gespeichert.',
     },
   ];
@@ -106,7 +103,7 @@ export default function CheckInScreen() {
   );
 
   function handleSpotlightNext() {
-    if (spotlightStep < spotlightSteps.length - 1) {
+    if (spotlightStep < spotlightTargets.length - 1) {
       setSpotlightStep((s) => s + 1);
     } else {
       dismissSpotlight();
@@ -247,10 +244,8 @@ export default function CheckInScreen() {
       style={[styles.container, { backgroundColor: theme.colors.background }]}
     >
       <View
+        ref={indicatorRef}
         style={[styles.indicatorWrapper, { paddingTop: spacing.lg }]}
-        onLayout={(e: LayoutChangeEvent) => {
-          setIndicatorLayout({ y: e.nativeEvent.layout.y, height: e.nativeEvent.layout.height });
-        }}
       >
         <StepIndicator totalSteps={TOTAL_STEPS} currentStep={step} />
       </View>
@@ -264,15 +259,15 @@ export default function CheckInScreen() {
           accessibilityLabel={`Schritt ${step + 1} von ${TOTAL_STEPS}: ${STEP_NAMES[step]}`}
           accessibilityRole="summary"
           style={styles.stepInner}
-          onLayout={(e: LayoutChangeEvent) => {
-            setContentLayout({ y: e.nativeEvent.layout.y, height: e.nativeEvent.layout.height });
-          }}
         >
-          {renderStep()}
+          <View ref={contentAreaRef} style={styles.stepInner}>
+            {renderStep()}
+          </View>
         </View>
       </FadeView>
 
       <View
+        ref={navRef}
         style={[
           styles.navigation,
           {
@@ -281,9 +276,6 @@ export default function CheckInScreen() {
             gap: spacing.md,
           },
         ]}
-        onLayout={(e: LayoutChangeEvent) => {
-          setNavLayout({ y: e.nativeEvent.layout.y, height: e.nativeEvent.layout.height });
-        }}
       >
         {canGoBack ? (
           <Pressable
@@ -345,7 +337,7 @@ export default function CheckInScreen() {
 
       <SpotlightOverlay
         visible={showSpotlight}
-        steps={spotlightSteps}
+        targets={spotlightTargets}
         currentStep={spotlightStep}
         onNext={handleSpotlightNext}
         onSkip={dismissSpotlight}

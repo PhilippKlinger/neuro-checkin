@@ -1,30 +1,40 @@
-import { useEffect, useRef } from 'react';
-import { View, Text, Pressable, StyleSheet, Animated, AccessibilityInfo, Dimensions } from 'react-native';
+import { useEffect, useRef, useState } from 'react';
+import {
+  View,
+  Text,
+  Pressable,
+  StyleSheet,
+  Animated,
+  AccessibilityInfo,
+  Dimensions,
+} from 'react-native';
 import { useTheme } from '../../lib/hooks/useTheme';
 import { useReducedMotion } from '../../lib/hooks/useReducedMotion';
 
-export interface SpotlightStep {
-  /** Screen-relative position of the element to highlight */
-  targetY: number;
-  targetHeight: number;
-  /** Explanation text shown below/above the highlight */
+export interface SpotlightTarget {
+  ref: React.RefObject<View | null>;
   hint: string;
+}
+
+interface MeasuredArea {
+  y: number;
+  height: number;
 }
 
 interface SpotlightOverlayProps {
   visible: boolean;
-  steps: SpotlightStep[];
+  targets: SpotlightTarget[];
   currentStep: number;
   onNext: () => void;
   onSkip: () => void;
 }
 
 const SCREEN_HEIGHT = Dimensions.get('window').height;
-const PADDING = 8;
+const PADDING = 12;
 
 export function SpotlightOverlay({
   visible,
-  steps,
+  targets,
   currentStep,
   onNext,
   onSkip,
@@ -32,77 +42,60 @@ export function SpotlightOverlay({
   const { theme, spacing, typography, radii } = useTheme();
   const reducedMotion = useReducedMotion();
   const fadeAnim = useRef(new Animated.Value(0)).current;
+  const [measured, setMeasured] = useState<MeasuredArea | null>(null);
 
-  const step = steps[currentStep];
-  const isLast = currentStep === steps.length - 1;
+  const target = targets[currentStep];
+  const isLast = currentStep === targets.length - 1;
 
   useEffect(() => {
-    if (!visible) return;
-    Animated.timing(fadeAnim, {
-      toValue: 1,
-      duration: reducedMotion ? 0 : 200,
-      useNativeDriver: true,
-    }).start();
-    AccessibilityInfo.announceForAccessibility(step?.hint ?? '');
+    if (!visible || !target?.ref?.current) return;
+
+    // Reset fade and measurement for each step
+    fadeAnim.setValue(0);
+    setMeasured(null);
+
+    // measure() gives position relative to the window
+    target.ref.current.measureInWindow((_x, y, _width, height) => {
+      setMeasured({ y, height });
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: reducedMotion ? 0 : 200,
+        useNativeDriver: true,
+      }).start();
+      AccessibilityInfo.announceForAccessibility(target.hint);
+    });
   }, [visible, currentStep]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  if (!visible || !step) return null;
+  if (!visible || !target || !measured) return null;
 
-  const spotTop = step.targetY - PADDING;
-  const spotHeight = step.targetHeight + PADDING * 2;
-  // Hint card: show below spotlight if space allows, else above
-  const hintTop = spotTop + spotHeight + spacing.lg;
-  const hintBelow = hintTop + 140 < SCREEN_HEIGHT;
+  const spotTop = Math.max(0, measured.y - PADDING);
+  const spotHeight = measured.height + PADDING * 2;
+  const spotBottom = spotTop + spotHeight;
+
+  // Show hint card below spotlight if enough space, else above
+  const hintTop = spotBottom + spacing.md;
+  const hintBelow = hintTop + 160 < SCREEN_HEIGHT - 80; // 80 = approx tab bar height
 
   return (
     <Animated.View
       style={[styles.container, { opacity: fadeAnim }]}
       accessibilityViewIsModal
-      accessibilityLabel={`Tutorial Schritt ${currentStep + 1} von ${steps.length}`}
+      accessibilityLabel={`Tutorial Schritt ${currentStep + 1} von ${targets.length}`}
     >
       {/* Top dark panel */}
-      <View style={[styles.darkPanel, { top: 0, height: Math.max(0, spotTop) }]} />
+      <View style={[styles.darkPanel, { top: 0, height: spotTop }]} />
 
       {/* Bottom dark panel */}
-      <View
-        style={[
-          styles.darkPanel,
-          { top: spotTop + spotHeight, bottom: 0 },
-        ]}
-      />
-
-      {/* Left dark panel (beside spotlight) */}
-      <View
-        style={[
-          styles.darkPanel,
-          {
-            top: spotTop,
-            height: spotHeight,
-            left: 0,
-            width: 0,
-          },
-        ]}
-      />
-
-      {/* Right dark panel (beside spotlight) */}
-      <View
-        style={[
-          styles.darkPanel,
-          {
-            top: spotTop,
-            height: spotHeight,
-            right: 0,
-            width: 0,
-          },
-        ]}
-      />
+      <View style={[styles.darkPanel, { top: spotBottom, bottom: 0 }]} />
 
       {/* Hint card */}
       <View
         style={[
           styles.hintCard,
           {
-            top: hintBelow ? hintTop : spotTop - 140 - spacing.lg,
+            top: hintBelow
+              ? hintTop
+              : spotTop - spacing.md - 160,
             backgroundColor: theme.colors.surface,
             borderRadius: radii.lg,
             padding: spacing.lg,
@@ -119,7 +112,7 @@ export function SpotlightOverlay({
             marginBottom: spacing.md,
           }}
         >
-          {step.hint}
+          {target.hint}
         </Text>
 
         <Pressable
@@ -134,7 +127,7 @@ export function SpotlightOverlay({
             },
           ]}
           accessibilityRole="button"
-          accessibilityLabel={isLast ? 'Tutorial beenden' : 'Weiter'}
+          accessibilityLabel={isLast ? 'Tutorial beenden' : 'OK'}
         >
           <Text
             style={{
@@ -144,7 +137,7 @@ export function SpotlightOverlay({
               textAlign: 'center',
             }}
           >
-            {isLast ? 'Los geht\'s' : 'OK'}
+            {isLast ? "Los geht's" : 'OK'}
           </Text>
         </Pressable>
       </View>
