@@ -117,18 +117,6 @@ export function StepFeelings({ value, onValueChange }: StepFeelingsProps) {
         accessibilityLabel="Gefühle beschreiben"
       />
 
-      <Text
-        style={{
-          fontFamily: typography.families.body.regular,
-          fontSize: typography.sizes.xs,
-          color: theme.colors.textSecondary,
-          textAlign: 'center',
-          marginTop: spacing.md,
-          fontStyle: 'italic',
-        }}
-      >
-        Alles ist erlaubt — auch „weiß nicht". Stichworte reichen völlig.
-      </Text>
     </View>
   );
 }

@@ -118,9 +118,9 @@ export function StepBodySignals({ value, onValueChange }: StepBodySignalsProps) 
                         minWidth: touchTarget.min,
                         minHeight: touchTarget.min,
                         borderRadius: radii.sm,
-                        borderWidth: 1,
+                        borderWidth: 2,
                         backgroundColor: state === true
-                          ? theme.colors.primarySoft
+                          ? theme.colors.primary
                           : theme.colors.background,
                         borderColor: state === true
                           ? theme.colors.primary
@@ -136,7 +136,7 @@ export function StepBodySignals({ value, onValueChange }: StepBodySignalsProps) 
                         fontFamily: typography.families.ui.semibold,
                         fontSize: typography.sizes.sm,
                         color: state === true
-                          ? theme.colors.primary
+                          ? theme.colors.textInverse
                           : theme.colors.textSecondary,
                       }}
                     >
@@ -152,14 +152,11 @@ export function StepBodySignals({ value, onValueChange }: StepBodySignalsProps) 
                         minWidth: touchTarget.min,
                         minHeight: touchTarget.min,
                         borderRadius: radii.sm,
-                        borderWidth: 1,
-                        backgroundColor: state === false
-                          ? theme.colors.surface
-                          : theme.colors.background,
+                        borderWidth: 2,
+                        backgroundColor: theme.colors.background,
                         borderColor: state === false
-                          ? theme.colors.border
+                          ? theme.colors.text
                           : theme.colors.border,
-                        opacity: state === false ? 1 : 0.6,
                       },
                     ]}
                     accessibilityRole="button"
@@ -184,19 +181,6 @@ export function StepBodySignals({ value, onValueChange }: StepBodySignalsProps) 
           })}
         </View>
 
-        <Text
-          style={{
-            fontFamily: typography.families.body.regular,
-            fontSize: typography.sizes.xs,
-            color: theme.colors.textSecondary,
-            textAlign: 'center',
-            marginTop: spacing.md,
-            marginBottom: spacing.sm,
-            fontStyle: 'italic',
-          }}
-        >
-          Du musst nicht alle beantworten. Nur was dir gerade auffällt.
-        </Text>
       </ScrollView>
     </View>
   );

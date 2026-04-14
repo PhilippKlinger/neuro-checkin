@@ -81,15 +81,17 @@ export default function SettingsScreen() {
         return;
       }
       if (!result) return;
+      // Permission granted — update UI immediately before async work
+      setReminderEnabled(true);
       const time = reminderTime ?? '09:00';
-      await scheduleReminderNotification(time);
       setReminderTime(time);
+      await scheduleReminderNotification(time);
       await updateSettings(db, { reminderEnabled: true, reminderTime: time });
     } else {
+      setReminderEnabled(false);
       await cancelReminderNotification();
       await updateSettings(db, { reminderEnabled: false });
     }
-    setReminderEnabled(value);
   }
 
   async function handleTimeChange(_event: DateTimePickerEvent, selected?: Date) {

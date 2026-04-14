@@ -95,43 +95,40 @@ export function CheckInCard({ checkIn, onPress }: CheckInCardProps) {
           </Text>
         </View>
 
-        {activeSignals > 0 && (
-          <View style={styles.metric}>
-            <Text
-              style={{
-                fontFamily: typography.families.body.regular,
-                fontSize: typography.sizes.xs,
-                color: theme.colors.textSecondary,
-              }}
-            >
-              Signale
-            </Text>
-            <Text
-              style={{
-                fontFamily: typography.families.ui.semibold,
-                fontSize: typography.sizes.lg,
-                color: theme.colors.accent,
-              }}
-            >
-              {activeSignals}
-            </Text>
-          </View>
-        )}
+        <View style={styles.metric}>
+          <Text
+            style={{
+              fontFamily: typography.families.body.regular,
+              fontSize: typography.sizes.xs,
+              color: theme.colors.textSecondary,
+            }}
+          >
+            Signale
+          </Text>
+          <Text
+            style={{
+              fontFamily: typography.families.ui.semibold,
+              fontSize: typography.sizes.lg,
+              color: activeSignals > 0 ? theme.colors.accent : theme.colors.textSecondary,
+            }}
+          >
+            {activeSignals > 0 ? activeSignals : '—'}
+          </Text>
+        </View>
       </View>
 
-      {checkIn.feelings.trim() !== '' && (
-        <Text
-          numberOfLines={1}
-          style={{
-            fontFamily: typography.families.body.regular,
-            fontSize: typography.sizes.sm,
-            color: theme.colors.textSecondary,
-            marginTop: spacing.sm,
-          }}
-        >
-          {checkIn.feelings}
-        </Text>
-      )}
+      <Text
+        numberOfLines={1}
+        style={{
+          fontFamily: typography.families.body.regular,
+          fontSize: typography.sizes.sm,
+          color: checkIn.feelings.trim() !== '' ? theme.colors.textSecondary : theme.colors.border,
+          marginTop: spacing.sm,
+          fontStyle: checkIn.feelings.trim() !== '' ? 'normal' : 'italic',
+        }}
+      >
+        {checkIn.feelings.trim() !== '' ? checkIn.feelings : 'Keine Gefühle angegeben'}
+      </Text>
     </Pressable>
   );
 }
