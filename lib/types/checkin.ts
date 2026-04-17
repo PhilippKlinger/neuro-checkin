@@ -64,9 +64,11 @@ export const FOCUS_LABELS = ['Kaum', 'Wenig', 'Mittel', 'Gut', 'Voll'] as const;
 
 /**
  * Returns the semantic label for a level value (1-based).
+ * Returns '—' for 0 (not captured, e.g. focusLevel in quick check-ins).
  * Falls back to the raw number string for legacy data stored with old 1-10 scale.
  */
 export function getLevelLabel(value: number, labels: readonly string[]): string {
+  if (value === 0) return '—';
   return labels[value - 1] ?? String(value);
 }
 
