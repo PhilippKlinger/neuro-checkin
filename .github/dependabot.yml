@@ -8,3 +8,31 @@ updates:
     open-pull-requests-limit: 5
     labels:
       - "chore"
+
+    ignore:
+      # react-native must only be updated as part of an Expo SDK upgrade.
+      # Never update manually — Expo pins compatible versions.
+      - dependency-name: "react-native"
+        versions: ["*"]
+
+      # All expo-* packages are managed by Expo SDK.
+      # Use `npx expo install <package>` instead of Dependabot updates.
+      - dependency-name: "expo"
+        versions: ["*"]
+      - dependency-name: "expo-*"
+        versions: ["*"]
+
+      # Expo-ecosystem packages — version-locked to Expo SDK.
+      - dependency-name: "@react-native-community/*"
+        versions: ["*"]
+      - dependency-name: "@react-navigation/*"
+        versions: ["*"]
+
+      # TypeScript major versions may introduce breaking changes.
+      # Review manually when upgrading. Patch updates are allowed.
+      - dependency-name: "typescript"
+        update-types: ["version-update:semver-major", "version-update:semver-minor"]
+
+    # NOTE: Dependabot scope will be expanded once V1.1 test coverage
+    # is in place (Unit + Integration + E2E). With a full test suite
+    # running in CI, automated updates can be trusted more broadly.
