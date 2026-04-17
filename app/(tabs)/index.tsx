@@ -123,7 +123,7 @@ export default function HomeScreen() {
             marginTop: spacing.xs,
           }}
         >
-          2 Schritte — für schwierige Momente
+          3 Schritte — wenn wenig Zeit oder Energie bleibt
         </Text>
       </View>
 
