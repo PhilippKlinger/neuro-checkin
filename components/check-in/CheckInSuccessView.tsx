@@ -1,6 +1,7 @@
 import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTheme } from '../../lib/hooks/useTheme';
+import { ENERGY_LABELS, FOCUS_LABELS, getLevelLabel } from '../../lib/types/checkin';
 
 interface CheckInSuccessViewProps {
   onReset: () => void;
@@ -93,7 +94,7 @@ export function CheckInSuccessView({ onReset, energyLevel, focusLevel }: CheckIn
                   color: theme.colors.primary,
                 }}
               >
-                {energyLevel}/10
+                {getLevelLabel(energyLevel, ENERGY_LABELS)}
               </Text>
             </View>
             <View style={[styles.summaryDivider, { backgroundColor: theme.colors.border }]} />
@@ -117,7 +118,7 @@ export function CheckInSuccessView({ onReset, energyLevel, focusLevel }: CheckIn
                   color: theme.colors.primary,
                 }}
               >
-                {focusLevel}/10
+                {getLevelLabel(focusLevel, FOCUS_LABELS)}
               </Text>
             </View>
           </View>

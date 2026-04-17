@@ -1,6 +1,6 @@
 import { View, Text, ScrollView, StyleSheet } from 'react-native';
 import { useTheme } from '../../lib/hooks/useTheme';
-import { CheckInDraft } from '../../lib/types/checkin';
+import { CheckInDraft, ENERGY_LABELS, FOCUS_LABELS, getLevelLabel } from '../../lib/types/checkin';
 
 interface StepSummaryProps {
   draft: CheckInDraft;
@@ -82,13 +82,13 @@ export function StepSummary({ draft }: StepSummaryProps) {
           <View style={[styles.row, { marginBottom: spacing.sm }]}>
             <Text style={rowLabel(typography, theme)}>Energie</Text>
             <Text style={rowValue(typography, theme)}>
-              {draft.energyLevel}/10
+              {getLevelLabel(draft.energyLevel, ENERGY_LABELS)}
             </Text>
           </View>
           <View style={styles.row}>
             <Text style={rowLabel(typography, theme)}>Fokus</Text>
             <Text style={rowValue(typography, theme)}>
-              {draft.focusLevel}/10
+              {getLevelLabel(draft.focusLevel, FOCUS_LABELS)}
             </Text>
           </View>
         </View>

@@ -1,4 +1,5 @@
 import { LevelSlider } from './LevelSlider';
+import { ENERGY_LABELS } from '../../lib/types/checkin';
 
 interface StepEnergyProps {
   value: number;
@@ -12,8 +13,7 @@ export function StepEnergy({ value, onValueChange }: StepEnergyProps) {
       subtitle="Wie viel Energie hast du gerade?"
       value={value}
       onValueChange={onValueChange}
-      minLabel="Sehr wenig"
-      maxLabel="Sehr viel"
+      labels={ENERGY_LABELS}
     />
   );
 }

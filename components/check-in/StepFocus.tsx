@@ -1,4 +1,5 @@
 import { LevelSlider } from './LevelSlider';
+import { FOCUS_LABELS } from '../../lib/types/checkin';
 
 interface StepFocusProps {
   value: number;
@@ -12,8 +13,7 @@ export function StepFocus({ value, onValueChange }: StepFocusProps) {
       subtitle="Wie gut kannst du dich gerade konzentrieren?"
       value={value}
       onValueChange={onValueChange}
-      minLabel="Kaum fokussiert"
-      maxLabel="Voll fokussiert"
+      labels={FOCUS_LABELS}
     />
   );
 }
