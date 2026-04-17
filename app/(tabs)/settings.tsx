@@ -13,6 +13,7 @@ import * as Device from 'expo-device';
 import { useFocusEffect } from 'expo-router';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { useTheme } from '../../lib/hooks/useTheme';
+import type { ThemeContextValue } from '../../lib/hooks/useTheme';
 import { useDatabase } from '../../lib/hooks/useDatabase';
 import { getSettings, updateSettings } from '../../lib/database/settings';
 import { deleteAllCheckIns } from '../../lib/database/checkins';
@@ -24,8 +25,7 @@ import {
   cancelSingleSlot,
   scheduleAllSlots,
 } from '../../lib/notifications/notifications';
-import type { NotificationSlot } from '../../lib/types/checkin';
-import { WEEKDAY_LABELS, WEEKDAY_BITS, ALL_WEEKDAYS } from '../../lib/types/checkin';
+import { type NotificationSlot, WEEKDAY_LABELS, WEEKDAY_BITS, ALL_WEEKDAYS } from '../../lib/types/checkin';
 import { ConfirmDialog } from '../../components/ui/ConfirmDialog';
 import * as MailComposer from 'expo-mail-composer';
 import Constants from 'expo-constants';
@@ -105,10 +105,12 @@ export default function SettingsScreen() {
     const updated = updatedSlots.find((s) => s.id === slotId)!;
     await saveNotificationSlot(db, updated);
 
-    if (value) {
-      await scheduleSingleSlot(updated);
-    } else {
-      await cancelSingleSlot(slotId);
+    if (Device.isDevice) {
+      if (value) {
+        await scheduleSingleSlot(updated);
+      } else {
+        await cancelSingleSlot(slotId);
+      }
     }
   }
 
@@ -286,7 +288,7 @@ export default function SettingsScreen() {
         </Text>
       )}
 
-      {(slots as NotificationSlot[]).map((slot) => (
+      {slots.map((slot) => (
         <SlotCard
           key={slot.id}
           slot={slot}
@@ -429,16 +431,11 @@ interface SlotCardProps {
   onTimePress: () => void;
   onTimeChange: (event: DateTimePickerEvent, date?: Date) => void;
   onWeekdayToggle: (bitIndex: number) => void;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  theme: any;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  spacing: any;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  typography: any;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  radii: any;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  touchTarget: any;
+  theme: ThemeContextValue['theme'];
+  spacing: ThemeContextValue['spacing'];
+  typography: ThemeContextValue['typography'];
+  radii: ThemeContextValue['radii'];
+  touchTarget: ThemeContextValue['touchTarget'];
 }
 
 function SlotCard({
@@ -580,6 +577,7 @@ function SlotCard({
                         : theme.colors.background,
                       minWidth: touchTarget.min,
                       minHeight: touchTarget.min,
+                      paddingHorizontal: spacing.xs,
                       justifyContent: 'center',
                       alignItems: 'center',
                     },
@@ -642,7 +640,5 @@ const slotStyles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
   },
-  dayChip: {
-    paddingHorizontal: 6,
-  },
+  dayChip: {},
 });
