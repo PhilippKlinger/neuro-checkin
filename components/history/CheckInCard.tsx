@@ -24,8 +24,9 @@ export const CheckInCard = memo(function CheckInCard({ checkIn, onPress }: Check
         {
           backgroundColor: theme.colors.surface,
           borderRadius: radii.md,
-          padding: spacing.md,
-          marginBottom: spacing.sm,
+          paddingHorizontal: spacing.md,
+          paddingVertical: spacing.sm,
+          marginBottom: spacing.xs,
         },
       ]}
       accessibilityRole="button"
@@ -36,7 +37,7 @@ export const CheckInCard = memo(function CheckInCard({ checkIn, onPress }: Check
         <Text
           style={{
             fontFamily: typography.families.ui.medium,
-            fontSize: typography.sizes.md,
+            fontSize: typography.sizes.sm,
             color: theme.colors.text,
           }}
         >
@@ -46,7 +47,7 @@ export const CheckInCard = memo(function CheckInCard({ checkIn, onPress }: Check
           <Text
             style={{
               fontFamily: typography.families.body.regular,
-              fontSize: typography.sizes.sm,
+              fontSize: typography.sizes.xs,
               color: theme.colors.textSecondary,
             }}
           >
@@ -55,7 +56,7 @@ export const CheckInCard = memo(function CheckInCard({ checkIn, onPress }: Check
           <Text
             style={{
               fontFamily: typography.families.ui.medium,
-              fontSize: typography.sizes.lg,
+              fontSize: typography.sizes.md,
               color: theme.colors.border,
               marginLeft: spacing.xs,
             }}
@@ -66,7 +67,7 @@ export const CheckInCard = memo(function CheckInCard({ checkIn, onPress }: Check
         </View>
       </View>
 
-      <View style={[styles.metricsRow, { marginTop: spacing.sm, gap: spacing.lg }]}>
+      <View style={[styles.metricsRow, { marginTop: spacing.xs, gap: spacing.md }]}>
         <View style={styles.metric}>
           <Text
             style={{
@@ -80,7 +81,7 @@ export const CheckInCard = memo(function CheckInCard({ checkIn, onPress }: Check
           <Text
             style={{
               fontFamily: typography.families.ui.semibold,
-              fontSize: typography.sizes.lg,
+              fontSize: typography.sizes.sm,
               color: theme.colors.primary,
             }}
           >
@@ -101,7 +102,7 @@ export const CheckInCard = memo(function CheckInCard({ checkIn, onPress }: Check
           <Text
             style={{
               fontFamily: typography.families.ui.semibold,
-              fontSize: typography.sizes.lg,
+              fontSize: typography.sizes.sm,
               color: theme.colors.primary,
             }}
           >
@@ -109,40 +110,29 @@ export const CheckInCard = memo(function CheckInCard({ checkIn, onPress }: Check
           </Text>
         </View>
 
-        <View style={styles.metric}>
-          <Text
-            style={{
-              fontFamily: typography.families.body.regular,
-              fontSize: typography.sizes.xs,
-              color: theme.colors.textSecondary,
-            }}
-          >
-            Signale
-          </Text>
-          <Text
-            style={{
-              fontFamily: typography.families.ui.semibold,
-              fontSize: typography.sizes.lg,
-              color: activeSignals > 0 ? theme.colors.accent : theme.colors.textSecondary,
-            }}
-          >
-            {activeSignals > 0 ? activeSignals : '—'}
-          </Text>
-        </View>
+        {activeSignals > 0 && (
+          <View style={styles.metric}>
+            <Text
+              style={{
+                fontFamily: typography.families.body.regular,
+                fontSize: typography.sizes.xs,
+                color: theme.colors.textSecondary,
+              }}
+            >
+              Signale
+            </Text>
+            <Text
+              style={{
+                fontFamily: typography.families.ui.semibold,
+                fontSize: typography.sizes.sm,
+                color: theme.colors.accent,
+              }}
+            >
+              {activeSignals}
+            </Text>
+          </View>
+        )}
       </View>
-
-      <Text
-        numberOfLines={1}
-        style={{
-          fontFamily: typography.families.body.regular,
-          fontSize: typography.sizes.sm,
-          color: checkIn.feelings.trim() !== '' ? theme.colors.textSecondary : theme.colors.border,
-          marginTop: spacing.sm,
-          fontStyle: checkIn.feelings.trim() !== '' ? 'normal' : 'italic',
-        }}
-      >
-        {checkIn.feelings.trim() !== '' ? checkIn.feelings : 'Keine Gefühle angegeben'}
-      </Text>
     </Pressable>
   );
 });
