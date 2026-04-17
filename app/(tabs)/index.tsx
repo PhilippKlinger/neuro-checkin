@@ -4,7 +4,7 @@ import { useFocusEffect, useRouter } from 'expo-router';
 import { useTheme } from '../../lib/hooks/useTheme';
 import { useDatabase } from '../../lib/hooks/useDatabase';
 import { getCheckIns } from '../../lib/database/checkins';
-import { CheckIn } from '../../lib/types/checkin';
+import { CheckIn, ENERGY_LABELS, FOCUS_LABELS, getLevelLabel } from '../../lib/types/checkin';
 import { formatDate, formatTime } from '../../lib/utils/format';
 
 function getGreeting(): string {
@@ -86,6 +86,45 @@ export default function HomeScreen() {
             Check-in starten
           </Text>
         </Pressable>
+
+        <Pressable
+          onPress={() => router.push('/quick-check-in')}
+          style={[
+            styles.startButton,
+            {
+              minHeight: touchTarget.min,
+              borderRadius: radii.md,
+              borderWidth: 1,
+              borderColor: theme.colors.border,
+              backgroundColor: theme.colors.surface,
+              paddingHorizontal: spacing.xl,
+              marginTop: spacing.sm,
+            },
+          ]}
+          accessibilityRole="button"
+          accessibilityLabel="Schnell-Check-in starten — 2 Schritte"
+        >
+          <Text
+            style={{
+              fontFamily: typography.families.ui.medium,
+              fontSize: typography.sizes.md,
+              color: theme.colors.textSecondary,
+            }}
+          >
+            Schnell-Check-in
+          </Text>
+        </Pressable>
+        <Text
+          style={{
+            fontFamily: typography.families.body.regular,
+            fontSize: typography.sizes.xs,
+            color: theme.colors.textSecondary,
+            textAlign: 'center',
+            marginTop: spacing.xs,
+          }}
+        >
+          2 Schritte — für schwierige Momente
+        </Text>
       </View>
 
       {!isLoading && !lastCheckIn && (
@@ -147,11 +186,13 @@ export default function HomeScreen() {
           </Text>
           <View style={[styles.miniMetrics, { marginTop: spacing.sm, gap: spacing.lg }]}>
             <Text style={{ fontFamily: typography.families.ui.medium, fontSize: typography.sizes.sm, color: theme.colors.primary }}>
-              Energie {lastCheckIn.energyLevel}/10
+              Energie {getLevelLabel(lastCheckIn.energyLevel, ENERGY_LABELS)}
             </Text>
-            <Text style={{ fontFamily: typography.families.ui.medium, fontSize: typography.sizes.sm, color: theme.colors.primary }}>
-              Fokus {lastCheckIn.focusLevel}/10
-            </Text>
+            {lastCheckIn.focusLevel > 0 && (
+              <Text style={{ fontFamily: typography.families.ui.medium, fontSize: typography.sizes.sm, color: theme.colors.primary }}>
+                Fokus {getLevelLabel(lastCheckIn.focusLevel, FOCUS_LABELS)}
+              </Text>
+            )}
           </View>
         </Pressable>
       )}
