@@ -9,10 +9,11 @@ import { insertCheckIn } from '../lib/database/checkins';
 import { StepIndicator } from '../components/check-in/StepIndicator';
 import { CheckInSuccessView } from '../components/check-in/CheckInSuccessView';
 import { StepEnergy } from '../components/check-in/StepEnergy';
+import { StepFocus } from '../components/check-in/StepFocus';
 import { QuickStepFeelings } from '../components/check-in/QuickStepFeelings';
 
-const TOTAL_STEPS = 2;
-const STEP_NAMES = ['Energie-Level', 'Gefühl'];
+const TOTAL_STEPS = 3;
+const STEP_NAMES = ['Energie-Level', 'Fokus-Level', 'Gefühle'];
 
 export default function QuickCheckInScreen() {
   const { theme, spacing, typography, radii, touchTarget } = useTheme();
@@ -20,13 +21,16 @@ export default function QuickCheckInScreen() {
   const router = useRouter();
   const [step, setStep] = useState(0);
   const [energyLevel, setEnergyLevel] = useState(0);
-  const [feeling, setFeeling] = useState('');
+  const [focusLevel, setFocusLevel] = useState(0);
+  const [feelings, setFeelings] = useState('');
   const [isSaving, setIsSaving] = useState(false);
   const [isDone, setIsDone] = useState(false);
   const stepContentRef = useRef<View>(null);
 
-  // Energy selection required before proceeding; feeling is optional
-  const isStepBlocked = step === 0 && energyLevel === 0;
+  // Energy and focus are required; feelings are optional
+  const isStepBlocked =
+    (step === 0 && energyLevel === 0) ||
+    (step === 1 && focusLevel === 0);
   const isNextDisabled = isSaving || isStepBlocked;
   const isLastStep = step === TOTAL_STEPS - 1;
 
@@ -63,9 +67,9 @@ export default function QuickCheckInScreen() {
     try {
       await insertCheckIn(db, {
         energyLevel,
-        focusLevel: 0, // not captured in quick mode — displayed as "—" via getLevelLabel
+        focusLevel,
         bodySignals: { ...EMPTY_BODY_SIGNALS },
-        feelings: feeling,
+        feelings,
         thoughtsType: null,
         thoughtsNote: null,
         selfCareNote: null,
@@ -84,7 +88,8 @@ export default function QuickCheckInScreen() {
   function handleReset() {
     setStep(0);
     setEnergyLevel(0);
-    setFeeling('');
+    setFocusLevel(0);
+    setFeelings('');
     setIsDone(false);
   }
 
@@ -93,7 +98,7 @@ export default function QuickCheckInScreen() {
       <CheckInSuccessView
         onReset={handleReset}
         energyLevel={energyLevel}
-        // focusLevel intentionally omitted — quick check-in only captures energy
+        focusLevel={focusLevel}
       />
     );
   }
@@ -109,9 +114,16 @@ export default function QuickCheckInScreen() {
         );
       case 1:
         return (
+          <StepFocus
+            value={focusLevel}
+            onValueChange={setFocusLevel}
+          />
+        );
+      case 2:
+        return (
           <QuickStepFeelings
-            value={feeling}
-            onValueChange={setFeeling}
+            value={feelings}
+            onValueChange={setFeelings}
           />
         );
       default:

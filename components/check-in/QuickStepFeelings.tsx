@@ -1,22 +1,19 @@
 import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { useTheme } from '../../lib/hooks/useTheme';
+import { isChipSelected, toggleChip } from '../../lib/utils/chips';
 import { FEELING_CHIPS } from './StepFeelings';
 
 interface QuickStepFeelingsProps {
-  value: string; // single chip name or '' for none selected
+  value: string; // comma-separated selected chips, or '' for none
   onValueChange: (value: string) => void;
 }
 
-// Single-select variant for the quick check-in flow.
-// No free-text toggle — in a dysregulated state typing is a barrier.
+// Multi-select chip variant for the quick check-in flow.
+// No free-text toggle — keeps cognitive load low in difficult moments.
 // Selection is optional: "Weiter" is never blocked here.
+// ND reality: co-occurring emotional states are the norm, not the exception.
 export function QuickStepFeelings({ value, onValueChange }: QuickStepFeelingsProps) {
   const { theme, spacing, typography, radii } = useTheme();
-
-  function handlePress(chip: string) {
-    // Toggle: tap again to deselect
-    onValueChange(value === chip ? '' : chip);
-  }
 
   return (
     <View style={styles.container}>
@@ -29,7 +26,7 @@ export function QuickStepFeelings({ value, onValueChange }: QuickStepFeelingsPro
           marginBottom: spacing.sm,
         }}
       >
-        Gefühl
+        Gefühle
       </Text>
       <Text
         style={{
@@ -40,21 +37,17 @@ export function QuickStepFeelings({ value, onValueChange }: QuickStepFeelingsPro
           marginBottom: spacing.lg,
         }}
       >
-        Was trifft es am ehesten? (optional)
+        Was nimmst du gerade wahr? (optional)
       </Text>
 
-      {/* Single-select chips — same vocabulary as the full check-in */}
-      <View
-        accessibilityRole="radiogroup"
-        accessibilityLabel="Gefühl auswählen"
-        style={[styles.chipWrap, { gap: spacing.sm }]}
-      >
+      {/* Multi-select chips — same vocabulary and logic as the full check-in */}
+      <View style={[styles.chipWrap, { gap: spacing.sm }]}>
         {FEELING_CHIPS.map((chip) => {
-          const selected = value === chip;
+          const selected = isChipSelected(chip, value);
           return (
             <Pressable
               key={chip}
-              onPress={() => handlePress(chip)}
+              onPress={() => onValueChange(toggleChip(chip, value))}
               style={[
                 styles.chip,
                 {
@@ -66,7 +59,7 @@ export function QuickStepFeelings({ value, onValueChange }: QuickStepFeelingsPro
                   borderColor: selected ? theme.colors.primary : theme.colors.border,
                 },
               ]}
-              accessibilityRole="radio"
+              accessibilityRole="button"
               accessibilityLabel={chip}
               accessibilityState={{ selected }}
             >
