@@ -42,15 +42,28 @@ export const CheckInCard = memo(function CheckInCard({ checkIn, onPress }: Check
         >
           {formatDate(checkIn.createdAt)}
         </Text>
-        <Text
-          style={{
-            fontFamily: typography.families.body.regular,
-            fontSize: typography.sizes.sm,
-            color: theme.colors.textSecondary,
-          }}
-        >
-          {formatTime(checkIn.createdAt)}
-        </Text>
+        <View style={styles.headerRight}>
+          <Text
+            style={{
+              fontFamily: typography.families.body.regular,
+              fontSize: typography.sizes.sm,
+              color: theme.colors.textSecondary,
+            }}
+          >
+            {formatTime(checkIn.createdAt)}
+          </Text>
+          <Text
+            style={{
+              fontFamily: typography.families.ui.medium,
+              fontSize: typography.sizes.lg,
+              color: theme.colors.border,
+              marginLeft: spacing.xs,
+            }}
+            accessibilityElementsHidden
+          >
+            ›
+          </Text>
+        </View>
       </View>
 
       <View style={[styles.metricsRow, { marginTop: spacing.sm, gap: spacing.lg }]}>
@@ -139,6 +152,10 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  headerRight: {
+    flexDirection: 'row',
     alignItems: 'center',
   },
   metricsRow: {

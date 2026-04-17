@@ -4,7 +4,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTheme } from '../../lib/hooks/useTheme';
 import { useDatabase } from '../../lib/hooks/useDatabase';
 import { getCheckInById, deleteCheckIn } from '../../lib/database/checkins';
-import { CheckIn } from '../../lib/types/checkin';
+import { CheckIn, ENERGY_LABELS, FOCUS_LABELS, getLevelLabel } from '../../lib/types/checkin';
 import { formatDateTime } from '../../lib/utils/format';
 import { ConfirmDialog } from '../../components/ui/ConfirmDialog';
 
@@ -142,11 +142,15 @@ export default function CheckInDetailScreen() {
       >
         <View style={[styles.row, { marginBottom: spacing.sm }]}>
           <Text style={label(typography, theme)}>Energie</Text>
-          <Text style={value(typography, theme)}>{checkIn.energyLevel}/10</Text>
+          <Text style={value(typography, theme)}>
+            {getLevelLabel(checkIn.energyLevel, ENERGY_LABELS)}
+          </Text>
         </View>
         <View style={styles.row}>
           <Text style={label(typography, theme)}>Fokus</Text>
-          <Text style={value(typography, theme)}>{checkIn.focusLevel}/10</Text>
+          <Text style={value(typography, theme)}>
+            {getLevelLabel(checkIn.focusLevel, FOCUS_LABELS)}
+          </Text>
         </View>
       </View>
 
@@ -179,7 +183,7 @@ export default function CheckInDetailScreen() {
         </View>
       )}
 
-      {/* Feelings */}
+      {/* Feelings — rendered as pills matching the chip selection UI */}
       {checkIn.feelings.trim() !== '' && (
         <View
           style={[
@@ -193,7 +197,36 @@ export default function CheckInDetailScreen() {
           ]}
         >
           <Text style={sectionTitle(typography, theme, spacing)}>Gefühle</Text>
-          <Text style={body(typography, theme)}>{checkIn.feelings}</Text>
+          <View style={styles.feelingPills}>
+            {checkIn.feelings
+              .split(',')
+              .map((f) => f.trim())
+              .filter(Boolean)
+              .map((feeling) => (
+                <View
+                  key={feeling}
+                  style={[
+                    styles.feelingPill,
+                    {
+                      backgroundColor: theme.colors.primarySoft,
+                      borderRadius: radii.full,
+                      paddingHorizontal: spacing.md,
+                      paddingVertical: spacing.xs,
+                    },
+                  ]}
+                >
+                  <Text
+                    style={{
+                      fontFamily: typography.families.ui.medium,
+                      fontSize: typography.sizes.sm,
+                      color: theme.colors.primary,
+                    }}
+                  >
+                    {feeling}
+                  </Text>
+                </View>
+              ))}
+          </View>
         </View>
       )}
 
@@ -357,4 +390,10 @@ const styles = StyleSheet.create({
   deleteButton: {
     alignItems: 'center',
   },
+  feelingPills: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 6,
+  },
+  feelingPill: {},
 });
