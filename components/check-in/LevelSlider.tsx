@@ -48,7 +48,7 @@ export function LevelSlider({
       <Text
         style={{
           fontFamily: typography.families.heading.bold,
-          fontSize: typography.sizes.xxl + 8,
+          fontSize: typography.sizes.xxxl,
           color: theme.colors.primary,
           textAlign: 'center',
           marginBottom: spacing.lg,
@@ -70,6 +70,8 @@ export function LevelSlider({
               style={[
                 styles.levelButton,
                 {
+                  // 1.5 reduction: full touchTarget.min (44) would overflow on 320px screens
+                  // with 10 buttons and gaps — this keeps buttons tappable while fitting the row
                   minWidth: touchTarget.min / 1.5,
                   minHeight: touchTarget.min,
                   borderRadius: radii.sm,

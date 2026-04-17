@@ -6,6 +6,7 @@ import { useDatabase } from '../../lib/hooks/useDatabase';
 import { getCheckIns } from '../../lib/database/checkins';
 import { CheckIn } from '../../lib/types/checkin';
 import { CheckInCard } from '../../components/history/CheckInCard';
+import { spacing } from '../../lib/constants/themes';
 
 export default function HistoryScreen() {
   const { theme, spacing, typography } = useTheme();
@@ -102,7 +103,7 @@ export default function HistoryScreen() {
         data={checkIns}
         keyExtractor={(item) => item.id.toString()}
         renderItem={renderItem}
-        contentContainerStyle={{ padding: spacing.md }}
+        contentContainerStyle={styles.listContent}
       />
     </View>
   );
@@ -116,5 +117,8 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  listContent: {
+    padding: spacing.md,
   },
 });
