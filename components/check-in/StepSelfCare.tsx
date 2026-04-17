@@ -1,5 +1,6 @@
-import { View, Text, TextInput, Pressable, ScrollView, StyleSheet } from 'react-native';
+import { View, Text, TextInput, Pressable, StyleSheet } from 'react-native';
 import { useTheme } from '../../lib/hooks/useTheme';
+import { isChipSelected, toggleChip } from '../../lib/utils/chips';
 
 interface StepSelfCareProps {
   value: string;
@@ -11,18 +12,6 @@ const SELF_CARE_CHIPS = [
   'Ruhe', 'Essen', 'Stretching', 'Musik hören', 'Spazieren',
   'Nichts — passt gerade so',
 ];
-
-function isChipSelected(chip: string, value: string): boolean {
-  return value.split(',').map((s) => s.trim()).includes(chip);
-}
-
-function toggleChip(chip: string, value: string): string {
-  const parts = value.split(',').map((s) => s.trim()).filter(Boolean);
-  if (parts.includes(chip)) {
-    return parts.filter((p) => p !== chip).join(', ');
-  }
-  return [...parts, chip].join(', ');
-}
 
 export function StepSelfCare({ value, onValueChange }: StepSelfCareProps) {
   const { theme, spacing, typography, radii } = useTheme();
@@ -52,12 +41,8 @@ export function StepSelfCare({ value, onValueChange }: StepSelfCareProps) {
         Was brauchst du gerade? Was würde dir jetzt gut tun?
       </Text>
 
-      {/* Chips */}
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={[styles.chipRow, { gap: spacing.sm, marginBottom: spacing.md }]}
-      >
+      {/* Chips — Wrap-Layout zeigt alle Optionen auf einmal (ND-UX: Object Permanence) */}
+      <View style={[styles.chipWrap, { gap: spacing.sm, marginBottom: spacing.md }]}>
         {SELF_CARE_CHIPS.map((chip) => {
           const selected = isChipSelected(chip, value);
           return (
@@ -91,7 +76,7 @@ export function StepSelfCare({ value, onValueChange }: StepSelfCareProps) {
             </Pressable>
           );
         })}
-      </ScrollView>
+      </View>
 
       {/* Freitext */}
       <TextInput
@@ -125,9 +110,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  chipRow: {
+  chipWrap: {
     flexDirection: 'row',
-    alignItems: 'center',
+    flexWrap: 'wrap',
   },
   chip: {
     alignItems: 'center',

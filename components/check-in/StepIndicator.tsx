@@ -1,5 +1,6 @@
 import { View, StyleSheet } from 'react-native';
 import { useTheme } from '../../lib/hooks/useTheme';
+import { spacing } from '../../lib/constants/themes';
 
 interface StepIndicatorProps {
   totalSteps: number;
@@ -7,7 +8,7 @@ interface StepIndicatorProps {
 }
 
 export function StepIndicator({ totalSteps, currentStep }: StepIndicatorProps) {
-  const { theme, spacing, radii } = useTheme();
+  const { theme, radii } = useTheme();
 
   return (
     <View
@@ -46,7 +47,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   dot: {
-    width: 8,
-    height: 8,
+    width: spacing.sm,
+    height: spacing.sm,
   },
 });
