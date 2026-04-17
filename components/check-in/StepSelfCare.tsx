@@ -1,4 +1,4 @@
-import { View, Text, TextInput, Pressable, ScrollView, StyleSheet } from 'react-native';
+import { View, Text, TextInput, Pressable, StyleSheet } from 'react-native';
 import { useTheme } from '../../lib/hooks/useTheme';
 import { isChipSelected, toggleChip } from '../../lib/utils/chips';
 
@@ -41,12 +41,8 @@ export function StepSelfCare({ value, onValueChange }: StepSelfCareProps) {
         Was brauchst du gerade? Was würde dir jetzt gut tun?
       </Text>
 
-      {/* Chips */}
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={[styles.chipRow, { gap: spacing.sm, marginBottom: spacing.md }]}
-      >
+      {/* Chips — Wrap-Layout zeigt alle Optionen auf einmal (ND-UX: Object Permanence) */}
+      <View style={[styles.chipWrap, { gap: spacing.sm, marginBottom: spacing.md }]}>
         {SELF_CARE_CHIPS.map((chip) => {
           const selected = isChipSelected(chip, value);
           return (
@@ -80,7 +76,7 @@ export function StepSelfCare({ value, onValueChange }: StepSelfCareProps) {
             </Pressable>
           );
         })}
-      </ScrollView>
+      </View>
 
       {/* Freitext */}
       <TextInput
@@ -114,9 +110,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  chipRow: {
+  chipWrap: {
     flexDirection: 'row',
-    alignItems: 'center',
+    flexWrap: 'wrap',
   },
   chip: {
     alignItems: 'center',
