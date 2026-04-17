@@ -23,7 +23,8 @@ export function CheckInSuccessView({ onReset, energyLevel, focusLevel }: CheckIn
     router.replace('/(tabs)/history');
   }
 
-  const showSummary = energyLevel !== undefined && focusLevel !== undefined;
+  const showSummary = energyLevel !== undefined && energyLevel > 0;
+  const showFocus = focusLevel !== undefined && focusLevel > 0;
 
   return (
     <View
@@ -94,33 +95,37 @@ export function CheckInSuccessView({ onReset, energyLevel, focusLevel }: CheckIn
                   color: theme.colors.primary,
                 }}
               >
-                {getLevelLabel(energyLevel, ENERGY_LABELS)}
+                {getLevelLabel(energyLevel!, ENERGY_LABELS)}
               </Text>
             </View>
-            <View style={[styles.summaryDivider, { backgroundColor: theme.colors.border }]} />
-            <View style={styles.summaryItem}>
-              <Text
-                style={{
-                  fontFamily: typography.families.ui.medium,
-                  fontSize: typography.sizes.xs,
-                  color: theme.colors.textSecondary,
-                  textTransform: 'uppercase',
-                  letterSpacing: 0.5,
-                  marginBottom: 2,
-                }}
-              >
-                Fokus
-              </Text>
-              <Text
-                style={{
-                  fontFamily: typography.families.heading.bold,
-                  fontSize: typography.sizes.lg,
-                  color: theme.colors.primary,
-                }}
-              >
-                {getLevelLabel(focusLevel, FOCUS_LABELS)}
-              </Text>
-            </View>
+            {showFocus && (
+              <>
+                <View style={[styles.summaryDivider, { backgroundColor: theme.colors.border }]} />
+                <View style={styles.summaryItem}>
+                  <Text
+                    style={{
+                      fontFamily: typography.families.ui.medium,
+                      fontSize: typography.sizes.xs,
+                      color: theme.colors.textSecondary,
+                      textTransform: 'uppercase',
+                      letterSpacing: 0.5,
+                      marginBottom: 2,
+                    }}
+                  >
+                    Fokus
+                  </Text>
+                  <Text
+                    style={{
+                      fontFamily: typography.families.heading.bold,
+                      fontSize: typography.sizes.lg,
+                      color: theme.colors.primary,
+                    }}
+                  >
+                    {getLevelLabel(focusLevel!, FOCUS_LABELS)}
+                  </Text>
+                </View>
+              </>
+            )}
           </View>
         )}
       </View>

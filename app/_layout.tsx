@@ -52,6 +52,19 @@ function AppStack() {
           },
         }}
       />
+      <Stack.Screen
+        name="quick-check-in"
+        options={{
+          headerShown: true,
+          title: 'Schnell-Check-in',
+          headerStyle: { backgroundColor: theme.colors.background },
+          headerTintColor: theme.colors.text,
+          headerTitleStyle: {
+            fontFamily: typography.families.heading.semibold,
+            fontSize: typography.sizes.lg,
+          },
+        }}
+      />
     </Stack>
   );
 }
