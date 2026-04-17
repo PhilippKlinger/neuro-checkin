@@ -4,10 +4,9 @@ import { useTheme } from '../../lib/hooks/useTheme';
 interface LevelSliderProps {
   title: string;
   subtitle: string;
-  value: number;
+  value: number; // 0 = unselected, 1-5 = selected
   onValueChange: (value: number) => void;
-  minLabel?: string;
-  maxLabel?: string;
+  labels: readonly string[]; // exactly 5 semantic labels
 }
 
 export function LevelSlider({
@@ -15,8 +14,7 @@ export function LevelSlider({
   subtitle,
   value,
   onValueChange,
-  minLabel = '1',
-  maxLabel = '10',
+  labels,
 }: LevelSliderProps) {
   const { theme, spacing, typography, radii, touchTarget } = useTheme();
 
@@ -45,36 +43,23 @@ export function LevelSlider({
         {subtitle}
       </Text>
 
-      <Text
-        style={{
-          fontFamily: typography.families.heading.bold,
-          fontSize: typography.sizes.xxxl,
-          color: theme.colors.primary,
-          textAlign: 'center',
-          marginBottom: spacing.lg,
-        }}
-        accessibilityRole="text"
-        accessibilityLabel={`${title}: ${value} von 10`}
+      <View
+        accessibilityRole="radiogroup"
+        accessibilityLabel={title}
+        style={styles.optionList}
       >
-        {value}
-      </Text>
-
-      <View style={styles.sliderRow}>
-        {Array.from({ length: 10 }, (_, i) => {
-          const level = i + 1;
+        {labels.map((label, index) => {
+          const level = index + 1;
           const isSelected = level === value;
           return (
             <Pressable
               key={level}
               onPress={() => onValueChange(level)}
               style={[
-                styles.levelButton,
+                styles.option,
                 {
-                  // 1.5 reduction: full touchTarget.min (44) would overflow on 320px screens
-                  // with 10 buttons and gaps — this keeps buttons tappable while fitting the row
-                  minWidth: touchTarget.min / 1.5,
                   minHeight: touchTarget.min,
-                  borderRadius: radii.sm,
+                  borderRadius: radii.md,
                   backgroundColor: isSelected
                     ? theme.colors.primary
                     : theme.colors.surface,
@@ -82,48 +67,29 @@ export function LevelSlider({
                   borderColor: isSelected
                     ? theme.colors.primary
                     : theme.colors.border,
+                  marginBottom: spacing.sm,
+                  paddingHorizontal: spacing.md,
                 },
               ]}
-              accessibilityRole="button"
-              accessibilityLabel={`${level} von 10`}
-              accessibilityHint={`${title} auf ${level} setzen`}
-              accessibilityState={{ selected: isSelected }}
+              accessibilityRole="radio"
+              accessibilityLabel={label}
+              accessibilityHint={`${title} auf "${label}" setzen`}
+              accessibilityState={{ checked: isSelected }}
             >
               <Text
                 style={{
                   fontFamily: typography.families.ui.medium,
-                  fontSize: typography.sizes.sm,
+                  fontSize: typography.sizes.md,
                   color: isSelected
                     ? theme.colors.textInverse
                     : theme.colors.text,
                 }}
               >
-                {level}
+                {label}
               </Text>
             </Pressable>
           );
         })}
-      </View>
-
-      <View style={[styles.labelRow, { marginTop: spacing.sm }]}>
-        <Text
-          style={{
-            fontFamily: typography.families.body.regular,
-            fontSize: typography.sizes.xs,
-            color: theme.colors.textSecondary,
-          }}
-        >
-          {minLabel}
-        </Text>
-        <Text
-          style={{
-            fontFamily: typography.families.body.regular,
-            fontSize: typography.sizes.xs,
-            color: theme.colors.textSecondary,
-          }}
-        >
-          {maxLabel}
-        </Text>
       </View>
     </View>
   );
@@ -134,18 +100,11 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
   },
-  sliderRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    gap: 4,
+  optionList: {
+    width: '100%',
   },
-  levelButton: {
-    flex: 1,
+  option: {
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  labelRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
   },
 });

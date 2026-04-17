@@ -1,7 +1,7 @@
 import { memo } from 'react';
 import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { useTheme } from '../../lib/hooks/useTheme';
-import { CheckIn } from '../../lib/types/checkin';
+import { CheckIn, ENERGY_LABELS, FOCUS_LABELS, getLevelLabel } from '../../lib/types/checkin';
 import { formatDate, formatTime } from '../../lib/utils/format';
 
 interface CheckInCardProps {
@@ -71,7 +71,7 @@ export const CheckInCard = memo(function CheckInCard({ checkIn, onPress }: Check
               color: theme.colors.primary,
             }}
           >
-            {checkIn.energyLevel}
+            {getLevelLabel(checkIn.energyLevel, ENERGY_LABELS)}
           </Text>
         </View>
 
@@ -92,7 +92,7 @@ export const CheckInCard = memo(function CheckInCard({ checkIn, onPress }: Check
               color: theme.colors.primary,
             }}
           >
-            {checkIn.focusLevel}
+            {getLevelLabel(checkIn.focusLevel, FOCUS_LABELS)}
           </Text>
         </View>
 
