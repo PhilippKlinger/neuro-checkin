@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react';
+import * as Notifications from 'expo-notifications';
 import { Stack, useRouter, useSegments } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { ThemeProvider, useTheme } from '../lib/hooks/useTheme';
 import { DatabaseProvider, useDatabase, useDatabaseReady } from '../lib/hooks/useDatabase';
 import { getSettings } from '../lib/database/settings';
 import { ThemeName } from '../lib/constants/themes';
+import { registerSnoozeCategory, handleSnoozeResponse } from '../lib/notifications/notifications';
 
 function AppStack() {
   const { theme, typography, setThemeName } = useTheme();
@@ -82,6 +84,17 @@ function AppContent() {
 }
 
 export default function RootLayout() {
+  useEffect(() => {
+    // Register snooze action category once at startup so the OS can show the
+    // "Snooze" button in the notification banner before any slot is scheduled.
+    registerSnoozeCategory();
+
+    const subscription = Notifications.addNotificationResponseReceivedListener(
+      handleSnoozeResponse
+    );
+    return () => subscription.remove();
+  }, []);
+
   return (
     <DatabaseProvider>
       <ThemeProvider>
