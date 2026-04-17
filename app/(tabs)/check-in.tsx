@@ -38,6 +38,7 @@ export default function CheckInScreen() {
   const [draft, setDraft] = useState<CheckInDraft>({ ...EMPTY_DRAFT, bodySignals: { ...EMPTY_BODY_SIGNALS } });
   const [isSaving, setIsSaving] = useState(false);
   const [isDone, setIsDone] = useState(false);
+  const [wasReset, setWasReset] = useState(false);
   const stepContentRef = useRef<View>(null);
   const stepRef = useRef(step);
   const leftAtRef = useRef<number | null>(null);
@@ -55,6 +56,7 @@ export default function CheckInScreen() {
           setStep(0);
           setDraft({ ...EMPTY_DRAFT, bodySignals: { ...EMPTY_BODY_SIGNALS } });
           setIsDone(false);
+          setWasReset(true);
         }
       }
       leftAtRef.current = null;
@@ -84,6 +86,7 @@ export default function CheckInScreen() {
   }, [step]);
 
   function handleNext() {
+    if (wasReset) setWasReset(false);
     if (isLastStep) {
       handleSave();
     } else {
@@ -125,6 +128,7 @@ export default function CheckInScreen() {
     setStep(0);
     setDraft({ ...EMPTY_DRAFT, bodySignals: { ...EMPTY_BODY_SIGNALS } });
     setIsDone(false);
+    setWasReset(false);
   }
 
   if (isDone) {
@@ -199,6 +203,21 @@ export default function CheckInScreen() {
       <View style={[styles.indicatorWrapper, { paddingTop: spacing.lg }]}>
         <StepIndicator totalSteps={TOTAL_STEPS} currentStep={step} />
       </View>
+
+      {wasReset && step === 0 && (
+        <View style={[styles.resetHint, { marginHorizontal: spacing.lg, marginTop: spacing.sm, backgroundColor: theme.colors.surface, borderRadius: radii.md, padding: spacing.md }]}>
+          <Text
+            style={{
+              fontFamily: typography.families.body.regular,
+              fontSize: typography.sizes.sm,
+              color: theme.colors.textSecondary,
+              textAlign: 'center',
+            }}
+          >
+            Kein Problem. Wann immer du bereit bist.
+          </Text>
+        </View>
+      )}
 
       <FadeView
         triggerKey={step}
@@ -306,5 +325,8 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  resetHint: {
+    alignItems: 'center',
   },
 });
