@@ -1,0 +1,7 @@
+{
+  // Use the workspace TypeScript version (node_modules/typescript) for editor
+  // validation. Required because VS Code's bundled TypeScript is older and
+  // does not recognise features used by expo/tsconfig.base (e.g. ${configDir}
+  // template paths, "customConditions", "module": "preserve").
+  "typescript.tsdk": "node_modules/typescript/lib"
+}
