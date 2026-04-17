@@ -8,14 +8,17 @@ interface StepFeelingsProps {
   onValueChange: (value: string) => void;
 }
 
-// Curated for ND users (Dr. Lena Bergmann review):
-// - No redundant pairs (erschöpft replaces müde, angespannt replaces unruhig)
-// - Added: überwältigt, gereizt, abgestumpft (shutdown/dysregulation states)
-// - Removed: dankbar, freudig (cognitively constructed, create implicit pressure)
-// - leicht replaces freudig (bodily graspable, non-evaluative)
+// Curated for ND users (Dr. Lena Bergmann review, expanded after user feedback):
+// 14 chips — enough vocabulary for nuanced ND self-awareness without overwhelming.
+// Activation states: neutral, leicht, aufgedreht, zufrieden
+// Depletion/shutdown: leer, erschöpft, abgestumpft
+// Dysregulation: angespannt, überwältigt, gereizt, frustriert
+// Affect: traurig, ängstlich
+// Cognitive: verwirrt
 export const FEELING_CHIPS = [
   'neutral', 'leer', 'erschöpft', 'angespannt', 'überwältigt',
   'gereizt', 'abgestumpft', 'traurig', 'ängstlich', 'leicht',
+  'frustriert', 'zufrieden', 'verwirrt', 'aufgedreht',
 ];
 
 function hasChipContent(val: string): boolean {
