@@ -72,6 +72,11 @@ export default function CheckInScreen() {
 
   const canGoBack = step > 0;
   const isLastStep = step === TOTAL_STEPS - 1;
+  // Require an active selection on energy and focus steps before proceeding
+  const isStepBlocked =
+    (step === 1 && draft.energyLevel === 0) ||
+    (step === 2 && draft.focusLevel === 0);
+  const isNextDisabled = isSaving || isStepBlocked;
 
   useEffect(() => {
     AccessibilityInfo.announceForAccessibility(
@@ -275,19 +280,20 @@ export default function CheckInScreen() {
 
         <Pressable
           onPress={handleNext}
-          disabled={isSaving}
+          disabled={isNextDisabled}
           style={[
             styles.navButton,
             {
               minHeight: touchTarget.min,
               borderRadius: radii.md,
-              backgroundColor: isSaving
+              backgroundColor: isNextDisabled
                 ? theme.colors.border
                 : theme.colors.primary,
             },
           ]}
           accessibilityRole="button"
           accessibilityLabel={isLastStep ? 'Speichern' : 'Weiter'}
+          accessibilityState={{ disabled: isNextDisabled }}
         >
           <Text
             style={{
