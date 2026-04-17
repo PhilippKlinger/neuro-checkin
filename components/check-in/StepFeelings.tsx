@@ -1,5 +1,6 @@
 import { View, Text, TextInput, Pressable, StyleSheet, ScrollView } from 'react-native';
 import { useTheme } from '../../lib/hooks/useTheme';
+import { isChipSelected, toggleChip } from '../../lib/utils/chips';
 
 interface StepFeelingsProps {
   value: string;
@@ -11,18 +12,6 @@ const FEELING_CHIPS = [
   'freudig', 'leer', 'dankbar', 'unruhig', 'neutral',
   'erschöpft', 'ängstlich',
 ];
-
-function isChipSelected(chip: string, value: string): boolean {
-  return value.split(',').map((s) => s.trim()).includes(chip);
-}
-
-function toggleChip(chip: string, value: string): string {
-  const parts = value.split(',').map((s) => s.trim()).filter(Boolean);
-  if (parts.includes(chip)) {
-    return parts.filter((p) => p !== chip).join(', ');
-  }
-  return [...parts, chip].join(', ');
-}
 
 export function StepFeelings({ value, onValueChange }: StepFeelingsProps) {
   const { theme, spacing, typography, radii } = useTheme();

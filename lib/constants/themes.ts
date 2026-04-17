@@ -163,6 +163,7 @@ export const typography = {
     lg: 20,
     xl: 24,
     xxl: 32,
+    xxxl: 40,
   },
   lineHeights: {
     tight: 1.2,

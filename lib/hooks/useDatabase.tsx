@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useState, ReactNode } from 'react
 import { View, Text } from 'react-native';
 import { openDatabaseSync, SQLiteDatabase } from 'expo-sqlite';
 import { migrateDatabase } from '../database/schema';
+import { spacing, typography, themes } from '../constants/themes';
 
 interface DatabaseContextValue {
   db: SQLiteDatabase | null;
@@ -38,12 +39,14 @@ export function DatabaseProvider({ children }: DatabaseProviderProps) {
   }, []);
 
   if (error) {
+    // ThemeProvider is unavailable here — use tokens directly from themes.ts
+    const colors = themes.warmEarth.colors;
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 24 }}>
-        <Text style={{ fontSize: 18, marginBottom: 8, textAlign: 'center' }}>
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: spacing.lg }}>
+        <Text style={{ fontSize: typography.sizes.lg, marginBottom: spacing.sm, textAlign: 'center', color: colors.text }}>
           Datenbank konnte nicht geladen werden
         </Text>
-        <Text style={{ fontSize: 14, color: '#666', textAlign: 'center' }}>
+        <Text style={{ fontSize: typography.sizes.sm, color: colors.textSecondary, textAlign: 'center' }}>
           {error}
         </Text>
       </View>
