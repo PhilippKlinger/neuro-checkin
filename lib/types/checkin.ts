@@ -26,10 +26,27 @@ export interface UserSettings {
   id: number;
   themeName: string;
   reminderEnabled: boolean;
-  reminderTime: string | null; // HH:mm format
+  reminderTime: string | null; // HH:mm format — deprecated, kept for migration only
   language: 'de' | 'en';
   onboardingCompleted: boolean;
 }
+
+/** A single configurable notification time slot (e.g. morning or evening). */
+export interface NotificationSlot {
+  id: 0 | 1;       // 0 = morning, 1 = evening
+  enabled: boolean;
+  time: string;     // HH:mm
+  weekdays: number; // bitmask: Mon=1, Tue=2, Wed=4, Thu=8, Fri=16, Sat=32, Sun=64
+}
+
+/** Human-readable short labels for weekdays (index 0 = Monday). */
+export const WEEKDAY_LABELS = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'] as const;
+
+/** Bitmask values per weekday (index 0 = Monday). */
+export const WEEKDAY_BITS = [1, 2, 4, 8, 16, 32, 64] as const;
+
+/** All weekdays active. */
+export const ALL_WEEKDAYS = 127;
 
 export type CheckInInsert = Omit<CheckIn, 'id' | 'createdAt'>;
 
