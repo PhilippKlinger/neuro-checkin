@@ -608,7 +608,7 @@ function SlotCard({
           {/* Progressive disclosure: weekday chips (Prio 1) */}
           <Pressable
             onPress={() => setWeekdayExpanded((v) => !v)}
-            style={{ marginTop: spacing.sm, alignSelf: 'flex-start' }}
+            style={{ marginTop: spacing.sm, alignSelf: 'flex-start', minHeight: touchTarget.min, paddingVertical: spacing.xs, justifyContent: 'center' }}
             accessibilityRole="button"
             accessibilityLabel="Wochentage anpassen"
             accessibilityState={{ expanded: weekdayExpanded }}
