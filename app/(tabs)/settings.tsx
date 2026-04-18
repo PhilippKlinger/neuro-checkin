@@ -1,19 +1,31 @@
 import { useState, useCallback } from 'react';
-import { View, Text, Switch, Pressable, ScrollView, StyleSheet, Platform, Alert } from 'react-native';
+import {
+  View,
+  Text,
+  Switch,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Platform,
+  Alert,
+} from 'react-native';
 import * as Device from 'expo-device';
 import { useFocusEffect } from 'expo-router';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { useTheme } from '../../lib/hooks/useTheme';
+import type { ThemeContextValue } from '../../lib/hooks/useTheme';
 import { useDatabase } from '../../lib/hooks/useDatabase';
 import { getSettings, updateSettings } from '../../lib/database/settings';
 import { deleteAllCheckIns } from '../../lib/database/checkins';
+import { getNotificationSlots, saveNotificationSlot } from '../../lib/database/notificationQueries';
 import { themes, ThemeName } from '../../lib/constants/themes';
 import {
   requestNotificationPermission,
-  scheduleReminderNotification,
-  cancelReminderNotification,
-  getScheduledReminderTime,
+  scheduleSingleSlot,
+  cancelSingleSlot,
+  scheduleAllSlots,
 } from '../../lib/notifications/notifications';
+import { type NotificationSlot, WEEKDAY_LABELS, WEEKDAY_BITS, ALL_WEEKDAYS } from '../../lib/types/checkin';
 import { ConfirmDialog } from '../../components/ui/ConfirmDialog';
 import * as MailComposer from 'expo-mail-composer';
 import Constants from 'expo-constants';
@@ -24,14 +36,15 @@ const THEME_OPTIONS: { key: ThemeName; label: string }[] = [
   { key: 'softSage', label: 'Soft Sage' },
 ];
 
-function timeStringToDate(time: string | null): Date {
+const SLOT_LABELS: Record<0 | 1, string> = {
+  0: 'Morgen-Erinnerung',
+  1: 'Abend-Erinnerung',
+};
+
+function timeStringToDate(time: string): Date {
   const date = new Date();
-  if (time) {
-    const [h, m] = time.split(':').map(Number);
-    date.setHours(h, m, 0, 0);
-  } else {
-    date.setHours(9, 0, 0, 0);
-  }
+  const [h, m] = time.split(':').map(Number);
+  date.setHours(h, m, 0, 0);
   return date;
 }
 
@@ -41,14 +54,18 @@ function dateToTimeString(date: Date): string {
   return `${h}:${m}`;
 }
 
+const DEFAULT_SLOTS: NotificationSlot[] = [
+  { id: 0, enabled: false, time: '09:00', weekdays: ALL_WEEKDAYS },
+  { id: 1, enabled: false, time: '20:00', weekdays: ALL_WEEKDAYS },
+];
+
 export default function SettingsScreen() {
   const { theme, themeName, setThemeName, spacing, typography, radii, touchTarget } =
     useTheme();
   const db = useDatabase();
 
-  const [reminderEnabled, setReminderEnabled] = useState(false);
-  const [reminderTime, setReminderTime] = useState<string | null>(null);
-  const [showTimePicker, setShowTimePicker] = useState(false);
+  const [slots, setSlots] = useState<NotificationSlot[]>(DEFAULT_SLOTS);
+  const [showTimePicker, setShowTimePicker] = useState<0 | 1 | null>(null);
   const [isEmulator, setIsEmulator] = useState(false);
   const [showDeleteStep1Dialog, setShowDeleteStep1Dialog] = useState(false);
   const [showDeleteStep2Dialog, setShowDeleteStep2Dialog] = useState(false);
@@ -57,17 +74,16 @@ export default function SettingsScreen() {
     useCallback(() => {
       async function load() {
         const settings = await getSettings(db);
-        setReminderEnabled(settings.reminderEnabled);
-        setReminderTime(settings.reminderTime);
         setThemeName(settings.themeName as ThemeName);
         setIsEmulator(!Device.isDevice);
 
-        // Reconcile: if DB says enabled but no notification is scheduled, reschedule
-        if (settings.reminderEnabled && Device.isDevice) {
-          const scheduledTime = await getScheduledReminderTime();
-          if (!scheduledTime) {
-            const time = settings.reminderTime ?? '09:00';
-            await scheduleReminderNotification(time);
+        const dbSlots = await getNotificationSlots(db);
+        if (dbSlots.length >= 2) {
+          setSlots(dbSlots as NotificationSlot[]);
+
+          // Reconcile: if a slot is enabled but has no scheduled notifications, reschedule
+          if (Device.isDevice) {
+            await scheduleAllSlots(dbSlots as NotificationSlot[]);
           }
         }
       }
@@ -75,57 +91,71 @@ export default function SettingsScreen() {
     }, [db, setThemeName])
   );
 
-  async function handleReminderToggle(value: boolean) {
+  async function handleSlotToggle(slotId: 0 | 1, value: boolean) {
     if (value) {
       const result = await requestNotificationPermission();
-      if (result === 'emulator') {
-        setReminderEnabled(true);
-        const time = reminderTime ?? '09:00';
-        setReminderTime(time);
-        await updateSettings(db, { reminderEnabled: true, reminderTime: time });
-        return;
+      if (result === false) return;
+    }
+
+    const updatedSlots = slots.map((s) =>
+      s.id === slotId ? { ...s, enabled: value } : s
+    );
+    setSlots(updatedSlots);
+
+    const updated = updatedSlots.find((s) => s.id === slotId)!;
+    await saveNotificationSlot(db, updated);
+
+    if (Device.isDevice) {
+      if (value) {
+        await scheduleSingleSlot(updated);
+      } else {
+        await cancelSingleSlot(slotId);
       }
-      if (!result) return;
-      // Permission granted — update UI immediately before async work
-      setReminderEnabled(true);
-      const time = reminderTime ?? '09:00';
-      setReminderTime(time);
-      await scheduleReminderNotification(time);
-      await updateSettings(db, { reminderEnabled: true, reminderTime: time });
-    } else {
-      setReminderEnabled(false);
-      await cancelReminderNotification();
-      await updateSettings(db, { reminderEnabled: false });
     }
   }
 
-  async function handleTimeChange(_event: DateTimePickerEvent, selected?: Date) {
-    if (Platform.OS === 'android') setShowTimePicker(false);
+  async function handleTimeChange(
+    slotId: 0 | 1,
+    _event: DateTimePickerEvent,
+    selected?: Date
+  ) {
+    if (Platform.OS === 'android') setShowTimePicker(null);
     if (!selected) return;
+
     const time = dateToTimeString(selected);
-    setReminderTime(time);
-    await updateSettings(db, { reminderTime: time });
-    if (reminderEnabled) await scheduleReminderNotification(time);
+    const updatedSlots = slots.map((s) =>
+      s.id === slotId ? { ...s, time } : s
+    );
+    setSlots(updatedSlots);
+
+    const updated = updatedSlots.find((s) => s.id === slotId)!;
+    await saveNotificationSlot(db, updated);
+    if (updated.enabled && Device.isDevice) {
+      await scheduleSingleSlot(updated);
+    }
+  }
+
+  async function handleWeekdayToggle(slotId: 0 | 1, bitIndex: number) {
+    const bit = WEEKDAY_BITS[bitIndex];
+    const updatedSlots = slots.map((s) => {
+      if (s.id !== slotId) return s;
+      const newWeekdays = (s.weekdays & bit) ? s.weekdays & ~bit : s.weekdays | bit;
+      // Prevent deselecting the last active weekday
+      if (newWeekdays === 0) return s;
+      return { ...s, weekdays: newWeekdays };
+    });
+    setSlots(updatedSlots);
+
+    const updated = updatedSlots.find((s) => s.id === slotId)!;
+    await saveNotificationSlot(db, updated);
+    if (updated.enabled && Device.isDevice) {
+      await scheduleSingleSlot(updated);
+    }
   }
 
   async function handleThemeChange(name: ThemeName) {
     setThemeName(name);
     await updateSettings(db, { themeName: name });
-  }
-
-  function handleDeleteAllCheckIns() {
-    setShowDeleteStep1Dialog(true);
-  }
-
-  function confirmDeleteStep1() {
-    setShowDeleteStep1Dialog(false);
-    setShowDeleteStep2Dialog(true);
-  }
-
-  async function confirmDeleteStep2() {
-    setShowDeleteStep2Dialog(false);
-    await deleteAllCheckIns(db);
-    Alert.alert('Erledigt', 'Alle Check-ins wurden gelöscht.');
   }
 
   async function handleSendFeedback() {
@@ -149,7 +179,7 @@ export default function SettingsScreen() {
     });
   }
 
-  const pickerDate = timeStringToDate(reminderTime);
+  const anySlotEnabled = slots.some((s) => s.enabled);
 
   return (
     <ScrollView
@@ -208,7 +238,12 @@ export default function SettingsScreen() {
                 <View
                   style={[
                     styles.colorDot,
-                    { backgroundColor: palette.colors.background, borderRadius: radii.full, borderWidth: 1, borderColor: palette.colors.border },
+                    {
+                      backgroundColor: palette.colors.background,
+                      borderRadius: radii.full,
+                      borderWidth: 1,
+                      borderColor: palette.colors.border,
+                    },
                   ]}
                 />
               </View>
@@ -227,7 +262,7 @@ export default function SettingsScreen() {
         })}
       </View>
 
-      {/* Reminder */}
+      {/* Notifications */}
       <Text
         style={{
           fontFamily: typography.families.heading.semibold,
@@ -236,65 +271,16 @@ export default function SettingsScreen() {
           marginBottom: spacing.md,
         }}
       >
-        Erinnerung
+        Erinnerungen
       </Text>
 
-      <View
-        style={[
-          styles.settingRow,
-          {
-            backgroundColor: theme.colors.surface,
-            borderRadius: radii.md,
-            padding: spacing.md,
-            minHeight: touchTarget.min,
-          },
-        ]}
-      >
-        <View style={styles.settingTextWrapper}>
-          <Text
-            style={{
-              fontFamily: typography.families.ui.medium,
-              fontSize: typography.sizes.md,
-              color: theme.colors.text,
-            }}
-          >
-            Tägliche Erinnerung
-          </Text>
-          <Text
-            style={{
-              fontFamily: typography.families.body.regular,
-              fontSize: typography.sizes.sm,
-              color: theme.colors.textSecondary,
-            }}
-          >
-            {reminderEnabled
-              ? 'Du wirst einmal täglich erinnert'
-              : 'Keine Erinnerung aktiv'}
-          </Text>
-        </View>
-        <Switch
-          value={reminderEnabled}
-          onValueChange={handleReminderToggle}
-          trackColor={{
-            false: theme.colors.border,
-            true: theme.colors.primarySoft,
-          }}
-          thumbColor={
-            reminderEnabled ? theme.colors.primary : theme.colors.surface
-          }
-          accessibilityLabel="Tägliche Erinnerung"
-          accessibilityRole="switch"
-          accessibilityHint={reminderEnabled ? 'Erinnerung deaktivieren' : 'Erinnerung aktivieren'}
-        />
-      </View>
-
-      {isEmulator && reminderEnabled && (
+      {isEmulator && anySlotEnabled && (
         <Text
           style={{
             fontFamily: typography.families.body.regular,
             fontSize: typography.sizes.xs,
             color: theme.colors.textSecondary,
-            marginTop: spacing.sm,
+            marginBottom: spacing.sm,
             fontStyle: 'italic',
           }}
         >
@@ -302,79 +288,23 @@ export default function SettingsScreen() {
         </Text>
       )}
 
-      {reminderEnabled && (
-        <View
-          style={[
-            styles.settingRow,
-            {
-              backgroundColor: theme.colors.surface,
-              borderRadius: radii.md,
-              padding: spacing.md,
-              marginTop: spacing.sm,
-              minHeight: touchTarget.min,
-            },
-          ]}
-        >
-          <Text
-            style={{
-              fontFamily: typography.families.ui.medium,
-              fontSize: typography.sizes.md,
-              color: theme.colors.text,
-              flex: 1,
-            }}
-          >
-            Uhrzeit
-          </Text>
-
-          {Platform.OS === 'ios' ? (
-            <DateTimePicker
-              value={pickerDate}
-              mode="time"
-              display="default"
-              onChange={handleTimeChange}
-              accessibilityLabel="Erinnerungszeit auswählen"
-            />
-          ) : (
-            <>
-              <Pressable
-                onPress={() => setShowTimePicker(true)}
-                style={[
-                  styles.timeButton,
-                  {
-                    backgroundColor: theme.colors.primarySoft,
-                    borderRadius: radii.sm,
-                    paddingHorizontal: spacing.md,
-                    paddingVertical: spacing.sm,
-                    minHeight: touchTarget.min,
-                    justifyContent: 'center',
-                  },
-                ]}
-                accessibilityRole="button"
-                accessibilityLabel={`Uhrzeit: ${reminderTime ?? '09:00'}. Tippen zum Ändern`}
-              >
-                <Text
-                  style={{
-                    fontFamily: typography.families.ui.medium,
-                    fontSize: typography.sizes.md,
-                    color: theme.colors.primary,
-                  }}
-                >
-                  {reminderTime ?? '09:00'}
-                </Text>
-              </Pressable>
-              {showTimePicker && (
-                <DateTimePicker
-                  value={pickerDate}
-                  mode="time"
-                  display="default"
-                  onChange={handleTimeChange}
-                  accessibilityLabel="Erinnerungszeit auswählen"
-                />
-              )}
-            </>
-          )}
-        </View>
-      )}
+      {slots.map((slot) => (
+        <SlotCard
+          key={slot.id}
+          slot={slot}
+          label={SLOT_LABELS[slot.id]}
+          showTimePicker={showTimePicker === slot.id}
+          onToggle={(value) => handleSlotToggle(slot.id, value)}
+          onTimePress={() => setShowTimePicker(slot.id)}
+          onTimeChange={(e, d) => handleTimeChange(slot.id, e, d)}
+          onWeekdayToggle={(i) => handleWeekdayToggle(slot.id, i)}
+          theme={theme}
+          spacing={spacing}
+          typography={typography}
+          radii={radii}
+          touchTarget={touchTarget}
+        />
+      ))}
 
       {/* Feedback */}
       <Text
@@ -430,35 +360,32 @@ export default function SettingsScreen() {
         Daten & Datenschutz
       </Text>
 
-      <View style={[styles.dataSection, { gap: spacing.sm }]}>
-        <Pressable
-          onPress={handleDeleteAllCheckIns}
-          style={[
-            styles.dataButton,
-            {
-              backgroundColor: theme.colors.errorSoft,
-              borderRadius: radii.md,
-              padding: spacing.md,
-              minHeight: touchTarget.min,
-              borderWidth: 1,
-              borderColor: theme.colors.error,
-            },
-          ]}
-          accessibilityRole="button"
-          accessibilityLabel="Alle Check-ins löschen"
-          accessibilityHint="Löscht alle gespeicherten Check-ins dauerhaft"
+      <Pressable
+        onPress={() => setShowDeleteStep1Dialog(true)}
+        style={[
+          {
+            backgroundColor: theme.colors.errorSoft,
+            borderRadius: radii.md,
+            padding: spacing.md,
+            minHeight: touchTarget.min,
+            borderWidth: 1,
+            borderColor: theme.colors.error,
+          },
+        ]}
+        accessibilityRole="button"
+        accessibilityLabel="Alle Check-ins löschen"
+        accessibilityHint="Löscht alle gespeicherten Check-ins dauerhaft"
+      >
+        <Text
+          style={{
+            fontFamily: typography.families.ui.medium,
+            fontSize: typography.sizes.md,
+            color: theme.colors.error,
+          }}
         >
-          <Text
-            style={{
-              fontFamily: typography.families.ui.medium,
-              fontSize: typography.sizes.md,
-              color: theme.colors.error,
-            }}
-          >
-            Alle Check-ins löschen
-          </Text>
-        </Pressable>
-      </View>
+          Alle Check-ins löschen
+        </Text>
+      </Pressable>
 
       <ConfirmDialog
         visible={showDeleteStep1Dialog}
@@ -467,7 +394,10 @@ export default function SettingsScreen() {
         confirmLabel="Löschen"
         cancelLabel="Abbrechen"
         destructive
-        onConfirm={confirmDeleteStep1}
+        onConfirm={() => {
+          setShowDeleteStep1Dialog(false);
+          setShowDeleteStep2Dialog(true);
+        }}
         onCancel={() => setShowDeleteStep1Dialog(false)}
       />
 
@@ -478,10 +408,200 @@ export default function SettingsScreen() {
         confirmLabel="Ja, alles löschen"
         cancelLabel="Abbrechen"
         destructive
-        onConfirm={confirmDeleteStep2}
+        onConfirm={async () => {
+          setShowDeleteStep2Dialog(false);
+          await deleteAllCheckIns(db);
+          Alert.alert('Erledigt', 'Alle Check-ins wurden gelöscht.');
+        }}
         onCancel={() => setShowDeleteStep2Dialog(false)}
       />
     </ScrollView>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// SlotCard — one notification slot with toggle, time picker, weekday chips
+// ---------------------------------------------------------------------------
+
+interface SlotCardProps {
+  slot: NotificationSlot;
+  label: string;
+  showTimePicker: boolean;
+  onToggle: (value: boolean) => void;
+  onTimePress: () => void;
+  onTimeChange: (event: DateTimePickerEvent, date?: Date) => void;
+  onWeekdayToggle: (bitIndex: number) => void;
+  theme: ThemeContextValue['theme'];
+  spacing: ThemeContextValue['spacing'];
+  typography: ThemeContextValue['typography'];
+  radii: ThemeContextValue['radii'];
+  touchTarget: ThemeContextValue['touchTarget'];
+}
+
+function SlotCard({
+  slot,
+  label,
+  showTimePicker,
+  onToggle,
+  onTimePress,
+  onTimeChange,
+  onWeekdayToggle,
+  theme,
+  spacing,
+  typography,
+  radii,
+  touchTarget,
+}: SlotCardProps) {
+  const pickerDate = timeStringToDate(slot.time);
+
+  return (
+    <View
+      style={[
+        slotStyles.card,
+        {
+          backgroundColor: theme.colors.surface,
+          borderRadius: radii.md,
+          padding: spacing.md,
+          marginBottom: spacing.sm,
+          borderWidth: 1,
+          borderColor: slot.enabled ? theme.colors.primary : theme.colors.border,
+        },
+      ]}
+    >
+      {/* Header row: label + switch */}
+      <View style={slotStyles.row}>
+        <Text
+          style={{
+            fontFamily: typography.families.ui.medium,
+            fontSize: typography.sizes.md,
+            color: theme.colors.text,
+            flex: 1,
+          }}
+        >
+          {label}
+        </Text>
+        <Switch
+          value={slot.enabled}
+          onValueChange={onToggle}
+          trackColor={{
+            false: theme.colors.border,
+            true: theme.colors.primarySoft,
+          }}
+          thumbColor={slot.enabled ? theme.colors.primary : theme.colors.surface}
+          accessibilityLabel={label}
+          accessibilityRole="switch"
+          accessibilityHint={slot.enabled ? 'Erinnerung deaktivieren' : 'Erinnerung aktivieren'}
+        />
+      </View>
+
+      {slot.enabled && (
+        <>
+          {/* Time row */}
+          <View style={[slotStyles.row, { marginTop: spacing.sm }]}>
+            <Text
+              style={{
+                fontFamily: typography.families.body.regular,
+                fontSize: typography.sizes.sm,
+                color: theme.colors.textSecondary,
+                flex: 1,
+              }}
+            >
+              Uhrzeit
+            </Text>
+
+            {Platform.OS === 'ios' ? (
+              <DateTimePicker
+                value={pickerDate}
+                mode="time"
+                display="default"
+                onChange={onTimeChange}
+                accessibilityLabel="Erinnerungszeit auswählen"
+              />
+            ) : (
+              <>
+                <Pressable
+                  onPress={onTimePress}
+                  style={[
+                    slotStyles.timeButton,
+                    {
+                      backgroundColor: theme.colors.primarySoft,
+                      borderRadius: radii.sm,
+                      paddingHorizontal: spacing.md,
+                      paddingVertical: spacing.sm,
+                      minHeight: touchTarget.min,
+                      justifyContent: 'center',
+                    },
+                  ]}
+                  accessibilityRole="button"
+                  accessibilityLabel={`Uhrzeit: ${slot.time}. Tippen zum Ändern`}
+                >
+                  <Text
+                    style={{
+                      fontFamily: typography.families.ui.medium,
+                      fontSize: typography.sizes.md,
+                      color: theme.colors.primary,
+                    }}
+                  >
+                    {slot.time}
+                  </Text>
+                </Pressable>
+                {showTimePicker && (
+                  <DateTimePicker
+                    value={pickerDate}
+                    mode="time"
+                    display="default"
+                    onChange={onTimeChange}
+                    accessibilityLabel="Erinnerungszeit auswählen"
+                  />
+                )}
+              </>
+            )}
+          </View>
+
+          {/* Weekday chips */}
+          <View style={[slotStyles.weekdayRow, { marginTop: spacing.sm, gap: spacing.xs }]}>
+            {WEEKDAY_LABELS.map((dayLabel, i) => {
+              const isActive = (slot.weekdays & WEEKDAY_BITS[i]) !== 0;
+              return (
+                <Pressable
+                  key={dayLabel}
+                  onPress={() => onWeekdayToggle(i)}
+                  style={[
+                    slotStyles.dayChip,
+                    {
+                      borderRadius: radii.full,
+                      borderWidth: 1,
+                      borderColor: isActive ? theme.colors.primary : theme.colors.border,
+                      backgroundColor: isActive
+                        ? theme.colors.primarySoft
+                        : theme.colors.background,
+                      minWidth: touchTarget.min,
+                      minHeight: touchTarget.min,
+                      paddingHorizontal: spacing.xs,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    },
+                  ]}
+                  accessibilityRole="checkbox"
+                  accessibilityLabel={`Wochentag ${dayLabel}`}
+                  accessibilityState={{ checked: isActive }}
+                >
+                  <Text
+                    style={{
+                      fontFamily: typography.families.ui.medium,
+                      fontSize: typography.sizes.xs,
+                      color: isActive ? theme.colors.primary : theme.colors.textSecondary,
+                    }}
+                  >
+                    {dayLabel}
+                  </Text>
+                </Pressable>
+              );
+            })}
+          </View>
+        </>
+      )}
+    </View>
   );
 }
 
@@ -504,17 +624,21 @@ const styles = StyleSheet.create({
     width: 16,
     height: 16,
   },
-  dataSection: {},
-  dataButton: {},
-  settingRow: {
+});
+
+const slotStyles = StyleSheet.create({
+  card: {},
+  row: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
   },
-  settingTextWrapper: {
-    flex: 1,
-  },
   timeButton: {
     alignItems: 'center',
   },
+  weekdayRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+  },
+  dayChip: {},
 });

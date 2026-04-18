@@ -11,7 +11,7 @@ import {
   ThemeTokens,
 } from '../constants/themes';
 
-interface ThemeContextValue {
+export interface ThemeContextValue {
   theme: ThemeTokens;
   themeName: ThemeName;
   setThemeName: (name: ThemeName) => void;
