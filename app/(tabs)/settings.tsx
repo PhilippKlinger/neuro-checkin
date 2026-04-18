@@ -274,6 +274,32 @@ export default function SettingsScreen() {
         Erinnerungen
       </Text>
 
+      {/* Intro text (Prio 2) */}
+      <Text
+        style={{
+          fontFamily: typography.families.body.regular,
+          fontSize: typography.sizes.sm,
+          color: theme.colors.textSecondary,
+          marginBottom: spacing.md,
+          lineHeight: typography.sizes.sm * 1.5,
+        }}
+      >
+        Du kannst eine oder zwei Erinnerungen einstellen — oder keine. Es gibt kein Richtig.
+      </Text>
+
+      {/* Snooze hint (Optional) */}
+      <Text
+        style={{
+          fontFamily: typography.families.body.regular,
+          fontSize: typography.sizes.xs,
+          color: theme.colors.textSecondary,
+          marginBottom: spacing.md,
+          fontStyle: 'italic',
+        }}
+      >
+        Tipp: In der Erinnerung kannst du „Später" wählen — dann wirst du in 15 Minuten nochmal erinnert.
+      </Text>
+
       {isEmulator && anySlotEnabled && (
         <Text
           style={{
@@ -438,6 +464,13 @@ interface SlotCardProps {
   touchTarget: ThemeContextValue['touchTarget'];
 }
 
+function weekdaySummary(weekdays: number): string {
+  if (weekdays === ALL_WEEKDAYS) return 'täglich';
+  const WORKDAYS = 1 | 2 | 4 | 8 | 16;
+  if (weekdays === WORKDAYS) return 'Mo–Fr';
+  return WEEKDAY_LABELS.filter((_, i) => (weekdays & WEEKDAY_BITS[i]) !== 0).join(' ');
+}
+
 function SlotCard({
   slot,
   label,
@@ -452,6 +485,7 @@ function SlotCard({
   radii,
   touchTarget,
 }: SlotCardProps) {
+  const [weekdayExpanded, setWeekdayExpanded] = useState(false);
   const pickerDate = timeStringToDate(slot.time);
 
   return (
@@ -496,6 +530,19 @@ function SlotCard({
 
       {slot.enabled && (
         <>
+          {/* Summary line (Prio 3) */}
+          <Text
+            style={{
+              fontFamily: typography.families.body.regular,
+              fontSize: typography.sizes.sm,
+              color: theme.colors.primary,
+              marginTop: spacing.xs,
+            }}
+            accessibilityLiveRegion="polite"
+          >
+            um {slot.time}, {weekdaySummary(slot.weekdays)}
+          </Text>
+
           {/* Time row */}
           <View style={[slotStyles.row, { marginTop: spacing.sm }]}>
             <Text
@@ -558,47 +605,68 @@ function SlotCard({
             )}
           </View>
 
-          {/* Weekday chips */}
-          <View style={[slotStyles.weekdayRow, { marginTop: spacing.sm, gap: spacing.xs }]}>
-            {WEEKDAY_LABELS.map((dayLabel, i) => {
-              const isActive = (slot.weekdays & WEEKDAY_BITS[i]) !== 0;
-              return (
-                <Pressable
-                  key={dayLabel}
-                  onPress={() => onWeekdayToggle(i)}
-                  style={[
-                    slotStyles.dayChip,
-                    {
-                      borderRadius: radii.full,
-                      borderWidth: 1,
-                      borderColor: isActive ? theme.colors.primary : theme.colors.border,
-                      backgroundColor: isActive
-                        ? theme.colors.primarySoft
-                        : theme.colors.background,
-                      minWidth: touchTarget.min,
-                      minHeight: touchTarget.min,
-                      paddingHorizontal: spacing.xs,
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                    },
-                  ]}
-                  accessibilityRole="checkbox"
-                  accessibilityLabel={`Wochentag ${dayLabel}`}
-                  accessibilityState={{ checked: isActive }}
-                >
-                  <Text
-                    style={{
-                      fontFamily: typography.families.ui.medium,
-                      fontSize: typography.sizes.xs,
-                      color: isActive ? theme.colors.primary : theme.colors.textSecondary,
-                    }}
+          {/* Progressive disclosure: weekday chips (Prio 1) */}
+          <Pressable
+            onPress={() => setWeekdayExpanded((v) => !v)}
+            style={{ marginTop: spacing.sm, alignSelf: 'flex-start' }}
+            accessibilityRole="button"
+            accessibilityLabel="Wochentage anpassen"
+            accessibilityState={{ expanded: weekdayExpanded }}
+          >
+            <Text
+              style={{
+                fontFamily: typography.families.ui.medium,
+                fontSize: typography.sizes.sm,
+                color: theme.colors.textSecondary,
+                textDecorationLine: 'underline',
+              }}
+            >
+              Wochentage anpassen
+            </Text>
+          </Pressable>
+
+          {weekdayExpanded && (
+            <View style={[slotStyles.weekdayRow, { marginTop: spacing.sm, gap: spacing.xs }]}>
+              {WEEKDAY_LABELS.map((dayLabel, i) => {
+                const isActive = (slot.weekdays & WEEKDAY_BITS[i]) !== 0;
+                return (
+                  <Pressable
+                    key={dayLabel}
+                    onPress={() => onWeekdayToggle(i)}
+                    style={[
+                      slotStyles.dayChip,
+                      {
+                        borderRadius: radii.full,
+                        borderWidth: 1,
+                        borderColor: isActive ? theme.colors.primary : theme.colors.border,
+                        backgroundColor: isActive
+                          ? theme.colors.primarySoft
+                          : theme.colors.background,
+                        minWidth: touchTarget.min,
+                        minHeight: touchTarget.min,
+                        paddingHorizontal: spacing.xs,
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                      },
+                    ]}
+                    accessibilityRole="checkbox"
+                    accessibilityLabel={`Wochentag ${dayLabel}`}
+                    accessibilityState={{ checked: isActive }}
                   >
-                    {dayLabel}
-                  </Text>
-                </Pressable>
-              );
-            })}
-          </View>
+                    <Text
+                      style={{
+                        fontFamily: typography.families.ui.medium,
+                        fontSize: typography.sizes.xs,
+                        color: isActive ? theme.colors.primary : theme.colors.textSecondary,
+                      }}
+                    >
+                      {dayLabel}
+                    </Text>
+                  </Pressable>
+                );
+              })}
+            </View>
+          )}
         </>
       )}
     </View>
