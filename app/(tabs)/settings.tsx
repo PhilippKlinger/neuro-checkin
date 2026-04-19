@@ -25,7 +25,7 @@ import {
   cancelSingleSlot,
   scheduleAllSlots,
 } from '../../lib/notifications/notifications';
-import { type NotificationSlot, WEEKDAY_LABELS, WEEKDAY_BITS, ALL_WEEKDAYS } from '../../lib/types/checkin';
+import { type NotificationSlot, WEEKDAY_LABELS, WEEKDAY_BITS, ALL_WEEKDAYS, WORKDAYS } from '../../lib/types/checkin';
 import { ConfirmDialog } from '../../components/ui/ConfirmDialog';
 import * as MailComposer from 'expo-mail-composer';
 import Constants from 'expo-constants';
@@ -466,7 +466,6 @@ interface SlotCardProps {
 
 function weekdaySummary(weekdays: number): string {
   if (weekdays === ALL_WEEKDAYS) return 'täglich';
-  const WORKDAYS = 1 | 2 | 4 | 8 | 16;
   if (weekdays === WORKDAYS) return 'Mo–Fr';
   return WEEKDAY_LABELS.filter((_, i) => (weekdays & WEEKDAY_BITS[i]) !== 0).join(' ');
 }

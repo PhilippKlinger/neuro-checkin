@@ -188,9 +188,10 @@ export function CheckInSuccessView({ onReset, energyLevel, focusLevel }: CheckIn
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
   },
   textBlock: {
+    flex: 1,
+    justifyContent: 'center',
     alignItems: 'center',
   },
   summaryRow: {
@@ -207,9 +208,7 @@ const styles = StyleSheet.create({
     width: 1,
     height: 32,
   },
-  buttons: {
-    marginTop: 'auto' as unknown as number,
-  },
+  buttons: {},
   button: {
     alignItems: 'center',
     justifyContent: 'center',

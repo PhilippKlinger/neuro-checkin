@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { View, Text, ScrollView, Pressable, StyleSheet } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTheme } from '../../lib/hooks/useTheme';
+import { spacing as spacingTokens } from '../../lib/constants/themes';
 import { useDatabase } from '../../lib/hooks/useDatabase';
 import { getCheckInById, deleteCheckIn } from '../../lib/database/checkins';
 import { CheckIn, ENERGY_LABELS, FOCUS_LABELS, getLevelLabel } from '../../lib/types/checkin';
@@ -393,7 +394,7 @@ const styles = StyleSheet.create({
   feelingPills: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 6,
+    gap: spacingTokens.xs,
   },
   feelingPill: {},
 });

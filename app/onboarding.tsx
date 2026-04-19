@@ -6,7 +6,7 @@ import { useDatabase } from '../lib/hooks/useDatabase';
 import { FadeView } from '../components/ui/FadeView';
 import { updateSettings } from '../lib/database/settings';
 import { StepIndicator } from '../components/check-in/StepIndicator';
-import { themes, ThemeName } from '../lib/constants/themes';
+import { themes, ThemeName, spacing, radii } from '../lib/constants/themes';
 
 interface OnboardingStep {
   title: string;
@@ -245,7 +245,7 @@ const styles = StyleSheet.create({
   contentScroll: {
     flexGrow: 1,
     alignItems: 'center',
-    paddingVertical: 24, // spacing.lg — StyleSheet.create runs outside component scope
+    paddingVertical: spacing.lg,
   },
   footer: {
     alignItems: 'center',
@@ -266,11 +266,11 @@ const styles = StyleSheet.create({
   },
   paletteSwatches: {
     flexDirection: 'row',
-    gap: 4,
+    gap: spacing.xs,
   },
   swatch: {
     width: 18,
     height: 18,
-    borderRadius: 9,
+    borderRadius: radii.full,
   },
 });

@@ -77,5 +77,7 @@ export async function migrateDatabase(db: SQLiteDatabase): Promise<void> {
     }
   }
 
+  // String interpolation intentional: PRAGMA does not support parameterized
+  // queries in SQLite. SCHEMA_VERSION is a local constant, not user input.
   await db.execAsync(`PRAGMA user_version = ${SCHEMA_VERSION};`);
 }
