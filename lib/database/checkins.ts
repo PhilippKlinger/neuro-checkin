@@ -1,5 +1,6 @@
 import type { SQLiteDatabase } from 'expo-sqlite';
 import type { CheckIn, CheckInInsert, BodySignals } from '../types/checkin';
+import { EMPTY_BODY_SIGNALS } from '../types/checkin';
 
 export async function insertCheckIn(
   db: SQLiteDatabase,
@@ -81,6 +82,14 @@ export async function deleteAllCheckIns(db: SQLiteDatabase): Promise<void> {
   await db.runAsync('DELETE FROM check_ins');
 }
 
+function parseBodySignals(raw: string): BodySignals {
+  try {
+    return JSON.parse(raw) as BodySignals;
+  } catch {
+    return { ...EMPTY_BODY_SIGNALS };
+  }
+}
+
 function mapRowToCheckIn(row: {
   id: number;
   created_at: string;
@@ -99,7 +108,7 @@ function mapRowToCheckIn(row: {
     createdAt: row.created_at,
     energyLevel: row.energy_level,
     focusLevel: row.focus_level,
-    bodySignals: JSON.parse(row.body_signals) as BodySignals,
+    bodySignals: parseBodySignals(row.body_signals),
     feelings: row.feelings,
     thoughtsType: row.thoughts_type as CheckIn['thoughtsType'],
     thoughtsNote: row.thoughts_note,
