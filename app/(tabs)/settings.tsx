@@ -297,7 +297,7 @@ export default function SettingsScreen() {
           fontStyle: 'italic',
         }}
       >
-        Tipp: In der Erinnerung kannst du „Später" wählen — dann wirst du in 15 Minuten nochmal erinnert.
+        Tipp: In der Erinnerung kannst du {'\u201ESpäter\u201D'} wählen — dann wirst du in 15 Minuten nochmal erinnert.
       </Text>
 
       {isEmulator && anySlotEnabled && (
