@@ -22,7 +22,7 @@ export function ConfirmDialog({
   onConfirm,
   onCancel,
 }: ConfirmDialogProps) {
-  const { theme, spacing, typography, radii } = useTheme();
+  const { theme, spacing, typography, radii, touchTarget } = useTheme();
 
   return (
     <Modal
@@ -37,7 +37,7 @@ export function ConfirmDialog({
         onPress={onCancel}
         accessibilityLabel="Dialog schließen"
       >
-        <Pressable
+        <View
           style={[
             styles.dialog,
             {
@@ -47,7 +47,8 @@ export function ConfirmDialog({
               margin: spacing.xl,
             },
           ]}
-          onPress={() => {}}
+          onStartShouldSetResponder={() => true}
+          accessibilityRole="none"
         >
           <Text
             style={{
@@ -84,7 +85,7 @@ export function ConfirmDialog({
                   backgroundColor: theme.colors.background,
                   paddingVertical: spacing.sm,
                   paddingHorizontal: spacing.md,
-                  minHeight: 44,
+                  minHeight: touchTarget.min,
                 },
               ]}
               accessibilityRole="button"
@@ -111,7 +112,7 @@ export function ConfirmDialog({
                   backgroundColor: destructive ? theme.colors.error : theme.colors.primary,
                   paddingVertical: spacing.sm,
                   paddingHorizontal: spacing.md,
-                  minHeight: 44,
+                  minHeight: touchTarget.min,
                 },
               ]}
               accessibilityRole="button"
@@ -129,7 +130,7 @@ export function ConfirmDialog({
               </Text>
             </Pressable>
           </View>
-        </Pressable>
+        </View>
       </Pressable>
     </Modal>
   );
