@@ -61,10 +61,22 @@ export function StepThoughts({
           fontSize: typography.sizes.md,
           color: theme.colors.textSecondary,
           textAlign: 'center',
-          marginBottom: spacing.xl,
+          marginBottom: spacing.xs,
         }}
       >
         Wie würdest du deine Gedanken gerade beschreiben?
+      </Text>
+      <Text
+        style={{
+          fontFamily: typography.families.body.regular,
+          fontSize: typography.sizes.sm,
+          color: theme.colors.textSecondary,
+          textAlign: 'center',
+          marginBottom: spacing.xl,
+          fontStyle: 'italic',
+        }}
+      >
+        Wähle was sich am nächsten anfühlt.
       </Text>
 
       <View style={[styles.optionList, { gap: spacing.sm }]}>

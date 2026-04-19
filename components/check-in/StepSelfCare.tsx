@@ -8,7 +8,7 @@ interface StepSelfCareProps {
   onValueChange: (value: string) => void;
 }
 
-// Curated for ND users (Dr. Lena Bergmann review):
+// Curated for ND users (ND-UX review):
 // - Removed: Spazieren (requires energy/mobility — too high threshold in crisis)
 // - Added: Tief atmen (always available, directly regulating)
 // - Added: Wärme (sensory regulation — blanket, warm drink — relevant for autism)

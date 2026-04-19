@@ -61,10 +61,22 @@ export function StepSummary({ draft }: StepSummaryProps) {
           fontSize: typography.sizes.md,
           color: theme.colors.textSecondary,
           textAlign: 'center',
-          marginBottom: spacing.lg,
+          marginBottom: spacing.xs,
         }}
       >
         Dein Check-in auf einen Blick
+      </Text>
+      <Text
+        style={{
+          fontFamily: typography.families.body.regular,
+          fontSize: typography.sizes.sm,
+          color: theme.colors.textSecondary,
+          textAlign: 'center',
+          marginBottom: spacing.lg,
+          fontStyle: 'italic',
+        }}
+      >
+        Alles davon ist okay.
       </Text>
 
       <ScrollView style={styles.scrollArea}>
