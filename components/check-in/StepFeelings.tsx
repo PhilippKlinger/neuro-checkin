@@ -8,7 +8,7 @@ interface StepFeelingsProps {
   onValueChange: (value: string) => void;
 }
 
-// Curated for ND users (Dr. Lena Bergmann review, expanded after user feedback):
+// Curated for ND users (ND-UX review, expanded after user feedback):
 // 15 chips — enough vocabulary for nuanced ND self-awareness without overwhelming.
 // Activation states: neutral, leicht, aufgedreht, zufrieden
 // Depletion/shutdown: leer, erschöpft, abgestumpft
@@ -16,7 +16,7 @@ interface StepFeelingsProps {
 // Affect: traurig, ängstlich
 // Cognitive: verwirrt
 // Alexithymia access: „Kann ich gerade nicht sagen" — explicitly validates
-// not having access to feelings, distinct from "neutral" (Dr. Lena Bergmann, 2026-04-18)
+// not having access to feelings, distinct from "neutral"
 export const FEELING_CHIPS = [
   'neutral', 'leer', 'erschöpft', 'angespannt', 'überwältigt',
   'gereizt', 'abgestumpft', 'traurig', 'ängstlich', 'leicht',

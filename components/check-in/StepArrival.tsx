@@ -45,7 +45,7 @@ export function StepArrival() {
           },
         ]}
       >
-        Vielleicht bemerkst du, wie du gerade atmest — oder wie du sitzt oder stehst.{'\n'}
+        Wenn du magst, bemerke wie du gerade atmest — oder wie du sitzt oder stehst.{'\n'}
         Oder einfach, wie es dir in diesem Moment geht.
       </Text>
       <Text
