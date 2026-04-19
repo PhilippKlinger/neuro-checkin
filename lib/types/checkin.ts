@@ -48,6 +48,9 @@ export const WEEKDAY_BITS = [1, 2, 4, 8, 16, 32, 64] as const;
 /** All weekdays active. */
 export const ALL_WEEKDAYS = 127;
 
+/** Monday–Friday bitmask (bits 0–4). */
+export const WORKDAYS = 1 | 2 | 4 | 8 | 16;
+
 export type CheckInInsert = Omit<CheckIn, 'id' | 'createdAt'>;
 
 /** State that builds up during the check-in flow */

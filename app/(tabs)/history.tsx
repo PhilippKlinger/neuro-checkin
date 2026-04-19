@@ -9,7 +9,7 @@ import { CheckInCard } from '../../components/history/CheckInCard';
 import { spacing } from '../../lib/constants/themes';
 
 export default function HistoryScreen() {
-  const { theme, spacing, typography } = useTheme();
+  const { theme, typography } = useTheme();
   const db = useDatabase();
   const router = useRouter();
   const [checkIns, setCheckIns] = useState<CheckIn[]>([]);

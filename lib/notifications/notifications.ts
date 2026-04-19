@@ -105,6 +105,7 @@ export async function scheduleSingleSlot(slot: NotificationSlot): Promise<void> 
   await cancelSingleSlot(slot.id);
 
   if (!slot.enabled) return;
+  if (!slot.time || !slot.time.includes(':')) return;
 
   const [hourStr, minuteStr] = slot.time.split(':');
   const hour = parseInt(hourStr, 10);
