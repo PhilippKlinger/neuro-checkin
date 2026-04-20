@@ -63,7 +63,10 @@ export async function registerSnoozeCategory(): Promise<void> {
     {
       identifier: 'snooze',
       buttonTitle: `Später (${SNOOZE_MINUTES} min)`,
-      options: { opensAppToForeground: false },
+      // Must open app to foreground so the response listener can run and
+      // schedule the follow-up notification — background execution is too
+      // unreliable on Android with Doze / aggressive battery management.
+      options: { opensAppToForeground: true },
     },
   ]);
 }

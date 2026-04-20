@@ -84,16 +84,25 @@ function AppContent() {
 }
 
 export default function RootLayout() {
+  const router = useRouter();
+
   useEffect(() => {
     // Register snooze action category once at startup so the OS can show the
     // "Snooze" button in the notification banner before any slot is scheduled.
     registerSnoozeCategory();
 
     const subscription = Notifications.addNotificationResponseReceivedListener(
-      handleSnoozeResponse
+      async (response) => {
+        await handleSnoozeResponse(response);
+        // Direct tap (not snooze action) → navigate into the check-in flow
+        if (response.actionIdentifier === Notifications.DEFAULT_ACTION_IDENTIFIER) {
+          router.push('/(tabs)/check-in');
+        }
+      }
     );
     return () => subscription.remove();
-  }, []);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // router is a stable ref from expo-router; registering once at mount is intentional
 
   return (
     <DatabaseProvider>
