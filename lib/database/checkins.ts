@@ -78,6 +78,11 @@ export async function deleteCheckIn(
   await db.runAsync('DELETE FROM check_ins WHERE id = ?', id);
 }
 
+export async function countCheckIns(db: SQLiteDatabase): Promise<number> {
+  const row = await db.getFirstAsync<{ count: number }>('SELECT COUNT(*) AS count FROM check_ins');
+  return row?.count ?? 0;
+}
+
 export async function deleteAllCheckIns(db: SQLiteDatabase): Promise<void> {
   await db.runAsync('DELETE FROM check_ins');
 }

@@ -14,7 +14,7 @@ import { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { useTheme } from '../../lib/hooks/useTheme';
 import { useDatabase } from '../../lib/hooks/useDatabase';
 import { getSettings, updateSettings } from '../../lib/database/settings';
-import { deleteAllCheckIns } from '../../lib/database/checkins';
+import { deleteAllCheckIns, countCheckIns } from '../../lib/database/checkins';
 import { getNotificationSlots, saveNotificationSlot } from '../../lib/database/notificationQueries';
 import { themes, ThemeName } from '../../lib/constants/themes';
 import {
@@ -56,6 +56,7 @@ export default function SettingsScreen() {
   const [isEmulator, setIsEmulator] = useState(false);
   const [showDeleteStep1Dialog, setShowDeleteStep1Dialog] = useState(false);
   const [showDeleteStep2Dialog, setShowDeleteStep2Dialog] = useState(false);
+  const [checkInCount, setCheckInCount] = useState(0);
 
   useFocusEffect(
     useCallback(() => {
@@ -369,15 +370,19 @@ export default function SettingsScreen() {
       </Text>
 
       <Pressable
-        onPress={() => setShowDeleteStep1Dialog(true)}
+        onPress={async () => {
+          const count = await countCheckIns(db);
+          setCheckInCount(count);
+          setShowDeleteStep1Dialog(true);
+        }}
         style={[
           {
-            backgroundColor: theme.colors.errorSoft,
+            backgroundColor: theme.colors.surface,
             borderRadius: radii.md,
             padding: spacing.md,
             minHeight: touchTarget.min,
             borderWidth: 1,
-            borderColor: theme.colors.error,
+            borderColor: theme.colors.border,
           },
         ]}
         accessibilityRole="button"
@@ -388,7 +393,7 @@ export default function SettingsScreen() {
           style={{
             fontFamily: typography.families.ui.medium,
             fontSize: typography.sizes.md,
-            color: theme.colors.error,
+            color: theme.colors.text,
           }}
         >
           Alle Check-ins löschen
@@ -398,7 +403,7 @@ export default function SettingsScreen() {
       <ConfirmDialog
         visible={showDeleteStep1Dialog}
         title="Alle Check-ins löschen"
-        message="Möchtest du wirklich alle gespeicherten Check-ins löschen? Diese Aktion kann nicht rückgängig gemacht werden."
+        message={`Möchtest du wirklich alle ${checkInCount} gespeicherten Check-ins löschen? Diese Aktion kann nicht rückgängig gemacht werden.`}
         confirmLabel="Löschen"
         cancelLabel="Abbrechen"
         destructive
