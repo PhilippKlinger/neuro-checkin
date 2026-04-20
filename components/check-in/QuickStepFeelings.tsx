@@ -59,6 +59,7 @@ export function QuickStepFeelings({ value, onValueChange }: QuickStepFeelingsPro
                   borderWidth: 1,
                   borderColor: selected ? theme.colors.primary : theme.colors.border,
                 },
+                isAlexithymia && styles.chipFullWidth,
               ]}
               accessibilityRole="button"
               accessibilityLabel={chip}
@@ -95,5 +96,8 @@ const styles = StyleSheet.create({
   chip: {
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  chipFullWidth: {
+    flexBasis: '100%',
   },
 });
