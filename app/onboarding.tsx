@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { View, Text, Pressable, StyleSheet, AccessibilityInfo, Alert, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../lib/hooks/useTheme';
 import { useDatabase } from '../lib/hooks/useDatabase';
 import { FadeView } from '../components/ui/FadeView';
@@ -42,6 +43,7 @@ export default function OnboardingScreen() {
   const { theme, themeName, setThemeName, spacing, typography, radii, touchTarget } = useTheme();
   const db = useDatabase();
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const [step, setStep] = useState(0);
   const [selectedTheme, setSelectedTheme] = useState<ThemeName>(themeName);
 
@@ -186,7 +188,7 @@ export default function OnboardingScreen() {
         </ScrollView>
       </FadeView>
 
-      <View style={[styles.footer, { gap: spacing.lg, paddingBottom: spacing.xl }]}>
+      <View style={[styles.footer, { gap: spacing.lg, paddingBottom: Math.max(spacing.xl, insets.bottom + spacing.md) }]}>
         {isLastStep && (
           <Text
             style={{
@@ -244,7 +246,6 @@ const styles = StyleSheet.create({
   },
   contentScroll: {
     flexGrow: 1,
-    alignItems: 'center',
     paddingVertical: spacing.lg,
   },
   footer: {
