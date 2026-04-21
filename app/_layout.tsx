@@ -6,7 +6,6 @@ import { ThemeProvider, useTheme } from '../lib/hooks/useTheme';
 import { DatabaseProvider, useDatabase, useDatabaseReady } from '../lib/hooks/useDatabase';
 import { getSettings } from '../lib/database/settings';
 import { ThemeName } from '../lib/constants/themes';
-import { registerSnoozeCategory, handleSnoozeResponse } from '../lib/notifications/notifications';
 
 function AppStack() {
   const { theme, typography, setThemeName } = useTheme();
@@ -87,14 +86,8 @@ export default function RootLayout() {
   const router = useRouter();
 
   useEffect(() => {
-    // Register snooze action category once at startup so the OS can show the
-    // "Snooze" button in the notification banner before any slot is scheduled.
-    registerSnoozeCategory();
-
     const subscription = Notifications.addNotificationResponseReceivedListener(
-      async (response) => {
-        await handleSnoozeResponse(response);
-        // Direct tap (not snooze action) → navigate into the check-in flow
+      (response) => {
         if (response.actionIdentifier === Notifications.DEFAULT_ACTION_IDENTIFIER) {
           router.push('/(tabs)/check-in');
         }

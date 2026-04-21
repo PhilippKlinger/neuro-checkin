@@ -107,6 +107,7 @@ export function SlotCard({
                 value={pickerDate}
                 mode="time"
                 display="default"
+                accentColor={theme.colors.primary}
                 onChange={onTimeChange}
                 accessibilityLabel="Erinnerungszeit auswählen"
               />
@@ -143,6 +144,7 @@ export function SlotCard({
                     value={pickerDate}
                     mode="time"
                     display="default"
+                    accentColor={theme.colors.primary}
                     onChange={onTimeChange}
                     accessibilityLabel="Erinnerungszeit auswählen"
                   />

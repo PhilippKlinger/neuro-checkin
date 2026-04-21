@@ -6,7 +6,6 @@ import {
   ScrollView,
   StyleSheet,
   Platform,
-  Alert,
 } from 'react-native';
 import * as Device from 'expo-device';
 import { useFocusEffect } from 'expo-router';
@@ -56,6 +55,7 @@ export default function SettingsScreen() {
   const [isEmulator, setIsEmulator] = useState(false);
   const [showDeleteStep1Dialog, setShowDeleteStep1Dialog] = useState(false);
   const [showDeleteStep2Dialog, setShowDeleteStep2Dialog] = useState(false);
+  const [showDeleteDoneDialog, setShowDeleteDoneDialog] = useState(false);
   const [checkInCount, setCheckInCount] = useState(0);
 
   useFocusEffect(
@@ -74,6 +74,9 @@ export default function SettingsScreen() {
             await scheduleAllSlots(dbSlots as NotificationSlot[]);
           }
         }
+
+        const count = await countCheckIns(db);
+        setCheckInCount(count);
       }
       load();
     }, [db, setThemeName])
@@ -370,11 +373,8 @@ export default function SettingsScreen() {
       </Text>
 
       <Pressable
-        onPress={async () => {
-          const count = await countCheckIns(db);
-          setCheckInCount(count);
-          setShowDeleteStep1Dialog(true);
-        }}
+        onPress={() => setShowDeleteStep1Dialog(true)}
+        disabled={checkInCount === 0}
         style={[
           {
             backgroundColor: theme.colors.surface,
@@ -383,11 +383,13 @@ export default function SettingsScreen() {
             minHeight: touchTarget.min,
             borderWidth: 1,
             borderColor: theme.colors.border,
+            opacity: checkInCount === 0 ? 0.4 : 1,
           },
         ]}
         accessibilityRole="button"
         accessibilityLabel="Alle Check-ins löschen"
         accessibilityHint="Löscht alle gespeicherten Check-ins dauerhaft"
+        accessibilityState={{ disabled: checkInCount === 0 }}
       >
         <Text
           style={{
@@ -403,7 +405,7 @@ export default function SettingsScreen() {
       <ConfirmDialog
         visible={showDeleteStep1Dialog}
         title="Alle Check-ins löschen"
-        message={`Möchtest du wirklich alle ${checkInCount} gespeicherten Check-ins löschen? Diese Aktion kann nicht rückgängig gemacht werden.`}
+        message={`Möchtest du wirklich ${checkInCount === 1 ? '1 gespeicherten Check-in' : `alle ${checkInCount} gespeicherten Check-ins`} löschen? Diese Aktion kann nicht rückgängig gemacht werden.`}
         confirmLabel="Löschen"
         cancelLabel="Abbrechen"
         destructive
@@ -424,9 +426,20 @@ export default function SettingsScreen() {
         onConfirm={async () => {
           setShowDeleteStep2Dialog(false);
           await deleteAllCheckIns(db);
-          Alert.alert('Erledigt', 'Alle Check-ins wurden gelöscht.');
+          setCheckInCount(0);
+          setShowDeleteDoneDialog(true);
         }}
         onCancel={() => setShowDeleteStep2Dialog(false)}
+      />
+
+      <ConfirmDialog
+        visible={showDeleteDoneDialog}
+        title="Erledigt"
+        message="Alle Check-ins wurden gelöscht."
+        confirmLabel="OK"
+        hideCancel
+        onConfirm={() => setShowDeleteDoneDialog(false)}
+        onCancel={() => setShowDeleteDoneDialog(false)}
       />
     </ScrollView>
   );

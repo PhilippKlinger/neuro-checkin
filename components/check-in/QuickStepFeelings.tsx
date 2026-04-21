@@ -44,7 +44,6 @@ export function QuickStepFeelings({ value, onValueChange }: QuickStepFeelingsPro
       <View style={[styles.chipWrap, { gap: spacing.sm }]}>
         {FEELING_CHIPS.map((chip) => {
           const selected = isChipSelected(chip, value);
-          const isAlexithymia = chip === 'Kann ich gerade nicht sagen';
           return (
             <Pressable
               key={chip}
@@ -59,7 +58,6 @@ export function QuickStepFeelings({ value, onValueChange }: QuickStepFeelingsPro
                   borderWidth: 1,
                   borderColor: selected ? theme.colors.primary : theme.colors.border,
                 },
-                isAlexithymia && styles.chipFullWidth,
               ]}
               accessibilityRole="button"
               accessibilityLabel={chip}
@@ -67,12 +65,9 @@ export function QuickStepFeelings({ value, onValueChange }: QuickStepFeelingsPro
             >
               <Text
                 style={{
-                  fontFamily: isAlexithymia
-                    ? typography.families.body.regular
-                    : typography.families.ui.medium,
+                  fontFamily: typography.families.ui.medium,
                   fontSize: typography.sizes.sm,
                   color: selected ? theme.colors.primary : theme.colors.textSecondary,
-                  fontStyle: isAlexithymia && !selected ? 'italic' : 'normal',
                 }}
               >
                 {chip}
@@ -96,8 +91,5 @@ const styles = StyleSheet.create({
   chip: {
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  chipFullWidth: {
-    flexBasis: '100%',
   },
 });

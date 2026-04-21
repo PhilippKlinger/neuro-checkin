@@ -5,8 +5,6 @@ import type { NotificationSlot } from '../types/checkin';
 import { WEEKDAY_BITS } from '../types/checkin';
 
 const CHANNEL_ID = 'check-in-reminder';
-const SNOOZE_TEMP_ID = 'snooze-temp';
-const SNOOZE_MINUTES = 15;
 
 // expo-notifications WEEKLY trigger: weekday 1=Sunday, 2=Monday, ..., 7=Saturday
 // Our bitmask: Mon=1, Tue=2, Wed=4, Thu=8, Fri=16, Sat=32, Sun=64 (index 0=Mon)
@@ -54,47 +52,6 @@ export async function requestNotificationPermission(): Promise<boolean | 'emulat
   return status === 'granted';
 }
 
-/**
- * Registers the snooze action category so the OS shows a "Snooze" button
- * directly in the notification banner. Call once at app startup.
- */
-export async function registerSnoozeCategory(): Promise<void> {
-  await Notifications.setNotificationCategoryAsync(CHANNEL_ID, [
-    {
-      identifier: 'snooze',
-      buttonTitle: `Später (${SNOOZE_MINUTES} min)`,
-      // Must open app to foreground so the response listener can run and
-      // schedule the follow-up notification — background execution is too
-      // unreliable on Android with Doze / aggressive battery management.
-      options: { opensAppToForeground: true },
-    },
-  ]);
-}
-
-/**
- * Handles a notification response. If the user tapped "Snooze",
- * schedules a one-off notification in SNOOZE_MINUTES minutes.
- */
-export async function handleSnoozeResponse(
-  response: Notifications.NotificationResponse
-): Promise<void> {
-  if (response.actionIdentifier !== 'snooze') return;
-
-  await Notifications.scheduleNotificationAsync({
-    identifier: SNOOZE_TEMP_ID,
-    content: {
-      title: 'Ein Moment für dich — wenn du magst.',
-      body: 'Wie geht es dir gerade?',
-      sound: false,
-      categoryIdentifier: CHANNEL_ID,
-    },
-    trigger: {
-      type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
-      seconds: SNOOZE_MINUTES * 60,
-      repeats: false,
-    },
-  });
-}
 
 function slotIdentifier(slotId: number, weekdayIndex: number): string {
   return `slot-${slotId}-wd-${weekdayIndex}`;
@@ -126,7 +83,6 @@ export async function scheduleSingleSlot(slot: NotificationSlot): Promise<void> 
         title: 'Ein Moment für dich — wenn du magst.',
         body: 'Wie geht es dir gerade?',
         sound: false,
-        categoryIdentifier: CHANNEL_ID,
       },
       trigger: {
         type: Notifications.SchedulableTriggerInputTypes.WEEKLY,
@@ -167,5 +123,4 @@ export async function scheduleAllSlots(slots: NotificationSlot[]): Promise<void>
 export async function cancelAllSlots(): Promise<void> {
   await cancelSingleSlot(0);
   await cancelSingleSlot(1);
-  await Notifications.cancelScheduledNotificationAsync(SNOOZE_TEMP_ID);
 }

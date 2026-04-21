@@ -8,6 +8,7 @@ interface ConfirmDialogProps {
   confirmLabel?: string;
   cancelLabel?: string;
   destructive?: boolean;
+  hideCancel?: boolean;
   onConfirm: () => void;
   onCancel: () => void;
 }
@@ -19,6 +20,7 @@ export function ConfirmDialog({
   confirmLabel = 'OK',
   cancelLabel = 'Abbrechen',
   destructive = false,
+  hideCancel = false,
   onConfirm,
   onCancel,
 }: ConfirmDialogProps) {
@@ -74,34 +76,36 @@ export function ConfirmDialog({
           </Text>
 
           <View style={[styles.buttons, { gap: spacing.sm }]}>
-            <Pressable
-              onPress={onCancel}
-              style={[
-                styles.button,
-                {
-                  borderRadius: radii.md,
-                  borderWidth: 1,
-                  borderColor: theme.colors.border,
-                  backgroundColor: theme.colors.background,
-                  paddingVertical: spacing.sm,
-                  paddingHorizontal: spacing.md,
-                  minHeight: touchTarget.min,
-                },
-              ]}
-              accessibilityRole="button"
-              accessibilityLabel={cancelLabel}
-            >
-              <Text
-                style={{
-                  fontFamily: typography.families.ui.medium,
-                  fontSize: typography.sizes.md,
-                  color: theme.colors.text,
-                  textAlign: 'center',
-                }}
+            {!hideCancel && (
+              <Pressable
+                onPress={onCancel}
+                style={[
+                  styles.button,
+                  {
+                    borderRadius: radii.md,
+                    borderWidth: 1,
+                    borderColor: theme.colors.border,
+                    backgroundColor: theme.colors.background,
+                    paddingVertical: spacing.sm,
+                    paddingHorizontal: spacing.md,
+                    minHeight: touchTarget.min,
+                  },
+                ]}
+                accessibilityRole="button"
+                accessibilityLabel={cancelLabel}
               >
-                {cancelLabel}
-              </Text>
-            </Pressable>
+                <Text
+                  style={{
+                    fontFamily: typography.families.ui.medium,
+                    fontSize: typography.sizes.md,
+                    color: theme.colors.text,
+                    textAlign: 'center',
+                  }}
+                >
+                  {cancelLabel}
+                </Text>
+              </Pressable>
+            )}
 
             <Pressable
               onPress={onConfirm}
