@@ -9,7 +9,7 @@ import {
   Alert,
 } from 'react-native';
 import * as Device from 'expo-device';
-import { useFocusEffect } from 'expo-router';
+import { useFocusEffect, useRouter } from 'expo-router';
 import { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { useTheme } from '../../lib/hooks/useTheme';
 import { useDatabase } from '../../lib/hooks/useDatabase';
@@ -50,6 +50,7 @@ export default function SettingsScreen() {
   const { theme, themeName, setThemeName, spacing, typography, radii, touchTarget } =
     useTheme();
   const db = useDatabase();
+  const router = useRouter();
 
   const [slots, setSlots] = useState<NotificationSlot[]>(DEFAULT_SLOTS);
   const [showTimePicker, setShowTimePicker] = useState<0 | 1 | null>(null);
@@ -430,6 +431,53 @@ export default function SettingsScreen() {
         onConfirm={() => setShowDeleteDoneDialog(false)}
         onCancel={() => setShowDeleteDoneDialog(false)}
       />
+
+      {/* Über die App */}
+      <Text
+        style={{
+          fontFamily: typography.families.heading.semibold,
+          fontSize: typography.sizes.lg,
+          color: theme.colors.text,
+          marginTop: spacing.xl,
+          marginBottom: spacing.md,
+        }}
+      >
+        Über die App
+      </Text>
+
+      <Pressable
+        onPress={() => router.push('/check-in-info')}
+        style={[
+          styles.infoRow,
+          {
+            backgroundColor: theme.colors.surface,
+            borderRadius: radii.md,
+            padding: spacing.md,
+            minHeight: touchTarget.min,
+          },
+        ]}
+        accessibilityRole="button"
+        accessibilityLabel="Was ist ein Check-in? Mehr erfahren"
+      >
+        <Text
+          style={{
+            fontFamily: typography.families.body.regular,
+            fontSize: typography.sizes.md,
+            color: theme.colors.text,
+          }}
+        >
+          Was ist ein Check-in?
+        </Text>
+        <Text
+          style={{
+            fontFamily: typography.families.body.regular,
+            fontSize: typography.sizes.md,
+            color: theme.colors.textSecondary,
+          }}
+        >
+          ›
+        </Text>
+      </Pressable>
     </ScrollView>
   );
 }
@@ -452,6 +500,11 @@ const styles = StyleSheet.create({
   colorDot: {
     width: 16,
     height: 16,
+  },
+  infoRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
 });
 

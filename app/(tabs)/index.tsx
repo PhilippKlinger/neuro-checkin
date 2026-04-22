@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { View, Text, Pressable, StyleSheet } from 'react-native';
-import { useFocusEffect, useRouter } from 'expo-router';
+import { useFocusEffect, useRouter, Link } from 'expo-router';
 import { useTheme } from '../../lib/hooks/useTheme';
 import { useDatabase } from '../../lib/hooks/useDatabase';
 import { getCheckIns } from '../../lib/database/checkins';
@@ -125,6 +125,21 @@ export default function HomeScreen() {
         >
           3 Schritte — wenn wenig Zeit oder Energie bleibt
         </Text>
+
+        <Link
+          href="/check-in-info"
+          style={{
+            fontFamily: typography.families.body.regular,
+            fontSize: typography.sizes.sm,
+            color: theme.colors.textSecondary,
+            textDecorationLine: 'underline',
+            marginTop: spacing.lg,
+          }}
+          accessibilityRole="link"
+          accessibilityLabel="Was ist ein Check-in? Mehr erfahren"
+        >
+          Was ist ein Check-in?
+        </Link>
       </View>
 
       {!isLoading && !lastCheckIn && (

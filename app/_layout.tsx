@@ -66,6 +66,19 @@ function AppStack() {
           },
         }}
       />
+      <Stack.Screen
+        name="check-in-info"
+        options={{
+          headerShown: true,
+          title: 'Was ist ein Check-in?',
+          headerStyle: { backgroundColor: theme.colors.background },
+          headerTintColor: theme.colors.text,
+          headerTitleStyle: {
+            fontFamily: typography.families.heading.semibold,
+            fontSize: typography.sizes.lg,
+          },
+        }}
+      />
     </Stack>
   );
 }
