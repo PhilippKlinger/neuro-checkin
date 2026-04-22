@@ -6,6 +6,7 @@ import {
   ScrollView,
   StyleSheet,
   Platform,
+  Alert,
 } from 'react-native';
 import * as Device from 'expo-device';
 import { useFocusEffect } from 'expo-router';
