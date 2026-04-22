@@ -6,7 +6,6 @@ import { ThemeProvider, useTheme } from '../lib/hooks/useTheme';
 import { DatabaseProvider, useDatabase, useDatabaseReady } from '../lib/hooks/useDatabase';
 import { getSettings } from '../lib/database/settings';
 import { ThemeName } from '../lib/constants/themes';
-import { registerSnoozeCategory, handleSnoozeResponse } from '../lib/notifications/notifications';
 
 function AppStack() {
   const { theme, typography, setThemeName } = useTheme();
@@ -84,16 +83,19 @@ function AppContent() {
 }
 
 export default function RootLayout() {
-  useEffect(() => {
-    // Register snooze action category once at startup so the OS can show the
-    // "Snooze" button in the notification banner before any slot is scheduled.
-    registerSnoozeCategory();
+  const router = useRouter();
 
+  useEffect(() => {
     const subscription = Notifications.addNotificationResponseReceivedListener(
-      handleSnoozeResponse
+      (response) => {
+        if (response.actionIdentifier === Notifications.DEFAULT_ACTION_IDENTIFIER) {
+          router.push('/(tabs)/check-in');
+        }
+      }
     );
     return () => subscription.remove();
-  }, []);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // router is a stable ref from expo-router; registering once at mount is intentional
 
   return (
     <DatabaseProvider>

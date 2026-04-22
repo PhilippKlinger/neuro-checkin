@@ -14,7 +14,7 @@ import { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { useTheme } from '../../lib/hooks/useTheme';
 import { useDatabase } from '../../lib/hooks/useDatabase';
 import { getSettings, updateSettings } from '../../lib/database/settings';
-import { deleteAllCheckIns } from '../../lib/database/checkins';
+import { deleteAllCheckIns, countCheckIns } from '../../lib/database/checkins';
 import { getNotificationSlots, saveNotificationSlot } from '../../lib/database/notificationQueries';
 import { themes, ThemeName } from '../../lib/constants/themes';
 import {
@@ -56,6 +56,8 @@ export default function SettingsScreen() {
   const [isEmulator, setIsEmulator] = useState(false);
   const [showDeleteStep1Dialog, setShowDeleteStep1Dialog] = useState(false);
   const [showDeleteStep2Dialog, setShowDeleteStep2Dialog] = useState(false);
+  const [showDeleteDoneDialog, setShowDeleteDoneDialog] = useState(false);
+  const [checkInCount, setCheckInCount] = useState(0);
 
   useFocusEffect(
     useCallback(() => {
@@ -73,6 +75,9 @@ export default function SettingsScreen() {
             await scheduleAllSlots(dbSlots as NotificationSlot[]);
           }
         }
+
+        const count = await countCheckIns(db);
+        setCheckInCount(count);
       }
       load();
     }, [db, setThemeName])
@@ -274,18 +279,6 @@ export default function SettingsScreen() {
         Du kannst eine oder zwei Erinnerungen einstellen — oder keine. Es gibt kein Richtig.
       </Text>
 
-      {/* Snooze hint (Optional) */}
-      <Text
-        style={{
-          fontFamily: typography.families.body.regular,
-          fontSize: typography.sizes.xs,
-          color: theme.colors.textSecondary,
-          marginBottom: spacing.md,
-          fontStyle: 'italic',
-        }}
-      >
-        Tipp: In der Erinnerung kannst du {'\u201ESpäter\u201D'} wählen — dann wirst du in 15 Minuten nochmal erinnert.
-      </Text>
 
       {isEmulator && anySlotEnabled && (
         <Text
@@ -370,25 +363,28 @@ export default function SettingsScreen() {
 
       <Pressable
         onPress={() => setShowDeleteStep1Dialog(true)}
+        disabled={checkInCount === 0}
         style={[
           {
-            backgroundColor: theme.colors.errorSoft,
+            backgroundColor: theme.colors.surface,
             borderRadius: radii.md,
             padding: spacing.md,
             minHeight: touchTarget.min,
             borderWidth: 1,
-            borderColor: theme.colors.error,
+            borderColor: theme.colors.border,
+            opacity: checkInCount === 0 ? 0.4 : 1,
           },
         ]}
         accessibilityRole="button"
         accessibilityLabel="Alle Check-ins löschen"
         accessibilityHint="Löscht alle gespeicherten Check-ins dauerhaft"
+        accessibilityState={{ disabled: checkInCount === 0 }}
       >
         <Text
           style={{
             fontFamily: typography.families.ui.medium,
             fontSize: typography.sizes.md,
-            color: theme.colors.error,
+            color: theme.colors.text,
           }}
         >
           Alle Check-ins löschen
@@ -398,7 +394,7 @@ export default function SettingsScreen() {
       <ConfirmDialog
         visible={showDeleteStep1Dialog}
         title="Alle Check-ins löschen"
-        message="Möchtest du wirklich alle gespeicherten Check-ins löschen? Diese Aktion kann nicht rückgängig gemacht werden."
+        message={`Möchtest du wirklich ${checkInCount === 1 ? '1 gespeicherten Check-in' : `alle ${checkInCount} gespeicherten Check-ins`} löschen? Diese Aktion kann nicht rückgängig gemacht werden.`}
         confirmLabel="Löschen"
         cancelLabel="Abbrechen"
         destructive
@@ -419,9 +415,20 @@ export default function SettingsScreen() {
         onConfirm={async () => {
           setShowDeleteStep2Dialog(false);
           await deleteAllCheckIns(db);
-          Alert.alert('Erledigt', 'Alle Check-ins wurden gelöscht.');
+          setCheckInCount(0);
+          setShowDeleteDoneDialog(true);
         }}
         onCancel={() => setShowDeleteStep2Dialog(false)}
+      />
+
+      <ConfirmDialog
+        visible={showDeleteDoneDialog}
+        title="Erledigt"
+        message="Alle Check-ins wurden gelöscht."
+        confirmLabel="OK"
+        hideCancel
+        onConfirm={() => setShowDeleteDoneDialog(false)}
+        onCancel={() => setShowDeleteDoneDialog(false)}
       />
     </ScrollView>
   );

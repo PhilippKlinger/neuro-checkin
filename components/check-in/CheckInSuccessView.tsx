@@ -1,5 +1,6 @@
 import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../../lib/hooks/useTheme';
 import { ENERGY_LABELS, FOCUS_LABELS, getLevelLabel } from '../../lib/types/checkin';
 
@@ -12,6 +13,7 @@ interface CheckInSuccessViewProps {
 export function CheckInSuccessView({ onReset, energyLevel, focusLevel }: CheckInSuccessViewProps) {
   const { theme, spacing, typography, radii, touchTarget } = useTheme();
   const router = useRouter();
+  const insets = useSafeAreaInsets();
 
   function handleGoHome() {
     onReset();
@@ -32,7 +34,8 @@ export function CheckInSuccessView({ onReset, energyLevel, focusLevel }: CheckIn
         styles.container,
         {
           backgroundColor: theme.colors.background,
-          padding: spacing.lg,
+          paddingTop: spacing.lg,
+          paddingHorizontal: spacing.lg,
         },
       ]}
     >
@@ -130,7 +133,7 @@ export function CheckInSuccessView({ onReset, energyLevel, focusLevel }: CheckIn
         )}
       </View>
 
-      <View style={[styles.buttons, { gap: spacing.md }]}>
+      <View style={[styles.buttons, { gap: spacing.md, paddingBottom: Math.max(spacing.lg, insets.bottom + spacing.md) }]}>
         <Pressable
           onPress={handleGoHome}
           style={[

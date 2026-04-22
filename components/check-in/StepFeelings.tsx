@@ -15,13 +15,13 @@ interface StepFeelingsProps {
 // Dysregulation: angespannt, überwältigt, gereizt, frustriert
 // Affect: traurig, ängstlich
 // Cognitive: verwirrt
-// Alexithymia access: „Kann ich gerade nicht sagen" — explicitly validates
+// Alexithymia access: „Nicht definierbar" — explicitly validates
 // not having access to feelings, distinct from "neutral"
 export const FEELING_CHIPS = [
   'neutral', 'leer', 'erschöpft', 'angespannt', 'überwältigt',
   'gereizt', 'abgestumpft', 'traurig', 'ängstlich', 'leicht',
   'frustriert', 'zufrieden', 'verwirrt', 'aufgedreht',
-  'Kann ich gerade nicht sagen',
+  'Nicht definierbar',
 ];
 
 function hasChipContent(val: string): boolean {
@@ -77,7 +77,6 @@ export function StepFeelings({ value, onValueChange }: StepFeelingsProps) {
           <View style={[styles.chipWrap, { gap: spacing.sm, marginBottom: spacing.md }]}>
             {FEELING_CHIPS.map((chip) => {
               const selected = isChipSelected(chip, value);
-              const isAlexithymia = chip === 'Kann ich gerade nicht sagen';
               return (
                 <Pressable
                   key={chip}
@@ -99,12 +98,9 @@ export function StepFeelings({ value, onValueChange }: StepFeelingsProps) {
                 >
                   <Text
                     style={{
-                      fontFamily: isAlexithymia
-                        ? typography.families.body.regular
-                        : typography.families.ui.medium,
+                      fontFamily: typography.families.ui.medium,
                       fontSize: typography.sizes.sm,
                       color: selected ? theme.colors.primary : theme.colors.textSecondary,
-                      fontStyle: isAlexithymia && !selected ? 'italic' : 'normal',
                     }}
                   >
                     {chip}

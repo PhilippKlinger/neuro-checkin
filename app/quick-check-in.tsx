@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { View, Text, Pressable, StyleSheet, Alert, AccessibilityInfo, findNodeHandle } from 'react-native';
 import { useRouter } from 'expo-router';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../lib/hooks/useTheme';
 import { useDatabase } from '../lib/hooks/useDatabase';
 import { EMPTY_BODY_SIGNALS } from '../lib/types/checkin';
@@ -19,6 +20,7 @@ export default function QuickCheckInScreen() {
   const { theme, spacing, typography, radii, touchTarget } = useTheme();
   const db = useDatabase();
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const [step, setStep] = useState(0);
   const [energyLevel, setEnergyLevel] = useState(0);
   const [focusLevel, setFocusLevel] = useState(0);
@@ -156,7 +158,7 @@ export default function QuickCheckInScreen() {
           styles.navigation,
           {
             padding: spacing.lg,
-            paddingBottom: spacing.xl,
+            paddingBottom: Math.max(spacing.xl, insets.bottom + spacing.md),
             gap: spacing.md,
           },
         ]}
