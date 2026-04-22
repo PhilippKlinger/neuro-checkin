@@ -49,9 +49,9 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Home',
-          tabBarLabel: 'Home',
-          tabBarAccessibilityLabel: 'Home',
+          title: 'Heute',
+          tabBarLabel: 'Heute',
+          tabBarAccessibilityLabel: 'Heute',
         }}
       />
       <Tabs.Screen

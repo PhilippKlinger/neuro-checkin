@@ -278,18 +278,6 @@ export default function SettingsScreen() {
         Du kannst eine oder zwei Erinnerungen einstellen — oder keine. Es gibt kein Richtig.
       </Text>
 
-      {/* Snooze hint (Optional) */}
-      <Text
-        style={{
-          fontFamily: typography.families.body.regular,
-          fontSize: typography.sizes.xs,
-          color: theme.colors.textSecondary,
-          marginBottom: spacing.md,
-          fontStyle: 'italic',
-        }}
-      >
-        Tipp: In der Erinnerung kannst du {'\u201ESpäter\u201D'} wählen — dann wirst du in 15 Minuten nochmal erinnert.
-      </Text>
 
       {isEmulator && anySlotEnabled && (
         <Text
