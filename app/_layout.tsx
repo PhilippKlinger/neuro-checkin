@@ -1,11 +1,33 @@
 import { useEffect, useState } from 'react';
 import * as Notifications from 'expo-notifications';
+import * as Sentry from '@sentry/react-native';
 import { Stack, useRouter, useSegments } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { ThemeProvider, useTheme } from '../lib/hooks/useTheme';
 import { DatabaseProvider, useDatabase, useDatabaseReady } from '../lib/hooks/useDatabase';
 import { getSettings } from '../lib/database/settings';
 import { ThemeName } from '../lib/constants/themes';
+import { SENTRY_DSN } from '../lib/constants/config';
+
+Sentry.init({
+  dsn: SENTRY_DSN,
+  environment: __DEV__ ? 'development' : 'production',
+  enabled: !__DEV__,
+  tracesSampleRate: 0,
+  beforeSend(event) {
+    // Strip any potential user identifiers — we never collect them intentionally
+    if (event.user) {
+      delete event.user.ip_address;
+      delete event.user.email;
+    }
+    return event;
+  },
+  beforeBreadcrumb(breadcrumb) {
+    // Skip console breadcrumbs — they could contain user-entered content
+    if (breadcrumb.category === 'console') return null;
+    return breadcrumb;
+  },
+});
 
 function AppStack() {
   const { theme, typography, setThemeName } = useTheme();
@@ -95,7 +117,7 @@ function AppContent() {
   );
 }
 
-export default function RootLayout() {
+function RootLayout() {
   const router = useRouter();
 
   useEffect(() => {
@@ -118,3 +140,5 @@ export default function RootLayout() {
     </DatabaseProvider>
   );
 }
+
+export default Sentry.wrap(RootLayout);
