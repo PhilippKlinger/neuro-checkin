@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { ScrollView, View, Text, StyleSheet } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../lib/hooks/useTheme';
@@ -29,61 +30,62 @@ export default function CheckInInfoScreen() {
   const { theme, spacing, typography, radii } = useTheme();
   const insets = useSafeAreaInsets();
 
+  const s = useMemo(
+    () =>
+      StyleSheet.create({
+        container: {
+          flex: 1,
+          backgroundColor: theme.colors.background,
+        },
+        content: {
+          padding: spacing.lg,
+          paddingBottom: Math.max(spacing.xl, insets.bottom + spacing.lg),
+          flexGrow: 1,
+        },
+        sectionCard: {
+          backgroundColor: theme.colors.surface,
+          borderRadius: radii.md,
+          padding: spacing.md,
+          marginBottom: spacing.md,
+        },
+        sectionCardLast: {
+          backgroundColor: theme.colors.surface,
+          borderRadius: radii.md,
+          padding: spacing.md,
+        },
+        sectionTitle: {
+          fontFamily: typography.families.heading.semibold,
+          fontSize: typography.sizes.md,
+          color: theme.colors.text,
+          marginBottom: spacing.sm,
+        },
+        sectionBody: {
+          fontFamily: typography.families.body.regular,
+          fontSize: typography.sizes.md,
+          color: theme.colors.textSecondary,
+          lineHeight: typography.sizes.md * 1.6,
+        },
+      }),
+    [theme, spacing, typography, radii, insets.bottom]
+  );
+
   return (
     <ScrollView
-      style={[styles.container, { backgroundColor: theme.colors.background }]}
-      contentContainerStyle={[
-        styles.content,
-        { padding: spacing.lg, paddingBottom: Math.max(spacing.xl, insets.bottom + spacing.lg) },
-      ]}
+      style={s.container}
+      contentContainerStyle={s.content}
       showsVerticalScrollIndicator={false}
     >
       {SECTIONS.map((section, index) => (
         <View
           key={section.title}
-          style={[
-            styles.section,
-            {
-              backgroundColor: theme.colors.surface,
-              borderRadius: radii.md,
-              padding: spacing.md,
-              marginBottom: index < SECTIONS.length - 1 ? spacing.md : 0,
-            },
-          ]}
+          style={index < SECTIONS.length - 1 ? s.sectionCard : s.sectionCardLast}
         >
-          <Text
-            style={{
-              fontFamily: typography.families.heading.semibold,
-              fontSize: typography.sizes.md,
-              color: theme.colors.text,
-              marginBottom: spacing.sm,
-            }}
-            accessibilityRole="header"
-          >
+          <Text style={s.sectionTitle} accessibilityRole="header">
             {section.title}
           </Text>
-          <Text
-            style={{
-              fontFamily: typography.families.body.regular,
-              fontSize: typography.sizes.md,
-              color: theme.colors.textSecondary,
-              lineHeight: typography.sizes.md * 1.6,
-            }}
-          >
-            {section.body}
-          </Text>
+          <Text style={s.sectionBody}>{section.body}</Text>
         </View>
       ))}
     </ScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  content: {
-    flexGrow: 1,
-  },
-  section: {},
-});

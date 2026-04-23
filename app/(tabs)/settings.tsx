@@ -6,10 +6,6 @@ import {
   ScrollView,
   StyleSheet,
   Platform,
-  Alert,
-  Modal,
-  TextInput,
-  KeyboardAvoidingView,
 } from 'react-native';
 import * as Device from 'expo-device';
 import { useFocusEffect, useRouter } from 'expo-router';
@@ -30,8 +26,7 @@ import { type NotificationSlot, ALL_WEEKDAYS, WEEKDAY_BITS } from '../../lib/typ
 import { ConfirmDialog } from '../../components/ui/ConfirmDialog';
 import { SlotCard } from '../../components/settings/SlotCard';
 import { dateToTimeString } from '../../lib/utils/time';
-import Constants from 'expo-constants';
-import { FORMSPREE_URL } from '../../lib/constants/config';
+import { FeedbackModal } from '../../components/settings/FeedbackModal';
 
 const THEME_OPTIONS: { key: ThemeName; label: string }[] = [
   { key: 'warmEarth', label: 'Warm Earth' },
@@ -63,10 +58,6 @@ export default function SettingsScreen() {
   const [showDeleteDoneDialog, setShowDeleteDoneDialog] = useState(false);
   const [checkInCount, setCheckInCount] = useState(0);
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
-  const [feedbackText, setFeedbackText] = useState('');
-  const [feedbackSubmitting, setFeedbackSubmitting] = useState(false);
-  const [feedbackError, setFeedbackError] = useState(false);
-  const [feedbackSuccess, setFeedbackSuccess] = useState(false);
 
   useFocusEffect(
     useCallback(() => {
@@ -157,45 +148,6 @@ export default function SettingsScreen() {
   async function handleThemeChange(name: ThemeName) {
     setThemeName(name);
     await updateSettings(db, { themeName: name });
-  }
-
-  function openFeedbackModal() {
-    setShowFeedbackModal(true);
-  }
-
-  function handleCloseFeedbackModal() {
-    setShowFeedbackModal(false);
-    setFeedbackText('');
-    setFeedbackError(false);
-    setFeedbackSuccess(false);
-  }
-
-  async function handleSubmitFeedback() {
-    if (!feedbackText.trim()) return;
-    setFeedbackSubmitting(true);
-    setFeedbackError(false);
-    try {
-      const appVersion = Constants.expoConfig?.version ?? '—';
-      const res = await fetch(FORMSPREE_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-        body: JSON.stringify({
-          feedback: feedbackText.trim(),
-          _subject: `Neuro Check-in Feedback v${appVersion}`,
-          app_version: appVersion,
-        }),
-      });
-      if (res.ok) {
-        setFeedbackSuccess(true);
-        setFeedbackText('');
-      } else {
-        setFeedbackError(true);
-      }
-    } catch {
-      setFeedbackError(true);
-    } finally {
-      setFeedbackSubmitting(false);
-    }
   }
 
   const anySlotEnabled = slots.some((s) => s.enabled);
@@ -349,7 +301,7 @@ export default function SettingsScreen() {
       </Text>
 
       <Pressable
-        onPress={openFeedbackModal}
+        onPress={() => setShowFeedbackModal(true)}
         style={[
           {
             backgroundColor: theme.colors.surface,
@@ -506,201 +458,8 @@ export default function SettingsScreen() {
         </Text>
       </Pressable>
     </ScrollView>
-
-    <Modal
-      visible={showFeedbackModal}
-      transparent
-      animationType="fade"
-      onRequestClose={handleCloseFeedbackModal}
-    >
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={styles.modalOverlay}
-      >
-        <View
-          style={[
-            styles.modalContent,
-            {
-              backgroundColor: theme.colors.background,
-              borderRadius: radii.lg,
-              padding: spacing.lg,
-            },
-          ]}
-        >
-          {feedbackSuccess ? (
-            <>
-              <Text
-                style={{
-                  fontFamily: typography.families.heading.semibold,
-                  fontSize: typography.sizes.lg,
-                  color: theme.colors.text,
-                  marginBottom: spacing.sm,
-                }}
-              >
-                Danke für dein Feedback!
-              </Text>
-              <Text
-                style={{
-                  fontFamily: typography.families.body.regular,
-                  fontSize: typography.sizes.md,
-                  color: theme.colors.textSecondary,
-                  marginBottom: spacing.xl,
-                }}
-              >
-                Es ist angekommen und wird gelesen.
-              </Text>
-              <Pressable
-                onPress={handleCloseFeedbackModal}
-                style={{
-                  backgroundColor: theme.colors.primary,
-                  borderRadius: radii.md,
-                  padding: spacing.md,
-                  alignItems: 'center',
-                  minHeight: touchTarget.min,
-                  justifyContent: 'center',
-                }}
-                accessibilityRole="button"
-                accessibilityLabel="Schließen"
-              >
-                <Text
-                  style={{
-                    fontFamily: typography.families.ui.semibold,
-                    fontSize: typography.sizes.md,
-                    color: theme.colors.textInverse,
-                  }}
-                >
-                  Schließen
-                </Text>
-              </Pressable>
-            </>
-          ) : (
-            <>
-              <Text
-                style={{
-                  fontFamily: typography.families.heading.semibold,
-                  fontSize: typography.sizes.lg,
-                  color: theme.colors.text,
-                  marginBottom: spacing.sm,
-                }}
-              >
-                Feedback
-              </Text>
-              <Text
-                style={{
-                  fontFamily: typography.families.body.regular,
-                  fontSize: typography.sizes.sm,
-                  color: theme.colors.textSecondary,
-                  marginBottom: spacing.md,
-                }}
-              >
-                Was denkst du? Was hat geholfen, was stört, was fehlt? Alles ist optional.
-              </Text>
-              <TextInput
-                value={feedbackText}
-                onChangeText={setFeedbackText}
-                placeholder="Dein Feedback..."
-                placeholderTextColor={theme.colors.textSecondary}
-                multiline
-                style={[
-                  styles.feedbackInput,
-                  {
-                    backgroundColor: theme.colors.surface,
-                    borderColor: theme.colors.border,
-                    borderRadius: radii.md,
-                    padding: spacing.md,
-                    color: theme.colors.text,
-                    fontFamily: typography.families.body.regular,
-                    fontSize: typography.sizes.md,
-                  },
-                ]}
-                accessibilityLabel="Feedback eingeben"
-              />
-              {feedbackError && (
-                <Text
-                  style={{
-                    fontFamily: typography.families.body.regular,
-                    fontSize: typography.sizes.sm,
-                    color: theme.colors.text,
-                    marginTop: spacing.sm,
-                  }}
-                >
-                  Senden hat nicht geklappt. Bitte versuche es später nochmal.
-                </Text>
-              )}
-              <Text
-                style={{
-                  fontFamily: typography.families.body.regular,
-                  fontSize: typography.sizes.xs,
-                  color: theme.colors.textSecondary,
-                  marginTop: spacing.sm,
-                  marginBottom: spacing.md,
-                  fontStyle: 'italic',
-                }}
-              >
-                Wird über Formspree weitergeleitet. Bitte keine persönlichen Check-in-Inhalte.
-              </Text>
-              <View style={{ flexDirection: 'row', gap: spacing.sm }}>
-                <Pressable
-                  onPress={handleCloseFeedbackModal}
-                  style={{
-                    flex: 1,
-                    backgroundColor: theme.colors.surface,
-                    borderRadius: radii.md,
-                    borderWidth: 1,
-                    borderColor: theme.colors.border,
-                    padding: spacing.md,
-                    alignItems: 'center',
-                    minHeight: touchTarget.min,
-                    justifyContent: 'center',
-                  }}
-                  accessibilityRole="button"
-                  accessibilityLabel="Abbrechen"
-                >
-                  <Text
-                    style={{
-                      fontFamily: typography.families.ui.medium,
-                      fontSize: typography.sizes.md,
-                      color: theme.colors.textSecondary,
-                    }}
-                  >
-                    Abbrechen
-                  </Text>
-                </Pressable>
-                <Pressable
-                  onPress={handleSubmitFeedback}
-                  disabled={feedbackSubmitting || !feedbackText.trim()}
-                  style={{
-                    flex: 1,
-                    backgroundColor:
-                      feedbackSubmitting || !feedbackText.trim()
-                        ? theme.colors.border
-                        : theme.colors.primary,
-                    borderRadius: radii.md,
-                    padding: spacing.md,
-                    alignItems: 'center',
-                    minHeight: touchTarget.min,
-                    justifyContent: 'center',
-                  }}
-                  accessibilityRole="button"
-                  accessibilityLabel={feedbackSubmitting ? 'Sendet...' : 'Feedback absenden'}
-                >
-                  <Text
-                    style={{
-                      fontFamily: typography.families.ui.semibold,
-                      fontSize: typography.sizes.md,
-                      color: theme.colors.textInverse,
-                    }}
-                  >
-                    {feedbackSubmitting ? 'Sendet...' : 'Senden'}
-                  </Text>
-                </Pressable>
-              </View>
-            </>
-          )}
-        </View>
-      </KeyboardAvoidingView>
-    </Modal>
-    </>
+    <FeedbackModal visible={showFeedbackModal} onClose={() => setShowFeedbackModal(false)} />
+  </>
   );
 }
 
@@ -727,20 +486,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-  },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.4)',
-    justifyContent: 'center',
-    padding: 24,
-  },
-  modalContent: {
-    width: '100%',
-  },
-  feedbackInput: {
-    borderWidth: 1,
-    textAlignVertical: 'top',
-    minHeight: 120,
   },
 });
 
