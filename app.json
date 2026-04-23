@@ -58,10 +58,8 @@
           "defaultChannel": "daily-reminder"
         }
       ],
-      "expo-mail-composer",
       "@sentry/react-native"
     ],
-    "privacyPolicyUrl": "https://neurocheckin.de/datenschutz.html",
     "extra": {
       "router": {},
       "eas": {
