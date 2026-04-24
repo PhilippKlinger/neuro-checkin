@@ -121,6 +121,15 @@ function RootLayout() {
   const router = useRouter();
 
   useEffect(() => {
+    // Cold-start: app was killed when user tapped the notification.
+    // addNotificationResponseReceivedListener fires only while the app is alive,
+    // so we need getLastNotificationResponseAsync for the launch-from-notification case.
+    Notifications.getLastNotificationResponseAsync().then((response) => {
+      if (response?.actionIdentifier === Notifications.DEFAULT_ACTION_IDENTIFIER) {
+        router.push('/(tabs)/check-in');
+      }
+    });
+
     const subscription = Notifications.addNotificationResponseReceivedListener(
       (response) => {
         if (response.actionIdentifier === Notifications.DEFAULT_ACTION_IDENTIFIER) {
