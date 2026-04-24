@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { View, Text, ScrollView, Pressable, StyleSheet } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../../lib/hooks/useTheme';
-import { spacing as spacingTokens } from '../../lib/constants/themes';
 import { useDatabase } from '../../lib/hooks/useDatabase';
 import { getCheckInById, deleteCheckIn } from '../../lib/database/checkins';
 import { CheckIn, ENERGY_LABELS, FOCUS_LABELS, getLevelLabel } from '../../lib/types/checkin';
@@ -31,6 +31,7 @@ const SIGNAL_LABELS: Record<string, string> = {
 export default function CheckInDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { theme, spacing, typography, radii } = useTheme();
+  const insets = useSafeAreaInsets();
   const db = useDatabase();
   const router = useRouter();
   const [checkIn, setCheckIn] = useState<CheckIn | null>(null);
@@ -106,7 +107,7 @@ export default function CheckInDetailScreen() {
     <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
     <ScrollView
       style={styles.scroll}
-      contentContainerStyle={{ padding: spacing.lg, paddingBottom: spacing.xxl }}
+      contentContainerStyle={{ padding: spacing.lg, paddingBottom: spacing.xxl + insets.bottom }}
     >
       <Text
         style={{
@@ -184,7 +185,6 @@ export default function CheckInDetailScreen() {
         </View>
       )}
 
-      {/* Feelings — rendered as pills matching the chip selection UI */}
       {checkIn.feelings.trim() !== '' && (
         <View
           style={[
@@ -198,36 +198,7 @@ export default function CheckInDetailScreen() {
           ]}
         >
           <Text style={sectionTitle(typography, theme, spacing)}>Gefühle</Text>
-          <View style={styles.feelingPills}>
-            {checkIn.feelings
-              .split(',')
-              .map((f) => f.trim())
-              .filter(Boolean)
-              .map((feeling) => (
-                <View
-                  key={feeling}
-                  style={[
-                    styles.feelingPill,
-                    {
-                      backgroundColor: theme.colors.primarySoft,
-                      borderRadius: radii.full,
-                      paddingHorizontal: spacing.md,
-                      paddingVertical: spacing.xs,
-                    },
-                  ]}
-                >
-                  <Text
-                    style={{
-                      fontFamily: typography.families.ui.medium,
-                      fontSize: typography.sizes.sm,
-                      color: theme.colors.primary,
-                    }}
-                  >
-                    {feeling}
-                  </Text>
-                </View>
-              ))}
-          </View>
+          <Text style={body(typography, theme)}>{checkIn.feelings}</Text>
         </View>
       )}
 
@@ -391,10 +362,4 @@ const styles = StyleSheet.create({
   deleteButton: {
     alignItems: 'center',
   },
-  feelingPills: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: spacingTokens.xs,
-  },
-  feelingPill: {},
 });
