@@ -51,7 +51,6 @@ export default function HomeScreen() {
           {getGreeting()}
         </Text>
 
-        {/* Beide CTAs gleich groß — Schnell-Check-in ist kein minderwertiger Modus */}
         <Pressable
           onPress={() => router.push('/(tabs)/check-in')}
           style={[
@@ -151,7 +150,6 @@ export default function HomeScreen() {
         </View>
       )}
 
-      {/* Letzter Check-in: nur Datum/Uhrzeit — keine Energie/Fokus-Werte auf dem Home Screen */}
       {!isLoading && lastCheckIn && (
         <Pressable
           onPress={() => router.push(`/history/${lastCheckIn.id}`)}

@@ -8,11 +8,6 @@ interface StepSelfCareProps {
   onValueChange: (value: string) => void;
 }
 
-// Curated for ND users (ND-UX review):
-// - Removed: Spazieren (requires energy/mobility — too high threshold in crisis)
-// - Added: Tief atmen (always available, directly regulating)
-// - Added: Wärme (sensory regulation — blanket, warm drink — relevant for autism)
-// - "Nichts — passt gerade so" kept: validates doing nothing as a valid choice
 const SELF_CARE_CHIPS = [
   'Pause', 'Wasser trinken', 'Frische Luft', 'Tief atmen',
   'Bewegung', 'Stretching', 'Essen', 'Musik hören',
@@ -67,7 +62,6 @@ export function StepSelfCare({ value, onValueChange }: StepSelfCareProps) {
 
       {mode === 'chips' ? (
         <>
-          {/* Chips — Wrap-Layout zeigt alle Optionen auf einmal (ND-UX: Object Permanence) */}
           <View style={[styles.chipWrap, { gap: spacing.sm, marginBottom: spacing.md }]}>
             {SELF_CARE_CHIPS.map((chip) => {
               const selected = isChipSelected(chip, value);

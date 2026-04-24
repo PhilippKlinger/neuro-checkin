@@ -121,9 +121,6 @@ function RootLayout() {
   const router = useRouter();
 
   useEffect(() => {
-    // On Android, addNotificationResponseReceivedListener fires for both
-    // background→foreground AND cold-start taps. router.navigate (not push)
-    // is correct here — navigate switches the active tab without stacking duplicates.
     const subscription = Notifications.addNotificationResponseReceivedListener(
       (response) => {
         if (response.actionIdentifier === Notifications.DEFAULT_ACTION_IDENTIFIER) {
