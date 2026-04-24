@@ -6,10 +6,9 @@ import {
   ScrollView,
   StyleSheet,
   Platform,
-  Alert,
 } from 'react-native';
 import * as Device from 'expo-device';
-import { useFocusEffect } from 'expo-router';
+import { useFocusEffect, useRouter } from 'expo-router';
 import { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { useTheme } from '../../lib/hooks/useTheme';
 import { useDatabase } from '../../lib/hooks/useDatabase';
@@ -27,8 +26,7 @@ import { type NotificationSlot, ALL_WEEKDAYS, WEEKDAY_BITS } from '../../lib/typ
 import { ConfirmDialog } from '../../components/ui/ConfirmDialog';
 import { SlotCard } from '../../components/settings/SlotCard';
 import { dateToTimeString } from '../../lib/utils/time';
-import * as MailComposer from 'expo-mail-composer';
-import Constants from 'expo-constants';
+import { FeedbackModal } from '../../components/settings/FeedbackModal';
 
 const THEME_OPTIONS: { key: ThemeName; label: string }[] = [
   { key: 'warmEarth', label: 'Warm Earth' },
@@ -50,6 +48,7 @@ export default function SettingsScreen() {
   const { theme, themeName, setThemeName, spacing, typography, radii, touchTarget } =
     useTheme();
   const db = useDatabase();
+  const router = useRouter();
 
   const [slots, setSlots] = useState<NotificationSlot[]>(DEFAULT_SLOTS);
   const [showTimePicker, setShowTimePicker] = useState<0 | 1 | null>(null);
@@ -58,6 +57,7 @@ export default function SettingsScreen() {
   const [showDeleteStep2Dialog, setShowDeleteStep2Dialog] = useState(false);
   const [showDeleteDoneDialog, setShowDeleteDoneDialog] = useState(false);
   const [checkInCount, setCheckInCount] = useState(0);
+  const [showFeedbackModal, setShowFeedbackModal] = useState(false);
 
   useFocusEffect(
     useCallback(() => {
@@ -150,30 +150,10 @@ export default function SettingsScreen() {
     await updateSettings(db, { themeName: name });
   }
 
-  async function handleSendFeedback() {
-    const isAvailable = await MailComposer.isAvailableAsync();
-    if (!isAvailable) {
-      Alert.alert(
-        'Kein Mail-Client gefunden',
-        'Bitte richte eine E-Mail-App ein oder schreib mir direkt: feedback@neuro-checkin.app'
-      );
-      return;
-    }
-
-    const appVersion = Constants.expoConfig?.version ?? '—';
-    const os = `${Device.osName ?? ''} ${Device.osVersion ?? ''}`.trim();
-    const deviceModel = Device.modelName ?? '—';
-
-    await MailComposer.composeAsync({
-      recipients: ['feedback@neuro-checkin.app'],
-      subject: `Neuro Check-in Feedback (v${appVersion})`,
-      body: `Hallo,\n\nhier ist mein Feedback:\n\n\n\n---\nApp-Version: ${appVersion}\nGerät: ${deviceModel}\nBetriebssystem: ${os}`,
-    });
-  }
-
   const anySlotEnabled = slots.some((s) => s.enabled);
 
   return (
+    <>
     <ScrollView
       style={[styles.container, { backgroundColor: theme.colors.background }]}
       contentContainerStyle={{ padding: spacing.lg, paddingBottom: spacing.xxl }}
@@ -321,7 +301,7 @@ export default function SettingsScreen() {
       </Text>
 
       <Pressable
-        onPress={handleSendFeedback}
+        onPress={() => setShowFeedbackModal(true)}
         style={[
           {
             backgroundColor: theme.colors.surface,
@@ -336,7 +316,7 @@ export default function SettingsScreen() {
         ]}
         accessibilityRole="button"
         accessibilityLabel="Feedback senden"
-        accessibilityHint="Öffnet eine E-Mail mit vorausgefülltem Betreff"
+        accessibilityHint="Öffnet ein Feedback-Formular"
       >
         <Text
           style={{
@@ -430,7 +410,56 @@ export default function SettingsScreen() {
         onConfirm={() => setShowDeleteDoneDialog(false)}
         onCancel={() => setShowDeleteDoneDialog(false)}
       />
+
+      {/* Über die App */}
+      <Text
+        style={{
+          fontFamily: typography.families.heading.semibold,
+          fontSize: typography.sizes.lg,
+          color: theme.colors.text,
+          marginTop: spacing.xl,
+          marginBottom: spacing.md,
+        }}
+      >
+        Über die App
+      </Text>
+
+      <Pressable
+        onPress={() => router.push('/check-in-info')}
+        style={[
+          styles.infoRow,
+          {
+            backgroundColor: theme.colors.surface,
+            borderRadius: radii.md,
+            padding: spacing.md,
+            minHeight: touchTarget.min,
+          },
+        ]}
+        accessibilityRole="button"
+        accessibilityLabel="Was ist ein Check-in? Mehr erfahren"
+      >
+        <Text
+          style={{
+            fontFamily: typography.families.body.regular,
+            fontSize: typography.sizes.md,
+            color: theme.colors.text,
+          }}
+        >
+          Was ist ein Check-in?
+        </Text>
+        <Text
+          style={{
+            fontFamily: typography.families.body.regular,
+            fontSize: typography.sizes.md,
+            color: theme.colors.textSecondary,
+          }}
+        >
+          ›
+        </Text>
+      </Pressable>
     </ScrollView>
+    <FeedbackModal visible={showFeedbackModal} onClose={() => setShowFeedbackModal(false)} />
+  </>
   );
 }
 
@@ -452,6 +481,11 @@ const styles = StyleSheet.create({
   colorDot: {
     width: 16,
     height: 16,
+  },
+  infoRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
 });
 
