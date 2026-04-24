@@ -214,7 +214,7 @@ export function FeedbackModal({ visible, onClose }: FeedbackModalProps) {
                 </Text>
               )}
               <Text style={s.privacyHint}>
-                Wird über Formspree weitergeleitet. Bitte keine persönlichen Check-in-Inhalte.
+                Anonym gesendet — nur dein Text und die App-Version kommen an. Bitte keine persönlichen Check-in-Inhalte.
               </Text>
               <View style={s.buttonRow}>
                 <Pressable
