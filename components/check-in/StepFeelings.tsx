@@ -136,6 +136,7 @@ export function StepFeelings({ value, onValueChange }: StepFeelingsProps) {
             placeholder="Was nimmst du gerade wahr?"
             placeholderTextColor={theme.colors.textSecondary}
             multiline
+            maxLength={150}
             textAlignVertical="top"
             style={[
               styles.textInput,
@@ -152,6 +153,19 @@ export function StepFeelings({ value, onValueChange }: StepFeelingsProps) {
             ]}
             accessibilityLabel="Gefühle beschreiben"
           />
+          {value.length >= 110 && (
+            <Text
+              style={{
+                fontFamily: typography.families.body.regular,
+                fontSize: typography.sizes.xs,
+                color: theme.colors.textSecondary,
+                textAlign: 'right',
+                marginTop: spacing.xs,
+              }}
+            >
+              {value.length >= 150 ? 'Das reicht ✓' : `Noch ${150 - value.length} Zeichen`}
+            </Text>
+          )}
 
           <Pressable
             onPress={switchToChips}

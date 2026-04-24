@@ -130,6 +130,7 @@ export function StepSelfCare({ value, onValueChange }: StepSelfCareProps) {
             placeholder="Was würde dir jetzt gut tun?"
             placeholderTextColor={theme.colors.textSecondary}
             multiline
+            maxLength={150}
             textAlignVertical="top"
             style={[
               styles.textInput,
@@ -146,6 +147,19 @@ export function StepSelfCare({ value, onValueChange }: StepSelfCareProps) {
             ]}
             accessibilityLabel="Selbstfürsorge-Notiz"
           />
+          {value.length >= 110 && (
+            <Text
+              style={{
+                fontFamily: typography.families.body.regular,
+                fontSize: typography.sizes.xs,
+                color: theme.colors.textSecondary,
+                textAlign: 'right',
+                marginTop: spacing.xs,
+              }}
+            >
+              {value.length >= 150 ? 'Das reicht ✓' : `Noch ${150 - value.length} Zeichen`}
+            </Text>
+          )}
 
           <Pressable
             onPress={switchToChips}

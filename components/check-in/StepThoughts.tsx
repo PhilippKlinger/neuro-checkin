@@ -139,6 +139,7 @@ export function StepThoughts({
         placeholder="Möchtest du dazu etwas notieren? (optional)"
         placeholderTextColor={theme.colors.textSecondary}
         multiline
+        maxLength={200}
         textAlignVertical="top"
         style={[
           styles.noteInput,
@@ -155,6 +156,19 @@ export function StepThoughts({
         ]}
         accessibilityLabel="Gedanken-Notiz"
       />
+      {note.length >= 160 && (
+        <Text
+          style={{
+            fontFamily: typography.families.body.regular,
+            fontSize: typography.sizes.xs,
+            color: theme.colors.textSecondary,
+            textAlign: 'right',
+            marginTop: spacing.xs,
+          }}
+        >
+          {note.length >= 200 ? 'Das reicht ✓' : `Noch ${200 - note.length} Zeichen`}
+        </Text>
+      )}
 
     </ScrollView>
   );
