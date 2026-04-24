@@ -102,7 +102,7 @@ export default function HomeScreen() {
             },
           ]}
           accessibilityRole="button"
-          accessibilityLabel="Schnell-Check-in starten, 3 Schritte, auch bei wenig Energie"
+          accessibilityLabel="Schnell-Check-in starten, 3 Schritte, wenn es schnell gehen muss"
         >
           <Text
             style={{
@@ -121,7 +121,7 @@ export default function HomeScreen() {
               marginTop: 2,
             }}
           >
-            3 Schritte · auch bei wenig Energie
+            3 Schritte · wenn's schnell gehen muss
           </Text>
         </Pressable>
       </View>
