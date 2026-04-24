@@ -109,6 +109,13 @@ export function FeedbackModal({ visible, onClose }: FeedbackModalProps) {
           fontFamily: typography.families.body.regular,
           fontSize: typography.sizes.md,
         },
+        charCount: {
+          fontFamily: typography.families.body.regular,
+          fontSize: typography.sizes.xs,
+          color: theme.colors.textSecondary,
+          textAlign: 'right',
+          marginTop: spacing.xs,
+        },
         errorText: {
           fontFamily: typography.families.body.regular,
           fontSize: typography.sizes.sm,
@@ -195,7 +202,7 @@ export function FeedbackModal({ visible, onClose }: FeedbackModalProps) {
             </>
           ) : (
             <>
-              <Text style={s.title}>Feedback</Text>
+              <Text style={s.title}>Feedback (anonym)</Text>
               <Text style={s.subtitle}>
                 Was denkst du? Was hat geholfen, was stört, was fehlt? Alles ist optional.
               </Text>
@@ -205,16 +212,22 @@ export function FeedbackModal({ visible, onClose }: FeedbackModalProps) {
                 placeholder="Dein Feedback..."
                 placeholderTextColor={theme.colors.textSecondary}
                 multiline
+                maxLength={500}
                 style={s.input}
                 accessibilityLabel="Feedback eingeben"
               />
+              {feedbackText.length >= 450 && (
+                <Text style={[s.charCount, feedbackText.length >= 500 ? { color: theme.colors.success } : {}]}>
+                  {feedbackText.length >= 500 ? '✓' : `${feedbackText.length} / 500`}
+                </Text>
+              )}
               {feedbackError && (
                 <Text style={s.errorText}>
                   Senden hat nicht geklappt. Bitte versuche es später nochmal.
                 </Text>
               )}
               <Text style={s.privacyHint}>
-                Wird über Formspree weitergeleitet. Bitte keine persönlichen Check-in-Inhalte.
+                Bitte keine persönlichen Check-in-Inhalte senden.
               </Text>
               <View style={s.buttonRow}>
                 <Pressable

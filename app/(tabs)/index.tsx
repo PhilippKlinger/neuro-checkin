@@ -1,10 +1,10 @@
 import { useState, useCallback } from 'react';
 import { View, Text, Pressable, StyleSheet } from 'react-native';
-import { useFocusEffect, useRouter, Link } from 'expo-router';
+import { useFocusEffect, useRouter } from 'expo-router';
 import { useTheme } from '../../lib/hooks/useTheme';
 import { useDatabase } from '../../lib/hooks/useDatabase';
 import { getCheckIns } from '../../lib/database/checkins';
-import { CheckIn, ENERGY_LABELS, FOCUS_LABELS, getLevelLabel } from '../../lib/types/checkin';
+import { CheckIn } from '../../lib/types/checkin';
 import { formatDate, formatTime } from '../../lib/utils/format';
 
 function getGreeting(): string {
@@ -40,41 +40,30 @@ export default function HomeScreen() {
       <View style={styles.hero}>
         <Text
           style={{
-            fontFamily: typography.families.heading.bold,
-            fontSize: typography.sizes.xxl,
+            fontFamily: typography.families.heading.semibold,
+            fontSize: typography.sizes.xl,
             color: theme.colors.text,
             textAlign: 'center',
-            marginBottom: spacing.sm,
+            marginBottom: spacing.xl,
           }}
           accessibilityRole="header"
         >
           {getGreeting()}
         </Text>
-        <Text
-          style={{
-            fontFamily: typography.families.body.regular,
-            fontSize: typography.sizes.md,
-            color: theme.colors.textSecondary,
-            textAlign: 'center',
-            marginBottom: spacing.xl,
-          }}
-        >
-          Wie geht es dir gerade?
-        </Text>
 
         <Pressable
           onPress={() => router.push('/(tabs)/check-in')}
           style={[
-            styles.startButton,
+            styles.cta,
             {
-              minHeight: touchTarget.min + 8,
               borderRadius: radii.md,
               backgroundColor: theme.colors.primary,
               paddingHorizontal: spacing.xl,
+              paddingVertical: spacing.md,
             },
           ]}
           accessibilityRole="button"
-          accessibilityLabel="Check-in starten"
+          accessibilityLabel="Check-in starten, 8 Schritte, geführt"
         >
           <Text
             style={{
@@ -85,67 +74,62 @@ export default function HomeScreen() {
           >
             Check-in starten
           </Text>
+          <Text
+            style={{
+              fontFamily: typography.families.body.regular,
+              fontSize: typography.sizes.sm,
+              color: theme.colors.textInverse,
+              marginTop: 2,
+              opacity: 0.8,
+            }}
+          >
+            8 Schritte, geführt
+          </Text>
         </Pressable>
 
         <Pressable
           onPress={() => router.push('/quick-check-in')}
           style={[
-            styles.startButton,
+            styles.cta,
             {
-              minHeight: touchTarget.min,
               borderRadius: radii.md,
-              borderWidth: 1,
-              borderColor: theme.colors.border,
+              borderWidth: 1.5,
+              borderColor: theme.colors.primary,
               backgroundColor: theme.colors.surface,
               paddingHorizontal: spacing.xl,
+              paddingVertical: spacing.md,
               marginTop: spacing.sm,
             },
           ]}
           accessibilityRole="button"
-          accessibilityLabel="Schnell-Check-in starten — 2 Schritte"
+          accessibilityLabel="Schnell-Check-in starten, 3 Schritte, wenn es schnell gehen muss"
         >
           <Text
             style={{
-              fontFamily: typography.families.ui.medium,
-              fontSize: typography.sizes.md,
-              color: theme.colors.textSecondary,
+              fontFamily: typography.families.ui.semibold,
+              fontSize: typography.sizes.lg,
+              color: theme.colors.primary,
             }}
           >
             Schnell-Check-in
           </Text>
+          <Text
+            style={{
+              fontFamily: typography.families.body.regular,
+              fontSize: typography.sizes.sm,
+              color: theme.colors.textSecondary,
+              marginTop: 2,
+            }}
+          >
+            3 Schritte · wenn es schnell gehen muss
+          </Text>
         </Pressable>
-        <Text
-          style={{
-            fontFamily: typography.families.body.regular,
-            fontSize: typography.sizes.xs,
-            color: theme.colors.textSecondary,
-            textAlign: 'center',
-            marginTop: spacing.xs,
-          }}
-        >
-          3 Schritte — wenn wenig Zeit oder Energie bleibt
-        </Text>
-
-        <Link
-          href="/check-in-info"
-          style={{
-            fontFamily: typography.families.body.regular,
-            fontSize: typography.sizes.sm,
-            color: theme.colors.textSecondary,
-            textDecorationLine: 'underline',
-            marginTop: spacing.lg,
-          }}
-          accessibilityRole="link"
-          accessibilityLabel="Was ist ein Check-in? Mehr erfahren"
-        >
-          Was ist ein Check-in?
-        </Link>
       </View>
 
       {!isLoading && !lastCheckIn && (
         <View
           style={[
-            styles.emptyHint,
+            styles.card,
             {
               backgroundColor: theme.colors.surface,
               borderRadius: radii.md,
@@ -170,15 +154,17 @@ export default function HomeScreen() {
         <Pressable
           onPress={() => router.push(`/history/${lastCheckIn.id}`)}
           style={[
-            styles.lastCheckIn,
+            styles.card,
             {
               backgroundColor: theme.colors.surface,
               borderRadius: radii.md,
               padding: spacing.md,
+              minHeight: touchTarget.min,
+              justifyContent: 'center',
             },
           ]}
           accessibilityRole="button"
-          accessibilityLabel={`Letzter Check-in vom ${formatDate(lastCheckIn.createdAt)}`}
+          accessibilityLabel={`Letzter Check-in vom ${formatDate(lastCheckIn.createdAt)}, ansehen`}
         >
           <Text
             style={{
@@ -199,16 +185,6 @@ export default function HomeScreen() {
           >
             {formatDate(lastCheckIn.createdAt)}, {formatTime(lastCheckIn.createdAt)}
           </Text>
-          <View style={[styles.miniMetrics, { marginTop: spacing.sm, gap: spacing.lg }]}>
-            <Text style={{ fontFamily: typography.families.ui.medium, fontSize: typography.sizes.sm, color: theme.colors.primary }}>
-              Energie {getLevelLabel(lastCheckIn.energyLevel, ENERGY_LABELS)}
-            </Text>
-            {lastCheckIn.focusLevel > 0 && (
-              <Text style={{ fontFamily: typography.families.ui.medium, fontSize: typography.sizes.sm, color: theme.colors.primary }}>
-                Fokus {getLevelLabel(lastCheckIn.focusLevel, FOCUS_LABELS)}
-              </Text>
-            )}
-          </View>
         </Pressable>
       )}
 
@@ -219,11 +195,9 @@ export default function HomeScreen() {
           color: theme.colors.textSecondary,
           textAlign: 'center',
           marginTop: spacing.xl,
-          fontStyle: 'italic',
         }}
       >
-        Alle Daten bleiben lokal auf deinem Gerät.{'\n'}
-        Kein Therapieersatz — ein Werkzeug für dich.
+        Lokal gespeichert · kein Therapieersatz
       </Text>
     </View>
   );
@@ -236,15 +210,10 @@ const styles = StyleSheet.create({
   hero: {
     flex: 1,
     justifyContent: 'center',
+    alignItems: 'stretch',
+  },
+  cta: {
     alignItems: 'center',
   },
-  startButton: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  emptyHint: {},
-  lastCheckIn: {},
-  miniMetrics: {
-    flexDirection: 'row',
-  },
+  card: {},
 });

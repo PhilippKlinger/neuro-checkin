@@ -8,15 +8,6 @@ interface StepFeelingsProps {
   onValueChange: (value: string) => void;
 }
 
-// Curated for ND users (ND-UX review, expanded after user feedback):
-// 15 chips — enough vocabulary for nuanced ND self-awareness without overwhelming.
-// Activation states: neutral, leicht, aufgedreht, zufrieden
-// Depletion/shutdown: leer, erschöpft, abgestumpft
-// Dysregulation: angespannt, überwältigt, gereizt, frustriert
-// Affect: traurig, ängstlich
-// Cognitive: verwirrt
-// Alexithymia access: „Nicht definierbar" — explicitly validates
-// not having access to feelings, distinct from "neutral"
 export const FEELING_CHIPS = [
   'neutral', 'leer', 'erschöpft', 'angespannt', 'überwältigt',
   'gereizt', 'abgestumpft', 'traurig', 'ängstlich', 'leicht',
@@ -73,7 +64,6 @@ export function StepFeelings({ value, onValueChange }: StepFeelingsProps) {
 
       {mode === 'chips' ? (
         <>
-          {/* Chips — Wrap-Layout zeigt alle Optionen auf einmal (ND-UX: Object Permanence) */}
           <View style={[styles.chipWrap, { gap: spacing.sm, marginBottom: spacing.md }]}>
             {FEELING_CHIPS.map((chip) => {
               const selected = isChipSelected(chip, value);
@@ -136,6 +126,7 @@ export function StepFeelings({ value, onValueChange }: StepFeelingsProps) {
             placeholder="Was nimmst du gerade wahr?"
             placeholderTextColor={theme.colors.textSecondary}
             multiline
+            maxLength={150}
             textAlignVertical="top"
             style={[
               styles.textInput,
@@ -152,6 +143,19 @@ export function StepFeelings({ value, onValueChange }: StepFeelingsProps) {
             ]}
             accessibilityLabel="Gefühle beschreiben"
           />
+          {value.length >= 135 && (
+            <Text
+              style={{
+                fontFamily: typography.families.ui.medium,
+                fontSize: typography.sizes.xs,
+                color: value.length >= 150 ? theme.colors.success : theme.colors.textSecondary,
+                textAlign: 'right',
+                marginTop: spacing.xs,
+              }}
+            >
+              {value.length >= 150 ? '✓' : `${value.length} / 150`}
+            </Text>
+          )}
 
           <Pressable
             onPress={switchToChips}

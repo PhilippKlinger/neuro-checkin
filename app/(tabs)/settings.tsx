@@ -246,7 +246,6 @@ export default function SettingsScreen() {
         Erinnerungen
       </Text>
 
-      {/* Intro text (Prio 2) */}
       <Text
         style={{
           fontFamily: typography.families.body.regular,
@@ -256,7 +255,7 @@ export default function SettingsScreen() {
           lineHeight: typography.sizes.sm * 1.5,
         }}
       >
-        Du kannst eine oder zwei Erinnerungen einstellen — oder keine. Es gibt kein Richtig.
+        Du kannst eine oder zwei Erinnerungen einstellen — oder keine.
       </Text>
 
 
