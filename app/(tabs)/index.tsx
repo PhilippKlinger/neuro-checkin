@@ -121,7 +121,7 @@ export default function HomeScreen() {
               marginTop: 2,
             }}
           >
-            3 Schritte · wenn's schnell gehen muss
+            3 Schritte · wenn es schnell gehen muss
           </Text>
         </Pressable>
       </View>
