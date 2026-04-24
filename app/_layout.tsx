@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import * as Notifications from 'expo-notifications';
 import * as Sentry from '@sentry/react-native';
 import { Stack, useRouter, useSegments } from 'expo-router';
@@ -119,15 +119,22 @@ function AppContent() {
 
 function RootLayout() {
   const router = useRouter();
+  const handledNotificationId = useRef<string | null>(null);
 
   useEffect(() => {
-    const subscription = Notifications.addNotificationResponseReceivedListener(
-      (response) => {
-        if (response.actionIdentifier === Notifications.DEFAULT_ACTION_IDENTIFIER) {
-          router.navigate('/(tabs)/check-in');
-        }
-      }
-    );
+    function handleResponse(response: Notifications.NotificationResponse) {
+      if (response.actionIdentifier !== Notifications.DEFAULT_ACTION_IDENTIFIER) return;
+      const id = response.notification.request.identifier;
+      if (handledNotificationId.current === id) return;
+      handledNotificationId.current = id;
+      router.navigate('/(tabs)/check-in');
+    }
+
+    Notifications.getLastNotificationResponseAsync().then((r) => {
+      if (r) handleResponse(r);
+    });
+
+    const subscription = Notifications.addNotificationResponseReceivedListener(handleResponse);
     return () => subscription.remove();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // router is a stable ref from expo-router; registering once at mount is intentional

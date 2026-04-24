@@ -216,9 +216,9 @@ export function FeedbackModal({ visible, onClose }: FeedbackModalProps) {
                 style={s.input}
                 accessibilityLabel="Feedback eingeben"
               />
-              {feedbackText.length >= 500 && (
-                <Text style={s.charCount}>
-                  Super, das ist ausführlich genug — danke.
+              {feedbackText.length >= 450 && (
+                <Text style={[s.charCount, feedbackText.length >= 500 ? { color: theme.colors.success } : {}]}>
+                  {feedbackText.length >= 500 ? '✓' : `${feedbackText.length} / 500`}
                 </Text>
               )}
               {feedbackError && (

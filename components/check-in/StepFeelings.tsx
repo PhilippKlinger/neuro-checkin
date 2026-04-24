@@ -143,17 +143,17 @@ export function StepFeelings({ value, onValueChange }: StepFeelingsProps) {
             ]}
             accessibilityLabel="Gefühle beschreiben"
           />
-          {value.length >= 150 && (
+          {value.length >= 135 && (
             <Text
               style={{
-                fontFamily: typography.families.body.regular,
-                fontSize: typography.sizes.sm,
-                color: theme.colors.textSecondary,
-                textAlign: 'center',
+                fontFamily: typography.families.ui.medium,
+                fontSize: typography.sizes.xs,
+                color: value.length >= 150 ? theme.colors.success : theme.colors.textSecondary,
+                textAlign: 'right',
                 marginTop: spacing.xs,
               }}
             >
-              Schön, dass du so viel wahrnimmst. Vielleicht reicht auch ein oder zwei Worte.
+              {value.length >= 150 ? '✓' : `${value.length} / 150`}
             </Text>
           )}
 

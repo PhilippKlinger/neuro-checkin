@@ -1,3 +1,4 @@
+import { useRef } from 'react';
 import { View, Text, TextInput, Pressable, ScrollView, StyleSheet } from 'react-native';
 import { useTheme } from '../../lib/hooks/useTheme';
 
@@ -41,9 +42,10 @@ export function StepThoughts({
   onNoteChange,
 }: StepThoughtsProps) {
   const { theme, spacing, typography, radii, touchTarget } = useTheme();
+  const scrollRef = useRef<ScrollView>(null);
 
   return (
-    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+    <ScrollView ref={scrollRef} style={styles.container} showsVerticalScrollIndicator={false}>
       <Text
         style={{
           fontFamily: typography.families.heading.semibold,
@@ -141,6 +143,7 @@ export function StepThoughts({
         multiline
         maxLength={200}
         textAlignVertical="top"
+        onFocus={() => setTimeout(() => scrollRef.current?.scrollToEnd({ animated: true }), 300)}
         style={[
           styles.noteInput,
           {
@@ -156,17 +159,17 @@ export function StepThoughts({
         ]}
         accessibilityLabel="Gedanken-Notiz"
       />
-      {note.length >= 200 && (
+      {note.length >= 180 && (
         <Text
           style={{
-            fontFamily: typography.families.body.regular,
-            fontSize: typography.sizes.sm,
-            color: theme.colors.textSecondary,
-            textAlign: 'center',
+            fontFamily: typography.families.ui.medium,
+            fontSize: typography.sizes.xs,
+            color: note.length >= 200 ? theme.colors.success : theme.colors.textSecondary,
+            textAlign: 'right',
             marginTop: spacing.xs,
           }}
         >
-          Schön, dass du so viel reflektierst. Der Kern davon reicht völlig.
+          {note.length >= 200 ? '✓' : `${note.length} / 200`}
         </Text>
       )}
 

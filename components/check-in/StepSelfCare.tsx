@@ -141,17 +141,17 @@ export function StepSelfCare({ value, onValueChange }: StepSelfCareProps) {
             ]}
             accessibilityLabel="Selbstfürsorge-Notiz"
           />
-          {value.length >= 150 && (
+          {value.length >= 135 && (
             <Text
               style={{
-                fontFamily: typography.families.body.regular,
-                fontSize: typography.sizes.sm,
-                color: theme.colors.textSecondary,
-                textAlign: 'center',
+                fontFamily: typography.families.ui.medium,
+                fontSize: typography.sizes.xs,
+                color: value.length >= 150 ? theme.colors.success : theme.colors.textSecondary,
+                textAlign: 'right',
                 marginTop: spacing.xs,
               }}
             >
-              Das klingt nach viel. Was braucht es gerade am meisten?
+              {value.length >= 150 ? '✓' : `${value.length} / 150`}
             </Text>
           )}
 
