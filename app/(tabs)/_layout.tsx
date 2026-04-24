@@ -1,7 +1,22 @@
-import { Tabs } from 'expo-router';
+import { Pressable } from 'react-native';
+import { Tabs, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../../lib/hooks/useTheme';
+
+function CheckInInfoButton({ color }: { color: string }) {
+  const router = useRouter();
+  return (
+    <Pressable
+      onPress={() => router.push('/check-in-info')}
+      style={{ marginRight: 16, padding: 4 }}
+      accessibilityRole="button"
+      accessibilityLabel="Hilfe: Was ist ein Check-in?"
+    >
+      <Ionicons name="help-circle-outline" size={22} color={color} />
+    </Pressable>
+  );
+}
 
 type IoniconName = React.ComponentProps<typeof Ionicons>['name'];
 
@@ -52,6 +67,7 @@ export default function TabLayout() {
           title: 'Heute',
           tabBarLabel: 'Heute',
           tabBarAccessibilityLabel: 'Heute',
+          headerRight: () => <CheckInInfoButton color={theme.colors.textSecondary} />,
         }}
       />
       <Tabs.Screen
