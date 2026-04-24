@@ -147,17 +147,17 @@ export function StepSelfCare({ value, onValueChange }: StepSelfCareProps) {
             ]}
             accessibilityLabel="Selbstfürsorge-Notiz"
           />
-          {value.length >= 110 && (
+          {value.length >= 150 && (
             <Text
               style={{
                 fontFamily: typography.families.body.regular,
-                fontSize: typography.sizes.xs,
+                fontSize: typography.sizes.sm,
                 color: theme.colors.textSecondary,
-                textAlign: 'right',
+                textAlign: 'center',
                 marginTop: spacing.xs,
               }}
             >
-              {value.length >= 150 ? 'Das reicht ✓' : `Noch ${150 - value.length} Zeichen`}
+              Das klingt nach viel. Was braucht es gerade am meisten?
             </Text>
           )}
 

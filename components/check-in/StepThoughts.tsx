@@ -156,17 +156,17 @@ export function StepThoughts({
         ]}
         accessibilityLabel="Gedanken-Notiz"
       />
-      {note.length >= 160 && (
+      {note.length >= 200 && (
         <Text
           style={{
             fontFamily: typography.families.body.regular,
-            fontSize: typography.sizes.xs,
+            fontSize: typography.sizes.sm,
             color: theme.colors.textSecondary,
-            textAlign: 'right',
+            textAlign: 'center',
             marginTop: spacing.xs,
           }}
         >
-          {note.length >= 200 ? 'Das reicht ✓' : `Noch ${200 - note.length} Zeichen`}
+          Schön, dass du so viel reflektierst. Der Kern davon reicht völlig.
         </Text>
       )}
 

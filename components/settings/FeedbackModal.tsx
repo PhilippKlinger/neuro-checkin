@@ -202,7 +202,7 @@ export function FeedbackModal({ visible, onClose }: FeedbackModalProps) {
             </>
           ) : (
             <>
-              <Text style={s.title}>Feedback</Text>
+              <Text style={s.title}>Feedback (anonym)</Text>
               <Text style={s.subtitle}>
                 Was denkst du? Was hat geholfen, was stört, was fehlt? Alles ist optional.
               </Text>
@@ -216,9 +216,9 @@ export function FeedbackModal({ visible, onClose }: FeedbackModalProps) {
                 style={s.input}
                 accessibilityLabel="Feedback eingeben"
               />
-              {feedbackText.length >= 400 && (
+              {feedbackText.length >= 500 && (
                 <Text style={s.charCount}>
-                  {feedbackText.length >= 500 ? 'Das reicht ✓' : `Noch ${500 - feedbackText.length} Zeichen`}
+                  Super, das ist ausführlich genug — danke.
                 </Text>
               )}
               {feedbackError && (
@@ -227,7 +227,7 @@ export function FeedbackModal({ visible, onClose }: FeedbackModalProps) {
                 </Text>
               )}
               <Text style={s.privacyHint}>
-                Anonym gesendet — nur dein Text und die App-Version kommen an. Bitte keine persönlichen Check-in-Inhalte.
+                Bitte keine persönlichen Check-in-Inhalte senden.
               </Text>
               <View style={s.buttonRow}>
                 <Pressable

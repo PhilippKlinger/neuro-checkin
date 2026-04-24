@@ -121,19 +121,13 @@ function RootLayout() {
   const router = useRouter();
 
   useEffect(() => {
-    // Cold-start: app was killed when user tapped the notification.
-    // addNotificationResponseReceivedListener fires only while the app is alive,
-    // so we need getLastNotificationResponseAsync for the launch-from-notification case.
-    Notifications.getLastNotificationResponseAsync().then((response) => {
-      if (response?.actionIdentifier === Notifications.DEFAULT_ACTION_IDENTIFIER) {
-        router.push('/(tabs)/check-in');
-      }
-    });
-
+    // On Android, addNotificationResponseReceivedListener fires for both
+    // background→foreground AND cold-start taps. router.navigate (not push)
+    // is correct here — navigate switches the active tab without stacking duplicates.
     const subscription = Notifications.addNotificationResponseReceivedListener(
       (response) => {
         if (response.actionIdentifier === Notifications.DEFAULT_ACTION_IDENTIFIER) {
-          router.push('/(tabs)/check-in');
+          router.navigate('/(tabs)/check-in');
         }
       }
     );
