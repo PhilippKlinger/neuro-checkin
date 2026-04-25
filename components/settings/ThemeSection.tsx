@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { useTheme } from '../../lib/hooks/useTheme';
 import { themes, ThemeName } from '../../lib/constants/themes';
@@ -13,7 +14,7 @@ const THEME_OPTIONS: { key: ThemeName; label: string }[] = [
   { key: 'softSage', label: 'Soft Sage' },
 ];
 
-export function ThemeSection({ currentTheme, onThemeChange }: ThemeSectionProps) {
+export const ThemeSection = memo(function ThemeSection({ currentTheme, onThemeChange }: ThemeSectionProps) {
   const { theme, spacing, typography, radii } = useTheme();
 
   return (
@@ -72,7 +73,7 @@ export function ThemeSection({ currentTheme, onThemeChange }: ThemeSectionProps)
       </View>
     </>
   );
-}
+});
 
 const styles = StyleSheet.create({
   grid: {
@@ -91,3 +92,4 @@ const styles = StyleSheet.create({
     height: 16,
   },
 });
+

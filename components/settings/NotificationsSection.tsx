@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { useTheme } from '../../lib/hooks/useTheme';
@@ -19,7 +20,7 @@ const SLOT_LABELS: Record<0 | 1, string> = {
   1: 'Abend-Erinnerung',
 };
 
-export function NotificationsSection({
+export const NotificationsSection = memo(function NotificationsSection({
   slots,
   showTimePicker,
   isEmulator,
@@ -86,7 +87,7 @@ export function NotificationsSection({
       </View>
     </>
   );
-}
+});
 
 const styles = StyleSheet.create({
   slots: {},

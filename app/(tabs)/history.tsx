@@ -31,15 +31,15 @@ export default function HistoryScreen() {
     }, [db])
   );
 
-  function handlePress(id: number) {
+  const handlePress = useCallback((id: number) => {
     router.push(`/history/${id}`);
-  }
+  // router is a stable ref from expo-router
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const renderItem = useCallback<ListRenderItem<CheckIn>>(
     ({ item }) => <CheckInCard checkIn={item} onPress={() => handlePress(item.id)} />,
-    // handlePress uses router which is a stable ref; item.id is part of the item itself
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
+    [handlePress]
   );
 
   if (isLoading) {
