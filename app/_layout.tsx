@@ -89,6 +89,19 @@ function AppStack() {
         }}
       />
       <Stack.Screen
+        name="check-in-selector"
+        options={{
+          headerShown: true,
+          title: 'Check-in',
+          headerStyle: { backgroundColor: theme.colors.background },
+          headerTintColor: theme.colors.text,
+          headerTitleStyle: {
+            fontFamily: typography.families.heading.semibold,
+            fontSize: typography.sizes.lg,
+          },
+        }}
+      />
+      <Stack.Screen
         name="check-in-info"
         options={{
           headerShown: true,
