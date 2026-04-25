@@ -132,7 +132,7 @@ export default function OnboardingScreen() {
         {isLastStep ? (
           <View style={[styles.paletteGrid, { gap: spacing.md }]}>
             {(Object.keys(themes) as ThemeName[]).map((name) => {
-              const palette = themes[name];
+              const palette = themes[name].light;
               const isSelected = selectedTheme === name;
               return (
                 <Pressable

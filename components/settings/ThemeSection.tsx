@@ -32,7 +32,7 @@ export const ThemeSection = memo(function ThemeSection({ currentTheme, onThemeCh
 
       <View style={[styles.grid, { gap: spacing.sm, marginBottom: spacing.xl }]}>
         {THEME_OPTIONS.map((option) => {
-          const palette = themes[option.key];
+          const palette = themes[option.key].light;
           const isSelected = currentTheme === option.key;
           return (
             <Pressable

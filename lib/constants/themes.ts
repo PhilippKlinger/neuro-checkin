@@ -1,24 +1,24 @@
 /**
- * Design Tokens — 3 ND-friendly color palettes.
+ * Design Tokens — 3 ND-friendly palettes, each with light + dark mode.
  *
- * All palettes follow the same semantic token structure so components
- * never reference colors directly — only token names.
- * Active palette is selected via ThemeContext (to be implemented).
+ * Structure: themes[palette][mode] -> ThemeTokens
+ * Active theme = themes[themeName][resolvedColorMode]
+ * resolvedColorMode: 'light' | 'dark' (system mode resolved via useColorScheme)
  */
 
 export interface ColorTokens {
   background: string;
   surface: string;
   surfaceHover: string;
-  primary: string;
-  primarySoft: string;
-  accent: string;
-  accentSoft: string;
+  primary: string;    // neutral mode-ink — buttons/CTAs only
+  primarySoft: string; // subtle pressed/hover tint for buttons
+  accent: string;     // palette identity signal — selected states, active indicators
+  accentSoft: string; // light accent tint — selected backgrounds
   text: string;
   textSecondary: string;
   textInverse: string;
   border: string;
-  borderFocus: string;
+  borderFocus: string; // accent focus ring
   error: string;
   errorSoft: string;
   success: string;
@@ -30,25 +30,27 @@ export interface ThemeTokens {
   colors: ColorTokens;
 }
 
+export type ThemeName = 'warmEarth' | 'coolMist' | 'softSage';
+export type ColorMode = 'light' | 'dark' | 'system';
+
 // ---------------------------------------------------------------------------
-// Palette A — Warm Earth
-// Warm, natural tones. Earthy, calming, biophilic.
+// Palette A — Warm Earth (Light)
 // ---------------------------------------------------------------------------
-const warmEarth: ThemeTokens = {
+const warmEarthLight: ThemeTokens = {
   name: 'Warm Earth',
   colors: {
     background: '#FAF8F5',
     surface: '#F0ECE6',
     surfaceHover: '#E8E2D9',
-    primary: '#2D2A26',     // neutral ink (dark) — for buttons/CTAs
-    primarySoft: '#E8E3DD', // subtle pressed/hover tint for buttons
-    accent: '#6B8F71',      // Sage Green — identity signal, selected states
-    accentSoft: '#A8C5AD',  // light Sage tint — selected backgrounds
+    primary: '#2D2A26',
+    primarySoft: '#E8E3DD',
+    accent: '#6B8F71',
+    accentSoft: '#A8C5AD',
     text: '#2D2A26',
     textSecondary: '#6B6358',
     textInverse: '#FFFFFF',
     border: '#E0D9CF',
-    borderFocus: '#6B8F71', // accent as focus ring
+    borderFocus: '#6B8F71',
     error: '#C4736C',
     errorSoft: '#F0D5D2',
     success: '#6B8F71',
@@ -56,25 +58,30 @@ const warmEarth: ThemeTokens = {
   },
 };
 
+// Dark variant — placeholder until Branch 3 defines real dark values
+const warmEarthDark: ThemeTokens = {
+  name: 'Warm Earth',
+  colors: { ...warmEarthLight.colors },
+};
+
 // ---------------------------------------------------------------------------
-// Palette B — Cool Mist
-// Cool, soft blue-grays. Minimalist, tech-modern, calm.
+// Palette B — Cool Mist (Light)
 // ---------------------------------------------------------------------------
-const coolMist: ThemeTokens = {
+const coolMistLight: ThemeTokens = {
   name: 'Cool Mist',
   colors: {
     background: '#F5F7FA',
     surface: '#EBEEF3',
     surfaceHover: '#E0E4EB',
-    primary: '#1E2A36',     // neutral ink (dark) — for buttons/CTAs
-    primarySoft: '#E0E5EC', // subtle pressed/hover tint for buttons
-    accent: '#7BA39E',      // Sage-Teal — identity signal, selected states
-    accentSoft: '#B0CEC9',  // light Sage-Teal tint — selected backgrounds
+    primary: '#1E2A36',
+    primarySoft: '#E0E5EC',
+    accent: '#7BA39E',
+    accentSoft: '#B0CEC9',
     text: '#1E2A36',
     textSecondary: '#566878',
     textInverse: '#FFFFFF',
     border: '#D6DCE4',
-    borderFocus: '#7BA39E', // accent as focus ring
+    borderFocus: '#7BA39E',
     error: '#B86B6B',
     errorSoft: '#EED5D5',
     success: '#7BA39E',
@@ -82,41 +89,52 @@ const coolMist: ThemeTokens = {
   },
 };
 
+const coolMistDark: ThemeTokens = {
+  name: 'Cool Mist',
+  colors: { ...coolMistLight.colors },
+};
+
 // ---------------------------------------------------------------------------
-// Palette C — Soft Sage
-// Green-based, nature-connected, meditative mood.
+// Palette C — Soft Sage (Light)
 // ---------------------------------------------------------------------------
-const softSage: ThemeTokens = {
+const softSageLight: ThemeTokens = {
   name: 'Soft Sage',
   colors: {
     background: '#F7F8F5',
     surface: '#ECF0E8',
     surfaceHover: '#E2E8DC',
-    primary: '#2A2E28',     // neutral ink (dark) — for buttons/CTAs
-    primarySoft: '#E3E8E0', // subtle pressed/hover tint for buttons
-    accent: '#A68B6B',      // Erde-Braun — identity signal, selected states
-    accentSoft: '#CCBDA6',  // light Erde-Braun tint — selected backgrounds
+    primary: '#2A2E28',
+    primarySoft: '#E3E8E0',
+    accent: '#A68B6B',
+    accentSoft: '#CCBDA6',
     text: '#2A2E28',
     textSecondary: '#5A6057',
     textInverse: '#FFFFFF',
     border: '#D9DFD4',
-    borderFocus: '#A68B6B', // accent as focus ring
+    borderFocus: '#A68B6B',
     error: '#B06A5E',
     errorSoft: '#F0D8D2',
-    success: '#527A58',     // semantic green (not accent — Soft Sage accent is earth-brown)
+    success: '#527A58',
     successSoft: '#D4E8D7',
   },
 };
 
-export const themes = {
-  warmEarth,
-  coolMist,
-  softSage,
-} as const;
+const softSageDark: ThemeTokens = {
+  name: 'Soft Sage',
+  colors: { ...softSageLight.colors },
+};
 
-export type ThemeName = keyof typeof themes;
+// ---------------------------------------------------------------------------
+// Theme map: themes[palette][mode]
+// ---------------------------------------------------------------------------
+export const themes: Record<ThemeName, { light: ThemeTokens; dark: ThemeTokens }> = {
+  warmEarth: { light: warmEarthLight, dark: warmEarthDark },
+  coolMist:  { light: coolMistLight,  dark: coolMistDark  },
+  softSage:  { light: softSageLight,  dark: softSageDark  },
+};
 
 export const DEFAULT_THEME: ThemeName = 'warmEarth';
+export const DEFAULT_COLOR_MODE: ColorMode = 'system';
 
 // ---------------------------------------------------------------------------
 // Spacing — 8px grid
@@ -149,8 +167,6 @@ export const fonts = {
 } as const;
 
 export const typography = {
-  // Inter for UI elements (buttons, labels, navigation)
-  // Nunito Sans for body text and longer content (softer, more readable)
   families: {
     heading: fonts.inter,
     body: fonts.nunitoSans,
@@ -184,7 +200,7 @@ export const radii = {
 } as const;
 
 // ---------------------------------------------------------------------------
-// Shadows (subtle, not aggressive)
+// Shadows
 // ---------------------------------------------------------------------------
 export const shadows = {
   sm: {
@@ -204,14 +220,13 @@ export const shadows = {
 } as const;
 
 // ---------------------------------------------------------------------------
-// Touch targets — minimum 44x44 for accessibility
+// Touch targets
 // ---------------------------------------------------------------------------
 export const touchTarget = {
   min: 44,
 } as const;
 
 // ---------------------------------------------------------------------------
-// Overlay — semi-transparent backdrop for modals and dialogs
-// Not per-palette: always a neutral dark overlay regardless of theme.
+// Overlay — modal backdrop, theme-independent
 // ---------------------------------------------------------------------------
 export const OVERLAY_COLOR = 'rgba(0, 0, 0, 0.5)' as const;

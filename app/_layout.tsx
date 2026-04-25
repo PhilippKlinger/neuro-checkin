@@ -47,7 +47,7 @@ Sentry.init({
 });
 
 function AppStack() {
-  const { theme, typography, setThemeName } = useTheme();
+  const { theme, typography, setThemeName, setColorMode } = useTheme();
   const db = useDatabase();
   const isReady = useDatabaseReady();
   const router = useRouter();
@@ -60,6 +60,7 @@ function AppStack() {
     async function checkOnboarding() {
       const settings = await getSettings(db);
       setThemeName(settings.themeName as ThemeName);
+      setColorMode(settings.colorMode);
       if (!settings.onboardingCompleted && segments[0] !== 'onboarding') {
         router.replace('/onboarding');
       }
