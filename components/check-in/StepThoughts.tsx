@@ -98,11 +98,11 @@ export function StepThoughts({
                   paddingHorizontal: spacing.md,
                   paddingVertical: spacing.sm,
                   backgroundColor: isSelected
-                    ? theme.colors.primarySoft
+                    ? theme.colors.accentSoft
                     : theme.colors.surface,
                   borderWidth: 1,
                   borderColor: isSelected
-                    ? theme.colors.primary
+                    ? theme.colors.accent
                     : theme.colors.border,
                 },
               ]}
@@ -115,7 +115,7 @@ export function StepThoughts({
                   fontFamily: typography.families.ui.medium,
                   fontSize: typography.sizes.md,
                   color: isSelected
-                    ? theme.colors.primary
+                    ? theme.colors.text
                     : theme.colors.text,
                 }}
               >

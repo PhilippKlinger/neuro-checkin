@@ -78,7 +78,7 @@ export function StepBodySignals({ value, onValueChange }: StepBodySignalsProps) 
                     minHeight: touchTarget.min,
                     borderWidth: 1,
                     borderColor: state !== null
-                      ? theme.colors.primarySoft
+                      ? theme.colors.accentSoft
                       : theme.colors.border,
                   },
                 ]}
@@ -118,10 +118,10 @@ export function StepBodySignals({ value, onValueChange }: StepBodySignalsProps) 
                         borderRadius: radii.sm,
                         borderWidth: 2,
                         backgroundColor: state === true
-                          ? theme.colors.primary
+                          ? theme.colors.accent
                           : theme.colors.background,
                         borderColor: state === true
-                          ? theme.colors.primary
+                          ? theme.colors.accent
                           : theme.colors.border,
                       },
                     ]}

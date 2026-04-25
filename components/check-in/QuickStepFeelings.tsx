@@ -54,9 +54,9 @@ export function QuickStepFeelings({ value, onValueChange }: QuickStepFeelingsPro
                   borderRadius: radii.full,
                   paddingHorizontal: spacing.md,
                   paddingVertical: spacing.xs,
-                  backgroundColor: selected ? theme.colors.primarySoft : theme.colors.surface,
+                  backgroundColor: selected ? theme.colors.accentSoft : theme.colors.surface,
                   borderWidth: 1,
-                  borderColor: selected ? theme.colors.primary : theme.colors.border,
+                  borderColor: selected ? theme.colors.accent : theme.colors.border,
                 },
               ]}
               accessibilityRole="button"
@@ -67,7 +67,7 @@ export function QuickStepFeelings({ value, onValueChange }: QuickStepFeelingsPro
                 style={{
                   fontFamily: typography.families.ui.medium,
                   fontSize: typography.sizes.sm,
-                  color: selected ? theme.colors.primary : theme.colors.textSecondary,
+                  color: selected ? theme.colors.text : theme.colors.textSecondary,
                 }}
               >
                 {chip}

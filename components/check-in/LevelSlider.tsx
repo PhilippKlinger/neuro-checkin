@@ -61,11 +61,11 @@ export function LevelSlider({
                   minHeight: touchTarget.min,
                   borderRadius: radii.md,
                   backgroundColor: isSelected
-                    ? theme.colors.primary
+                    ? theme.colors.accent
                     : theme.colors.surface,
                   borderWidth: 1,
                   borderColor: isSelected
-                    ? theme.colors.primary
+                    ? theme.colors.accent
                     : theme.colors.border,
                   marginBottom: spacing.sm,
                   paddingHorizontal: spacing.md,

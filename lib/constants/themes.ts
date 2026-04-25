@@ -40,15 +40,15 @@ const warmEarth: ThemeTokens = {
     background: '#FAF8F5',
     surface: '#F0ECE6',
     surfaceHover: '#E8E2D9',
-    primary: '#7A6344',
-    primarySoft: '#9A8B6F',
-    accent: '#6B8F71',
-    accentSoft: '#A8C5AD',
+    primary: '#2D2A26',     // neutral ink (dark) — for buttons/CTAs
+    primarySoft: '#E8E3DD', // subtle pressed/hover tint for buttons
+    accent: '#6B8F71',      // Sage Green — identity signal, selected states
+    accentSoft: '#A8C5AD',  // light Sage tint — selected backgrounds
     text: '#2D2A26',
     textSecondary: '#6B6358',
     textInverse: '#FFFFFF',
     border: '#E0D9CF',
-    borderFocus: '#7A6344',
+    borderFocus: '#6B8F71', // accent as focus ring
     error: '#C4736C',
     errorSoft: '#F0D5D2',
     success: '#6B8F71',
@@ -66,15 +66,15 @@ const coolMist: ThemeTokens = {
     background: '#F5F7FA',
     surface: '#EBEEF3',
     surfaceHover: '#E0E4EB',
-    primary: '#4A6A89',
-    primarySoft: '#6E8EA8',
-    accent: '#7BA39E',
-    accentSoft: '#B0CEC9',
+    primary: '#1E2A36',     // neutral ink (dark) — for buttons/CTAs
+    primarySoft: '#E0E5EC', // subtle pressed/hover tint for buttons
+    accent: '#7BA39E',      // Sage-Teal — identity signal, selected states
+    accentSoft: '#B0CEC9',  // light Sage-Teal tint — selected backgrounds
     text: '#1E2A36',
     textSecondary: '#566878',
     textInverse: '#FFFFFF',
     border: '#D6DCE4',
-    borderFocus: '#4A6A89',
+    borderFocus: '#7BA39E', // accent as focus ring
     error: '#B86B6B',
     errorSoft: '#EED5D5',
     success: '#7BA39E',
@@ -92,18 +92,18 @@ const softSage: ThemeTokens = {
     background: '#F7F8F5',
     surface: '#ECF0E8',
     surfaceHover: '#E2E8DC',
-    primary: '#527A58',
-    primarySoft: '#6E9474',
-    accent: '#A68B6B',
-    accentSoft: '#CCBDA6',
+    primary: '#2A2E28',     // neutral ink (dark) — for buttons/CTAs
+    primarySoft: '#E3E8E0', // subtle pressed/hover tint for buttons
+    accent: '#A68B6B',      // Erde-Braun — identity signal, selected states
+    accentSoft: '#CCBDA6',  // light Erde-Braun tint — selected backgrounds
     text: '#2A2E28',
     textSecondary: '#5A6057',
     textInverse: '#FFFFFF',
     border: '#D9DFD4',
-    borderFocus: '#527A58',
+    borderFocus: '#A68B6B', // accent as focus ring
     error: '#B06A5E',
     errorSoft: '#F0D8D2',
-    success: '#527A58',
+    success: '#527A58',     // semantic green (not accent — Soft Sage accent is earth-brown)
     successSoft: '#D4E8D7',
   },
 };

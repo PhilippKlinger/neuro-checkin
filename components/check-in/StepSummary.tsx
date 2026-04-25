@@ -239,7 +239,7 @@ function sectionTitle(
   return {
     fontFamily: typography.families.ui.medium,
     fontSize: typography.sizes.sm,
-    color: theme.colors.primary,
+    color: theme.colors.accent,
     marginBottom: spacing.sm,
   };
 }

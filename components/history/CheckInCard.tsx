@@ -82,7 +82,7 @@ export const CheckInCard = memo(function CheckInCard({ checkIn, onPress }: Check
             style={{
               fontFamily: typography.families.ui.semibold,
               fontSize: typography.sizes.sm,
-              color: theme.colors.primary,
+              color: theme.colors.accent,
             }}
           >
             {getLevelLabel(checkIn.energyLevel, ENERGY_LABELS)}
@@ -103,7 +103,7 @@ export const CheckInCard = memo(function CheckInCard({ checkIn, onPress }: Check
             style={{
               fontFamily: typography.families.ui.semibold,
               fontSize: typography.sizes.sm,
-              color: theme.colors.primary,
+              color: theme.colors.accent,
             }}
           >
             {getLevelLabel(checkIn.focusLevel, FOCUS_LABELS)}
