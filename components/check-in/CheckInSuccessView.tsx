@@ -1,4 +1,5 @@
 import { View, Text, Pressable, StyleSheet } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../../lib/hooks/useTheme';
@@ -40,29 +41,24 @@ export function CheckInSuccessView({ onReset, energyLevel, focusLevel }: CheckIn
       ]}
     >
       <View style={styles.textBlock}>
+        <Ionicons
+          name="checkmark-circle"
+          size={64}
+          color={theme.colors.success}
+          style={{ marginBottom: spacing.lg }}
+          accessibilityElementsHidden
+        />
         <Text
           style={{
             fontFamily: typography.families.heading.semibold,
             fontSize: typography.sizes.xl,
             color: theme.colors.text,
             textAlign: 'center',
-            marginBottom: spacing.md,
+            marginBottom: showSummary ? spacing.lg : spacing.xl,
           }}
           accessibilityRole="header"
         >
           Check-in gespeichert
-        </Text>
-        <Text
-          style={{
-            fontFamily: typography.families.body.regular,
-            fontSize: typography.sizes.md,
-            color: theme.colors.textSecondary,
-            textAlign: 'center',
-            lineHeight: typography.sizes.md * 1.6,
-            marginBottom: showSummary ? spacing.lg : spacing.xl,
-          }}
-        >
-          Du hast dir einen Moment für dich genommen. Das zählt.
         </Text>
 
         {showSummary && (
