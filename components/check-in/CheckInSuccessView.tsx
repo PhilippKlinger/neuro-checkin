@@ -91,7 +91,7 @@ export function CheckInSuccessView({ onReset, energyLevel, focusLevel }: CheckIn
                 style={{
                   fontFamily: typography.families.heading.bold,
                   fontSize: typography.sizes.lg,
-                  color: theme.colors.primary,
+                  color: theme.colors.accent,
                 }}
               >
                 {getLevelLabel(energyLevel!, ENERGY_LABELS)}
@@ -117,7 +117,7 @@ export function CheckInSuccessView({ onReset, energyLevel, focusLevel }: CheckIn
                     style={{
                       fontFamily: typography.families.heading.bold,
                       fontSize: typography.sizes.lg,
-                      color: theme.colors.primary,
+                      color: theme.colors.accent,
                     }}
                   >
                     {getLevelLabel(focusLevel!, FOCUS_LABELS)}

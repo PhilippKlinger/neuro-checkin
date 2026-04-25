@@ -51,7 +51,7 @@ export default function TabLayout() {
           paddingBottom: insets.bottom + 4,
           height: 56 + insets.bottom,
         },
-        tabBarActiveTintColor: theme.colors.primary,
+        tabBarActiveTintColor: theme.colors.accent,
         tabBarInactiveTintColor: theme.colors.textSecondary,
         tabBarLabelStyle: {
           fontFamily: typography.families.ui.medium,
