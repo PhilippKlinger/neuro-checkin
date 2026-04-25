@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { View, Text, Pressable, ScrollView, StyleSheet, Platform } from 'react-native';
+import { Text, Pressable, ScrollView, StyleSheet, Platform } from 'react-native';
 import * as Device from 'expo-device';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { DateTimePickerEvent } from '@react-native-community/datetimepicker';

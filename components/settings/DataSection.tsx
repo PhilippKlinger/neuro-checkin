@@ -1,4 +1,4 @@
-import { Alert, View, Text, Pressable, StyleSheet } from 'react-native';
+import { Alert, Text, Pressable, StyleSheet } from 'react-native';
 import { useTheme } from '../../lib/hooks/useTheme';
 import { ConfirmDialog } from '../ui/ConfirmDialog';
 import { deleteAllCheckIns } from '../../lib/database/checkins';
