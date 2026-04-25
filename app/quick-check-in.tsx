@@ -80,12 +80,8 @@ export default function QuickCheckInScreen() {
       });
       setIsDone(true);
     } catch (error) {
-      const message = error instanceof Error ? error.message : String(error);
-      console.error('[QuickCheckIn] save failed — SQLite error:', message, error);
-      Alert.alert(
-        'Fehler beim Speichern',
-        `Check-in konnte nicht gespeichert werden.\n\n${message}`,
-      );
+      console.error('[QuickCheckIn] save failed:', error);
+      Alert.alert('Fehler beim Speichern', 'Check-in konnte nicht gespeichert werden.');
     } finally {
       setIsSaving(false);
     }
