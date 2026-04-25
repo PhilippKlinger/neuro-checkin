@@ -209,3 +209,9 @@ export const shadows = {
 export const touchTarget = {
   min: 44,
 } as const;
+
+// ---------------------------------------------------------------------------
+// Overlay — semi-transparent backdrop for modals and dialogs
+// Not per-palette: always a neutral dark overlay regardless of theme.
+// ---------------------------------------------------------------------------
+export const OVERLAY_COLOR = 'rgba(0, 0, 0, 0.5)' as const;

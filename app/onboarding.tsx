@@ -7,7 +7,7 @@ import { useDatabase } from '../lib/hooks/useDatabase';
 import { FadeView } from '../components/ui/FadeView';
 import { updateSettings } from '../lib/database/settings';
 import { StepIndicator } from '../components/check-in/StepIndicator';
-import { themes, ThemeName, spacing, radii } from '../lib/constants/themes';
+import { themes, ThemeName } from '../lib/constants/themes';
 
 interface OnboardingStep {
   title: string;
@@ -100,7 +100,7 @@ export default function OnboardingScreen() {
 
       <FadeView triggerKey={step} style={styles.content}>
         <ScrollView
-          contentContainerStyle={styles.contentScroll}
+          contentContainerStyle={[styles.contentScroll, { paddingVertical: spacing.lg }]}
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
         >
@@ -153,10 +153,10 @@ export default function OnboardingScreen() {
                   accessibilityLabel={PALETTE_LABELS[name]}
                   accessibilityState={{ selected: isSelected }}
                 >
-                  <View style={[styles.paletteSwatches, { marginBottom: spacing.sm }]}>
-                    <View style={[styles.swatch, { backgroundColor: palette.colors.primary }]} />
-                    <View style={[styles.swatch, { backgroundColor: palette.colors.accent }]} />
-                    <View style={[styles.swatch, { backgroundColor: palette.colors.background }]} />
+                  <View style={[styles.paletteSwatches, { gap: spacing.xs, marginBottom: spacing.sm }]}>
+                    <View style={[styles.swatch, { backgroundColor: palette.colors.primary, borderRadius: radii.full }]} />
+                    <View style={[styles.swatch, { backgroundColor: palette.colors.accent, borderRadius: radii.full }]} />
+                    <View style={[styles.swatch, { backgroundColor: palette.colors.background, borderRadius: radii.full }]} />
                   </View>
                   <Text
                     style={{
@@ -246,7 +246,6 @@ const styles = StyleSheet.create({
   },
   contentScroll: {
     flexGrow: 1,
-    paddingVertical: spacing.lg,
   },
   footer: {
     alignItems: 'center',
@@ -267,11 +266,9 @@ const styles = StyleSheet.create({
   },
   paletteSwatches: {
     flexDirection: 'row',
-    gap: spacing.xs,
   },
   swatch: {
     width: 18,
     height: 18,
-    borderRadius: radii.full,
   },
 });
