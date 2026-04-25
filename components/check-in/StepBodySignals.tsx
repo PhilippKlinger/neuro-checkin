@@ -1,8 +1,6 @@
 import { View, Text, Pressable, StyleSheet, ScrollView } from 'react-native';
 import { useTheme } from '../../lib/hooks/useTheme';
 import { BodySignals } from '../../lib/types/checkin';
-import { spacing as spacingTokens } from '../../lib/constants/themes';
-
 interface StepBodySignalsProps {
   value: BodySignals;
   onValueChange: (value: BodySignals) => void;
@@ -87,7 +85,7 @@ export function StepBodySignals({ value, onValueChange }: StepBodySignalsProps) 
                 accessibilityLabel={signal.label}
               >
                 {/* Label + Beschreibung */}
-                <View style={styles.signalTextWrapper}>
+                <View style={[styles.signalTextWrapper, { marginRight: spacing.sm }]}>
                   <Text
                     style={{
                       fontFamily: typography.families.ui.medium,
@@ -201,7 +199,6 @@ const styles = StyleSheet.create({
   },
   signalTextWrapper: {
     flex: 1,
-    marginRight: spacingTokens.sm,
   },
   buttonGroup: {
     flexDirection: 'row',

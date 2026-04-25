@@ -12,13 +12,12 @@ import {
 import Constants from 'expo-constants';
 import { useTheme } from '../../lib/hooks/useTheme';
 import { FORMSPREE_URL } from '../../lib/constants/config';
+import { OVERLAY_COLOR } from '../../lib/constants/themes';
 
 interface FeedbackModalProps {
   visible: boolean;
   onClose: () => void;
 }
-
-const OVERLAY_BG = 'rgba(0, 0, 0, 0.4)';
 
 export function FeedbackModal({ visible, onClose }: FeedbackModalProps) {
   const { theme, spacing, typography, radii, touchTarget } = useTheme();
@@ -69,7 +68,7 @@ export function FeedbackModal({ visible, onClose }: FeedbackModalProps) {
       StyleSheet.create({
         overlay: {
           flex: 1,
-          backgroundColor: OVERLAY_BG,
+          backgroundColor: OVERLAY_COLOR,
           justifyContent: 'center',
           padding: spacing.lg,
         },

@@ -1,5 +1,6 @@
 import { Modal, View, Text, Pressable, StyleSheet } from 'react-native';
 import { useTheme } from '../../lib/hooks/useTheme';
+import { OVERLAY_COLOR } from '../../lib/constants/themes';
 
 interface ConfirmDialogProps {
   visible: boolean;
@@ -143,7 +144,7 @@ export function ConfirmDialog({
 const styles = StyleSheet.create({
   backdrop: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)',
+    backgroundColor: OVERLAY_COLOR,
     justifyContent: 'center',
   },
   dialog: {

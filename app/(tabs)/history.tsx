@@ -6,10 +6,9 @@ import { useDatabase } from '../../lib/hooks/useDatabase';
 import { getCheckIns } from '../../lib/database/checkins';
 import { CheckIn } from '../../lib/types/checkin';
 import { CheckInCard } from '../../components/history/CheckInCard';
-import { spacing } from '../../lib/constants/themes';
 
 export default function HistoryScreen() {
-  const { theme, typography } = useTheme();
+  const { theme, typography, spacing } = useTheme();
   const db = useDatabase();
   const router = useRouter();
   const [checkIns, setCheckIns] = useState<CheckIn[]>([]);
@@ -32,15 +31,15 @@ export default function HistoryScreen() {
     }, [db])
   );
 
-  function handlePress(id: number) {
+  const handlePress = useCallback((id: number) => {
     router.push(`/history/${id}`);
-  }
+  // router is a stable ref from expo-router
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const renderItem = useCallback<ListRenderItem<CheckIn>>(
     ({ item }) => <CheckInCard checkIn={item} onPress={() => handlePress(item.id)} />,
-    // handlePress uses router which is a stable ref; item.id is part of the item itself
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
+    [handlePress]
   );
 
   if (isLoading) {
@@ -103,7 +102,7 @@ export default function HistoryScreen() {
         data={checkIns}
         keyExtractor={(item) => item.id.toString()}
         renderItem={renderItem}
-        contentContainerStyle={styles.listContent}
+        contentContainerStyle={{ padding: spacing.md }}
       />
     </View>
   );
@@ -117,8 +116,5 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  listContent: {
-    padding: spacing.md,
   },
 });

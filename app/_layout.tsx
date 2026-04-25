@@ -15,10 +15,27 @@ Sentry.init({
   enabled: !__DEV__,
   tracesSampleRate: 0,
   beforeSend(event) {
-    // Strip any potential user identifiers — we never collect them intentionally
+    // Strip user identifiers — never collected intentionally
     if (event.user) {
       delete event.user.ip_address;
       delete event.user.email;
+    }
+    // Strip sensitive check-in health data that may appear in crash contexts
+    // (component state, extra fields). The app promises local-only storage.
+    const sensitiveKeys = [
+      'feelings', 'thoughtsNote', 'selfCareNote', 'innerPart', 'note',
+      'draft', 'bodySignals',
+    ];
+    function scrub(obj: Record<string, unknown>) {
+      for (const key of sensitiveKeys) {
+        if (key in obj) obj[key] = '[scrubbed]';
+      }
+    }
+    if (event.extra) scrub(event.extra as Record<string, unknown>);
+    if (event.contexts) {
+      for (const ctx of Object.values(event.contexts)) {
+        if (ctx && typeof ctx === 'object') scrub(ctx as Record<string, unknown>);
+      }
     }
     return event;
   },
