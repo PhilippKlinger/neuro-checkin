@@ -121,8 +121,12 @@ export default function CheckInScreen() {
       });
       setIsDone(true);
     } catch (error) {
-      console.error('[CheckIn] save failed:', error);
-      Alert.alert('Fehler beim Speichern', 'Check-in konnte nicht gespeichert werden. Bitte versuche es erneut.');
+      const message = error instanceof Error ? error.message : String(error);
+      console.error('[CheckIn] save failed — SQLite error:', message, error);
+      Alert.alert(
+        'Fehler beim Speichern',
+        `Check-in konnte nicht gespeichert werden.\n\n${message}`,
+      );
     } finally {
       setIsSaving(false);
     }

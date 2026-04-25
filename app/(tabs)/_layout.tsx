@@ -13,7 +13,7 @@ function CheckInInfoButton({ color }: { color: string }) {
       accessibilityRole="button"
       accessibilityLabel="Hilfe: Was ist ein Check-in?"
     >
-      <Ionicons name="help-circle-outline" size={22} color={color} />
+      <Ionicons name="help-circle-outline" size={26} color={color} />
     </Pressable>
   );
 }
@@ -41,6 +41,9 @@ export default function TabLayout() {
         headerTitleStyle: {
           fontFamily: typography.families.heading.semibold,
           fontSize: typography.sizes.lg,
+        },
+        headerTitleContainerStyle: {
+          paddingLeft: 8,
         },
         tabBarStyle: {
           backgroundColor: theme.colors.background,

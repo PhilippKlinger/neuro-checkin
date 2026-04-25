@@ -28,12 +28,6 @@ export default function CheckInSelectorScreen() {
       accessibilityLabel: 'Ich nehme mir kurz Zeit, 3 Schritte, etwa 2 Minuten',
       onPress: () => router.replace('/quick-check-in'),
     },
-    {
-      title: 'Schritt für Schritt',
-      subtitle: 'Du wählst nach jedem Schritt: weiter oder fertig. Was du hast, bleibt gespeichert.',
-      accessibilityLabel: 'Schritt für Schritt, du wählst nach jedem Schritt weiter oder fertig, was du hast bleibt gespeichert',
-      onPress: () => router.replace('/(tabs)/check-in'),
-    },
   ];
 
   return (
