@@ -44,7 +44,7 @@ export function SlotCard({
           padding: spacing.md,
           marginBottom: spacing.sm,
           borderWidth: 1,
-          borderColor: slot.enabled ? theme.colors.primary : theme.colors.border,
+          borderColor: slot.enabled ? theme.colors.accent : theme.colors.border,
         },
       ]}
     >
@@ -65,9 +65,9 @@ export function SlotCard({
           onValueChange={onToggle}
           trackColor={{
             false: theme.colors.border,
-            true: theme.colors.primarySoft,
+            true: theme.colors.accentSoft,
           }}
-          thumbColor={slot.enabled ? theme.colors.primary : theme.colors.surface}
+          thumbColor={slot.enabled ? theme.colors.accent : theme.colors.surface}
           accessibilityLabel={label}
           accessibilityRole="switch"
           accessibilityHint={slot.enabled ? 'Erinnerung deaktivieren' : 'Erinnerung aktivieren'}
@@ -81,7 +81,7 @@ export function SlotCard({
             style={{
               fontFamily: typography.families.body.regular,
               fontSize: typography.sizes.sm,
-              color: theme.colors.primary,
+              color: theme.colors.accent,
               marginTop: spacing.xs,
             }}
             accessibilityLiveRegion="polite"
@@ -107,7 +107,7 @@ export function SlotCard({
                 value={pickerDate}
                 mode="time"
                 display="default"
-                accentColor={theme.colors.primary}
+                accentColor={theme.colors.accent}
                 onChange={onTimeChange}
                 accessibilityLabel="Erinnerungszeit auswählen"
               />
@@ -118,7 +118,7 @@ export function SlotCard({
                   style={[
                     styles.timeButton,
                     {
-                      backgroundColor: theme.colors.primarySoft,
+                      backgroundColor: theme.colors.accentSoft,
                       borderRadius: radii.sm,
                       paddingHorizontal: spacing.md,
                       paddingVertical: spacing.sm,
@@ -133,7 +133,7 @@ export function SlotCard({
                     style={{
                       fontFamily: typography.families.ui.medium,
                       fontSize: typography.sizes.md,
-                      color: theme.colors.primary,
+                      color: theme.colors.accent,
                     }}
                   >
                     {slot.time}
@@ -144,7 +144,7 @@ export function SlotCard({
                     value={pickerDate}
                     mode="time"
                     display="default"
-                    accentColor={theme.colors.primary}
+                    accentColor={theme.colors.accent}
                     onChange={onTimeChange}
                     accessibilityLabel="Erinnerungszeit auswählen"
                   />
@@ -192,9 +192,9 @@ export function SlotCard({
                       {
                         borderRadius: radii.full,
                         borderWidth: 1,
-                        borderColor: isActive ? theme.colors.primary : theme.colors.border,
+                        borderColor: isActive ? theme.colors.accent : theme.colors.border,
                         backgroundColor: isActive
-                          ? theme.colors.primarySoft
+                          ? theme.colors.accentSoft
                           : theme.colors.background,
                         minWidth: touchTarget.min,
                         minHeight: touchTarget.min,
@@ -211,7 +211,7 @@ export function SlotCard({
                       style={{
                         fontFamily: typography.families.ui.medium,
                         fontSize: typography.sizes.xs,
-                        color: isActive ? theme.colors.primary : theme.colors.textSecondary,
+                        color: isActive ? theme.colors.text : theme.colors.textSecondary,
                       }}
                     >
                       {dayLabel}
