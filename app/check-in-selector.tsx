@@ -61,7 +61,7 @@ export default function CheckInSelectorScreen() {
         Wie viel Raum hast du gerade?
       </Text>
 
-      <View style={[styles.options, { gap: spacing.sm }]}>
+      <View style={[styles.options, { gap: spacing.md }]}>
         {options.map((option) => (
           <Pressable
             key={option.title}
@@ -81,7 +81,7 @@ export default function CheckInSelectorScreen() {
             <Text
               style={{
                 fontFamily: typography.families.heading.semibold,
-                fontSize: typography.sizes.md,
+                fontSize: typography.sizes.lg,
                 color: theme.colors.text,
                 marginBottom: spacing.xs,
               }}
@@ -93,6 +93,7 @@ export default function CheckInSelectorScreen() {
                 fontFamily: typography.families.body.regular,
                 fontSize: typography.sizes.sm,
                 color: theme.colors.textSecondary,
+                lineHeight: typography.sizes.sm * 1.5,
               }}
             >
               {option.subtitle}
