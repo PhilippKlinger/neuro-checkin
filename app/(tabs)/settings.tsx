@@ -1,22 +1,14 @@
 import { useState, useCallback } from 'react';
-import {
-  View,
-  Text,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Platform,
-  Alert,
-} from 'react-native';
+import { View, Text, Pressable, ScrollView, StyleSheet, Platform } from 'react-native';
 import * as Device from 'expo-device';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { useTheme } from '../../lib/hooks/useTheme';
 import { useDatabase } from '../../lib/hooks/useDatabase';
 import { getSettings, updateSettings } from '../../lib/database/settings';
-import { deleteAllCheckIns, countCheckIns } from '../../lib/database/checkins';
+import { countCheckIns } from '../../lib/database/checkins';
 import { getNotificationSlots, saveNotificationSlot } from '../../lib/database/notificationQueries';
-import { themes, ThemeName } from '../../lib/constants/themes';
+import { ThemeName } from '../../lib/constants/themes';
 import {
   requestNotificationPermission,
   scheduleSingleSlot,
@@ -24,21 +16,11 @@ import {
   scheduleAllSlots,
 } from '../../lib/notifications/notifications';
 import { type NotificationSlot, ALL_WEEKDAYS, WEEKDAY_BITS } from '../../lib/types/checkin';
-import { ConfirmDialog } from '../../components/ui/ConfirmDialog';
-import { SlotCard } from '../../components/settings/SlotCard';
-import { dateToTimeString } from '../../lib/utils/time';
+import { ThemeSection } from '../../components/settings/ThemeSection';
+import { NotificationsSection } from '../../components/settings/NotificationsSection';
+import { DataSection } from '../../components/settings/DataSection';
 import { FeedbackModal } from '../../components/settings/FeedbackModal';
-
-const THEME_OPTIONS: { key: ThemeName; label: string }[] = [
-  { key: 'warmEarth', label: 'Warm Earth' },
-  { key: 'coolMist', label: 'Cool Mist' },
-  { key: 'softSage', label: 'Soft Sage' },
-];
-
-const SLOT_LABELS: Record<0 | 1, string> = {
-  0: 'Morgen-Erinnerung',
-  1: 'Abend-Erinnerung',
-};
+import { dateToTimeString } from '../../lib/utils/time';
 
 const DEFAULT_SLOTS: NotificationSlot[] = [
   { id: 0, enabled: false, time: '09:00', weekdays: ALL_WEEKDAYS },
@@ -46,17 +28,13 @@ const DEFAULT_SLOTS: NotificationSlot[] = [
 ];
 
 export default function SettingsScreen() {
-  const { theme, themeName, setThemeName, spacing, typography, radii, touchTarget } =
-    useTheme();
+  const { theme, themeName, setThemeName, spacing, typography, radii, touchTarget } = useTheme();
   const db = useDatabase();
   const router = useRouter();
 
   const [slots, setSlots] = useState<NotificationSlot[]>(DEFAULT_SLOTS);
   const [showTimePicker, setShowTimePicker] = useState<0 | 1 | null>(null);
   const [isEmulator, setIsEmulator] = useState(false);
-  const [showDeleteStep1Dialog, setShowDeleteStep1Dialog] = useState(false);
-  const [showDeleteStep2Dialog, setShowDeleteStep2Dialog] = useState(false);
-  const [showDeleteDoneDialog, setShowDeleteDoneDialog] = useState(false);
   const [checkInCount, setCheckInCount] = useState(0);
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
 
@@ -70,8 +48,6 @@ export default function SettingsScreen() {
         const dbSlots = await getNotificationSlots(db);
         if (dbSlots.length >= 2) {
           setSlots(dbSlots as NotificationSlot[]);
-
-          // Reconcile: if a slot is enabled but has no scheduled notifications, reschedule
           if (Device.isDevice) {
             await scheduleAllSlots(dbSlots as NotificationSlot[]);
           }
@@ -89,43 +65,25 @@ export default function SettingsScreen() {
       const result = await requestNotificationPermission();
       if (result === false) return;
     }
-
-    const updatedSlots = slots.map((s) =>
-      s.id === slotId ? { ...s, enabled: value } : s
-    );
+    const updatedSlots = slots.map((s) => s.id === slotId ? { ...s, enabled: value } : s);
     setSlots(updatedSlots);
-
     const updated = updatedSlots.find((s) => s.id === slotId)!;
     await saveNotificationSlot(db, updated);
-
     if (Device.isDevice) {
-      if (value) {
-        await scheduleSingleSlot(updated);
-      } else {
-        await cancelSingleSlot(slotId);
-      }
+      if (value) await scheduleSingleSlot(updated);
+      else await cancelSingleSlot(slotId);
     }
   }
 
-  async function handleTimeChange(
-    slotId: 0 | 1,
-    _event: DateTimePickerEvent,
-    selected?: Date
-  ) {
+  async function handleTimeChange(slotId: 0 | 1, _event: DateTimePickerEvent, selected?: Date) {
     if (Platform.OS === 'android') setShowTimePicker(null);
     if (!selected) return;
-
     const time = dateToTimeString(selected);
-    const updatedSlots = slots.map((s) =>
-      s.id === slotId ? { ...s, time } : s
-    );
+    const updatedSlots = slots.map((s) => s.id === slotId ? { ...s, time } : s);
     setSlots(updatedSlots);
-
     const updated = updatedSlots.find((s) => s.id === slotId)!;
     await saveNotificationSlot(db, updated);
-    if (updated.enabled && Device.isDevice) {
-      await scheduleSingleSlot(updated);
-    }
+    if (updated.enabled && Device.isDevice) await scheduleSingleSlot(updated);
   }
 
   async function handleWeekdayToggle(slotId: 0 | 1, bitIndex: number) {
@@ -133,17 +91,13 @@ export default function SettingsScreen() {
     const updatedSlots = slots.map((s) => {
       if (s.id !== slotId) return s;
       const newWeekdays = (s.weekdays & bit) ? s.weekdays & ~bit : s.weekdays | bit;
-      // Prevent deselecting the last active weekday
       if (newWeekdays === 0) return s;
       return { ...s, weekdays: newWeekdays };
     });
     setSlots(updatedSlots);
-
     const updated = updatedSlots.find((s) => s.id === slotId)!;
     await saveNotificationSlot(db, updated);
-    if (updated.enabled && Device.isDevice) {
-      await scheduleSingleSlot(updated);
-    }
+    if (updated.enabled && Device.isDevice) await scheduleSingleSlot(updated);
   }
 
   async function handleThemeChange(name: ThemeName) {
@@ -151,347 +105,111 @@ export default function SettingsScreen() {
     await updateSettings(db, { themeName: name });
   }
 
-  async function handleConfirmDeleteAll() {
-    setShowDeleteStep2Dialog(false);
-    try {
-      await deleteAllCheckIns(db);
-      setCheckInCount(0);
-      setShowDeleteDoneDialog(true);
-    } catch {
-      Alert.alert('Fehler', 'Daten konnten nicht gelöscht werden. Bitte versuche es erneut.');
-    }
-  }
-
-  const anySlotEnabled = slots.some((s) => s.enabled);
-
   return (
     <>
-    <ScrollView
-      style={[styles.container, { backgroundColor: theme.colors.background }]}
-      contentContainerStyle={{ padding: spacing.lg, paddingBottom: spacing.xxl }}
-    >
-      {/* Theme Selection */}
-      <Text
-        style={{
-          fontFamily: typography.families.heading.semibold,
-          fontSize: typography.sizes.lg,
-          color: theme.colors.text,
-          marginBottom: spacing.md,
-        }}
+      <ScrollView
+        style={[styles.container, { backgroundColor: theme.colors.background }]}
+        contentContainerStyle={{ padding: spacing.lg, paddingBottom: spacing.xxl }}
       >
-        Farbpalette
-      </Text>
+        <ThemeSection currentTheme={themeName} onThemeChange={handleThemeChange} />
 
-      <View style={[styles.themeGrid, { gap: spacing.sm, marginBottom: spacing.xl }]}>
-        {THEME_OPTIONS.map((option) => {
-          const palette = themes[option.key];
-          const isSelected = themeName === option.key;
-          return (
-            <Pressable
-              key={option.key}
-              onPress={() => handleThemeChange(option.key)}
-              style={[
-                styles.themeCard,
-                {
-                  borderRadius: radii.md,
-                  padding: spacing.md,
-                  backgroundColor: palette.colors.surface,
-                  borderWidth: 2,
-                  borderColor: isSelected
-                    ? palette.colors.primary
-                    : palette.colors.border,
-                },
-              ]}
-              accessibilityRole="button"
-              accessibilityLabel={`Farbpalette ${option.label}`}
-              accessibilityState={{ selected: isSelected }}
-            >
-              <View style={[styles.colorPreview, { gap: spacing.xs, marginBottom: spacing.sm }]}>
-                <View
-                  style={[
-                    styles.colorDot,
-                    { backgroundColor: palette.colors.primary, borderRadius: radii.full },
-                  ]}
-                />
-                <View
-                  style={[
-                    styles.colorDot,
-                    { backgroundColor: palette.colors.accent, borderRadius: radii.full },
-                  ]}
-                />
-                <View
-                  style={[
-                    styles.colorDot,
-                    {
-                      backgroundColor: palette.colors.background,
-                      borderRadius: radii.full,
-                      borderWidth: 1,
-                      borderColor: palette.colors.border,
-                    },
-                  ]}
-                />
-              </View>
-              <Text
-                style={{
-                  fontFamily: typography.families.ui.medium,
-                  fontSize: typography.sizes.sm,
-                  color: palette.colors.text,
-                  textAlign: 'center',
-                }}
-              >
-                {option.label}
-              </Text>
-            </Pressable>
-          );
-        })}
-      </View>
-
-      {/* Notifications */}
-      <Text
-        style={{
-          fontFamily: typography.families.heading.semibold,
-          fontSize: typography.sizes.lg,
-          color: theme.colors.text,
-          marginBottom: spacing.md,
-        }}
-      >
-        Erinnerungen
-      </Text>
-
-      <Text
-        style={{
-          fontFamily: typography.families.body.regular,
-          fontSize: typography.sizes.sm,
-          color: theme.colors.textSecondary,
-          marginBottom: spacing.md,
-          lineHeight: typography.sizes.sm * 1.5,
-        }}
-      >
-        Du kannst eine oder zwei Erinnerungen einstellen — oder keine.
-      </Text>
-
-
-      {isEmulator && anySlotEnabled && (
-        <Text
-          style={{
-            fontFamily: typography.families.body.regular,
-            fontSize: typography.sizes.xs,
-            color: theme.colors.textSecondary,
-            marginBottom: spacing.sm,
-            fontStyle: 'italic',
-          }}
-        >
-          Hinweis: Benachrichtigungen funktionieren nur auf einem echten Gerät, nicht im Emulator.
-        </Text>
-      )}
-
-      {slots.map((slot) => (
-        <SlotCard
-          key={slot.id}
-          slot={slot}
-          label={SLOT_LABELS[slot.id]}
-          showTimePicker={showTimePicker === slot.id}
-          onToggle={(value) => handleSlotToggle(slot.id, value)}
-          onTimePress={() => setShowTimePicker(slot.id)}
-          onTimeChange={(e, d) => handleTimeChange(slot.id, e, d)}
-          onWeekdayToggle={(i) => handleWeekdayToggle(slot.id, i)}
+        <NotificationsSection
+          slots={slots}
+          showTimePicker={showTimePicker}
+          isEmulator={isEmulator}
+          onToggle={handleSlotToggle}
+          onTimePress={(id) => setShowTimePicker(id)}
+          onTimeChange={handleTimeChange}
+          onWeekdayToggle={handleWeekdayToggle}
         />
-      ))}
 
-      {/* Feedback */}
-      <Text
-        style={{
-          fontFamily: typography.families.heading.semibold,
-          fontSize: typography.sizes.lg,
-          color: theme.colors.text,
-          marginBottom: spacing.md,
-          marginTop: spacing.xl,
-        }}
-      >
-        Feedback
-      </Text>
-
-      <Pressable
-        onPress={() => setShowFeedbackModal(true)}
-        style={[
-          {
-            backgroundColor: theme.colors.surface,
-            borderRadius: radii.md,
-            padding: spacing.md,
-            minHeight: touchTarget.min,
-            borderWidth: 1,
-            borderColor: theme.colors.border,
-            marginBottom: spacing.xl,
-            justifyContent: 'center',
-          },
-        ]}
-        accessibilityRole="button"
-        accessibilityLabel="Feedback senden"
-        accessibilityHint="Öffnet ein Feedback-Formular"
-      >
         <Text
           style={{
-            fontFamily: typography.families.ui.medium,
-            fontSize: typography.sizes.md,
-            color: theme.colors.textSecondary,
-          }}
-        >
-          Feedback senden
-        </Text>
-      </Pressable>
-
-      {/* Data & Privacy */}
-      <Text
-        style={{
-          fontFamily: typography.families.heading.semibold,
-          fontSize: typography.sizes.lg,
-          color: theme.colors.text,
-          marginBottom: spacing.md,
-        }}
-      >
-        Daten & Datenschutz
-      </Text>
-
-      <Pressable
-        onPress={() => setShowDeleteStep1Dialog(true)}
-        disabled={checkInCount === 0}
-        style={[
-          {
-            backgroundColor: theme.colors.surface,
-            borderRadius: radii.md,
-            padding: spacing.md,
-            minHeight: touchTarget.min,
-            borderWidth: 1,
-            borderColor: theme.colors.border,
-            opacity: checkInCount === 0 ? 0.4 : 1,
-          },
-        ]}
-        accessibilityRole="button"
-        accessibilityLabel="Alle Check-ins löschen"
-        accessibilityHint="Löscht alle gespeicherten Check-ins dauerhaft"
-        accessibilityState={{ disabled: checkInCount === 0 }}
-      >
-        <Text
-          style={{
-            fontFamily: typography.families.ui.medium,
-            fontSize: typography.sizes.md,
+            fontFamily: typography.families.heading.semibold,
+            fontSize: typography.sizes.lg,
             color: theme.colors.text,
+            marginBottom: spacing.md,
+            marginTop: spacing.xl,
           }}
         >
-          Alle Check-ins löschen
+          Feedback
         </Text>
-      </Pressable>
+        <Pressable
+          onPress={() => setShowFeedbackModal(true)}
+          style={[
+            styles.listItem,
+            {
+              backgroundColor: theme.colors.surface,
+              borderRadius: radii.md,
+              padding: spacing.md,
+              minHeight: touchTarget.min,
+              borderWidth: 1,
+              borderColor: theme.colors.border,
+              marginBottom: spacing.xl,
+            },
+          ]}
+          accessibilityRole="button"
+          accessibilityLabel="Feedback senden"
+          accessibilityHint="Öffnet ein Feedback-Formular"
+        >
+          <Text
+            style={{
+              fontFamily: typography.families.ui.medium,
+              fontSize: typography.sizes.md,
+              color: theme.colors.textSecondary,
+            }}
+          >
+            Feedback senden
+          </Text>
+        </Pressable>
 
-      <ConfirmDialog
-        visible={showDeleteStep1Dialog}
-        title="Alle Check-ins löschen"
-        message={`Möchtest du wirklich ${checkInCount === 1 ? '1 gespeicherten Check-in' : `alle ${checkInCount} gespeicherten Check-ins`} löschen? Diese Aktion kann nicht rückgängig gemacht werden.`}
-        confirmLabel="Löschen"
-        cancelLabel="Abbrechen"
-        destructive
-        onConfirm={() => {
-          setShowDeleteStep1Dialog(false);
-          setShowDeleteStep2Dialog(true);
-        }}
-        onCancel={() => setShowDeleteStep1Dialog(false)}
-      />
+        <DataSection
+          db={db}
+          checkInCount={checkInCount}
+          onDeleteComplete={() => setCheckInCount(0)}
+        />
 
-      <ConfirmDialog
-        visible={showDeleteStep2Dialog}
-        title="Sicher?"
-        message="Alle Check-ins werden unwiderruflich gelöscht."
-        confirmLabel="Ja, alles löschen"
-        cancelLabel="Abbrechen"
-        destructive
-        onConfirm={handleConfirmDeleteAll}
-        onCancel={() => setShowDeleteStep2Dialog(false)}
-      />
-
-      <ConfirmDialog
-        visible={showDeleteDoneDialog}
-        title="Erledigt"
-        message="Alle Check-ins wurden gelöscht."
-        confirmLabel="OK"
-        hideCancel
-        onConfirm={() => setShowDeleteDoneDialog(false)}
-        onCancel={() => setShowDeleteDoneDialog(false)}
-      />
-
-      {/* Über die App */}
-      <Text
-        style={{
-          fontFamily: typography.families.heading.semibold,
-          fontSize: typography.sizes.lg,
-          color: theme.colors.text,
-          marginTop: spacing.xl,
-          marginBottom: spacing.md,
-        }}
-      >
-        Über die App
-      </Text>
-
-      <Pressable
-        onPress={() => router.push('/check-in-info')}
-        style={[
-          styles.infoRow,
-          {
-            backgroundColor: theme.colors.surface,
-            borderRadius: radii.md,
-            padding: spacing.md,
-            minHeight: touchTarget.min,
-          },
-        ]}
-        accessibilityRole="button"
-        accessibilityLabel="Was ist ein Check-in? Mehr erfahren"
-      >
         <Text
           style={{
-            fontFamily: typography.families.body.regular,
-            fontSize: typography.sizes.md,
+            fontFamily: typography.families.heading.semibold,
+            fontSize: typography.sizes.lg,
             color: theme.colors.text,
+            marginTop: spacing.xl,
+            marginBottom: spacing.md,
           }}
         >
-          Was ist ein Check-in?
+          Über die App
         </Text>
-        <Text
-          style={{
-            fontFamily: typography.families.body.regular,
-            fontSize: typography.sizes.md,
-            color: theme.colors.textSecondary,
-          }}
+        <Pressable
+          onPress={() => router.push('/check-in-info')}
+          style={[
+            styles.infoRow,
+            {
+              backgroundColor: theme.colors.surface,
+              borderRadius: radii.md,
+              padding: spacing.md,
+              minHeight: touchTarget.min,
+            },
+          ]}
+          accessibilityRole="button"
+          accessibilityLabel="Was ist ein Check-in? Mehr erfahren"
         >
-          ›
-        </Text>
-      </Pressable>
-    </ScrollView>
-    <FeedbackModal visible={showFeedbackModal} onClose={() => setShowFeedbackModal(false)} />
-  </>
+          <Text style={{ fontFamily: typography.families.body.regular, fontSize: typography.sizes.md, color: theme.colors.text }}>
+            Was ist ein Check-in?
+          </Text>
+          <Text style={{ fontFamily: typography.families.body.regular, fontSize: typography.sizes.md, color: theme.colors.textSecondary }}>
+            ›
+          </Text>
+        </Pressable>
+      </ScrollView>
+
+      <FeedbackModal visible={showFeedbackModal} onClose={() => setShowFeedbackModal(false)} />
+    </>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  themeGrid: {
-    flexDirection: 'row',
-  },
-  themeCard: {
-    flex: 1,
-    alignItems: 'center',
-  },
-  colorPreview: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-  },
-  colorDot: {
-    width: 16,
-    height: 16,
-  },
-  infoRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
+  container: { flex: 1 },
+  listItem: { justifyContent: 'center' },
+  infoRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
 });
-

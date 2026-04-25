@@ -28,7 +28,7 @@ const TAB_ICONS: Record<string, { active: IoniconName; inactive: IoniconName }> 
 };
 
 export default function TabLayout() {
-  const { theme, typography } = useTheme();
+  const { theme, typography, spacing } = useTheme();
   const insets = useSafeAreaInsets();
 
   return (
@@ -43,7 +43,7 @@ export default function TabLayout() {
           fontSize: typography.sizes.lg,
         },
         headerTitleContainerStyle: {
-          paddingLeft: 8,
+          paddingLeft: spacing.sm,
         },
         tabBarStyle: {
           backgroundColor: theme.colors.background,
