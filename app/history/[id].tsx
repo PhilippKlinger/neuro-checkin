@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { View, Text, ScrollView, Pressable, StyleSheet } from 'react-native';
+import { View, Text, ScrollView, Pressable, StyleSheet, Alert } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../../lib/hooks/useTheme';
@@ -59,8 +59,12 @@ export default function CheckInDetailScreen() {
   async function confirmDelete() {
     if (!checkIn) return;
     setShowDeleteDialog(false);
-    await deleteCheckIn(db, checkIn.id);
-    router.back();
+    try {
+      await deleteCheckIn(db, checkIn.id);
+      router.back();
+    } catch {
+      Alert.alert('Fehler', 'Check-in konnte nicht gelöscht werden. Bitte versuche es erneut.');
+    }
   }
 
   if (isLoading) {

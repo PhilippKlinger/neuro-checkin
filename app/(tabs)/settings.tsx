@@ -6,6 +6,7 @@ import {
   ScrollView,
   StyleSheet,
   Platform,
+  Alert,
 } from 'react-native';
 import * as Device from 'expo-device';
 import { useFocusEffect, useRouter } from 'expo-router';
@@ -148,6 +149,17 @@ export default function SettingsScreen() {
   async function handleThemeChange(name: ThemeName) {
     setThemeName(name);
     await updateSettings(db, { themeName: name });
+  }
+
+  async function handleConfirmDeleteAll() {
+    setShowDeleteStep2Dialog(false);
+    try {
+      await deleteAllCheckIns(db);
+      setCheckInCount(0);
+      setShowDeleteDoneDialog(true);
+    } catch {
+      Alert.alert('Fehler', 'Daten konnten nicht gelöscht werden. Bitte versuche es erneut.');
+    }
   }
 
   const anySlotEnabled = slots.some((s) => s.enabled);
@@ -391,12 +403,7 @@ export default function SettingsScreen() {
         confirmLabel="Ja, alles löschen"
         cancelLabel="Abbrechen"
         destructive
-        onConfirm={async () => {
-          setShowDeleteStep2Dialog(false);
-          await deleteAllCheckIns(db);
-          setCheckInCount(0);
-          setShowDeleteDoneDialog(true);
-        }}
+        onConfirm={handleConfirmDeleteAll}
         onCancel={() => setShowDeleteStep2Dialog(false)}
       />
 
