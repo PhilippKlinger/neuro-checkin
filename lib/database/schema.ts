@@ -1,6 +1,6 @@
 import type { SQLiteDatabase } from 'expo-sqlite';
 
-const SCHEMA_VERSION = 4;
+const SCHEMA_VERSION = 5;
 
 export async function migrateDatabase(db: SQLiteDatabase): Promise<void> {
   await db.execAsync(`PRAGMA journal_mode = WAL;`);
@@ -75,6 +75,12 @@ export async function migrateDatabase(db: SQLiteDatabase): Promise<void> {
         legacy.reminder_time ?? '09:00'
       );
     }
+  }
+
+  if (currentVersion < 5) {
+    await db.execAsync(
+      `ALTER TABLE user_settings ADD COLUMN color_mode TEXT NOT NULL DEFAULT 'system';`
+    );
   }
 
   // String interpolation intentional: PRAGMA does not support parameterized

@@ -25,6 +25,7 @@ export interface BodySignals {
 export interface UserSettings {
   id: number;
   themeName: string;
+  colorMode: 'light' | 'dark' | 'system';
   reminderEnabled: boolean;
   reminderTime: string | null; // HH:mm format — deprecated, kept for migration only
   language: 'de' | 'en';
