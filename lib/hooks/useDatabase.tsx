@@ -40,7 +40,7 @@ export function DatabaseProvider({ children }: DatabaseProviderProps) {
 
   if (error) {
     // ThemeProvider is unavailable here — use tokens directly from themes.ts
-    const colors = themes.warmEarth.colors;
+    const colors = themes.warmEarth.light.colors;
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: spacing.lg }}>
         <Text style={{ fontSize: typography.sizes.lg, marginBottom: spacing.sm, textAlign: 'center', color: colors.text }}>
