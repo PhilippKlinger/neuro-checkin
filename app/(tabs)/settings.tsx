@@ -8,7 +8,8 @@ import { useDatabase } from '../../lib/hooks/useDatabase';
 import { getSettings, updateSettings } from '../../lib/database/settings';
 import { countCheckIns } from '../../lib/database/checkins';
 import { getNotificationSlots, saveNotificationSlot } from '../../lib/database/notificationQueries';
-import { ThemeName } from '../../lib/constants/themes';
+import { ThemeName, ColorMode } from '../../lib/constants/themes';
+import { AppearanceModeSection } from '../../components/settings/AppearanceModeSection';
 import {
   requestNotificationPermission,
   scheduleSingleSlot,
@@ -28,7 +29,7 @@ const DEFAULT_SLOTS: NotificationSlot[] = [
 ];
 
 export default function SettingsScreen() {
-  const { theme, themeName, setThemeName, spacing, typography, radii, touchTarget } = useTheme();
+  const { theme, themeName, colorMode, setThemeName, setColorMode, spacing, typography, radii, touchTarget } = useTheme();
   const db = useDatabase();
   const router = useRouter();
 
@@ -100,6 +101,11 @@ export default function SettingsScreen() {
     if (updated.enabled && Device.isDevice) await scheduleSingleSlot(updated);
   }
 
+  async function handleModeChange(mode: ColorMode) {
+    setColorMode(mode);
+    await updateSettings(db, { colorMode: mode });
+  }
+
   async function handleThemeChange(name: ThemeName) {
     setThemeName(name);
     await updateSettings(db, { themeName: name });
@@ -111,6 +117,8 @@ export default function SettingsScreen() {
         style={[styles.container, { backgroundColor: theme.colors.background }]}
         contentContainerStyle={{ padding: spacing.lg, paddingBottom: spacing.xxl }}
       >
+        <AppearanceModeSection currentMode={colorMode} onModeChange={handleModeChange} />
+
         <ThemeSection currentTheme={themeName} onThemeChange={handleThemeChange} />
 
         <NotificationsSection

@@ -190,17 +190,29 @@ export default function OnboardingScreen() {
 
       <View style={[styles.footer, { gap: spacing.lg, paddingBottom: Math.max(spacing.xl, insets.bottom + spacing.md) }]}>
         {isLastStep && (
-          <Text
-            style={{
-              fontFamily: typography.families.body.regular,
-              fontSize: typography.sizes.sm,
-              color: theme.colors.textSecondary,
-              textAlign: 'center',
-              fontStyle: 'italic',
-            }}
-          >
-            {current.hint}
-          </Text>
+          <>
+            <Text
+              style={{
+                fontFamily: typography.families.body.regular,
+                fontSize: typography.sizes.sm,
+                color: theme.colors.textSecondary,
+                textAlign: 'center',
+                fontStyle: 'italic',
+              }}
+            >
+              {current.hint}
+            </Text>
+            <Text
+              style={{
+                fontFamily: typography.families.body.regular,
+                fontSize: typography.sizes.sm,
+                color: theme.colors.textSecondary,
+                textAlign: 'center',
+              }}
+            >
+              Hell oder Dunkel kannst du jederzeit in den Einstellungen anpassen.
+            </Text>
+          </>
         )}
         <StepIndicator totalSteps={STEPS.length} currentStep={step} />
 
