@@ -250,7 +250,7 @@ export default function CheckInScreen() {
         {canGoBack ? (
           <Pressable
             onPress={handleBack}
-            style={[
+            style={({ pressed }) => [
               styles.navButton,
               {
                 minHeight: touchTarget.min,
@@ -259,6 +259,7 @@ export default function CheckInScreen() {
                 borderColor: theme.colors.border,
                 backgroundColor: theme.colors.surface,
               },
+              pressed && { opacity: 0.75 },
             ]}
             accessibilityRole="button"
             accessibilityLabel="Zurück"
@@ -280,7 +281,7 @@ export default function CheckInScreen() {
         <Pressable
           onPress={handleNext}
           disabled={isNextDisabled}
-          style={[
+          style={({ pressed }) => [
             styles.navButton,
             {
               minHeight: touchTarget.min,
@@ -289,6 +290,7 @@ export default function CheckInScreen() {
                 ? theme.colors.border
                 : theme.colors.primary,
             },
+            pressed && !isNextDisabled && { opacity: 0.75 },
           ]}
           accessibilityRole="button"
           accessibilityLabel={isLastStep ? 'Speichern' : 'Weiter'}

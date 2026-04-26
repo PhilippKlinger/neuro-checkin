@@ -60,7 +60,7 @@ export default function CheckInSelectorScreen() {
           <Pressable
             key={option.title}
             onPress={option.onPress}
-            style={[
+            style={({ pressed }) => [
               styles.card,
               {
                 backgroundColor: theme.colors.surface,
@@ -68,6 +68,7 @@ export default function CheckInSelectorScreen() {
                 padding: spacing.lg,
                 minHeight: touchTarget.min,
               },
+              pressed && { opacity: 0.75 },
             ]}
             accessibilityRole="button"
             accessibilityLabel={option.accessibilityLabel}

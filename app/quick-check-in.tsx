@@ -165,7 +165,7 @@ export default function QuickCheckInScreen() {
       >
         <Pressable
           onPress={handleBack}
-          style={[
+          style={({ pressed }) => [
             styles.navButton,
             {
               minHeight: touchTarget.min,
@@ -174,6 +174,7 @@ export default function QuickCheckInScreen() {
               borderColor: theme.colors.border,
               backgroundColor: theme.colors.surface,
             },
+            pressed && { opacity: 0.75 },
           ]}
           accessibilityRole="button"
           accessibilityLabel={step === 0 ? 'Abbrechen' : 'Zurück'}
@@ -192,7 +193,7 @@ export default function QuickCheckInScreen() {
         <Pressable
           onPress={handleNext}
           disabled={isNextDisabled}
-          style={[
+          style={({ pressed }) => [
             styles.navButton,
             {
               minHeight: touchTarget.min,
@@ -201,6 +202,7 @@ export default function QuickCheckInScreen() {
                 ? theme.colors.border
                 : theme.colors.primary,
             },
+            pressed && !isNextDisabled && { opacity: 0.75 },
           ]}
           accessibilityRole="button"
           accessibilityLabel={isLastStep ? 'Speichern' : 'Weiter'}

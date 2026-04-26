@@ -259,7 +259,7 @@ export default function CheckInDetailScreen() {
       {/* Delete */}
       <Pressable
         onPress={handleDelete}
-        style={[
+        style={({ pressed }) => [
           styles.deleteButton,
           {
             marginTop: spacing.xl,
@@ -268,6 +268,7 @@ export default function CheckInDetailScreen() {
             borderWidth: 1,
             borderColor: theme.colors.textSecondary,
           },
+          pressed && { opacity: 0.75 },
         ]}
         accessibilityRole="button"
         accessibilityLabel="Check-in löschen"

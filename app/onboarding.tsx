@@ -66,7 +66,7 @@ export default function OnboardingScreen() {
 
   async function finish() {
     try {
-      await updateSettings(db, { onboardingCompleted: true, themeName: selectedTheme });
+      await updateSettings(db, { onboardingCompleted: true, themeName: selectedTheme, colorMode: 'system' });
       router.replace('/(tabs)');
     } catch {
       Alert.alert('Fehler', 'Einstellungen konnten nicht gespeichert werden. Bitte versuche es erneut.');
@@ -190,17 +190,29 @@ export default function OnboardingScreen() {
 
       <View style={[styles.footer, { gap: spacing.lg, paddingBottom: Math.max(spacing.xl, insets.bottom + spacing.md) }]}>
         {isLastStep && (
-          <Text
-            style={{
-              fontFamily: typography.families.body.regular,
-              fontSize: typography.sizes.sm,
-              color: theme.colors.textSecondary,
-              textAlign: 'center',
-              fontStyle: 'italic',
-            }}
-          >
-            {current.hint}
-          </Text>
+          <>
+            <Text
+              style={{
+                fontFamily: typography.families.body.regular,
+                fontSize: typography.sizes.sm,
+                color: theme.colors.textSecondary,
+                textAlign: 'center',
+                fontStyle: 'italic',
+              }}
+            >
+              {current.hint}
+            </Text>
+            <Text
+              style={{
+                fontFamily: typography.families.body.regular,
+                fontSize: typography.sizes.sm,
+                color: theme.colors.textSecondary,
+                textAlign: 'center',
+              }}
+            >
+              Hell oder Dunkel kannst du jederzeit in den Einstellungen wählen.
+            </Text>
+          </>
         )}
         <StepIndicator totalSteps={STEPS.length} currentStep={step} />
 

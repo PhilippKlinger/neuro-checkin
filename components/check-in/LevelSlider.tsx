@@ -61,7 +61,7 @@ export function LevelSlider({
                   minHeight: touchTarget.min,
                   borderRadius: radii.md,
                   backgroundColor: isSelected
-                    ? theme.colors.accent
+                    ? theme.colors.accentSoft
                     : theme.colors.surface,
                   borderWidth: 1,
                   borderColor: isSelected
@@ -81,7 +81,7 @@ export function LevelSlider({
                   fontFamily: typography.families.ui.medium,
                   fontSize: typography.sizes.md,
                   color: isSelected
-                    ? theme.colors.textInverse
+                    ? theme.colors.text
                     : theme.colors.text,
                 }}
               >
