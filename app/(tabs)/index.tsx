@@ -5,7 +5,7 @@ import { useTheme } from '../../lib/hooks/useTheme';
 import { useDatabase } from '../../lib/hooks/useDatabase';
 import { getCheckIns } from '../../lib/database/checkins';
 import type { CheckIn } from '../../lib/types/checkin';
-import { ENERGY_LABELS, FOCUS_LABELS, getLevelLabel } from '../../lib/types/checkin';
+import { formatDate, formatTime } from '../../lib/utils/format';
 
 function getGreeting(): string {
   const hour = new Date().getHours();
@@ -15,7 +15,7 @@ function getGreeting(): string {
 }
 
 export default function HomeScreen() {
-  const { theme, spacing, typography, radii } = useTheme();
+  const { theme, spacing, typography, radii, touchTarget } = useTheme();
   const db = useDatabase();
   const router = useRouter();
   const [latestCheckIn, setLatestCheckIn] = useState<CheckIn | null>(null);
@@ -58,8 +58,9 @@ export default function HomeScreen() {
 
       {isLoaded && (
         latestCheckIn ? (
-          <View
-            style={[
+          <Pressable
+            onPress={() => router.push(`/history/${latestCheckIn.id}`)}
+            style={({ pressed }) => [
               styles.anchor,
               {
                 backgroundColor: theme.colors.surface,
@@ -67,13 +68,17 @@ export default function HomeScreen() {
                 padding: spacing.md,
                 borderWidth: 1,
                 borderColor: theme.colors.border,
+                minHeight: touchTarget.min,
+                justifyContent: 'center',
               },
+              pressed && { opacity: 0.75 },
             ]}
-            accessibilityLabel={`Letzter Check-in: Energie ${getLevelLabel(latestCheckIn.energyLevel, ENERGY_LABELS)}, Fokus ${getLevelLabel(latestCheckIn.focusLevel, FOCUS_LABELS)}`}
+            accessibilityRole="button"
+            accessibilityLabel={`Letzter Check-in vom ${formatDate(latestCheckIn.createdAt)}, ansehen`}
           >
             <Text
               style={{
-                fontFamily: typography.families.body.regular,
+                fontFamily: typography.families.ui.medium,
                 fontSize: typography.sizes.sm,
                 color: theme.colors.textSecondary,
                 marginBottom: spacing.xs,
@@ -83,14 +88,14 @@ export default function HomeScreen() {
             </Text>
             <Text
               style={{
-                fontFamily: typography.families.ui.medium,
+                fontFamily: typography.families.body.regular,
                 fontSize: typography.sizes.md,
                 color: theme.colors.text,
               }}
             >
-              Energie: {getLevelLabel(latestCheckIn.energyLevel, ENERGY_LABELS)} · Fokus: {getLevelLabel(latestCheckIn.focusLevel, FOCUS_LABELS)}
+              {formatDate(latestCheckIn.createdAt)}, {formatTime(latestCheckIn.createdAt)}
             </Text>
-          </View>
+          </Pressable>
         ) : (
           <Text
             style={{
