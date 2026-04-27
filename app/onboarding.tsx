@@ -79,7 +79,7 @@ export default function OnboardingScreen() {
         {!isLastStep ? (
           <Pressable
             onPress={finish}
-            style={[styles.skipButton, { padding: spacing.sm }]}
+            style={({ pressed }) => [styles.skipButton, { padding: spacing.sm }, pressed && { opacity: 0.75 }]}
             accessibilityRole="button"
             accessibilityLabel="Onboarding überspringen"
           >
@@ -138,7 +138,7 @@ export default function OnboardingScreen() {
                 <Pressable
                   key={name}
                   onPress={() => handleThemeSelect(name)}
-                  style={[
+                  style={({ pressed }) => [
                     styles.paletteCard,
                     {
                       borderRadius: radii.md,
@@ -148,6 +148,7 @@ export default function OnboardingScreen() {
                       padding: spacing.md,
                       minHeight: touchTarget.min,
                     },
+                    pressed && { opacity: 0.75 },
                   ]}
                   accessibilityRole="button"
                   accessibilityLabel={PALETTE_LABELS[name]}
@@ -218,7 +219,7 @@ export default function OnboardingScreen() {
 
         <Pressable
           onPress={handleNext}
-          style={[
+          style={({ pressed }) => [
             styles.nextButton,
             {
               minHeight: touchTarget.min,
@@ -226,6 +227,7 @@ export default function OnboardingScreen() {
               backgroundColor: theme.colors.primary,
               paddingHorizontal: spacing.xl,
             },
+            pressed && { opacity: 0.75 },
           ]}
           accessibilityRole="button"
           accessibilityLabel={isLastStep ? 'Los gehts' : 'Weiter'}

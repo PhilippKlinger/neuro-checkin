@@ -81,8 +81,7 @@ export function CheckInSuccessView({ onReset, energyLevel, focusLevel }: CheckIn
                   fontSize: typography.sizes.xs,
                   color: theme.colors.textSecondary,
                   textTransform: 'uppercase',
-                  letterSpacing: 0.5,
-                  marginBottom: 2,
+                  marginBottom: spacing.xs,
                 }}
               >
                 Energie

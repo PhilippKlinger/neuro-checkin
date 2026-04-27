@@ -80,7 +80,7 @@ export function ChipOrTextStep({
                 <Pressable
                   key={chip}
                   onPress={() => onValueChange(toggleChip(chip, value))}
-                  style={[
+                  style={({ pressed }) => [
                     styles.chip,
                     {
                       borderRadius: radii.full,
@@ -90,6 +90,7 @@ export function ChipOrTextStep({
                       borderWidth: 1,
                       borderColor: selected ? theme.colors.accent : theme.colors.border,
                     },
+                    pressed && { opacity: 0.75 },
                   ]}
                   accessibilityRole="button"
                   accessibilityLabel={chip}
@@ -111,7 +112,7 @@ export function ChipOrTextStep({
 
           <Pressable
             onPress={switchToText}
-            style={[styles.modeSwitch, { minHeight: touchTarget.min, paddingVertical: spacing.sm }]}
+            style={({ pressed }) => [styles.modeSwitch, { minHeight: touchTarget.min, paddingVertical: spacing.sm }, pressed && { opacity: 0.75 }]}
             accessibilityRole="button"
             accessibilityLabel="Stattdessen frei beschreiben"
           >
@@ -168,7 +169,7 @@ export function ChipOrTextStep({
 
           <Pressable
             onPress={switchToChips}
-            style={[styles.modeSwitch, { minHeight: touchTarget.min, paddingVertical: spacing.sm }]}
+            style={({ pressed }) => [styles.modeSwitch, { minHeight: touchTarget.min, paddingVertical: spacing.sm }, pressed && { opacity: 0.75 }]}
             accessibilityRole="button"
             accessibilityLabel="Stattdessen aus Vorschlägen wählen"
           >

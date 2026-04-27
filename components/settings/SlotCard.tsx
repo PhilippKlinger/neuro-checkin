@@ -115,7 +115,7 @@ export function SlotCard({
               <>
                 <Pressable
                   onPress={onTimePress}
-                  style={[
+                  style={({ pressed }) => [
                     styles.timeButton,
                     {
                       backgroundColor: theme.colors.accentSoft,
@@ -125,6 +125,7 @@ export function SlotCard({
                       minHeight: touchTarget.min,
                       justifyContent: 'center',
                     },
+                    pressed && { opacity: 0.75 },
                   ]}
                   accessibilityRole="button"
                   accessibilityLabel={`Uhrzeit: ${slot.time}. Tippen zum Ändern`}
@@ -156,13 +157,14 @@ export function SlotCard({
           {/* Progressive disclosure: weekday chips */}
           <Pressable
             onPress={() => setWeekdayExpanded((v) => !v)}
-            style={{
+            style={({ pressed }) => ({
               marginTop: spacing.sm,
               alignSelf: 'flex-start',
               minHeight: touchTarget.min,
               paddingVertical: spacing.xs,
               justifyContent: 'center',
-            }}
+              opacity: pressed ? 0.75 : 1,
+            })}
             accessibilityRole="button"
             accessibilityLabel="Wochentage anpassen"
             accessibilityState={{ expanded: weekdayExpanded }}
@@ -187,7 +189,7 @@ export function SlotCard({
                   <Pressable
                     key={dayLabel}
                     onPress={() => onWeekdayToggle(i)}
-                    style={[
+                    style={({ pressed }) => [
                       styles.dayChip,
                       {
                         borderRadius: radii.full,
@@ -202,6 +204,7 @@ export function SlotCard({
                         justifyContent: 'center',
                         alignItems: 'center',
                       },
+                      pressed && { opacity: 0.75 },
                     ]}
                     accessibilityRole="checkbox"
                     accessibilityLabel={`Wochentag ${dayLabel}`}
