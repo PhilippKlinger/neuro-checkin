@@ -121,7 +121,7 @@ export default function CheckInScreen() {
       });
       setIsDone(true);
     } catch (error) {
-      console.error('[CheckIn] save failed:', error);
+      console.error('[CheckIn] save failed:', error instanceof Error ? error.message : String(error));
       Alert.alert('Fehler beim Speichern', 'Check-in konnte nicht gespeichert werden. Bitte versuche es erneut.');
     } finally {
       setIsSaving(false);
