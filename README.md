@@ -1,63 +1,172 @@
 # Neuro Check-in
 
-A minimalist, neurodivergence-friendly check-in app for daily self-awareness.
+![Expo SDK](https://img.shields.io/badge/Expo-SDK%2054-4630EB?logo=expo&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178C6?logo=typescript&logoColor=white)
+![Platform](https://img.shields.io/badge/Platform-Android-3DDC84?logo=android&logoColor=white)
+![CI](https://img.shields.io/github/actions/workflow/status/PhilippKlinger/neuro-checkin/ci.yml?label=CI)
 
-Helps people with autism, ADHD, and high inner complexity capture inner states in a calm, clear, and non-overwhelming way. Inspired by IFS (Internal Family Systems) — not a therapy replacement. All data stays local, no account required.
+A minimalist, neurodivergence-friendly check-in app for daily self-awareness — built with React Native and Expo.
 
-## Tech Stack
+Designed for people with autism, ADHD, or high inner complexity who need a calm, low-pressure way to notice how they are doing right now. All data stays on the device. No account, no tracking.
 
-- **React Native** + **Expo SDK 54** (file-based routing via Expo Router)
-- **TypeScript** (strict mode)
-- **expo-sqlite** (local-first, Schema V4)
-- **expo-notifications** (smart multi-slot weekly reminders, exact alarm on Android 12+)
-- **@sentry/react-native** (crash reporting, EU-hosted, health data filtered)
-- **Formspree** (anonymous in-app feedback form)
+---
 
-## Features
+## Table of Contents
 
-- **8-step guided check-in:** Arrival, energy, focus, body signals, feelings, thoughts, self-care, summary
-- **Quick check-in:** 3-step shortcut (energy + focus + feelings) for when it needs to be fast
-- **Quick-select chips** for feelings and self-care (reduces Alexithymia barrier)
-- **'Was ist ein Check-in?' info screen** for first-time users, always accessible via header icon
-- **3 color palettes:** Warm Earth, Cool Mist, Soft Sage — all WCAG AA compliant
-- **History:** Browse and review past check-ins with detail view
-- **Onboarding:** 3-step intro with live palette preview, skippable
-- **Smart reminders:** 2 configurable slots (morning/evening), weekly schedule with weekday selection
-- **In-app feedback form** (anonymous, via Formspree)
-- **Crash reporting** via Sentry (EU-hosted, no health data transmitted)
-- **Accessibility:** Screen reader support (TalkBack/VoiceOver), focus management, semantic roles, 44×44 touch targets, reduced motion support
-- **Local-first:** All data on device, SQLite, no account, no tracking
+- [Screenshots](#screenshots)
+- [Prerequisites](#prerequisites)
+- [Quickstart](#quickstart)
+- [Project Structure](#project-structure)
+- [Environment Variables](#environment-variables)
+- [Scripts](#scripts)
+- [Security Notes](#security-notes)
+- [Status](#status)
+- [Product Principles](#product-principles)
+- [License](#license)
 
-## Setup
+---
+
+## Screenshots
+
+> Screenshots will be added before the public release.
+
+---
+
+## Prerequisites
+
+| Requirement | Version |
+|-------------|---------|
+| Node.js | 18 or later |
+| EAS CLI | latest (`npm install -g eas-cli`) |
+| Android emulator or physical device | API 26+ |
+
+The app runs as a custom development build. Expo Go is not supported.
+
+---
+
+## Quickstart
+
+Clone the repository and enter the project folder.
 
 ```bash
-# Install dependencies
+git clone git@github.com:PhilippKlinger/neuro-checkin.git
+cd neuro-checkin
+```
+
+Install dependencies.
+
+```bash
 npm install
+```
 
-# First-time native build (required; emulator/device must be running)
+Create a local environment file.
+
+```bash
+cp .env.example .env
+```
+
+Open `.env` and fill in the values. See [Environment Variables](#environment-variables) for details.
+
+Create the native development build. The emulator or a connected device must be running.
+
+```bash
 npx expo run:android
+```
 
-# All subsequent sessions
+This step is only required once — or after adding new native packages. For all subsequent development sessions, use the dev server directly.
+
+```bash
 npx expo start
 ```
 
-> **Note:** Expo Go is not fully supported since SDK 54.
-> The app runs as a custom development build.
-> Re-run `npx expo run:android` only when new native packages are added.
+---
+
+## Project Structure
+
+```
+app/                   Screens and routes (Expo Router, file-based)
+components/
+  check-in/            Steps and UI for the guided check-in flow
+  history/             History list and detail components
+  settings/            Settings sections (appearance, notifications, data)
+  ui/                  Shared primitives (ConfirmDialog, FadeView, ...)
+lib/
+  constants/           Design tokens, app config
+  database/            SQLite service layer (queries, schema, migrations)
+  hooks/               Custom hooks (useTheme, useDatabase)
+  types/               Shared TypeScript interfaces
+  utils/               Helper functions (format, chips, time)
+assets/                Icons, splash screen
+```
+
+The database schema is versioned. Migrations run automatically on app start and are idempotent.
+
+---
+
+## Environment Variables
+
+Copy `.env.example` to `.env` and fill in the values.
+
+```bash
+cp .env.example .env
+```
+
+| Variable | Purpose |
+|----------|---------|
+| `SENTRY_DSN` | Sentry project DSN for crash reporting |
+| `FORMSPREE_URL` | Formspree endpoint for the in-app feedback form |
+
+Values are read at build time via `app.config.js` and injected into the bundle through the Expo `extra` field. For EAS builds, set them as EAS Secrets.
+
+```bash
+eas secret:create --name SENTRY_DSN --value "your-dsn"
+eas secret:create --name FORMSPREE_URL --value "your-url"
+```
+
+---
 
 ## Scripts
 
-| Command | When |
-|---------|------|
-| `npx expo run:android` | After adding native packages (one-time) |
-| `npx expo start` | Normal dev session |
-| `npx expo start --android` | Dev session + open emulator |
-| `eas build --platform android` | Production APK/AAB (EAS cloud) |
-| `eas build --local --profile preview` | Local build via WSL2 |
+| Command | When to use |
+|---------|-------------|
+| `npx expo run:android` | First-time build or after adding native packages |
+| `npx expo start` | Normal development session |
+| `npx expo start --android` | Development session and open emulator |
+| `eas build --platform android` | Production build via EAS cloud |
+| `eas build --local --profile preview` | Local production build via WSL2 |
 
-## CI
+---
 
-GitHub Actions runs on every push and PR to `main`:
-`npm ci` → `npm audit --audit-level=high` → `npx expo lint` → `npx tsc --noEmit`
+## Security Notes
 
-Branch protection enforces all checks before merge.
+- Do not commit real `.env` files. The `.gitignore` covers all `.env` variants.
+- Sentry is configured with a `beforeSend` hook that strips all health-related fields before transmission. No check-in content leaves the device.
+- Sentry is disabled in development (`enabled: !__DEV__`).
+- All SQLite queries use parameterised statements. No string concatenation with user input.
+
+---
+
+## Status
+
+Neuro Check-in is currently in preparation for a closed Android beta release.
+
+Screenshots will be added before the public release.
+
+---
+
+## Product Principles
+
+- Low cognitive load: few decisions per screen, calm flows, no dashboard overload.
+- No streaks, points, rewards, or pressure language.
+- Local-first data storage: check-ins stay on the device.
+- Accessibility and neurodivergence-friendly UX from the start.
+- The app is a self-awareness tool, not a diagnosis tool or therapy replacement.
+
+---
+
+## License
+
+This repository is publicly visible for portfolio, transparency, and review purposes.
+The code, branding, copy, assets, product strategy, and documentation may not be reused without written permission.
+
+See [LICENSE](LICENSE).
