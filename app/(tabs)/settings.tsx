@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import { Text, Pressable, ScrollView, StyleSheet, Platform } from 'react-native';
 import * as Device from 'expo-device';
 import { useFocusEffect, useRouter } from 'expo-router';
@@ -34,6 +34,8 @@ export default function SettingsScreen() {
   const router = useRouter();
 
   const [slots, setSlots] = useState<NotificationSlot[]>(DEFAULT_SLOTS);
+  const slotsRef = useRef(slots);
+  slotsRef.current = slots;
   const [showTimePicker, setShowTimePicker] = useState<0 | 1 | null>(null);
   const [isEmulator, setIsEmulator] = useState(false);
   const [checkInCount, setCheckInCount] = useState(0);
@@ -62,12 +64,12 @@ export default function SettingsScreen() {
     }, [db, setThemeName, setColorMode])
   );
 
-  async function handleSlotToggle(slotId: 0 | 1, value: boolean) {
+  const handleSlotToggle = useCallback(async (slotId: 0 | 1, value: boolean) => {
     if (value) {
       const result = await requestNotificationPermission();
       if (result === false) return;
     }
-    const updatedSlots = slots.map((s) => s.id === slotId ? { ...s, enabled: value } : s);
+    const updatedSlots = slotsRef.current.map((s) => s.id === slotId ? { ...s, enabled: value } : s);
     setSlots(updatedSlots);
     const updated = updatedSlots.find((s) => s.id === slotId)!;
     await saveNotificationSlot(db, updated);
@@ -75,22 +77,22 @@ export default function SettingsScreen() {
       if (value) await scheduleSingleSlot(updated);
       else await cancelSingleSlot(slotId);
     }
-  }
+  }, [db]);
 
-  async function handleTimeChange(slotId: 0 | 1, _event: DateTimePickerEvent, selected?: Date) {
+  const handleTimeChange = useCallback(async (slotId: 0 | 1, _event: DateTimePickerEvent, selected?: Date) => {
     if (Platform.OS === 'android') setShowTimePicker(null);
     if (!selected) return;
     const time = dateToTimeString(selected);
-    const updatedSlots = slots.map((s) => s.id === slotId ? { ...s, time } : s);
+    const updatedSlots = slotsRef.current.map((s) => s.id === slotId ? { ...s, time } : s);
     setSlots(updatedSlots);
     const updated = updatedSlots.find((s) => s.id === slotId)!;
     await saveNotificationSlot(db, updated);
     if (updated.enabled && Device.isDevice) await scheduleSingleSlot(updated);
-  }
+  }, [db]);
 
-  async function handleWeekdayToggle(slotId: 0 | 1, bitIndex: number) {
+  const handleWeekdayToggle = useCallback(async (slotId: 0 | 1, bitIndex: number) => {
     const bit = WEEKDAY_BITS[bitIndex];
-    const updatedSlots = slots.map((s) => {
+    const updatedSlots = slotsRef.current.map((s) => {
       if (s.id !== slotId) return s;
       const newWeekdays = (s.weekdays & bit) ? s.weekdays & ~bit : s.weekdays | bit;
       if (newWeekdays === 0) return s;
@@ -100,17 +102,19 @@ export default function SettingsScreen() {
     const updated = updatedSlots.find((s) => s.id === slotId)!;
     await saveNotificationSlot(db, updated);
     if (updated.enabled && Device.isDevice) await scheduleSingleSlot(updated);
-  }
+  }, [db]);
 
-  async function handleModeChange(mode: ColorMode) {
+  const handleModeChange = useCallback(async (mode: ColorMode) => {
     setColorMode(mode);
     await updateSettings(db, { colorMode: mode });
-  }
+  }, [db, setColorMode]);
 
-  async function handleThemeChange(name: ThemeName) {
+  const handleThemeChange = useCallback(async (name: ThemeName) => {
     setThemeName(name);
     await updateSettings(db, { themeName: name });
-  }
+  }, [db, setThemeName]);
+
+  const handleTimePress = useCallback((id: 0 | 1) => setShowTimePicker(id), []);
 
   return (
     <>
@@ -127,7 +131,7 @@ export default function SettingsScreen() {
           showTimePicker={showTimePicker}
           isEmulator={isEmulator}
           onToggle={handleSlotToggle}
-          onTimePress={(id) => setShowTimePicker(id)}
+          onTimePress={handleTimePress}
           onTimeChange={handleTimeChange}
           onWeekdayToggle={handleWeekdayToggle}
         />

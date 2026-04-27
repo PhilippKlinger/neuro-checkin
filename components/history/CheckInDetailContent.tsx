@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { View, Text, ScrollView, Pressable, StyleSheet } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../../lib/hooks/useTheme';
@@ -23,13 +24,14 @@ export function CheckInDetailContent({
   const { theme, spacing, typography, radii } = useTheme();
   const insets = useSafeAreaInsets();
 
-  const activeSignals = Object.entries(checkIn.bodySignals)
-    .filter(([, v]) => v === true)
-    .map(([key]) => SIGNAL_LABELS[key as keyof typeof SIGNAL_LABELS] || key);
-
-  const inactiveSignals = Object.entries(checkIn.bodySignals)
-    .filter(([, v]) => v === false)
-    .map(([key]) => SIGNAL_LABELS[key as keyof typeof SIGNAL_LABELS] || key);
+  const { activeSignals, inactiveSignals } = useMemo(() => ({
+    activeSignals: Object.entries(checkIn.bodySignals)
+      .filter(([, v]) => v === true)
+      .map(([key]) => SIGNAL_LABELS[key as keyof typeof SIGNAL_LABELS] || key),
+    inactiveSignals: Object.entries(checkIn.bodySignals)
+      .filter(([, v]) => v === false)
+      .map(([key]) => SIGNAL_LABELS[key as keyof typeof SIGNAL_LABELS] || key),
+  }), [checkIn.bodySignals]);
 
   return (
     <View style={styles.container}>

@@ -80,7 +80,7 @@ export default function QuickCheckInScreen() {
       });
       setIsDone(true);
     } catch (error) {
-      console.error('[QuickCheckIn] save failed:', error);
+      console.error('[QuickCheckIn] save failed:', error instanceof Error ? error.message : String(error));
       Alert.alert('Fehler beim Speichern', 'Check-in konnte nicht gespeichert werden.');
     } finally {
       setIsSaving(false);
