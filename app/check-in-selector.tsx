@@ -72,6 +72,7 @@ export default function CheckInSelectorScreen() {
             ]}
             accessibilityRole="button"
             accessibilityLabel={option.accessibilityLabel}
+            accessibilityHint="Tippen zum Starten"
           >
             <Text
               style={{

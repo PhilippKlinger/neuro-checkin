@@ -93,6 +93,25 @@ export function getLevelLabel(value: number, labels: readonly string[]): string 
   return labels[value - 1] ?? String(value);
 }
 
+export const SIGNAL_LABELS: Record<keyof BodySignals, string> = {
+  hunger: 'Hunger',
+  thirst: 'Durst',
+  temperature: 'Temperatur',
+  pain: 'Schmerzen',
+  restroom: 'Toilette',
+  seating: 'Sitzposition',
+  externalStimuli: 'Reize',
+};
+
+export function getThoughtsLabel(type: string | null): string {
+  switch (type) {
+    case 'supportive': return 'Unterstützend';
+    case 'burdening': return 'Belastend';
+    case 'mixed': return 'Gemischt';
+    default: return '—';
+  }
+}
+
 export const EMPTY_DRAFT: CheckInDraft = {
   energyLevel: 0, // 0 = unselected, forces active choice
   focusLevel: 0,  // 0 = unselected, forces active choice

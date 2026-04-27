@@ -37,6 +37,7 @@ export const AppearanceModeSection = memo(function AppearanceModeSection({
         style={[styles.row, { gap: spacing.sm, marginBottom: spacing.xl }]}
         accessibilityRole="radiogroup"
         accessibilityLabel="Farbmodus wählen"
+        accessibilityHint="Bestimmt ob die App hell, dunkel oder dem System folgend dargestellt wird"
       >
         {MODE_OPTIONS.map((option) => {
           const isSelected = currentMode === option.key;
