@@ -80,7 +80,7 @@ export function ConfirmDialog({
             {!hideCancel && (
               <Pressable
                 onPress={onCancel}
-                style={[
+                style={({ pressed }) => [
                   styles.button,
                   {
                     borderRadius: radii.md,
@@ -91,6 +91,7 @@ export function ConfirmDialog({
                     paddingHorizontal: spacing.md,
                     minHeight: touchTarget.min,
                   },
+                  pressed && { opacity: 0.75 },
                 ]}
                 accessibilityRole="button"
                 accessibilityLabel={cancelLabel}
@@ -110,7 +111,7 @@ export function ConfirmDialog({
 
             <Pressable
               onPress={onConfirm}
-              style={[
+              style={({ pressed }) => [
                 styles.button,
                 {
                   borderRadius: radii.md,
@@ -119,6 +120,7 @@ export function ConfirmDialog({
                   paddingHorizontal: spacing.md,
                   minHeight: touchTarget.min,
                 },
+                pressed && { opacity: 0.75 },
               ]}
               accessibilityRole="button"
               accessibilityLabel={confirmLabel}

@@ -44,7 +44,7 @@ export function DataSection({ db, checkInCount, onDeleteComplete }: DataSectionP
       <Pressable
         onPress={() => setShowStep1(true)}
         disabled={checkInCount === 0}
-        style={[
+        style={({ pressed }) => [
           styles.button,
           {
             backgroundColor: theme.colors.surface,
@@ -53,7 +53,7 @@ export function DataSection({ db, checkInCount, onDeleteComplete }: DataSectionP
             minHeight: touchTarget.min,
             borderWidth: 1,
             borderColor: theme.colors.border,
-            opacity: checkInCount === 0 ? 0.4 : 1,
+            opacity: checkInCount === 0 ? 0.4 : pressed ? 0.75 : 1,
           },
         ]}
         accessibilityRole="button"

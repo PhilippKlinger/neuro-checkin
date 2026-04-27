@@ -192,7 +192,7 @@ export function FeedbackModal({ visible, onClose }: FeedbackModalProps) {
               <Text style={s.successBody}>Es ist angekommen und wird gelesen.</Text>
               <Pressable
                 onPress={handleClose}
-                style={s.primaryButton}
+                style={({ pressed }) => [s.primaryButton, pressed && { opacity: 0.75 }]}
                 accessibilityRole="button"
                 accessibilityLabel="Schließen"
               >
@@ -231,7 +231,7 @@ export function FeedbackModal({ visible, onClose }: FeedbackModalProps) {
               <View style={s.buttonRow}>
                 <Pressable
                   onPress={handleClose}
-                  style={s.cancelButton}
+                  style={({ pressed }) => [s.cancelButton, pressed && { opacity: 0.75 }]}
                   accessibilityRole="button"
                   accessibilityLabel="Abbrechen"
                 >
@@ -240,13 +240,14 @@ export function FeedbackModal({ visible, onClose }: FeedbackModalProps) {
                 <Pressable
                   onPress={handleSubmit}
                   disabled={isSubmitDisabled}
-                  style={[
+                  style={({ pressed }) => [
                     s.submitButton,
                     {
                       backgroundColor: isSubmitDisabled
                         ? theme.colors.border
                         : theme.colors.primary,
                     },
+                    pressed && !isSubmitDisabled && { opacity: 0.75 },
                   ]}
                   accessibilityRole="button"
                   accessibilityLabel={feedbackSubmitting ? 'Sendet...' : 'Feedback absenden'}

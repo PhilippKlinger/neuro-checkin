@@ -18,6 +18,7 @@ export interface ThemeContextValue {
   theme: ThemeTokens;
   themeName: ThemeName;
   colorMode: ColorMode;
+  resolvedMode: 'light' | 'dark';
   setThemeName: (name: ThemeName) => void;
   setColorMode: (mode: ColorMode) => void;
   typography: typeof typography;
@@ -47,6 +48,7 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
       theme: themes[themeName][resolvedMode],
       themeName,
       colorMode,
+      resolvedMode,
       setThemeName,
       setColorMode,
       typography,

@@ -132,13 +132,14 @@ export function CheckInSuccessView({ onReset, energyLevel, focusLevel }: CheckIn
       <View style={[styles.buttons, { gap: spacing.md, paddingBottom: Math.max(spacing.lg, insets.bottom + spacing.md) }]}>
         <Pressable
           onPress={handleGoHome}
-          style={[
+          style={({ pressed }) => [
             styles.button,
             {
               minHeight: touchTarget.min,
               borderRadius: radii.md,
               backgroundColor: theme.colors.primary,
             },
+            pressed && { opacity: 0.75 },
           ]}
           accessibilityRole="button"
           accessibilityLabel="Zurück zu Home"
@@ -156,7 +157,7 @@ export function CheckInSuccessView({ onReset, energyLevel, focusLevel }: CheckIn
 
         <Pressable
           onPress={handleGoHistory}
-          style={[
+          style={({ pressed }) => [
             styles.button,
             {
               minHeight: touchTarget.min,
@@ -165,6 +166,7 @@ export function CheckInSuccessView({ onReset, energyLevel, focusLevel }: CheckIn
               borderColor: theme.colors.border,
               backgroundColor: theme.colors.surface,
             },
+            pressed && { opacity: 0.75 },
           ]}
           accessibilityRole="button"
           accessibilityLabel="Im Verlauf ansehen"

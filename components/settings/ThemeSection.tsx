@@ -15,7 +15,7 @@ const THEME_OPTIONS: { key: ThemeName; label: string }[] = [
 ];
 
 export const ThemeSection = memo(function ThemeSection({ currentTheme, onThemeChange }: ThemeSectionProps) {
-  const { theme, spacing, typography, radii } = useTheme();
+  const { theme, spacing, typography, radii, resolvedMode } = useTheme();
 
   return (
     <>
@@ -32,7 +32,7 @@ export const ThemeSection = memo(function ThemeSection({ currentTheme, onThemeCh
 
       <View style={[styles.grid, { gap: spacing.sm, marginBottom: spacing.xl }]}>
         {THEME_OPTIONS.map((option) => {
-          const palette = themes[option.key].light;
+          const palette = themes[option.key][resolvedMode];
           const isSelected = currentTheme === option.key;
           return (
             <Pressable

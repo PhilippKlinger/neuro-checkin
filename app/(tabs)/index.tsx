@@ -31,7 +31,7 @@ export default function HomeScreen() {
 
         <Pressable
           onPress={() => router.push('/check-in-selector')}
-          style={[
+          style={({ pressed }) => [
             styles.cta,
             {
               borderRadius: radii.md,
@@ -39,6 +39,7 @@ export default function HomeScreen() {
               paddingHorizontal: spacing.xl,
               paddingVertical: spacing.lg,
             },
+            pressed && { opacity: 0.75 },
           ]}
           accessibilityRole="button"
           accessibilityLabel="Beginnen, Tiefe wählen"

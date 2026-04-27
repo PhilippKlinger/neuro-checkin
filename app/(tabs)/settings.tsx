@@ -8,7 +8,8 @@ import { useDatabase } from '../../lib/hooks/useDatabase';
 import { getSettings, updateSettings } from '../../lib/database/settings';
 import { countCheckIns } from '../../lib/database/checkins';
 import { getNotificationSlots, saveNotificationSlot } from '../../lib/database/notificationQueries';
-import { ThemeName } from '../../lib/constants/themes';
+import { ThemeName, ColorMode } from '../../lib/constants/themes';
+import { AppearanceModeSection } from '../../components/settings/AppearanceModeSection';
 import {
   requestNotificationPermission,
   scheduleSingleSlot,
@@ -28,7 +29,7 @@ const DEFAULT_SLOTS: NotificationSlot[] = [
 ];
 
 export default function SettingsScreen() {
-  const { theme, themeName, setThemeName, spacing, typography, radii, touchTarget } = useTheme();
+  const { theme, themeName, colorMode, setThemeName, setColorMode, spacing, typography, radii, touchTarget } = useTheme();
   const db = useDatabase();
   const router = useRouter();
 
@@ -43,6 +44,7 @@ export default function SettingsScreen() {
       async function load() {
         const settings = await getSettings(db);
         setThemeName(settings.themeName as ThemeName);
+        setColorMode(settings.colorMode);
         setIsEmulator(!Device.isDevice);
 
         const dbSlots = await getNotificationSlots(db);
@@ -57,7 +59,7 @@ export default function SettingsScreen() {
         setCheckInCount(count);
       }
       load();
-    }, [db, setThemeName])
+    }, [db, setThemeName, setColorMode])
   );
 
   async function handleSlotToggle(slotId: 0 | 1, value: boolean) {
@@ -100,6 +102,11 @@ export default function SettingsScreen() {
     if (updated.enabled && Device.isDevice) await scheduleSingleSlot(updated);
   }
 
+  async function handleModeChange(mode: ColorMode) {
+    setColorMode(mode);
+    await updateSettings(db, { colorMode: mode });
+  }
+
   async function handleThemeChange(name: ThemeName) {
     setThemeName(name);
     await updateSettings(db, { themeName: name });
@@ -111,6 +118,8 @@ export default function SettingsScreen() {
         style={[styles.container, { backgroundColor: theme.colors.background }]}
         contentContainerStyle={{ padding: spacing.lg, paddingBottom: spacing.xxl }}
       >
+        <AppearanceModeSection currentMode={colorMode} onModeChange={handleModeChange} />
+
         <ThemeSection currentTheme={themeName} onThemeChange={handleThemeChange} />
 
         <NotificationsSection
@@ -136,7 +145,7 @@ export default function SettingsScreen() {
         </Text>
         <Pressable
           onPress={() => setShowFeedbackModal(true)}
-          style={[
+          style={({ pressed }) => [
             styles.listItem,
             {
               backgroundColor: theme.colors.surface,
@@ -147,6 +156,7 @@ export default function SettingsScreen() {
               borderColor: theme.colors.border,
               marginBottom: spacing.xl,
             },
+            pressed && { opacity: 0.75 },
           ]}
           accessibilityRole="button"
           accessibilityLabel="Feedback senden"
@@ -182,7 +192,7 @@ export default function SettingsScreen() {
         </Text>
         <Pressable
           onPress={() => router.push('/check-in-info')}
-          style={[
+          style={({ pressed }) => [
             styles.infoRow,
             {
               backgroundColor: theme.colors.surface,
@@ -190,6 +200,7 @@ export default function SettingsScreen() {
               padding: spacing.md,
               minHeight: touchTarget.min,
             },
+            pressed && { opacity: 0.75 },
           ]}
           accessibilityRole="button"
           accessibilityLabel="Was ist ein Check-in? Mehr erfahren"
