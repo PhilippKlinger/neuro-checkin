@@ -90,7 +90,7 @@ export function StepThoughts({
               onPress={() =>
                 onTypeChange(isSelected ? null : option.value)
               }
-              style={[
+              style={({ pressed }) => [
                 styles.optionButton,
                 {
                   minHeight: touchTarget.min,
@@ -105,6 +105,7 @@ export function StepThoughts({
                     ? theme.colors.accent
                     : theme.colors.border,
                 },
+                pressed && { opacity: 0.75 },
               ]}
               accessibilityRole="button"
               accessibilityLabel={option.label}

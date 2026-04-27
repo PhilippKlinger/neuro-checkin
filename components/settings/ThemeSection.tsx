@@ -38,7 +38,7 @@ export const ThemeSection = memo(function ThemeSection({ currentTheme, onThemeCh
             <Pressable
               key={option.key}
               onPress={() => onThemeChange(option.key)}
-              style={[
+              style={({ pressed }) => [
                 styles.card,
                 {
                   borderRadius: radii.md,
@@ -47,6 +47,7 @@ export const ThemeSection = memo(function ThemeSection({ currentTheme, onThemeCh
                   borderWidth: 2,
                   borderColor: isSelected ? palette.colors.primary : palette.colors.border,
                 },
+                pressed && { opacity: 0.75 },
               ]}
               accessibilityRole="button"
               accessibilityLabel={`Farbpalette ${option.label}`}

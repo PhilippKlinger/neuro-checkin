@@ -19,7 +19,7 @@ export const CheckInCard = memo(function CheckInCard({ checkIn, onPress }: Check
   return (
     <Pressable
       onPress={onPress}
-      style={[
+      style={({ pressed }) => [
         styles.card,
         {
           backgroundColor: theme.colors.surface,
@@ -28,6 +28,7 @@ export const CheckInCard = memo(function CheckInCard({ checkIn, onPress }: Check
           paddingVertical: spacing.sm,
           marginBottom: spacing.xs,
         },
+        pressed && { opacity: 0.75 },
       ]}
       accessibilityRole="button"
       accessibilityLabel={`Check-in vom ${formatDate(checkIn.createdAt)}`}
