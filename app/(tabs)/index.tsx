@@ -5,7 +5,14 @@ import { useTheme } from '../../lib/hooks/useTheme';
 import { useDatabase } from '../../lib/hooks/useDatabase';
 import { getCheckIns } from '../../lib/database/checkins';
 import type { CheckIn } from '../../lib/types/checkin';
+import { ENERGY_LABELS, getLevelLabel } from '../../lib/types/checkin';
 import { formatDate, formatTime } from '../../lib/utils/format';
+
+const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000;
+
+function isWithinSevenDays(isoDate: string): boolean {
+  return Date.now() - new Date(isoDate).getTime() < SEVEN_DAYS_MS;
+}
 
 function getGreeting(): string {
   const hour = new Date().getHours();
@@ -74,7 +81,7 @@ export default function HomeScreen() {
               pressed && { opacity: 0.75 },
             ]}
             accessibilityRole="button"
-            accessibilityLabel={`Letzter Check-in vom ${formatDate(latestCheckIn.createdAt)}, ansehen`}
+            accessibilityLabel={`Letzter Check-in, ansehen`}
           >
             <Text
               style={{
@@ -93,7 +100,9 @@ export default function HomeScreen() {
                 color: theme.colors.text,
               }}
             >
-              {formatDate(latestCheckIn.createdAt)}, {formatTime(latestCheckIn.createdAt)}
+              {isWithinSevenDays(latestCheckIn.createdAt)
+                ? `${formatDate(latestCheckIn.createdAt)}, ${formatTime(latestCheckIn.createdAt)}`
+                : `Energie: ${getLevelLabel(latestCheckIn.energyLevel, ENERGY_LABELS)}`}
             </Text>
           </Pressable>
         ) : (

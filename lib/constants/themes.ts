@@ -77,13 +77,13 @@ const warmEarthDark: ThemeTokens = {
     background: '#1B1A18',
     surface: '#252321',
     surfaceHover: '#2F2C28',
-    primary: '#F0ECE6',     // warm off-white — light ink for buttons in dark
+    primary: '#9A9088',     // warm mid-gray — softer than near-white, avoids harsh glare in dark
     primarySoft: '#3A3733',
     accent: '#A88A65',      // warm brown lighter — readable on dark bg
     accentSoft: '#403020',  // dark warm brown tint — selected backgrounds
     text: '#F0ECE6',
     textSecondary: '#B5AFA5',
-    textInverse: '#1B1A18', // dark — for text on light primary buttons
+    textInverse: '#1B1A18', // dark — for text on primary buttons
     border: '#3A3733',
     borderFocus: '#A88A65',
     error: '#E08C85',
@@ -128,7 +128,7 @@ const coolMistDark: ThemeTokens = {
     background: '#1A1E22',
     surface: '#222830',
     surfaceHover: '#2A3240',
-    primary: '#EBF0F5',
+    primary: '#8A98A8',     // cool mid-gray — softer than near-white, avoids harsh glare in dark
     primarySoft: '#2E3540',
     accent: '#7AAFC8',      // steel blue lighter — readable on dark bg
     accentSoft: '#1A3252',  // dark navy blue — selected backgrounds
@@ -179,7 +179,7 @@ const softSageDark: ThemeTokens = {
     background: '#1A1F1B',
     surface: '#222924',
     surfaceHover: '#2C352D',
-    primary: '#EEF2EB',
+    primary: '#8C9588',     // sage mid-gray — softer than near-white, avoids harsh glare in dark
     primarySoft: '#303830',
     accent: '#80A885',      // sage green lighter — readable on dark bg
     accentSoft: '#2E4A34',
