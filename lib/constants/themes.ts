@@ -11,7 +11,7 @@
  *
  * Palette accents match palette character:
  *   Warm Earth → warm earthy brown (#7A6344)
- *   Cool Mist  → sage-teal (#7BA39E)
+ *   Cool Mist  → steel blue (#4A6A89)
  *   Soft Sage  → sage green (#527A58)
  */
 
@@ -95,7 +95,7 @@ const warmEarthDark: ThemeTokens = {
 
 // ---------------------------------------------------------------------------
 // Palette B — Cool Mist (Light)
-// Cool blue-grays. Primary: dark navy-gray. Accent: sage-teal.
+// Cool blue-grays. Primary: dark navy-gray. Accent: steel blue (original identity color).
 // ---------------------------------------------------------------------------
 const coolMistLight: ThemeTokens = {
   name: 'Cool Mist',
@@ -105,17 +105,17 @@ const coolMistLight: ThemeTokens = {
     surfaceHover: '#E0E4EB',
     primary: '#3A4855',     // dark navy-gray — buttons/CTAs
     primarySoft: '#E0E5EC',
-    accent: '#7BA39E',      // sage-teal — identity signal
-    accentSoft: '#C5DDD9',  // light teal tint — selected backgrounds
+    accent: '#4A6A89',      // steel blue — identity signal (original WCAG-approved palette color)
+    accentSoft: '#C8D8E8',  // light blue tint — selected backgrounds
     text: '#1E2A36',
     textSecondary: '#566878',
     textInverse: '#FFFFFF',
     border: '#D6DCE4',
-    borderFocus: '#7BA39E',
+    borderFocus: '#4A6A89',
     error: '#B86B6B',
     errorSoft: '#EED5D5',
-    success: '#7BA39E',
-    successSoft: '#D2E6E3',
+    success: '#6B9E84',     // semantic green — independent of accent
+    successSoft: '#C8E0D4',
   },
 };
 
@@ -130,17 +130,17 @@ const coolMistDark: ThemeTokens = {
     surfaceHover: '#2A3240',
     primary: '#EBF0F5',
     primarySoft: '#2E3540',
-    accent: '#9DC4BE',      // sage-teal lighter — readable on dark bg
-    accentSoft: '#2A4045',
+    accent: '#7AAFC8',      // steel blue lighter — readable on dark bg
+    accentSoft: '#1A3252',  // dark navy blue — selected backgrounds
     text: '#EBF0F5',
     textSecondary: '#A8B5C2',
     textInverse: '#1A1E22',
     border: '#2E3540',
-    borderFocus: '#9DC4BE',
+    borderFocus: '#7AAFC8',
     error: '#D98888',
     errorSoft: '#40282A',
-    success: '#9DC4BE',
-    successSoft: '#2A4045',
+    success: '#8FBFA8',     // semantic green — independent of accent
+    successSoft: '#1E3830',
   },
 };
 
