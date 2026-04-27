@@ -20,6 +20,9 @@ Designed for people with autism, ADHD, or high inner complexity who need a calm,
 - [Environment Variables](#environment-variables)
 - [Scripts](#scripts)
 - [Security Notes](#security-notes)
+- [Status](#status)
+- [Product Principles](#product-principles)
+- [License](#license)
 
 ---
 
@@ -140,3 +143,30 @@ eas secret:create --name FORMSPREE_URL --value "your-url"
 - Sentry is configured with a `beforeSend` hook that strips all health-related fields before transmission. No check-in content leaves the device.
 - Sentry is disabled in development (`enabled: !__DEV__`).
 - All SQLite queries use parameterised statements. No string concatenation with user input.
+
+---
+
+## Status
+
+Neuro Check-in is currently in preparation for a closed Android beta release.
+
+Screenshots will be added before the public release.
+
+---
+
+## Product Principles
+
+- Low cognitive load: few decisions per screen, calm flows, no dashboard overload.
+- No streaks, points, rewards, or pressure language.
+- Local-first data storage: check-ins stay on the device.
+- Accessibility and neurodivergence-friendly UX from the start.
+- The app is a self-awareness tool, not a diagnosis tool or therapy replacement.
+
+---
+
+## License
+
+This repository is publicly visible for portfolio, transparency, and review purposes.
+The code, branding, copy, assets, product strategy, and documentation may not be reused without written permission.
+
+See [LICENSE](LICENSE).
