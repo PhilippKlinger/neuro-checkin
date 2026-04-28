@@ -81,7 +81,7 @@ const warmEarthDark: ThemeTokens = {
     primarySoft: '#3A3733',
     accent: '#A88A65',      // warm brown lighter — readable on dark bg
     accentSoft: '#403020',  // dark warm brown tint — selected backgrounds
-    text: '#F0ECE6',
+    text: '#D8D0CA',         // warm cream — softer than near-white, less glare for ND users
     textSecondary: '#B5AFA5',
     textInverse: '#1B1A18', // dark — for text on primary buttons
     border: '#3A3733',
@@ -132,7 +132,7 @@ const coolMistDark: ThemeTokens = {
     primarySoft: '#2E3540',
     accent: '#7AAFC8',      // steel blue lighter — readable on dark bg
     accentSoft: '#1A3252',  // dark navy blue — selected backgrounds
-    text: '#EBF0F5',
+    text: '#D0D8E4',         // cool light blue-gray — softer than near-white
     textSecondary: '#A8B5C2',
     textInverse: '#1A1E22',
     border: '#2E3540',
@@ -183,7 +183,7 @@ const softSageDark: ThemeTokens = {
     primarySoft: '#303830',
     accent: '#80A885',      // sage green lighter — readable on dark bg
     accentSoft: '#2E4A34',
-    text: '#EEF2EB',
+    text: '#D0D9CC',         // sage-tinted light gray — softer than near-white
     textSecondary: '#A8B0A4',
     textInverse: '#1A1F1B',
     border: '#303830',

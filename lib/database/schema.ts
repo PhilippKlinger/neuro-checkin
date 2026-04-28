@@ -1,6 +1,6 @@
 import type { SQLiteDatabase } from 'expo-sqlite';
 
-const SCHEMA_VERSION = 5;
+const SCHEMA_VERSION = 6;
 
 export async function migrateDatabase(db: SQLiteDatabase): Promise<void> {
   await db.execAsync(`PRAGMA journal_mode = WAL;`);
@@ -80,6 +80,15 @@ export async function migrateDatabase(db: SQLiteDatabase): Promise<void> {
   if (currentVersion < 5) {
     await db.execAsync(
       `ALTER TABLE user_settings ADD COLUMN color_mode TEXT NOT NULL DEFAULT 'system';`
+    );
+  }
+
+  if (currentVersion < 6) {
+    // Default to light mode: 'system' silently activates dark mode on devices
+    // with dark system settings, surprising users on first launch before they
+    // can discover the appearance toggle in Settings.
+    await db.execAsync(
+      `UPDATE user_settings SET color_mode = 'light' WHERE color_mode = 'system';`
     );
   }
 
