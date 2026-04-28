@@ -16,7 +16,7 @@ export async function getSettings(db: SQLiteDatabase): Promise<UserSettings> {
     return {
       id: 1,
       themeName: 'warmEarth',
-      colorMode: 'system',
+      colorMode: 'light',
       reminderEnabled: false,
       reminderTime: null,
       language: 'de',
@@ -27,7 +27,7 @@ export async function getSettings(db: SQLiteDatabase): Promise<UserSettings> {
   return {
     id: row.id,
     themeName: row.theme_name,
-    colorMode: (row.color_mode as UserSettings['colorMode']) ?? 'system',
+    colorMode: (row.color_mode as UserSettings['colorMode']) ?? 'light',
     reminderEnabled: row.reminder_enabled === 1,
     reminderTime: row.reminder_time,
     language: row.language as 'de' | 'en',
