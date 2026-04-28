@@ -76,12 +76,14 @@ export function CheckInDetailContent({
           </View>
         )}
 
-        {checkIn.thoughtsType && (
+        {(checkIn.thoughtsType || (checkIn.thoughtsNote && checkIn.thoughtsNote.trim() !== '')) && (
           <View style={[styles.card, { backgroundColor: theme.colors.surface, borderRadius: radii.md, padding: spacing.md, marginBottom: spacing.md }]}>
             <Text style={sectionTitle(typography, theme, spacing)}>Gedanken</Text>
-            <Text style={body(typography, theme)}>{getThoughtsLabel(checkIn.thoughtsType)}</Text>
+            {checkIn.thoughtsType && (
+              <Text style={body(typography, theme)}>{getThoughtsLabel(checkIn.thoughtsType)}</Text>
+            )}
             {checkIn.thoughtsNote && checkIn.thoughtsNote.trim() !== '' && (
-              <Text style={[body(typography, theme), { marginTop: spacing.xs, fontStyle: 'italic' }]}>
+              <Text style={[body(typography, theme), { marginTop: checkIn.thoughtsType ? spacing.xs : 0, fontStyle: 'italic' }]}>
                 {checkIn.thoughtsNote}
               </Text>
             )}
