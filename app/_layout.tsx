@@ -58,13 +58,18 @@ function AppStack() {
     if (!isReady) return;
 
     async function checkOnboarding() {
-      const settings = await getSettings(db);
-      setThemeName(settings.themeName as ThemeName);
-      setColorMode(settings.colorMode);
-      if (!settings.onboardingCompleted && segments[0] !== 'onboarding') {
-        router.replace('/onboarding');
+      try {
+        const settings = await getSettings(db);
+        setThemeName(settings.themeName as ThemeName);
+        setColorMode(settings.colorMode);
+        if (!settings.onboardingCompleted && segments[0] !== 'onboarding') {
+          router.replace('/onboarding');
+        }
+      } catch (e) {
+        Sentry.captureException(e);
+      } finally {
+        setOnboardingChecked(true);
       }
-      setOnboardingChecked(true);
     }
     checkOnboarding();
   // eslint-disable-next-line react-hooks/exhaustive-deps

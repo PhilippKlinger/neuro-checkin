@@ -22,6 +22,7 @@
         "backgroundColor": "#F5EFE8"
       },
       "versionCode": 1,
+      "allowBackup": false,
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
       "package": "com.philippklinger.neurocheckin",
