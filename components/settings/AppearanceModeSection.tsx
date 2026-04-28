@@ -70,19 +70,6 @@ export const AppearanceModeSection = memo(function AppearanceModeSection({
               >
                 {option.label}
               </Text>
-              {option.key === 'system' && (
-                <Text
-                  style={{
-                    fontFamily: typography.families.body.regular,
-                    fontSize: typography.sizes.xs,
-                    color: theme.colors.textSecondary,
-                    textAlign: 'center',
-                    marginTop: 2,
-                  }}
-                >
-                  übernimmt Geräteeinstellungen
-                </Text>
-              )}
             </Pressable>
           );
         })}
