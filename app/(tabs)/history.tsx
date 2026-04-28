@@ -103,6 +103,13 @@ export default function HistoryScreen() {
         keyExtractor={(item) => item.id.toString()}
         renderItem={renderItem}
         contentContainerStyle={{ padding: spacing.md }}
+        ListFooterComponent={
+          checkIns.length > 0 ? (
+            <Text style={{ fontFamily: typography.families.body.regular, fontSize: typography.sizes.xs, color: theme.colors.textSecondary, textAlign: 'center', paddingVertical: spacing.md }}>
+              Zeigt die letzten 50 Check-ins
+            </Text>
+          ) : null
+        }
       />
     </View>
   );
