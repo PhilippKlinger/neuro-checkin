@@ -72,7 +72,7 @@ export function FeedbackFormContent({
         Feedback (anonym)
       </Text>
       <Text style={s.subtitle}>
-        Was denkst du? Was hat geholfen, was stört, was fehlt? Alles ist optional.
+        Was hat geholfen, was stört, was fehlt? Bitte nur App-Feedback — nicht wie es dir gerade geht.
       </Text>
       <TextInput
         value={feedbackText}
@@ -92,7 +92,7 @@ export function FeedbackFormContent({
       {feedbackError && (
         <Text style={s.errorText}>Senden hat nicht geklappt. Bitte versuche es später nochmal.</Text>
       )}
-      <Text style={s.privacyHint}>Bitte keine persönlichen Check-in-Inhalte senden.</Text>
+      <Text style={s.privacyHint}>Bitte keine persönlichen Inhalte senden. Das Feedback wird anonym über Formspree (externer Dienst) übertragen.</Text>
       <View style={s.buttonRow}>
         <Pressable
           onPress={onCancel}
