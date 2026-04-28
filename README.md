@@ -7,7 +7,7 @@
 
 A minimalist, neurodivergence-friendly check-in app for daily self-awareness — built with React Native and Expo.
 
-Designed for people with autism, ADHD, or high inner complexity who need a calm, low-pressure way to notice how they are doing right now. All data stays on the device. No account, no tracking.
+Designed for people with autism, ADHD, or high inner complexity who need a calm, low-pressure way to notice how they are doing right now. Check-in data stays on your device. Optional feedback is sent via Formspree. No account, no tracking.
 
 ---
 
