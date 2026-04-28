@@ -9,9 +9,9 @@ interface ThemeSectionProps {
 }
 
 const THEME_OPTIONS: { key: ThemeName; label: string }[] = [
-  { key: 'warmEarth', label: 'Warm Earth' },
-  { key: 'coolMist', label: 'Cool Mist' },
-  { key: 'softSage', label: 'Soft Sage' },
+  { key: 'warmEarth', label: 'Warm\nEarth' },
+  { key: 'coolMist', label: 'Cool\nMist' },
+  { key: 'softSage', label: 'Soft\nSage' },
 ];
 
 export const ThemeSection = memo(function ThemeSection({ currentTheme, onThemeChange }: ThemeSectionProps) {

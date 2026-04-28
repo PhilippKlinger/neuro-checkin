@@ -153,7 +153,7 @@ export function StepSummary({ draft }: StepSummaryProps) {
           </View>
         )}
 
-        {draft.thoughtsType !== null && (
+        {(draft.thoughtsType !== null || draft.thoughtsNote.trim() !== '') && (
           <View
             style={[
               styles.card,
@@ -168,14 +168,16 @@ export function StepSummary({ draft }: StepSummaryProps) {
             <Text style={sectionTitle(typography, theme, spacing)}>
               Gedanken
             </Text>
-            <Text style={bodyText(typography, theme)}>
-              {getThoughtsLabel(draft.thoughtsType)}
-            </Text>
+            {draft.thoughtsType !== null && (
+              <Text style={bodyText(typography, theme)}>
+                {getThoughtsLabel(draft.thoughtsType)}
+              </Text>
+            )}
             {draft.thoughtsNote.trim() !== '' && (
               <Text
                 style={[
                   bodyText(typography, theme),
-                  { marginTop: spacing.xs, fontStyle: 'italic' },
+                  { marginTop: draft.thoughtsType !== null ? spacing.xs : 0, fontStyle: 'italic' },
                 ]}
               >
                 {draft.thoughtsNote}

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Modal, View, KeyboardAvoidingView, Platform, StyleSheet, Text } from 'react-native';
+import { Modal, View, KeyboardAvoidingView, Platform, StyleSheet, Text, Pressable } from 'react-native';
 import Constants from 'expo-constants';
 import { useTheme } from '../../lib/hooks/useTheme';
 import { FORMSPREE_URL } from '../../lib/constants/config';
@@ -57,9 +57,13 @@ export function FeedbackModal({ visible, onClose }: FeedbackModalProps) {
 
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={handleClose}>
+      {/* Full-screen background — separate from KeyboardAvoidingView so it
+          covers the entire screen including nav bar on edge-to-edge Android */}
+      <Pressable style={[StyleSheet.absoluteFillObject, styles.backdrop]} onPress={handleClose} />
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={[styles.overlay, { padding: spacing.lg }]}
+        style={[styles.container, { padding: spacing.lg }]}
+        pointerEvents="box-none"
       >
         <View style={{ width: '100%', backgroundColor: theme.colors.background, borderRadius: radii.lg, padding: spacing.lg }}>
           {!feedbackAvailable ? (
@@ -85,9 +89,11 @@ export function FeedbackModal({ visible, onClose }: FeedbackModalProps) {
 }
 
 const styles = StyleSheet.create({
-  overlay: {
-    flex: 1,
+  backdrop: {
     backgroundColor: OVERLAY_COLOR,
+  },
+  container: {
+    flex: 1,
     justifyContent: 'center',
   },
 });
