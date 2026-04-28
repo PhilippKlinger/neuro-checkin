@@ -19,7 +19,7 @@ export default function HistoryScreen() {
       async function load() {
         setIsLoading(true);
         try {
-          const data = await getCheckIns(db);
+          const data = await getCheckIns(db, 10000);
           setCheckIns(data);
         } catch {
           setCheckIns([]);
@@ -103,13 +103,6 @@ export default function HistoryScreen() {
         keyExtractor={(item) => item.id.toString()}
         renderItem={renderItem}
         contentContainerStyle={{ padding: spacing.md }}
-        ListFooterComponent={
-          checkIns.length > 0 ? (
-            <Text style={{ fontFamily: typography.families.body.regular, fontSize: typography.sizes.xs, color: theme.colors.textSecondary, textAlign: 'center', paddingVertical: spacing.md }}>
-              Zeigt die letzten 50 Check-ins
-            </Text>
-          ) : null
-        }
       />
     </View>
   );
