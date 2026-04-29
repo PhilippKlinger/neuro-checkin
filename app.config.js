@@ -3,11 +3,16 @@
 // The static parts of the config live in app.json and are merged here.
 
 /** @type {import('@expo/config').ConfigContext} */
-module.exports = ({ config }) => ({
-  ...config,
-  extra: {
-    ...config.extra,
-    sentryDsn: process.env.SENTRY_DSN ?? '',
-    formspreeUrl: process.env.FORMSPREE_URL ?? '',
-  },
-});
+const withAdiRegistration = require('./plugins/withAdiRegistration');
+
+module.exports = ({ config }) => {
+  const updatedConfig = {
+    ...config,
+    extra: {
+      ...config.extra,
+      sentryDsn: process.env.SENTRY_DSN ?? '',
+      formspreeUrl: process.env.FORMSPREE_URL ?? '',
+    },
+  };
+  return withAdiRegistration(updatedConfig);
+};
