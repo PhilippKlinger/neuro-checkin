@@ -69,7 +69,7 @@ export function FeedbackFormContent({
   return (
     <>
       <Text style={{ fontFamily: typography.families.heading.semibold, fontSize: typography.sizes.lg, color: theme.colors.text, marginBottom: spacing.sm }}>
-        Feedback (anonym)
+        Feedback
       </Text>
       <Text style={s.subtitle}>
         Was hat geholfen, was stört, was fehlt? Bitte nur App-Feedback — nicht wie es dir gerade geht.
@@ -92,7 +92,7 @@ export function FeedbackFormContent({
       {feedbackError && (
         <Text style={s.errorText}>Senden hat nicht geklappt. Bitte versuche es später nochmal.</Text>
       )}
-      <Text style={s.privacyHint}>Bitte keine persönlichen Inhalte senden. Das Feedback wird anonym über Formspree (externer Dienst) übertragen.</Text>
+      <Text style={s.privacyHint}>Bitte keine persönlichen Inhalte senden. Das Feedback wird ohne Namensangabe über Formspree (externer Dienst) übertragen — IP-Adresse kann dabei anfallen.</Text>
       <View style={s.buttonRow}>
         <Pressable
           onPress={onCancel}

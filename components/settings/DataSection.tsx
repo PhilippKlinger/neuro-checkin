@@ -1,4 +1,4 @@
-import { Alert, Text, Pressable, StyleSheet } from 'react-native';
+import { Alert, Text, Pressable, StyleSheet, Linking } from 'react-native';
 import { useTheme } from '../../lib/hooks/useTheme';
 import { ConfirmDialog } from '../ui/ConfirmDialog';
 import { deleteAllCheckIns } from '../../lib/database/checkins';
@@ -40,6 +40,36 @@ export function DataSection({ db, checkInCount, onDeleteComplete }: DataSectionP
       >
         Daten & Datenschutz
       </Text>
+
+      <Pressable
+        onPress={() => Linking.openURL('https://neurocheckin.de/datenschutz')}
+        style={({ pressed }) => [
+          styles.button,
+          {
+            backgroundColor: theme.colors.surface,
+            borderRadius: radii.md,
+            padding: spacing.md,
+            minHeight: touchTarget.min,
+            borderWidth: 1,
+            borderColor: theme.colors.border,
+            marginBottom: spacing.sm,
+            opacity: pressed ? 0.75 : 1,
+          },
+        ]}
+        accessibilityRole="link"
+        accessibilityLabel="Datenschutzerklärung öffnen"
+        accessibilityHint="Öffnet die Datenschutzerklärung im Browser"
+      >
+        <Text
+          style={{
+            fontFamily: typography.families.ui.medium,
+            fontSize: typography.sizes.md,
+            color: theme.colors.text,
+          }}
+        >
+          Datenschutzerklärung
+        </Text>
+      </Pressable>
 
       <Pressable
         onPress={() => setShowStep1(true)}
