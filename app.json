@@ -59,8 +59,7 @@
           "defaultChannel": "daily-reminder"
         }
       ],
-      "@sentry/react-native",
-      "./plugins/withAdiRegistration"
+      "@sentry/react-native"
     ],
     "extra": {
       "router": {},
