@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { View, Text, Pressable, StyleSheet, AccessibilityInfo, Alert, ScrollView } from 'react-native';
+import { View, Text, Pressable, StyleSheet, AccessibilityInfo, Alert, ScrollView, Linking } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../lib/hooks/useTheme';
@@ -174,17 +174,39 @@ export default function OnboardingScreen() {
             })}
           </View>
         ) : (
-          <Text
-            style={{
-              fontFamily: typography.families.body.regular,
-              fontSize: typography.sizes.sm,
-              color: theme.colors.textSecondary,
-              textAlign: 'center',
-              fontStyle: 'italic',
-            }}
-          >
-            {current.hint}
-          </Text>
+          <>
+            <Text
+              style={{
+                fontFamily: typography.families.body.regular,
+                fontSize: typography.sizes.sm,
+                color: theme.colors.textSecondary,
+                textAlign: 'center',
+                fontStyle: 'italic',
+              }}
+            >
+              {current.hint}
+            </Text>
+            {step === 0 && (
+              <Pressable
+                onPress={() => Linking.openURL('https://neurocheckin.de/datenschutz')}
+                style={({ pressed }) => [{ marginTop: spacing.lg, opacity: pressed ? 0.6 : 1 }]}
+                accessibilityRole="link"
+                accessibilityLabel="Datenschutzerklärung lesen"
+              >
+                <Text
+                  style={{
+                    fontFamily: typography.families.body.regular,
+                    fontSize: typography.sizes.sm,
+                    color: theme.colors.primary,
+                    textAlign: 'center',
+                    textDecorationLine: 'underline',
+                  }}
+                >
+                  Datenschutzerklärung lesen
+                </Text>
+              </Pressable>
+            )}
+          </>
         )}
         </ScrollView>
       </FadeView>

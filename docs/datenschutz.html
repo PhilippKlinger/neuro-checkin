@@ -115,7 +115,7 @@
   <header>
     <p class="app-name">Neuro Check-in</p>
     <h1>Datenschutzerklärung</h1>
-    <p class="meta">Stand: April 2026 &nbsp;·&nbsp; Version 1.0</p>
+    <p class="meta">Stand: April 2026 &nbsp;·&nbsp; Version 1.1</p>
   </header>
 
   <!-- 1. Verantwortlicher -->
@@ -135,7 +135,7 @@
   <!-- 2. Überblick -->
   <h2>2. Überblick</h2>
   <p>Neuro Check-in ist eine App zur persönlichen Selbstwahrnehmung. Wir legen größten Wert auf den Schutz deiner Daten. Diese Erklärung informiert dich darüber, welche Daten verarbeitet werden, auf welcher Rechtsgrundlage und welche Rechte dir zustehen.</p>
-  <p><strong>Kernprinzip:</strong> Deine Check-in-Inhalte verlassen niemals dein Gerät. Sie werden ausschließlich lokal gespeichert und nicht übertragen, analysiert oder weitergegeben.</p>
+  <p><strong>Kernprinzip:</strong> Gespeicherte Check-in-Inhalte verlassen dein Gerät nicht. Sie werden ausschließlich lokal gespeichert und nicht übertragen, analysiert oder weitergegeben. Wenn du Inhalte freiwillig in das Feedback-Feld eingibst, werden diese an Formspree übertragen (siehe Abschnitt 6).</p>
   <p>Verarbeitete Datenkategorien im Überblick:</p>
   <ul>
     <li>Check-in-Inhalte (Energie, Fokus, Körpersignale, Gefühle, Gedanken, Selbstfürsorge) – <strong>ausschließlich lokal</strong></li>
@@ -146,7 +146,7 @@
   <!-- 3. Besondere Kategorien -->
   <h2>3. Besondere Kategorien personenbezogener Daten (Gesundheitsdaten)</h2>
   <p>Check-in-Inhalte können Angaben zu deinem körperlichen und psychischen Befinden enthalten (z.&nbsp;B. Energielevel, Körpersignale, Gefühlszustände). Diese Daten fallen unter die besonderen Kategorien personenbezogener Daten gemäß <strong>Art. 9 DSGVO</strong> (Gesundheitsdaten).</p>
-  <p><strong>Rechtsgrundlage:</strong> Art. 9 Abs. 2 lit. a DSGVO (ausdrückliche Einwilligung durch aktive Nutzung der App) sowie Art. 6 Abs. 1 lit. a DSGVO.</p>
+  <p><strong>Rechtsgrundlage:</strong> Art. 9 Abs. 2 lit. a DSGVO (Einwilligung) sowie Art. 6 Abs. 1 lit. a DSGVO. Die Einwilligung erfolgt durch die aktive Nutzung der App in Kenntnis dieser Datenschutzerklärung, auf die beim Onboarding hingewiesen wird. Da alle Gesundheitsdaten ausschließlich lokal auf deinem Gerät verbleiben und zu keinem Zeitpunkt übertragen werden, ist die tatsächliche Verarbeitung auf das geräteinterne Speichern beschränkt.</p>
   <p><strong>Diese Daten werden ausschließlich lokal auf deinem Gerät gespeichert.</strong> Sie verlassen dein Gerät zu keinem Zeitpunkt, werden nicht an uns oder Dritte übertragen und stehen nur dir zur Verfügung. Du kannst alle Daten jederzeit über die Funktion <em>Einstellungen → Daten &amp; Datenschutz → Alle Check-ins löschen</em> unwiderruflich entfernen.</p>
 
   <!-- 4. Lokale Datenspeicherung -->
@@ -171,8 +171,10 @@
     <li>Zeitstempel des Fehlers</li>
     <li>IP-Adresse (wird serverseitig anonymisiert)</li>
   </ul>
-  <p><strong>Nicht erfasst:</strong> Check-in-Inhalte, Einstellungen oder sonstige personenbezogene Nutzungsdaten. Die Datenerfassung ist auf technische Fehlerdaten beschränkt.</p>
+  <p><strong>Nicht bewusst erfasst:</strong> Wir übermitteln keine Check-in-Inhalte oder Gesundheitsdaten an Sentry. Technische Schutzmaßnahmen (beforeSend-Hook) filtern bekannte sensible Felder heraus; ein vollständiger Schutz bei unvorhergesehenen Abstürzen kann nicht absolut garantiert werden.</p>
   <p><strong>Rechtsgrundlage:</strong> Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse an der Sicherstellung der technischen Funktionsfähigkeit der App).</p>
+  <p><strong>IP-Adresse:</strong> Der beforeSend-Hook entfernt die IP-Adresse aus dem Ereignis-Payload. Eine Übertragung auf Netzwerkebene kann dabei technisch anfallen; wir nutzen Sentry datensparsam und haben IP-Speicherung in den Sentry-Projekteinstellungen deaktiviert.</p>
+  <p><strong>Speicherdauer:</strong> Absturzberichte werden in Sentry für maximal 90 Tage gespeichert und danach automatisch gelöscht.</p>
   <p><strong>Drittlandtransfer:</strong> Sentry ist ein US-amerikanisches Unternehmen. Die Datenübertragung erfolgt auf Basis von Standardvertragsklauseln (SCCs) gemäß Art. 46 Abs. 2 lit. c DSGVO. Wir nutzen die EU-Region von Sentry, sodass Daten primär auf Servern innerhalb der EU verarbeitet werden.</p>
   <p><strong>Auftragsverarbeitung:</strong> Mit Sentry besteht ein Auftragsverarbeitungsvertrag (DPA) gemäß Art. 28 DSGVO.</p>
   <p>Weitere Informationen: <a href="https://sentry.io/privacy/" target="_blank" rel="noopener">sentry.io/privacy</a></p>
@@ -190,11 +192,13 @@
   <p><strong>Rechtsgrundlage:</strong> Art. 6 Abs. 1 lit. a DSGVO (Einwilligung durch aktives Absenden des Formulars).</p>
   <p><strong>Drittlandtransfer:</strong> Formspree ist ein US-amerikanisches Unternehmen. Die Übermittlung erfolgt auf Basis von Standardvertragsklauseln (SCCs) gemäß Art. 46 Abs. 2 lit. c DSGVO. Formspree erklärt die Einhaltung der DSGVO in seinen Nutzungsbedingungen und seiner Datenschutzrichtlinie; ein separater Auftragsverarbeitungsvertrag (DPA) gemäß Art. 28 DSGVO wird von Formspree derzeit nicht als eigenständiges Dokument angeboten.</p>
   <p><strong>Hinweis:</strong> Das Feedback-Formular ist vollständig freiwillig. Du kannst die App ohne Abgabe von Feedback vollständig nutzen. Bitte sende im Feedback-Feld keine Gesundheitsdaten oder Check-in-Inhalte.</p>
+  <p><strong>Speicherdauer:</strong> Feedback-Einträge werden nach Bearbeitung gelöscht, spätestens jedoch nach 6 Monaten. Zur Löschung deiner Daten bei Formspree wende dich an <a href="mailto:hello@neurocheckin.de">hello@neurocheckin.de</a>.</p>
   <p>Weitere Informationen: <a href="https://formspree.io/legal/privacy-policy" target="_blank" rel="noopener">formspree.io/legal/privacy-policy</a></p>
 
   <!-- 7. Push-Benachrichtigungen -->
   <h2>7. Push-Benachrichtigungen</h2>
   <p>Die App ermöglicht lokale Push-Benachrichtigungen als Erinnerung für Check-ins. Diese Benachrichtigungen werden ausschließlich lokal auf deinem Gerät geplant und ausgelöst. Es werden keine Daten an externe Server übermittelt.</p>
+  <p><strong>Android-Berechtigungen:</strong> Die App nutzt <code>SCHEDULE_EXACT_ALARM</code>, um Erinnerungen zur eingestellten Uhrzeit zuverlässig auszulösen, sowie <code>RECEIVE_BOOT_COMPLETED</code>, um geplante Erinnerungen nach einem Geräteneustart wiederherzustellen. Beide Berechtigungen dienen ausschließlich der lokalen Benachrichtigungsplanung — keine Server-Pushes, keine Datenübertragung.</p>
   <p>Die Nutzung von Benachrichtigungen erfordert deine Zustimmung im Betriebssystem. Du kannst Benachrichtigungen jederzeit in den Einstellungen der App oder in den Systemeinstellungen deines Geräts deaktivieren.</p>
 
   <!-- 8. Google Play Store -->
@@ -205,6 +209,7 @@
   <!-- 9. Keine Weitergabe -->
   <h2>9. Datenweitergabe und Verkauf</h2>
   <p>Wir verkaufen keine personenbezogenen Daten. Daten werden nicht an Werbeplattformen, Datenbroker oder sonstige Dritte weitergegeben, außer soweit in dieser Erklärung ausdrücklich beschrieben (Sentry, Formspree als Auftragsverarbeiter).</p>
+  <p><strong>Kein Profiling, keine automatisierten Entscheidungen:</strong> Wir erstellen keine Nutzerprofile, betreiben keine verhaltensbasierte Werbung und treffen keine automatisierten Entscheidungen mit rechtlicher oder vergleichbar erheblicher Wirkung gemäß Art. 22 DSGVO.</p>
 
   <!-- 10. Datensicherheit -->
   <h2>10. Datensicherheit</h2>
@@ -219,7 +224,7 @@
 
   <!-- 11. Minderjährige -->
   <h2>11. Kinder und Minderjährige</h2>
-  <p>Diese App richtet sich nicht an Kinder unter 16 Jahren. Wir erheben wissentlich keine personenbezogenen Daten von Kindern unter 16 Jahren. Falls du davon Kenntnis erhältst, dass ein Kind unter 16 Jahren die App nutzt, bitte wende dich an <a href="mailto:hello@neurocheckin.de">hello@neurocheckin.de</a>.</p>
+  <p>Diese App richtet sich an Erwachsene ab 18 Jahren. Wir erheben wissentlich keine personenbezogenen Daten von Personen unter 18 Jahren. Falls du davon Kenntnis erhältst, dass eine minderjährige Person die App nutzt, bitte wende dich an <a href="mailto:hello@neurocheckin.de">hello@neurocheckin.de</a>.</p>
 
   <!-- 12. Betroffenenrechte -->
   <h2>12. Deine Rechte als betroffene Person</h2>
