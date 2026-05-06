@@ -9,7 +9,8 @@
     "web": "expo start --web",
     "lint": "npx expo lint",
     "typecheck": "tsc --noEmit",
-    "format": "prettier --write \"**/*.{ts,tsx,json}\""
+    "format": "prettier --write \"**/*.{ts,tsx,json}\"",
+    "seed": "node scripts/seed-checkins.js"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.1.1",
