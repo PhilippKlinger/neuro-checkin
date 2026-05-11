@@ -44,7 +44,7 @@ export function StepDistress({
   const showNoteToggle = distressLevel !== null && distressLevel >= DISTRESS_NOTE_THRESHOLD;
 
   return (
-    <ScrollView ref={scrollRef} style={styles.container} showsVerticalScrollIndicator={false}>
+    <ScrollView ref={scrollRef} style={styles.container} contentContainerStyle={styles.contentContainer} showsVerticalScrollIndicator={false}>
       <Text
         style={{
           fontFamily: typography.families.heading.semibold,
@@ -54,7 +54,7 @@ export function StepDistress({
           marginBottom: spacing.sm,
         }}
       >
-        Belastung
+        Stress-Level
       </Text>
       <Text
         style={{
@@ -62,12 +62,12 @@ export function StepDistress({
           fontSize: typography.sizes.md,
           color: theme.colors.textSecondary,
           textAlign: 'center',
-          marginBottom: spacing.xs,
+          marginBottom: spacing.xl,
         }}
       >
-        Wie viel ist gerade in dir los?
+        Wie belastet oder angespannt bist du gerade?
       </Text>
-      <View style={[styles.optionList, { gap: spacing.sm }]}>
+      <View style={[styles.optionList, { gap: spacing.sm }]} accessibilityRole="radiogroup" accessibilityLabel="Stress-Level">
         {LEVEL_OPTIONS.map(({ level, label }) => {
           const isSelected = distressLevel === level;
           return (
@@ -80,16 +80,15 @@ export function StepDistress({
                   minHeight: touchTarget.min,
                   borderRadius: radii.md,
                   paddingHorizontal: spacing.md,
-                  paddingVertical: spacing.sm,
                   backgroundColor: isSelected ? theme.colors.accentSoft : theme.colors.surface,
                   borderWidth: 1,
                   borderColor: isSelected ? theme.colors.accent : theme.colors.border,
                 },
                 pressed && { opacity: 0.75 },
               ]}
-              accessibilityRole="button"
+              accessibilityRole="radio"
               accessibilityLabel={label}
-              accessibilityState={{ selected: isSelected }}
+              accessibilityState={{ checked: isSelected }}
             >
               <Text
                 style={{
@@ -105,13 +104,7 @@ export function StepDistress({
         })}
       </View>
 
-      <View
-        style={{
-          height: 1,
-          backgroundColor: theme.colors.border,
-          marginVertical: spacing.md,
-        }}
-      />
+      <View style={[styles.divider, { backgroundColor: theme.colors.border, marginVertical: spacing.md }]} />
 
       <Pressable
         onPress={handleCannotSay}
@@ -121,7 +114,6 @@ export function StepDistress({
             minHeight: touchTarget.min,
             borderRadius: radii.md,
             paddingHorizontal: spacing.md,
-            paddingVertical: spacing.sm,
             backgroundColor: cannotSay ? theme.colors.accentSoft : theme.colors.surface,
             borderWidth: 1,
             borderColor: cannotSay ? theme.colors.accent : theme.colors.border,
@@ -190,7 +182,7 @@ export function StepDistress({
               marginTop: spacing.lg,
             },
           ]}
-          accessibilityLabel="Belastungs-Notiz"
+          accessibilityLabel="Stress-Notiz"
         />
       )}
       {noteOpen && distressNote.length >= 180 && (
@@ -213,11 +205,18 @@ export function StepDistress({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  contentContainer: {
     flexGrow: 1,
+    justifyContent: 'center',
   },
   optionList: {},
   optionButton: {
-    alignItems: 'flex-start',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  divider: {
+    height: 1,
   },
   cannotSayButton: {
     alignItems: 'center',

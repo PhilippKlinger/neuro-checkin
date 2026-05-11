@@ -87,16 +87,16 @@ export const ENERGY_LABELS = ['Sehr wenig', 'Wenig', 'Mittel', 'Viel', 'Sehr vie
 /** Semantic labels for the 5-step focus scale (index 0 = level 1). */
 export const FOCUS_LABELS = ['Kaum', 'Wenig', 'Mittel', 'Gut', 'Voll'] as const;
 
-/** Semantic labels for the 5-step distress scale (index 0 = level 1). */
-export const DISTRESS_LABELS = ['Ruhig', 'Leicht angespannt', 'Spürbar belastet', 'Stark belastet', 'Überwältigt'] as const;
+/** Semantic labels for the 5-step stress scale (index 0 = level 1). */
+export const DISTRESS_LABELS = ['Kaum', 'Wenig', 'Mittel', 'Viel', 'Sehr viel'] as const;
 
-/** Accompanying descriptions for each distress level (same index mapping). */
+/** Accompanying descriptions for each stress level (same index mapping). */
 export const DISTRESS_DESCRIPTIONS = [
-  'Es ist gerade ok.',
-  'Etwas zieht, aber tragbar.',
-  'Es ist da und braucht Aufmerksamkeit.',
+  'Ich fühle mich ruhig und ausgeglichen.',
+  'Ein leises Rauschen, aber gut managebar.',
+  'Spürbar vorhanden — deutlich, aber handlungsfähig.',
   'Es ist viel gerade.',
-  'Ich komme kaum durch.',
+  'Ich bin am absoluten Limit.',
 ] as const;
 
 /** Show optional note field when distress level is at or above this value. */

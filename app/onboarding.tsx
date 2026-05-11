@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { View, Text, Pressable, StyleSheet, AccessibilityInfo, Alert, ScrollView, Linking } from 'react-native';
+import { View, Text, Pressable, StyleSheet, AccessibilityInfo, Alert, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../lib/hooks/useTheme';
@@ -18,18 +18,18 @@ interface OnboardingStep {
 const STEPS: OnboardingStep[] = [
   {
     title: 'Willkommen',
-    body: 'Ein Check-in ist eine kurze Pause — ein Moment, um wahrzunehmen wie es dir gerade geht: Körper, Gefühle, Gedanken. Diese App ist aus eigenem Bedarf entstanden — für Momente, in denen Wahrnehmung schwer ist.',
-    hint: 'Kein Quiz, kein Score, kein Ergebnis. Alles bleibt lokal auf deinem Gerät.',
+    body: 'Ein Check-in ist eine kurze Pause — ein Moment, um wahrzunehmen wie es dir gerade geht: Körper, Gefühle, Gedanken. Für gute Momente genauso wie für schwere.',
+    hint: 'Alles bleibt auf deinem Gerät — kein Konto, keine Cloud.',
   },
   {
     title: 'So funktioniert es',
-    body: 'Ein Check-in führt dich in 9 ruhigen Schritten durch Körper, Gefühle und Gedanken. Du entscheidest, wie tief du gehst.\n\nFür Menschen, die innere Zustände wahrnehmen wollen — besonders dann, wenn das nicht selbstverständlich ist.',
-    hint: 'Stichworte reichen. Es muss nicht perfekt sein.',
+    body: 'Ein Check-in führt dich in 9 ruhigen Schritten durch Körper, Gefühle und Gedanken. Du entscheidest, wie tief du gehst.',
+    hint: 'Du kannst jeden Schritt überspringen.',
   },
   {
     title: 'Für dich gemacht',
     body: 'Keine Streaks, keine Punkte, kein Druck. Wähle eine Farbwelt, die sich für dich richtig anfühlt.',
-    hint: 'Du kannst die Palette jederzeit in den Einstellungen ändern.',
+    hint: 'Farbe, Dark Mode und Erinnerungen lassen sich jederzeit in den Einstellungen anpassen.',
   },
 ];
 
@@ -49,19 +49,10 @@ export default function OnboardingScreen() {
 
   const isLastStep = step === STEPS.length - 1;
   const current = STEPS[step];
-  const [originalTheme] = useState<ThemeName>(themeName);
-  const [keepDefault, setKeepDefault] = useState(true);
 
   function handleThemeSelect(name: ThemeName) {
-    setKeepDefault(false);
     setSelectedTheme(name);
     setThemeName(name);
-  }
-
-  function handleKeepDefault() {
-    setKeepDefault(true);
-    setSelectedTheme(originalTheme);
-    setThemeName(originalTheme);
   }
 
   function handleNext() {
@@ -140,35 +131,6 @@ export default function OnboardingScreen() {
 
         {isLastStep ? (
           <View style={[styles.paletteSection, { gap: spacing.md }]}>
-            <Pressable
-              onPress={handleKeepDefault}
-              style={({ pressed }) => [
-                styles.keepDefaultCard,
-                {
-                  borderRadius: radii.md,
-                  borderWidth: 2,
-                  borderColor: keepDefault ? theme.colors.primary : theme.colors.border,
-                  backgroundColor: theme.colors.surface,
-                  padding: spacing.md,
-                  minHeight: touchTarget.min,
-                },
-                pressed && { opacity: 0.75 },
-              ]}
-              accessibilityRole="button"
-              accessibilityLabel="Standard behalten"
-              accessibilityState={{ selected: keepDefault }}
-            >
-              <Text
-                style={{
-                  fontFamily: typography.families.ui.semibold,
-                  fontSize: typography.sizes.sm,
-                  color: theme.colors.text,
-                  textAlign: 'center',
-                }}
-              >
-                Standard behalten
-              </Text>
-            </Pressable>
             <View style={[styles.paletteGrid, { gap: spacing.md }]}>
             {(Object.keys(themes) as ThemeName[]).map((name) => {
               const palette = themes[name].light;
@@ -226,43 +188,36 @@ export default function OnboardingScreen() {
             >
               {current.hint}
             </Text>
-            {step === 0 && (
-              <Pressable
-                onPress={() => Linking.openURL('https://neurocheckin.de/datenschutz')}
-                style={({ pressed }) => [{ marginTop: spacing.lg, opacity: pressed ? 0.6 : 1 }]}
-                accessibilityRole="link"
-                accessibilityLabel="Datenschutzerklärung lesen"
-              >
-                <Text
-                  style={{
-                    fontFamily: typography.families.body.regular,
-                    fontSize: typography.sizes.sm,
-                    color: theme.colors.primary,
-                    textAlign: 'center',
-                    textDecorationLine: 'underline',
-                  }}
-                >
-                  Datenschutzerklärung lesen
-                </Text>
-              </Pressable>
-            )}
             {step === 1 && (
               <Pressable
                 onPress={() => router.push('/check-in-info')}
-                style={({ pressed }) => [{ marginTop: spacing.lg, opacity: pressed ? 0.6 : 1 }]}
-                accessibilityRole="link"
-                accessibilityLabel="Was ist ein Check-in? Mehr erfahren"
+                style={({ pressed }) => [
+                  styles.learnMoreButton,
+                  {
+                    marginTop: spacing.lg,
+                    alignSelf: 'center',
+                    paddingHorizontal: spacing.lg,
+                    paddingVertical: spacing.sm,
+                    borderRadius: radii.full,
+                    borderWidth: 1,
+                    borderColor: theme.colors.border,
+                    backgroundColor: theme.colors.surface,
+                    minHeight: touchTarget.min,
+                  },
+                  pressed && { opacity: 0.6 },
+                ]}
+                accessibilityRole="button"
+                accessibilityLabel="Mehr über einen Check-in erfahren"
               >
                 <Text
                   style={{
-                    fontFamily: typography.families.body.regular,
+                    fontFamily: typography.families.ui.medium,
                     fontSize: typography.sizes.sm,
-                    color: theme.colors.primary,
+                    color: theme.colors.text,
                     textAlign: 'center',
-                    textDecorationLine: 'underline',
                   }}
                 >
-                  Was ist ein Check-in? →
+                  Mehr über einen Check-in erfahren
                 </Text>
               </Pressable>
             )}
@@ -273,29 +228,16 @@ export default function OnboardingScreen() {
 
       <View style={[styles.footer, { gap: spacing.lg, paddingBottom: Math.max(spacing.xl, insets.bottom + spacing.md) }]}>
         {isLastStep && (
-          <>
-            <Text
-              style={{
-                fontFamily: typography.families.body.regular,
-                fontSize: typography.sizes.sm,
-                color: theme.colors.textSecondary,
-                textAlign: 'center',
-                fontStyle: 'italic',
-              }}
-            >
-              {current.hint}
-            </Text>
-            <Text
-              style={{
-                fontFamily: typography.families.body.regular,
-                fontSize: typography.sizes.sm,
-                color: theme.colors.textSecondary,
-                textAlign: 'center',
-              }}
-            >
-              Farbe, Dark Mode und Erinnerungen kannst du jederzeit in den Einstellungen anpassen.
-            </Text>
-          </>
+          <Text
+            style={{
+              fontFamily: typography.families.body.regular,
+              fontSize: typography.sizes.sm,
+              color: theme.colors.textSecondary,
+              textAlign: 'center',
+            }}
+          >
+            {current.hint}
+          </Text>
         )}
         <StepIndicator totalSteps={STEPS.length} currentStep={step} />
 
@@ -351,12 +293,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignSelf: 'stretch',
   },
-  paletteSection: {
-    alignSelf: 'stretch',
-  },
-  keepDefaultCard: {
+  learnMoreButton: {
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  paletteSection: {
+    alignSelf: 'stretch',
   },
   paletteGrid: {
     flexDirection: 'row',

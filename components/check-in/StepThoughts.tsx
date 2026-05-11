@@ -14,25 +14,12 @@ interface StepThoughtsProps {
 interface OptionItem {
   value: ThoughtsType;
   label: string;
-  description: string;
 }
 
 const OPTIONS: OptionItem[] = [
-  {
-    value: 'supportive',
-    label: 'Unterstützend',
-    description: 'Meine Gedanken helfen mir gerade',
-  },
-  {
-    value: 'burdening',
-    label: 'Belastend',
-    description: 'Meine Gedanken belasten mich gerade',
-  },
-  {
-    value: 'mixed',
-    label: 'Gemischt',
-    description: 'Beides ist gerade da',
-  },
+  { value: 'supportive', label: 'Unterstützend' },
+  { value: 'burdening', label: 'Belastend' },
+  { value: 'mixed', label: 'Gemischt' },
 ];
 
 export function StepThoughts({
@@ -45,7 +32,7 @@ export function StepThoughts({
   const scrollRef = useRef<ScrollView>(null);
 
   return (
-    <ScrollView ref={scrollRef} style={styles.container} showsVerticalScrollIndicator={false}>
+    <ScrollView ref={scrollRef} style={styles.container} contentContainerStyle={styles.contentContainer} showsVerticalScrollIndicator={false}>
       <Text
         style={{
           fontFamily: typography.families.heading.semibold,
@@ -63,24 +50,11 @@ export function StepThoughts({
           fontSize: typography.sizes.md,
           color: theme.colors.textSecondary,
           textAlign: 'center',
-          marginBottom: spacing.xs,
+          marginBottom: spacing.xl,
         }}
       >
         Wie würdest du deine Gedanken gerade beschreiben?
       </Text>
-      <Text
-        style={{
-          fontFamily: typography.families.body.regular,
-          fontSize: typography.sizes.sm,
-          color: theme.colors.textSecondary,
-          textAlign: 'center',
-          marginBottom: spacing.xl,
-          fontStyle: 'italic',
-        }}
-      >
-        Wähle was sich am nächsten anfühlt.
-      </Text>
-
       <View style={[styles.optionList, { gap: spacing.sm }]}>
         {OPTIONS.map((option) => {
           const isSelected = type === option.value;
@@ -96,7 +70,6 @@ export function StepThoughts({
                   minHeight: touchTarget.min,
                   borderRadius: radii.md,
                   paddingHorizontal: spacing.md,
-                  paddingVertical: spacing.sm,
                   backgroundColor: isSelected
                     ? theme.colors.accentSoft
                     : theme.colors.surface,
@@ -115,21 +88,10 @@ export function StepThoughts({
                 style={{
                   fontFamily: typography.families.ui.medium,
                   fontSize: typography.sizes.md,
-                  color: isSelected
-                    ? theme.colors.text
-                    : theme.colors.text,
+                  color: theme.colors.text,
                 }}
               >
                 {option.label}
-              </Text>
-              <Text
-                style={{
-                  fontFamily: typography.families.body.regular,
-                  fontSize: typography.sizes.sm,
-                  color: theme.colors.textSecondary,
-                }}
-              >
-                {option.description}
               </Text>
             </Pressable>
           );
@@ -181,11 +143,15 @@ export function StepThoughts({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  contentContainer: {
     flexGrow: 1,
+    justifyContent: 'center',
   },
   optionList: {},
   optionButton: {
-    alignItems: 'flex-start',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   noteInput: {
     minHeight: 80,

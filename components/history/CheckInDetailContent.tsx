@@ -78,7 +78,7 @@ export function CheckInDetailContent({
 
         {checkIn.distressLevel !== null && (
           <View style={[styles.card, { backgroundColor: theme.colors.surface, borderRadius: radii.md, padding: spacing.md, marginBottom: spacing.md }]}>
-            <Text style={sectionTitle(typography, theme, spacing)}>Belastung</Text>
+            <Text style={sectionTitle(typography, theme, spacing)}>Stress-Level</Text>
             <Text style={body(typography, theme)}>{getLevelLabel(checkIn.distressLevel, DISTRESS_LABELS)}</Text>
             {checkIn.distressNote && checkIn.distressNote.trim() !== '' && (
               <Text style={[body(typography, theme), { marginTop: spacing.xs, fontStyle: 'italic' }]}>

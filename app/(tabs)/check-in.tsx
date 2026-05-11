@@ -27,7 +27,7 @@ const STEP_NAMES = [
   'Fokus-Level',
   'Körpersignale',
   'Gefühle',
-  'Belastung',
+  'Stress-Level',
   'Gedanken',
   'Selbstfürsorge',
   'Zusammenfassung',
