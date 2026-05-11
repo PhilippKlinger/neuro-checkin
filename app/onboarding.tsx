@@ -49,10 +49,19 @@ export default function OnboardingScreen() {
 
   const isLastStep = step === STEPS.length - 1;
   const current = STEPS[step];
+  const [originalTheme] = useState<ThemeName>(themeName);
+  const [keepDefault, setKeepDefault] = useState(true);
 
   function handleThemeSelect(name: ThemeName) {
+    setKeepDefault(false);
     setSelectedTheme(name);
     setThemeName(name);
+  }
+
+  function handleKeepDefault() {
+    setKeepDefault(true);
+    setSelectedTheme(originalTheme);
+    setThemeName(originalTheme);
   }
 
   function handleNext() {
@@ -130,7 +139,37 @@ export default function OnboardingScreen() {
         </Text>
 
         {isLastStep ? (
-          <View style={[styles.paletteGrid, { gap: spacing.md }]}>
+          <View style={[styles.paletteSection, { gap: spacing.md }]}>
+            <Pressable
+              onPress={handleKeepDefault}
+              style={({ pressed }) => [
+                styles.keepDefaultCard,
+                {
+                  borderRadius: radii.md,
+                  borderWidth: 2,
+                  borderColor: keepDefault ? theme.colors.primary : theme.colors.border,
+                  backgroundColor: theme.colors.surface,
+                  padding: spacing.md,
+                  minHeight: touchTarget.min,
+                },
+                pressed && { opacity: 0.75 },
+              ]}
+              accessibilityRole="button"
+              accessibilityLabel="Standard behalten"
+              accessibilityState={{ selected: keepDefault }}
+            >
+              <Text
+                style={{
+                  fontFamily: typography.families.ui.semibold,
+                  fontSize: typography.sizes.sm,
+                  color: theme.colors.text,
+                  textAlign: 'center',
+                }}
+              >
+                Standard behalten
+              </Text>
+            </Pressable>
+            <View style={[styles.paletteGrid, { gap: spacing.md }]}>
             {(Object.keys(themes) as ThemeName[]).map((name) => {
               const palette = themes[name].light;
               const isSelected = selectedTheme === name;
@@ -172,6 +211,7 @@ export default function OnboardingScreen() {
                 </Pressable>
               );
             })}
+            </View>
           </View>
         ) : (
           <>
@@ -310,6 +350,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     alignSelf: 'stretch',
+  },
+  paletteSection: {
+    alignSelf: 'stretch',
+  },
+  keepDefaultCard: {
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   paletteGrid: {
     flexDirection: 'row',
