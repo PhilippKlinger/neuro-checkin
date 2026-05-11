@@ -1,7 +1,7 @@
 import { useState, useRef } from 'react';
 import { View, Text, TextInput, Pressable, ScrollView, StyleSheet } from 'react-native';
 import { useTheme } from '../../lib/hooks/useTheme';
-import { DISTRESS_LABELS, DISTRESS_DESCRIPTIONS, DISTRESS_NOTE_THRESHOLD } from '../../lib/types/checkin';
+import { DISTRESS_LABELS, DISTRESS_NOTE_THRESHOLD } from '../../lib/types/checkin';
 
 interface StepDistressProps {
   distressLevel: number | null;
@@ -13,7 +13,6 @@ interface StepDistressProps {
 const LEVEL_OPTIONS = DISTRESS_LABELS.map((label, i) => ({
   level: i + 1,
   label,
-  description: DISTRESS_DESCRIPTIONS[i],
 }));
 
 export function StepDistress({
@@ -68,21 +67,8 @@ export function StepDistress({
       >
         Wie viel ist gerade in dir los?
       </Text>
-      <Text
-        style={{
-          fontFamily: typography.families.body.regular,
-          fontSize: typography.sizes.sm,
-          color: theme.colors.textSecondary,
-          textAlign: 'center',
-          marginBottom: spacing.xl,
-          fontStyle: 'italic',
-        }}
-      >
-        Wähle was sich am nächsten anfühlt.
-      </Text>
-
       <View style={[styles.optionList, { gap: spacing.sm }]}>
-        {LEVEL_OPTIONS.map(({ level, label, description }) => {
+        {LEVEL_OPTIONS.map(({ level, label }) => {
           const isSelected = distressLevel === level;
           return (
             <Pressable
@@ -102,7 +88,7 @@ export function StepDistress({
                 pressed && { opacity: 0.75 },
               ]}
               accessibilityRole="button"
-              accessibilityLabel={`${label}: ${description}`}
+              accessibilityLabel={label}
               accessibilityState={{ selected: isSelected }}
             >
               <Text
@@ -113,15 +99,6 @@ export function StepDistress({
                 }}
               >
                 {label}
-              </Text>
-              <Text
-                style={{
-                  fontFamily: typography.families.body.regular,
-                  fontSize: typography.sizes.sm,
-                  color: theme.colors.textSecondary,
-                }}
-              >
-                {description}
               </Text>
             </Pressable>
           );
