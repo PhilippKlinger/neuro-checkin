@@ -18,8 +18,8 @@ interface OnboardingStep {
 const STEPS: OnboardingStep[] = [
   {
     title: 'Willkommen',
-    body: 'Neuro Check-in hilft dir, innere Zustände wahrzunehmen und festzuhalten — in deinem Tempo, ohne Druck.',
-    hint: 'Alles bleibt lokal auf deinem Gerät.',
+    body: 'Ein Check-in ist eine kurze Pause — ein Moment, um wahrzunehmen wie es dir gerade geht: Körper, Gefühle, Gedanken. Diese App ist aus eigenem Bedarf entstanden — für Momente, in denen Wahrnehmung schwer ist.',
+    hint: 'Kein Quiz, kein Score, kein Ergebnis. Alles bleibt lokal auf deinem Gerät.',
   },
   {
     title: 'So funktioniert es',
