@@ -293,7 +293,7 @@ export default function OnboardingScreen() {
                 textAlign: 'center',
               }}
             >
-              Hell oder Dunkel kannst du jederzeit in den Einstellungen wählen.
+              Farbe, Dark Mode und Erinnerungen kannst du jederzeit in den Einstellungen anpassen.
             </Text>
           </>
         )}
