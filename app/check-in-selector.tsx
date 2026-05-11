@@ -18,14 +18,14 @@ export default function CheckInSelectorScreen() {
   const options: SelectorOption[] = [
     {
       title: 'Ich nehme mir kurz Zeit',
-      subtitle: '3 Schritte · etwa 2 Minuten',
-      accessibilityLabel: 'Ich nehme mir kurz Zeit, 3 Schritte, etwa 2 Minuten',
+      subtitle: '3 Schritte · etwa 2 Minuten — Energie, Fokus, Gefühle',
+      accessibilityLabel: 'Ich nehme mir kurz Zeit, 3 Schritte, etwa 2 Minuten, Energie, Fokus, Gefühle',
       onPress: () => router.replace('/quick-check-in'),
     },
     {
       title: 'Ich nehme mir Zeit',
-      subtitle: 'alle 8 Schritte · etwa 5 Minuten',
-      accessibilityLabel: 'Ich nehme mir Zeit, alle 8 Schritte, etwa 5 Minuten',
+      subtitle: 'alle 8 Schritte · etwa 5 Minuten — Körper, Gefühle, Gedanken',
+      accessibilityLabel: 'Ich nehme mir Zeit, alle 8 Schritte, etwa 5 Minuten, Körper, Gefühle, Gedanken',
       onPress: () => router.replace('/(tabs)/check-in'),
     },
   ];
