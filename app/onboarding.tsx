@@ -18,13 +18,13 @@ interface OnboardingStep {
 const STEPS: OnboardingStep[] = [
   {
     title: 'Willkommen',
-    body: 'Neuro Check-in hilft dir, innere Zustände wahrzunehmen und festzuhalten — in deinem Tempo, ohne Druck.',
-    hint: 'Alles bleibt lokal auf deinem Gerät.',
+    body: 'Ein Check-in ist eine kurze Pause — ein Moment, um wahrzunehmen wie es dir gerade geht: Körper, Gefühle, Gedanken. Diese App ist aus eigenem Bedarf entstanden — für Momente, in denen Wahrnehmung schwer ist.',
+    hint: 'Kein Quiz, kein Score, kein Ergebnis. Alles bleibt lokal auf deinem Gerät.',
   },
   {
     title: 'So funktioniert es',
-    body: 'Ein Check-in führt dich in 8 ruhigen Schritten durch Körper, Gefühle und Gedanken. Du entscheidest, wie tief du gehst.',
-    hint: 'Stichworte reichen. Es muss nicht perfekt sein. Was genau ein Check-in ist, kannst du jederzeit in der App nachlesen.',
+    body: 'Ein Check-in führt dich in 8 ruhigen Schritten durch Körper, Gefühle und Gedanken. Du entscheidest, wie tief du gehst.\n\nFür Menschen, die innere Zustände wahrnehmen wollen — besonders dann, wenn das nicht selbstverständlich ist.',
+    hint: 'Stichworte reichen. Es muss nicht perfekt sein.',
   },
   {
     title: 'Für dich gemacht',
@@ -49,10 +49,19 @@ export default function OnboardingScreen() {
 
   const isLastStep = step === STEPS.length - 1;
   const current = STEPS[step];
+  const [originalTheme] = useState<ThemeName>(themeName);
+  const [keepDefault, setKeepDefault] = useState(true);
 
   function handleThemeSelect(name: ThemeName) {
+    setKeepDefault(false);
     setSelectedTheme(name);
     setThemeName(name);
+  }
+
+  function handleKeepDefault() {
+    setKeepDefault(true);
+    setSelectedTheme(originalTheme);
+    setThemeName(originalTheme);
   }
 
   function handleNext() {
@@ -130,7 +139,37 @@ export default function OnboardingScreen() {
         </Text>
 
         {isLastStep ? (
-          <View style={[styles.paletteGrid, { gap: spacing.md }]}>
+          <View style={[styles.paletteSection, { gap: spacing.md }]}>
+            <Pressable
+              onPress={handleKeepDefault}
+              style={({ pressed }) => [
+                styles.keepDefaultCard,
+                {
+                  borderRadius: radii.md,
+                  borderWidth: 2,
+                  borderColor: keepDefault ? theme.colors.primary : theme.colors.border,
+                  backgroundColor: theme.colors.surface,
+                  padding: spacing.md,
+                  minHeight: touchTarget.min,
+                },
+                pressed && { opacity: 0.75 },
+              ]}
+              accessibilityRole="button"
+              accessibilityLabel="Standard behalten"
+              accessibilityState={{ selected: keepDefault }}
+            >
+              <Text
+                style={{
+                  fontFamily: typography.families.ui.semibold,
+                  fontSize: typography.sizes.sm,
+                  color: theme.colors.text,
+                  textAlign: 'center',
+                }}
+              >
+                Standard behalten
+              </Text>
+            </Pressable>
+            <View style={[styles.paletteGrid, { gap: spacing.md }]}>
             {(Object.keys(themes) as ThemeName[]).map((name) => {
               const palette = themes[name].light;
               const isSelected = selectedTheme === name;
@@ -172,6 +211,7 @@ export default function OnboardingScreen() {
                 </Pressable>
               );
             })}
+            </View>
           </View>
         ) : (
           <>
@@ -206,6 +246,26 @@ export default function OnboardingScreen() {
                 </Text>
               </Pressable>
             )}
+            {step === 1 && (
+              <Pressable
+                onPress={() => router.push('/check-in-info')}
+                style={({ pressed }) => [{ marginTop: spacing.lg, opacity: pressed ? 0.6 : 1 }]}
+                accessibilityRole="link"
+                accessibilityLabel="Was ist ein Check-in? Mehr erfahren"
+              >
+                <Text
+                  style={{
+                    fontFamily: typography.families.body.regular,
+                    fontSize: typography.sizes.sm,
+                    color: theme.colors.primary,
+                    textAlign: 'center',
+                    textDecorationLine: 'underline',
+                  }}
+                >
+                  Was ist ein Check-in? →
+                </Text>
+              </Pressable>
+            )}
           </>
         )}
         </ScrollView>
@@ -233,7 +293,7 @@ export default function OnboardingScreen() {
                 textAlign: 'center',
               }}
             >
-              Hell oder Dunkel kannst du jederzeit in den Einstellungen wählen.
+              Farbe, Dark Mode und Erinnerungen kannst du jederzeit in den Einstellungen anpassen.
             </Text>
           </>
         )}
@@ -290,6 +350,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     alignSelf: 'stretch',
+  },
+  paletteSection: {
+    alignSelf: 'stretch',
+  },
+  keepDefaultCard: {
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   paletteGrid: {
     flexDirection: 'row',
