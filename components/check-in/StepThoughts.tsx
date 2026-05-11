@@ -88,9 +88,7 @@ export function StepThoughts({
                 style={{
                   fontFamily: typography.families.ui.medium,
                   fontSize: typography.sizes.md,
-                  color: isSelected
-                    ? theme.colors.text
-                    : theme.colors.text,
+                  color: theme.colors.text,
                 }}
               >
                 {option.label}

@@ -67,7 +67,7 @@ export function StepDistress({
       >
         Wie belastet oder angespannt bist du gerade?
       </Text>
-      <View style={[styles.optionList, { gap: spacing.sm }]}>
+      <View style={[styles.optionList, { gap: spacing.sm }]} accessibilityRole="radiogroup" accessibilityLabel="Stress-Level">
         {LEVEL_OPTIONS.map(({ level, label }) => {
           const isSelected = distressLevel === level;
           return (
@@ -86,9 +86,9 @@ export function StepDistress({
                 },
                 pressed && { opacity: 0.75 },
               ]}
-              accessibilityRole="button"
+              accessibilityRole="radio"
               accessibilityLabel={label}
-              accessibilityState={{ selected: isSelected }}
+              accessibilityState={{ checked: isSelected }}
             >
               <Text
                 style={{
@@ -104,13 +104,7 @@ export function StepDistress({
         })}
       </View>
 
-      <View
-        style={{
-          height: 1,
-          backgroundColor: theme.colors.border,
-          marginVertical: spacing.md,
-        }}
-      />
+      <View style={[styles.divider, { backgroundColor: theme.colors.border, marginVertical: spacing.md }]} />
 
       <Pressable
         onPress={handleCannotSay}
@@ -220,6 +214,9 @@ const styles = StyleSheet.create({
   optionButton: {
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  divider: {
+    height: 1,
   },
   cannotSayButton: {
     alignItems: 'center',
