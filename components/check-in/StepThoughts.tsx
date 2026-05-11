@@ -14,25 +14,12 @@ interface StepThoughtsProps {
 interface OptionItem {
   value: ThoughtsType;
   label: string;
-  description: string;
 }
 
 const OPTIONS: OptionItem[] = [
-  {
-    value: 'supportive',
-    label: 'Unterstützend',
-    description: 'Meine Gedanken helfen mir gerade',
-  },
-  {
-    value: 'burdening',
-    label: 'Belastend',
-    description: 'Meine Gedanken belasten mich gerade',
-  },
-  {
-    value: 'mixed',
-    label: 'Gemischt',
-    description: 'Beides ist gerade da',
-  },
+  { value: 'supportive', label: 'Unterstützend' },
+  { value: 'burdening', label: 'Belastend' },
+  { value: 'mixed', label: 'Gemischt' },
 ];
 
 export function StepThoughts({
@@ -68,20 +55,7 @@ export function StepThoughts({
       >
         Wie würdest du deine Gedanken gerade beschreiben?
       </Text>
-      <Text
-        style={{
-          fontFamily: typography.families.body.regular,
-          fontSize: typography.sizes.sm,
-          color: theme.colors.textSecondary,
-          textAlign: 'center',
-          marginBottom: spacing.xl,
-          fontStyle: 'italic',
-        }}
-      >
-        Wähle was sich am nächsten anfühlt.
-      </Text>
-
-      <View style={[styles.optionList, { gap: spacing.sm }]}>
+      <View style={[styles.optionList, { gap: spacing.sm, marginTop: spacing.xl }]}>
         {OPTIONS.map((option) => {
           const isSelected = type === option.value;
           return (
@@ -121,15 +95,6 @@ export function StepThoughts({
                 }}
               >
                 {option.label}
-              </Text>
-              <Text
-                style={{
-                  fontFamily: typography.families.body.regular,
-                  fontSize: typography.sizes.sm,
-                  color: theme.colors.textSecondary,
-                }}
-              >
-                {option.description}
               </Text>
             </Pressable>
           );

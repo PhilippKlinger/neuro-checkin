@@ -18,13 +18,13 @@ interface OnboardingStep {
 const STEPS: OnboardingStep[] = [
   {
     title: 'Willkommen',
-    body: 'Ein Check-in ist eine kurze Pause — ein Moment, um wahrzunehmen wie es dir gerade geht: Körper, Gefühle, Gedanken. Diese App ist aus eigenem Bedarf entstanden — für Momente, in denen Wahrnehmung schwer ist.',
+    body: 'Ein Check-in ist eine kurze Pause — ein Moment, um wahrzunehmen wie es dir gerade geht: Körper, Gefühle, Gedanken. Für gute Momente genauso wie für schwere.',
     hint: 'Kein Quiz, kein Score, kein Ergebnis. Alles bleibt lokal auf deinem Gerät.',
   },
   {
     title: 'So funktioniert es',
-    body: 'Ein Check-in führt dich in 9 ruhigen Schritten durch Körper, Gefühle und Gedanken. Du entscheidest, wie tief du gehst.\n\nFür Menschen, die innere Zustände wahrnehmen wollen — besonders dann, wenn das nicht selbstverständlich ist.',
-    hint: 'Stichworte reichen. Es muss nicht perfekt sein.',
+    body: 'Ein Check-in führt dich in 9 ruhigen Schritten durch Körper, Gefühle und Gedanken. Du entscheidest, wie tief du gehst.',
+    hint: 'Du kannst jeden Schritt überspringen.',
   },
   {
     title: 'Für dich gemacht',
@@ -49,19 +49,10 @@ export default function OnboardingScreen() {
 
   const isLastStep = step === STEPS.length - 1;
   const current = STEPS[step];
-  const [originalTheme] = useState<ThemeName>(themeName);
-  const [keepDefault, setKeepDefault] = useState(true);
 
   function handleThemeSelect(name: ThemeName) {
-    setKeepDefault(false);
     setSelectedTheme(name);
     setThemeName(name);
-  }
-
-  function handleKeepDefault() {
-    setKeepDefault(true);
-    setSelectedTheme(originalTheme);
-    setThemeName(originalTheme);
   }
 
   function handleNext() {
@@ -140,35 +131,6 @@ export default function OnboardingScreen() {
 
         {isLastStep ? (
           <View style={[styles.paletteSection, { gap: spacing.md }]}>
-            <Pressable
-              onPress={handleKeepDefault}
-              style={({ pressed }) => [
-                styles.keepDefaultCard,
-                {
-                  borderRadius: radii.md,
-                  borderWidth: 2,
-                  borderColor: keepDefault ? theme.colors.primary : theme.colors.border,
-                  backgroundColor: theme.colors.surface,
-                  padding: spacing.md,
-                  minHeight: touchTarget.min,
-                },
-                pressed && { opacity: 0.75 },
-              ]}
-              accessibilityRole="button"
-              accessibilityLabel="Standard behalten"
-              accessibilityState={{ selected: keepDefault }}
-            >
-              <Text
-                style={{
-                  fontFamily: typography.families.ui.semibold,
-                  fontSize: typography.sizes.sm,
-                  color: theme.colors.text,
-                  textAlign: 'center',
-                }}
-              >
-                Standard behalten
-              </Text>
-            </Pressable>
             <View style={[styles.paletteGrid, { gap: spacing.md }]}>
             {(Object.keys(themes) as ThemeName[]).map((name) => {
               const palette = themes[name].light;
@@ -353,10 +315,6 @@ const styles = StyleSheet.create({
   },
   paletteSection: {
     alignSelf: 'stretch',
-  },
-  keepDefaultCard: {
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   paletteGrid: {
     flexDirection: 'row',
