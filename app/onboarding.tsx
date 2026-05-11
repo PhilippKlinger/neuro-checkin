@@ -206,6 +206,26 @@ export default function OnboardingScreen() {
                 </Text>
               </Pressable>
             )}
+            {step === 1 && (
+              <Pressable
+                onPress={() => router.push('/check-in-info')}
+                style={({ pressed }) => [{ marginTop: spacing.lg, opacity: pressed ? 0.6 : 1 }]}
+                accessibilityRole="link"
+                accessibilityLabel="Was ist ein Check-in? Mehr erfahren"
+              >
+                <Text
+                  style={{
+                    fontFamily: typography.families.body.regular,
+                    fontSize: typography.sizes.sm,
+                    color: theme.colors.primary,
+                    textAlign: 'center',
+                    textDecorationLine: 'underline',
+                  }}
+                >
+                  Was ist ein Check-in? →
+                </Text>
+              </Pressable>
+            )}
           </>
         )}
         </ScrollView>
