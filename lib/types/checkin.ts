@@ -5,6 +5,8 @@ export interface CheckIn {
   focusLevel: number; // 1-5
   bodySignals: BodySignals;
   feelings: string; // free text
+  distressLevel: number | null; // 1-5, null = not answered
+  distressNote: string | null;
   thoughtsType: 'supportive' | 'burdening' | 'mixed' | null;
   thoughtsNote: string | null;
   selfCareNote: string | null;
@@ -60,6 +62,8 @@ export interface CheckInDraft {
   focusLevel: number; // 1-5
   bodySignals: BodySignals;
   feelings: string;
+  distressLevel: number | null; // 1-5, null = not answered
+  distressNote: string;
   thoughtsType: 'supportive' | 'burdening' | 'mixed' | null;
   thoughtsNote: string;
   selfCareNote: string;
@@ -82,6 +86,21 @@ export const ENERGY_LABELS = ['Sehr wenig', 'Wenig', 'Mittel', 'Viel', 'Sehr vie
 
 /** Semantic labels for the 5-step focus scale (index 0 = level 1). */
 export const FOCUS_LABELS = ['Kaum', 'Wenig', 'Mittel', 'Gut', 'Voll'] as const;
+
+/** Semantic labels for the 5-step distress scale (index 0 = level 1). */
+export const DISTRESS_LABELS = ['Ruhig', 'Leicht angespannt', 'Spürbar belastet', 'Stark belastet', 'Überwältigt'] as const;
+
+/** Accompanying descriptions for each distress level (same index mapping). */
+export const DISTRESS_DESCRIPTIONS = [
+  'Es ist gerade ok.',
+  'Etwas zieht, aber tragbar.',
+  'Es ist da und braucht Aufmerksamkeit.',
+  'Es ist viel gerade.',
+  'Ich komme kaum durch.',
+] as const;
+
+/** Show optional note field when distress level is at or above this value. */
+export const DISTRESS_NOTE_THRESHOLD = 4;
 
 /**
  * Returns the semantic label for a level value (1-based).
@@ -117,6 +136,8 @@ export const EMPTY_DRAFT: CheckInDraft = {
   focusLevel: 0,  // 0 = unselected, forces active choice
   bodySignals: { ...EMPTY_BODY_SIGNALS },
   feelings: '',
+  distressLevel: null,
+  distressNote: '',
   thoughtsType: null,
   thoughtsNote: '',
   selfCareNote: '',
