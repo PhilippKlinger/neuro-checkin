@@ -24,8 +24,8 @@ export default function CheckInSelectorScreen() {
     },
     {
       title: 'Ich nehme mir Zeit',
-      subtitle: 'alle 8 Schritte · etwa 5 Minuten — Körper, Gefühle, Gedanken',
-      accessibilityLabel: 'Ich nehme mir Zeit, alle 8 Schritte, etwa 5 Minuten, Körper, Gefühle, Gedanken',
+      subtitle: 'alle 9 Schritte · etwa 5 Minuten — Körper, Gefühle, Belastung, Gedanken',
+      accessibilityLabel: 'Ich nehme mir Zeit, alle 9 Schritte, etwa 5 Minuten, Körper, Gefühle, Belastung, Gedanken',
       onPress: () => router.replace('/(tabs)/check-in'),
     },
   ];
