@@ -54,7 +54,7 @@ export function StepDistress({
           marginBottom: spacing.sm,
         }}
       >
-        Belastung
+        Stress-Level
       </Text>
       <Text
         style={{

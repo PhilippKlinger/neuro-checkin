@@ -165,7 +165,7 @@ export function StepSummary({ draft }: StepSummaryProps) {
               },
             ]}
           >
-            <Text style={sectionTitle(typography, theme, spacing)}>Belastung</Text>
+            <Text style={sectionTitle(typography, theme, spacing)}>Stress-Level</Text>
             <Text style={bodyText(typography, theme)}>
               {getLevelLabel(draft.distressLevel, DISTRESS_LABELS)}
             </Text>
