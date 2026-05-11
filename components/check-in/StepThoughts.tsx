@@ -32,7 +32,7 @@ export function StepThoughts({
   const scrollRef = useRef<ScrollView>(null);
 
   return (
-    <ScrollView ref={scrollRef} style={styles.container} showsVerticalScrollIndicator={false}>
+    <ScrollView ref={scrollRef} style={styles.container} contentContainerStyle={styles.contentContainer} showsVerticalScrollIndicator={false}>
       <Text
         style={{
           fontFamily: typography.families.heading.semibold,
@@ -146,11 +146,15 @@ export function StepThoughts({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  contentContainer: {
     flexGrow: 1,
+    justifyContent: 'center',
   },
   optionList: {},
   optionButton: {
-    alignItems: 'flex-start',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   noteInput: {
     minHeight: 80,

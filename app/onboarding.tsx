@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { View, Text, Pressable, StyleSheet, AccessibilityInfo, Alert, ScrollView, Linking } from 'react-native';
+import { View, Text, Pressable, StyleSheet, AccessibilityInfo, Alert, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../lib/hooks/useTheme';
@@ -19,7 +19,7 @@ const STEPS: OnboardingStep[] = [
   {
     title: 'Willkommen',
     body: 'Ein Check-in ist eine kurze Pause — ein Moment, um wahrzunehmen wie es dir gerade geht: Körper, Gefühle, Gedanken. Für gute Momente genauso wie für schwere.',
-    hint: 'Kein Quiz, kein Score, kein Ergebnis. Alles bleibt lokal auf deinem Gerät.',
+    hint: 'Alles bleibt auf deinem Gerät — kein Konto, keine Cloud.',
   },
   {
     title: 'So funktioniert es',
@@ -29,7 +29,7 @@ const STEPS: OnboardingStep[] = [
   {
     title: 'Für dich gemacht',
     body: 'Keine Streaks, keine Punkte, kein Druck. Wähle eine Farbwelt, die sich für dich richtig anfühlt.',
-    hint: 'Du kannst die Palette jederzeit in den Einstellungen ändern.',
+    hint: 'Farbe, Dark Mode und Erinnerungen lassen sich jederzeit in den Einstellungen anpassen.',
   },
 ];
 
@@ -188,43 +188,36 @@ export default function OnboardingScreen() {
             >
               {current.hint}
             </Text>
-            {step === 0 && (
-              <Pressable
-                onPress={() => Linking.openURL('https://neurocheckin.de/datenschutz')}
-                style={({ pressed }) => [{ marginTop: spacing.lg, opacity: pressed ? 0.6 : 1 }]}
-                accessibilityRole="link"
-                accessibilityLabel="Datenschutzerklärung lesen"
-              >
-                <Text
-                  style={{
-                    fontFamily: typography.families.body.regular,
-                    fontSize: typography.sizes.sm,
-                    color: theme.colors.primary,
-                    textAlign: 'center',
-                    textDecorationLine: 'underline',
-                  }}
-                >
-                  Datenschutzerklärung lesen
-                </Text>
-              </Pressable>
-            )}
             {step === 1 && (
               <Pressable
                 onPress={() => router.push('/check-in-info')}
-                style={({ pressed }) => [{ marginTop: spacing.lg, opacity: pressed ? 0.6 : 1 }]}
-                accessibilityRole="link"
-                accessibilityLabel="Was ist ein Check-in? Mehr erfahren"
+                style={({ pressed }) => [
+                  styles.learnMoreButton,
+                  {
+                    marginTop: spacing.lg,
+                    alignSelf: 'center',
+                    paddingHorizontal: spacing.lg,
+                    paddingVertical: spacing.sm,
+                    borderRadius: radii.full,
+                    borderWidth: 1,
+                    borderColor: theme.colors.border,
+                    backgroundColor: theme.colors.surface,
+                    minHeight: touchTarget.min,
+                  },
+                  pressed && { opacity: 0.6 },
+                ]}
+                accessibilityRole="button"
+                accessibilityLabel="Mehr über einen Check-in erfahren"
               >
                 <Text
                   style={{
-                    fontFamily: typography.families.body.regular,
+                    fontFamily: typography.families.ui.medium,
                     fontSize: typography.sizes.sm,
-                    color: theme.colors.primary,
+                    color: theme.colors.text,
                     textAlign: 'center',
-                    textDecorationLine: 'underline',
                   }}
                 >
-                  Was ist ein Check-in? →
+                  Mehr über einen Check-in erfahren
                 </Text>
               </Pressable>
             )}
@@ -235,29 +228,16 @@ export default function OnboardingScreen() {
 
       <View style={[styles.footer, { gap: spacing.lg, paddingBottom: Math.max(spacing.xl, insets.bottom + spacing.md) }]}>
         {isLastStep && (
-          <>
-            <Text
-              style={{
-                fontFamily: typography.families.body.regular,
-                fontSize: typography.sizes.sm,
-                color: theme.colors.textSecondary,
-                textAlign: 'center',
-                fontStyle: 'italic',
-              }}
-            >
-              {current.hint}
-            </Text>
-            <Text
-              style={{
-                fontFamily: typography.families.body.regular,
-                fontSize: typography.sizes.sm,
-                color: theme.colors.textSecondary,
-                textAlign: 'center',
-              }}
-            >
-              Farbe, Dark Mode und Erinnerungen kannst du jederzeit in den Einstellungen anpassen.
-            </Text>
-          </>
+          <Text
+            style={{
+              fontFamily: typography.families.body.regular,
+              fontSize: typography.sizes.sm,
+              color: theme.colors.textSecondary,
+              textAlign: 'center',
+            }}
+          >
+            {current.hint}
+          </Text>
         )}
         <StepIndicator totalSteps={STEPS.length} currentStep={step} />
 
@@ -312,6 +292,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     alignSelf: 'stretch',
+  },
+  learnMoreButton: {
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   paletteSection: {
     alignSelf: 'stretch',
