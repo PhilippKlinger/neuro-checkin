@@ -31,7 +31,7 @@ export function StepArrival() {
           },
         ]}
       >
-        Wenn du magst, nimm einen Moment inne — bevor es weitergeht.
+        Wenn du magst, halte einen Moment inne — bevor es weitergeht.
       </Text>
       <Text
         style={[
