@@ -21,7 +21,7 @@ interface DatabaseProviderProps {
 export function DatabaseProvider({ children }: DatabaseProviderProps) {
   const [db, setDb] = useState<SQLiteDatabase | null>(null);
   const [isReady, setIsReady] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     async function init() {
@@ -36,8 +36,8 @@ export function DatabaseProvider({ children }: DatabaseProviderProps) {
         setDb(database);
         setIsReady(true);
       } catch (e) {
-        const message = e instanceof Error ? e.message : 'Unbekannter Fehler';
-        setError(message);
+        console.error('Database initialization failed:', e);
+        setError(true);
       }
     }
     init();
@@ -52,7 +52,7 @@ export function DatabaseProvider({ children }: DatabaseProviderProps) {
           Datenbank konnte nicht geladen werden
         </Text>
         <Text style={{ fontSize: typography.sizes.sm, color: colors.textSecondary, textAlign: 'center' }}>
-          {error}
+          Bitte starte die App neu. Falls das Problem weiterhin besteht, deinstalliere und installiere die App erneut.
         </Text>
       </View>
     );
