@@ -65,7 +65,7 @@ export function StepDistress({
           marginBottom: spacing.xs,
         }}
       >
-        Wie viel ist gerade in dir los?
+        Wie belastet oder angespannt bist du gerade?
       </Text>
       <View style={[styles.optionList, { gap: spacing.sm }]}>
         {LEVEL_OPTIONS.map(({ level, label }) => {
