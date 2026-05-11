@@ -88,14 +88,14 @@ export const ENERGY_LABELS = ['Sehr wenig', 'Wenig', 'Mittel', 'Viel', 'Sehr vie
 export const FOCUS_LABELS = ['Kaum', 'Wenig', 'Mittel', 'Gut', 'Voll'] as const;
 
 /** Semantic labels for the 5-step stress scale (index 0 = level 1). */
-export const DISTRESS_LABELS = ['Kaum gestresst', 'Leicht gestresst', 'Merklich gestresst', 'Stark gestresst', 'Extrem gestresst'] as const;
+export const DISTRESS_LABELS = ['Kaum', 'Wenig', 'Mittel', 'Viel', 'Sehr viel'] as const;
 
 /** Accompanying descriptions for each stress level (same index mapping). */
 export const DISTRESS_DESCRIPTIONS = [
   'Ich fühle mich ruhig und ausgeglichen.',
-  'Etwas Stress, aber gut managebar.',
-  'Spürbar gestresst — deutlich, aber handlungsfähig.',
-  'Der Stress ist viel und belastet.',
+  'Ein leises Rauschen, aber gut managebar.',
+  'Spürbar vorhanden — deutlich, aber handlungsfähig.',
+  'Es ist viel gerade.',
   'Ich bin am absoluten Limit.',
 ] as const;
 

@@ -62,7 +62,7 @@ export function StepDistress({
           fontSize: typography.sizes.md,
           color: theme.colors.textSecondary,
           textAlign: 'center',
-          marginBottom: spacing.xs,
+          marginBottom: spacing.xl,
         }}
       >
         Wie belastet oder angespannt bist du gerade?
@@ -80,7 +80,6 @@ export function StepDistress({
                   minHeight: touchTarget.min,
                   borderRadius: radii.md,
                   paddingHorizontal: spacing.md,
-                  paddingVertical: spacing.sm,
                   backgroundColor: isSelected ? theme.colors.accentSoft : theme.colors.surface,
                   borderWidth: 1,
                   borderColor: isSelected ? theme.colors.accent : theme.colors.border,
@@ -121,7 +120,6 @@ export function StepDistress({
             minHeight: touchTarget.min,
             borderRadius: radii.md,
             paddingHorizontal: spacing.md,
-            paddingVertical: spacing.sm,
             backgroundColor: cannotSay ? theme.colors.accentSoft : theme.colors.surface,
             borderWidth: 1,
             borderColor: cannotSay ? theme.colors.accent : theme.colors.border,
@@ -190,7 +188,7 @@ export function StepDistress({
               marginTop: spacing.lg,
             },
           ]}
-          accessibilityLabel="Belastungs-Notiz"
+          accessibilityLabel="Stress-Notiz"
         />
       )}
       {noteOpen && distressNote.length >= 180 && (

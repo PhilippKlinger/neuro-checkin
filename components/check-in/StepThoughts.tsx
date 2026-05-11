@@ -50,12 +50,12 @@ export function StepThoughts({
           fontSize: typography.sizes.md,
           color: theme.colors.textSecondary,
           textAlign: 'center',
-          marginBottom: spacing.xs,
+          marginBottom: spacing.xl,
         }}
       >
         Wie würdest du deine Gedanken gerade beschreiben?
       </Text>
-      <View style={[styles.optionList, { gap: spacing.sm, marginTop: spacing.xl }]}>
+      <View style={[styles.optionList, { gap: spacing.sm }]}>
         {OPTIONS.map((option) => {
           const isSelected = type === option.value;
           return (
@@ -70,7 +70,6 @@ export function StepThoughts({
                   minHeight: touchTarget.min,
                   borderRadius: radii.md,
                   paddingHorizontal: spacing.md,
-                  paddingVertical: spacing.sm,
                   backgroundColor: isSelected
                     ? theme.colors.accentSoft
                     : theme.colors.surface,
