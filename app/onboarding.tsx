@@ -23,8 +23,8 @@ const STEPS: OnboardingStep[] = [
   },
   {
     title: 'So funktioniert es',
-    body: 'Ein Check-in führt dich in 8 ruhigen Schritten durch Körper, Gefühle und Gedanken. Du entscheidest, wie tief du gehst.',
-    hint: 'Stichworte reichen. Es muss nicht perfekt sein. Was genau ein Check-in ist, kannst du jederzeit in der App nachlesen.',
+    body: 'Ein Check-in führt dich in 8 ruhigen Schritten durch Körper, Gefühle und Gedanken. Du entscheidest, wie tief du gehst.\n\nFür Menschen, die innere Zustände wahrnehmen wollen — besonders dann, wenn das nicht selbstverständlich ist.',
+    hint: 'Stichworte reichen. Es muss nicht perfekt sein.',
   },
   {
     title: 'Für dich gemacht',
