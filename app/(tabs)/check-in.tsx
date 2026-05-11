@@ -13,11 +13,12 @@ import { StepEnergy } from '../../components/check-in/StepEnergy';
 import { StepFocus } from '../../components/check-in/StepFocus';
 import { StepBodySignals } from '../../components/check-in/StepBodySignals';
 import { StepFeelings } from '../../components/check-in/StepFeelings';
+import { StepDistress } from '../../components/check-in/StepDistress';
 import { StepThoughts } from '../../components/check-in/StepThoughts';
 import { StepSelfCare } from '../../components/check-in/StepSelfCare';
 import { StepSummary } from '../../components/check-in/StepSummary';
 
-const TOTAL_STEPS = 8;
+const TOTAL_STEPS = 9;
 const INACTIVITY_TIMEOUT_MS = 60 * 60 * 1000; // 1h
 
 const STEP_NAMES = [
@@ -26,6 +27,7 @@ const STEP_NAMES = [
   'Fokus-Level',
   'Körpersignale',
   'Gefühle',
+  'Belastung',
   'Gedanken',
   'Selbstfürsorge',
   'Zusammenfassung',
@@ -113,6 +115,8 @@ export default function CheckInScreen() {
         focusLevel: draft.focusLevel,
         bodySignals: draft.bodySignals,
         feelings: draft.feelings,
+        distressLevel: draft.distressLevel,
+        distressNote: draft.distressNote || null,
         thoughtsType: draft.thoughtsType,
         thoughtsNote: draft.thoughtsNote || null,
         selfCareNote: draft.selfCareNote || null,
@@ -179,6 +183,15 @@ export default function CheckInScreen() {
         );
       case 5:
         return (
+          <StepDistress
+            distressLevel={draft.distressLevel}
+            distressNote={draft.distressNote}
+            onLevelChange={(v) => setDraft({ ...draft, distressLevel: v })}
+            onNoteChange={(v) => setDraft({ ...draft, distressNote: v })}
+          />
+        );
+      case 6:
+        return (
           <StepThoughts
             type={draft.thoughtsType}
             note={draft.thoughtsNote}
@@ -186,14 +199,14 @@ export default function CheckInScreen() {
             onNoteChange={(v) => setDraft({ ...draft, thoughtsNote: v })}
           />
         );
-      case 6:
+      case 7:
         return (
           <StepSelfCare
             value={draft.selfCareNote}
             onValueChange={(v) => setDraft({ ...draft, selfCareNote: v })}
           />
         );
-      case 7:
+      case 8:
         return <StepSummary draft={draft} />;
       default:
         return null;

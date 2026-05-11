@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { View, Text, ScrollView, Pressable, StyleSheet } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../../lib/hooks/useTheme';
-import { CheckIn, ENERGY_LABELS, FOCUS_LABELS, getLevelLabel, SIGNAL_LABELS, getThoughtsLabel } from '../../lib/types/checkin';
+import { CheckIn, ENERGY_LABELS, FOCUS_LABELS, DISTRESS_LABELS, getLevelLabel, SIGNAL_LABELS, getThoughtsLabel } from '../../lib/types/checkin';
 import { formatDateTime } from '../../lib/utils/format';
 import { ConfirmDialog } from '../ui/ConfirmDialog';
 
@@ -73,6 +73,18 @@ export function CheckInDetailContent({
           <View style={[styles.card, { backgroundColor: theme.colors.surface, borderRadius: radii.md, padding: spacing.md, marginBottom: spacing.md }]}>
             <Text style={sectionTitle(typography, theme, spacing)}>Gefühle</Text>
             <Text style={body(typography, theme)}>{checkIn.feelings}</Text>
+          </View>
+        )}
+
+        {checkIn.distressLevel !== null && (
+          <View style={[styles.card, { backgroundColor: theme.colors.surface, borderRadius: radii.md, padding: spacing.md, marginBottom: spacing.md }]}>
+            <Text style={sectionTitle(typography, theme, spacing)}>Belastung</Text>
+            <Text style={body(typography, theme)}>{getLevelLabel(checkIn.distressLevel, DISTRESS_LABELS)}</Text>
+            {checkIn.distressNote && checkIn.distressNote.trim() !== '' && (
+              <Text style={[body(typography, theme), { marginTop: spacing.xs, fontStyle: 'italic' }]}>
+                {checkIn.distressNote}
+              </Text>
+            )}
           </View>
         )}
 

@@ -9,12 +9,15 @@ export async function insertCheckIn(
   const result = await db.runAsync(
     `INSERT INTO check_ins (
       energy_level, focus_level, body_signals, feelings,
+      distress_level, distress_note,
       thoughts_type, thoughts_note, self_care_note, inner_part, note
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     data.energyLevel,
     data.focusLevel,
     JSON.stringify(data.bodySignals),
     data.feelings,
+    data.distressLevel,
+    data.distressNote,
     data.thoughtsType,
     data.thoughtsNote,
     data.selfCareNote,
@@ -36,6 +39,8 @@ export async function getCheckIns(
     focus_level: number;
     body_signals: string;
     feelings: string;
+    distress_level: number | null;
+    distress_note: string | null;
     thoughts_type: string | null;
     thoughts_note: string | null;
     self_care_note: string | null;
@@ -61,6 +66,8 @@ export async function getCheckInById(
     focus_level: number;
     body_signals: string;
     feelings: string;
+    distress_level: number | null;
+    distress_note: string | null;
     thoughts_type: string | null;
     thoughts_note: string | null;
     self_care_note: string | null;
@@ -102,6 +109,8 @@ function mapRowToCheckIn(row: {
   focus_level: number;
   body_signals: string;
   feelings: string;
+  distress_level: number | null;
+  distress_note: string | null;
   thoughts_type: string | null;
   thoughts_note: string | null;
   self_care_note: string | null;
@@ -115,6 +124,8 @@ function mapRowToCheckIn(row: {
     focusLevel: row.focus_level,
     bodySignals: parseBodySignals(row.body_signals),
     feelings: row.feelings,
+    distressLevel: row.distress_level,
+    distressNote: row.distress_note,
     thoughtsType: row.thoughts_type as CheckIn['thoughtsType'],
     thoughtsNote: row.thoughts_note,
     selfCareNote: row.self_care_note,

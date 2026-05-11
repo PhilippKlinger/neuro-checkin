@@ -72,6 +72,8 @@ export default function QuickCheckInScreen() {
         focusLevel,
         bodySignals: { ...EMPTY_BODY_SIGNALS },
         feelings,
+        distressLevel: null,
+        distressNote: null,
         thoughtsType: null,
         thoughtsNote: null,
         selfCareNote: null,

@@ -1,6 +1,6 @@
 import { View, Text, ScrollView, StyleSheet } from 'react-native';
 import { useTheme } from '../../lib/hooks/useTheme';
-import { CheckInDraft, ENERGY_LABELS, FOCUS_LABELS, getLevelLabel } from '../../lib/types/checkin';
+import { CheckInDraft, ENERGY_LABELS, FOCUS_LABELS, DISTRESS_LABELS, getLevelLabel } from '../../lib/types/checkin';
 
 interface StepSummaryProps {
   draft: CheckInDraft;
@@ -150,6 +150,30 @@ export function StepSummary({ draft }: StepSummaryProps) {
               Gefühle
             </Text>
             <Text style={bodyText(typography, theme)}>{draft.feelings}</Text>
+          </View>
+        )}
+
+        {draft.distressLevel !== null && (
+          <View
+            style={[
+              styles.card,
+              {
+                backgroundColor: theme.colors.surface,
+                borderRadius: radii.md,
+                padding: spacing.md,
+                marginBottom: spacing.md,
+              },
+            ]}
+          >
+            <Text style={sectionTitle(typography, theme, spacing)}>Belastung</Text>
+            <Text style={bodyText(typography, theme)}>
+              {getLevelLabel(draft.distressLevel, DISTRESS_LABELS)}
+            </Text>
+            {draft.distressNote.trim() !== '' && (
+              <Text style={[bodyText(typography, theme), { marginTop: spacing.xs, fontStyle: 'italic' }]}>
+                {draft.distressNote}
+              </Text>
+            )}
           </View>
         )}
 
