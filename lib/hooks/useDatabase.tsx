@@ -28,6 +28,11 @@ export function DatabaseProvider({ children }: DatabaseProviderProps) {
       try {
         const database = openDatabaseSync('neuro-checkin.db');
         await migrateDatabase(database);
+        // Verify the prepared-statement pipeline is operational before signaling ready.
+        // On some Android devices (first install), NativeDatabase.prepareAsync is not
+        // fully initialized until a bound-parameter query runs — migration skips this
+        // path when there are no legacy settings to migrate.
+        await database.getFirstAsync<{ n: number }>('SELECT ? AS n', 1);
         setDb(database);
         setIsReady(true);
       } catch (e) {
