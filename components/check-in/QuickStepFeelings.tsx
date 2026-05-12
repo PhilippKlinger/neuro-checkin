@@ -6,13 +6,14 @@ import { FEELING_CHIPS } from './StepFeelings';
 interface QuickStepFeelingsProps {
   value: string; // comma-separated selected chips, or '' for none
   onValueChange: (value: string) => void;
+  hint?: string;
 }
 
 // Multi-select chip variant for the quick check-in flow.
 // No free-text toggle — keeps cognitive load low in difficult moments.
 // Selection is optional: "Weiter" is never blocked here.
 // ND reality: co-occurring emotional states are the norm, not the exception.
-export function QuickStepFeelings({ value, onValueChange }: QuickStepFeelingsProps) {
+export function QuickStepFeelings({ value, onValueChange, hint }: QuickStepFeelingsProps) {
   const { theme, spacing, typography, radii } = useTheme();
 
   return (
@@ -34,11 +35,25 @@ export function QuickStepFeelings({ value, onValueChange }: QuickStepFeelingsPro
           fontSize: typography.sizes.md,
           color: theme.colors.textSecondary,
           textAlign: 'center',
-          marginBottom: spacing.lg,
+          marginBottom: hint ? spacing.sm : spacing.lg,
         }}
       >
         Was nimmst du gerade wahr? (optional)
       </Text>
+      {hint && (
+        <Text
+          style={{
+            fontFamily: typography.families.body.regular,
+            fontSize: typography.sizes.sm,
+            color: theme.colors.textSecondary,
+            textAlign: 'center',
+            fontStyle: 'italic',
+            marginBottom: spacing.lg,
+          }}
+        >
+          {hint}
+        </Text>
+      )}
 
       {/* Multi-select chips — same vocabulary and logic as the full check-in */}
       <View style={[styles.chipWrap, { gap: spacing.sm }]}>
