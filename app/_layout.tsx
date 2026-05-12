@@ -5,8 +5,9 @@ import { Stack, useRouter, useSegments } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { ThemeProvider, useTheme } from '../lib/hooks/useTheme';
 import { DatabaseProvider, useDatabase, useDatabaseReady } from '../lib/hooks/useDatabase';
-import { getSettings } from '../lib/database/settings';
+import { getSettings, updateSettings } from '../lib/database/settings';
 import { ThemeName } from '../lib/constants/themes';
+import { REENTRY_THRESHOLD_DAYS } from '../lib/constants/timing';
 import { SENTRY_DSN } from '../lib/constants/config';
 
 Sentry.init({
@@ -62,6 +63,21 @@ function AppStack() {
         const settings = await getSettings(db);
         setThemeName(settings.themeName as ThemeName);
         setColorMode(settings.colorMode);
+
+        const today = new Date().toISOString().slice(0, 10);
+        const updates: Parameters<typeof updateSettings>[1] = { lastActiveDate: today };
+
+        if (settings.lastActiveDate) {
+          const last = new Date(settings.lastActiveDate);
+          const daysSince = Math.floor((Date.now() - last.getTime()) / (1000 * 60 * 60 * 24));
+          if (daysSince >= REENTRY_THRESHOLD_DAYS) {
+            updates.guidedModeEnabled = true;
+            updates.guidedToggleIntroduced = false;
+          }
+        }
+
+        await updateSettings(db, updates);
+
         if (!settings.onboardingCompleted && segments[0] !== 'onboarding') {
           router.replace('/onboarding');
         }
