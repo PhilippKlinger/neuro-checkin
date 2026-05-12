@@ -1,9 +1,12 @@
 import { View, Text, ScrollView, StyleSheet } from 'react-native';
+import { AttachStep } from 'react-native-spotlight-tour';
 import { useTheme } from '../../lib/hooks/useTheme';
 import { CheckInDraft, ENERGY_LABELS, FOCUS_LABELS, DISTRESS_LABELS, getLevelLabel } from '../../lib/types/checkin';
 
 interface StepSummaryProps {
   draft: CheckInDraft;
+  tutorialIndex?: number;
+  showPostFirstCheckinHint?: boolean;
 }
 
 function getThoughtsLabel(
@@ -27,7 +30,7 @@ function getSignalLabel(val: boolean | null): string {
   return '—';
 }
 
-export function StepSummary({ draft }: StepSummaryProps) {
+export function StepSummary({ draft, tutorialIndex, showPostFirstCheckinHint }: StepSummaryProps) {
   const { theme, spacing, typography, radii } = useTheme();
 
   const bodySignalEntries = [
@@ -42,7 +45,7 @@ export function StepSummary({ draft }: StepSummaryProps) {
 
   const activeSignals = bodySignalEntries.filter((s) => s.value === true);
 
-  return (
+  const content = (
     <View style={styles.container}>
       <Text
         style={{
@@ -78,6 +81,21 @@ export function StepSummary({ draft }: StepSummaryProps) {
       >
         Alles davon ist okay.
       </Text>
+
+      {showPostFirstCheckinHint && (
+        <Text
+          style={{
+            fontFamily: typography.families.body.regular,
+            fontSize: typography.sizes.sm,
+            color: theme.colors.textSecondary,
+            textAlign: 'center',
+            marginBottom: spacing.md,
+            fontStyle: 'italic',
+          }}
+        >
+          Check-ins lassen sich jederzeit im Verlauf nachlesen — und Muster werden über Zeit sichtbar.
+        </Text>
+      )}
 
       <ScrollView style={styles.scrollArea}>
         <View
@@ -233,6 +251,11 @@ export function StepSummary({ draft }: StepSummaryProps) {
       </ScrollView>
     </View>
   );
+
+  if (tutorialIndex !== undefined) {
+    return <AttachStep index={tutorialIndex}>{content}</AttachStep>;
+  }
+  return content;
 }
 
 function rowLabel(

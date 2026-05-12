@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { View, Text, TextInput, Pressable, StyleSheet } from 'react-native';
+import { AttachStep } from 'react-native-spotlight-tour';
 import { useTheme } from '../../lib/hooks/useTheme';
 import { isChipSelected, toggleChip } from '../../lib/utils/chips';
 
@@ -12,10 +13,59 @@ interface ChipOrTextStepProps {
   textPlaceholder: string;
   textAccessibilityLabel: string;
   maxLength?: number;
+  tutorialIndex?: number;
 }
 
 function hasChipContent(val: string, chips: readonly string[]): boolean {
   return chips.some((chip) => isChipSelected(chip, val));
+}
+
+interface ChipWrapProps {
+  chips: readonly string[];
+  value: string;
+  onValueChange: (value: string) => void;
+}
+
+function ChipWrap({ chips, value, onValueChange }: ChipWrapProps) {
+  const { theme, spacing, typography, radii } = useTheme();
+  return (
+    <View style={[styles.chipWrap, { gap: spacing.sm, marginBottom: spacing.md }]}>
+      {chips.map((chip) => {
+        const selected = isChipSelected(chip, value);
+        return (
+          <Pressable
+            key={chip}
+            onPress={() => onValueChange(toggleChip(chip, value))}
+            style={({ pressed }) => [
+              styles.chip,
+              {
+                borderRadius: radii.full,
+                paddingHorizontal: spacing.md,
+                paddingVertical: spacing.xs,
+                backgroundColor: selected ? theme.colors.accentSoft : theme.colors.surface,
+                borderWidth: 1,
+                borderColor: selected ? theme.colors.accent : theme.colors.border,
+              },
+              pressed && { opacity: 0.75 },
+            ]}
+            accessibilityRole="button"
+            accessibilityLabel={chip}
+            accessibilityState={{ selected }}
+          >
+            <Text
+              style={{
+                fontFamily: typography.families.ui.medium,
+                fontSize: typography.sizes.sm,
+                color: selected ? theme.colors.text : theme.colors.textSecondary,
+              }}
+            >
+              {chip}
+            </Text>
+          </Pressable>
+        );
+      })}
+    </View>
+  );
 }
 
 export function ChipOrTextStep({
@@ -27,6 +77,7 @@ export function ChipOrTextStep({
   textPlaceholder,
   textAccessibilityLabel,
   maxLength = 150,
+  tutorialIndex,
 }: ChipOrTextStepProps) {
   const { theme, spacing, typography, radii, touchTarget } = useTheme();
 
@@ -73,42 +124,13 @@ export function ChipOrTextStep({
 
       {mode === 'chips' ? (
         <>
-          <View style={[styles.chipWrap, { gap: spacing.sm, marginBottom: spacing.md }]}>
-            {chips.map((chip) => {
-              const selected = isChipSelected(chip, value);
-              return (
-                <Pressable
-                  key={chip}
-                  onPress={() => onValueChange(toggleChip(chip, value))}
-                  style={({ pressed }) => [
-                    styles.chip,
-                    {
-                      borderRadius: radii.full,
-                      paddingHorizontal: spacing.md,
-                      paddingVertical: spacing.xs,
-                      backgroundColor: selected ? theme.colors.accentSoft : theme.colors.surface,
-                      borderWidth: 1,
-                      borderColor: selected ? theme.colors.accent : theme.colors.border,
-                    },
-                    pressed && { opacity: 0.75 },
-                  ]}
-                  accessibilityRole="button"
-                  accessibilityLabel={chip}
-                  accessibilityState={{ selected }}
-                >
-                  <Text
-                    style={{
-                      fontFamily: typography.families.ui.medium,
-                      fontSize: typography.sizes.sm,
-                      color: selected ? theme.colors.text : theme.colors.textSecondary,
-                    }}
-                  >
-                    {chip}
-                  </Text>
-                </Pressable>
-              );
-            })}
-          </View>
+          {tutorialIndex !== undefined ? (
+            <AttachStep index={tutorialIndex}>
+              <ChipWrap chips={chips} value={value} onValueChange={onValueChange} />
+            </AttachStep>
+          ) : (
+            <ChipWrap chips={chips} value={value} onValueChange={onValueChange} />
+          )}
 
           <Pressable
             onPress={switchToText}
