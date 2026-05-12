@@ -56,17 +56,19 @@ export default function OnboardingScreen() {
   }
 
   function handleNext() {
-    if (isLastStep) {
-      finish();
-    } else {
-      setStep(step + 1);
-      AccessibilityInfo.announceForAccessibility(STEPS[step + 1].title);
-    }
+    setStep(step + 1);
+    AccessibilityInfo.announceForAccessibility(STEPS[step + 1].title);
   }
 
-  async function finish() {
+  async function finish(acceptTutorial: boolean) {
     try {
-      await updateSettings(db, { onboardingCompleted: true, themeName: selectedTheme, colorMode: 'system' });
+      await updateSettings(db, {
+        onboardingCompleted: true,
+        themeName: selectedTheme,
+        colorMode: 'system',
+        tutorialOffered: true,
+        tutorialSeen: !acceptTutorial,
+      });
       router.replace('/(tabs)');
     } catch {
       Alert.alert('Fehler', 'Einstellungen konnten nicht gespeichert werden. Bitte versuche es erneut.');
@@ -78,7 +80,7 @@ export default function OnboardingScreen() {
       <View style={[styles.skipRow, { paddingTop: spacing.md }]}>
         {!isLastStep ? (
           <Pressable
-            onPress={finish}
+            onPress={() => finish(false)}
             style={({ pressed }) => [styles.skipButton, { padding: spacing.sm }, pressed && { opacity: 0.75 }]}
             accessibilityRole="button"
             accessibilityLabel="Onboarding überspringen"
@@ -241,31 +243,100 @@ export default function OnboardingScreen() {
         )}
         <StepIndicator totalSteps={STEPS.length} currentStep={step} />
 
-        <Pressable
-          onPress={handleNext}
-          style={({ pressed }) => [
-            styles.nextButton,
-            {
-              minHeight: touchTarget.min,
-              borderRadius: radii.md,
-              backgroundColor: theme.colors.primary,
-              paddingHorizontal: spacing.xl,
-            },
-            pressed && { opacity: 0.75 },
-          ]}
-          accessibilityRole="button"
-          accessibilityLabel={isLastStep ? 'Los gehts' : 'Weiter'}
-        >
-          <Text
-            style={{
-              fontFamily: typography.families.ui.semibold,
-              fontSize: typography.sizes.md,
-              color: theme.colors.textInverse,
-            }}
+        {isLastStep ? (
+          <View style={[styles.tutorialOptIn, { gap: spacing.sm }]}>
+            <Text
+              style={{
+                fontFamily: typography.families.body.regular,
+                fontSize: typography.sizes.sm,
+                color: theme.colors.textSecondary,
+                textAlign: 'center',
+                fontStyle: 'italic',
+                marginBottom: spacing.xs,
+              }}
+            >
+              Drei kurze Hinweise erscheinen an bestimmten Stellen — du kannst jederzeit abbrechen.
+            </Text>
+            <Pressable
+              onPress={() => finish(true)}
+              style={({ pressed }) => [
+                styles.nextButton,
+                {
+                  minHeight: touchTarget.min,
+                  borderRadius: radii.md,
+                  backgroundColor: theme.colors.primary,
+                  paddingHorizontal: spacing.xl,
+                },
+                pressed && { opacity: 0.75 },
+              ]}
+              accessibilityRole="button"
+              accessibilityLabel="Beim ersten Check-in begleiten"
+            >
+              <Text
+                style={{
+                  fontFamily: typography.families.ui.semibold,
+                  fontSize: typography.sizes.md,
+                  color: theme.colors.textInverse,
+                }}
+              >
+                Beim ersten Check-in begleiten
+              </Text>
+            </Pressable>
+            <Pressable
+              onPress={() => finish(false)}
+              style={({ pressed }) => [
+                styles.nextButton,
+                {
+                  minHeight: touchTarget.min,
+                  borderRadius: radii.md,
+                  borderWidth: 1,
+                  borderColor: theme.colors.border,
+                  backgroundColor: theme.colors.surface,
+                  paddingHorizontal: spacing.xl,
+                },
+                pressed && { opacity: 0.75 },
+              ]}
+              accessibilityRole="button"
+              accessibilityLabel="Direkt starten"
+            >
+              <Text
+                style={{
+                  fontFamily: typography.families.ui.medium,
+                  fontSize: typography.sizes.md,
+                  color: theme.colors.text,
+                }}
+              >
+                Direkt starten
+              </Text>
+            </Pressable>
+          </View>
+        ) : (
+          <Pressable
+            onPress={handleNext}
+            style={({ pressed }) => [
+              styles.nextButton,
+              {
+                minHeight: touchTarget.min,
+                borderRadius: radii.md,
+                backgroundColor: theme.colors.primary,
+                paddingHorizontal: spacing.xl,
+              },
+              pressed && { opacity: 0.75 },
+            ]}
+            accessibilityRole="button"
+            accessibilityLabel="Weiter"
           >
-            {isLastStep ? 'Los gehts' : 'Weiter'}
-          </Text>
-        </Pressable>
+            <Text
+              style={{
+                fontFamily: typography.families.ui.semibold,
+                fontSize: typography.sizes.md,
+                color: theme.colors.textInverse,
+              }}
+            >
+              Weiter
+            </Text>
+          </Pressable>
+        )}
       </View>
     </View>
   );
@@ -291,6 +362,9 @@ const styles = StyleSheet.create({
   nextButton: {
     alignItems: 'center',
     justifyContent: 'center',
+    alignSelf: 'stretch',
+  },
+  tutorialOptIn: {
     alignSelf: 'stretch',
   },
   learnMoreButton: {

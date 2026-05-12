@@ -32,6 +32,8 @@ export interface UserSettings {
   reminderTime: string | null; // HH:mm format — deprecated, kept for migration only
   language: 'de' | 'en';
   onboardingCompleted: boolean;
+  tutorialOffered: boolean;
+  tutorialSeen: boolean;
 }
 
 /** A single configurable notification time slot (e.g. morning or evening). */

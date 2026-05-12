@@ -40,6 +40,7 @@ export default function SettingsScreen() {
   const [isEmulator, setIsEmulator] = useState(false);
   const [checkInCount, setCheckInCount] = useState(0);
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
+  const [tutorialResettable, setTutorialResettable] = useState(false);
 
   useFocusEffect(
     useCallback(() => {
@@ -59,6 +60,7 @@ export default function SettingsScreen() {
 
         const count = await countCheckIns(db);
         setCheckInCount(count);
+        setTutorialResettable(settings.tutorialSeen);
       }
       load();
     }, [db, setThemeName, setColorMode])
@@ -115,6 +117,15 @@ export default function SettingsScreen() {
   }, [db, setThemeName]);
 
   const handleTimePress = useCallback((id: 0 | 1) => setShowTimePicker(id), []);
+
+  const handleTutorialReset = useCallback(async () => {
+    try {
+      await updateSettings(db, { tutorialSeen: false });
+      setTutorialResettable(false);
+    } catch {
+      // Non-critical
+    }
+  }, [db]);
 
   return (
     <>
@@ -182,6 +193,50 @@ export default function SettingsScreen() {
           checkInCount={checkInCount}
           onDeleteComplete={() => setCheckInCount(0)}
         />
+
+        {tutorialResettable && (
+          <>
+            <Text
+              style={{
+                fontFamily: typography.families.heading.semibold,
+                fontSize: typography.sizes.lg,
+                color: theme.colors.text,
+                marginTop: spacing.xl,
+                marginBottom: spacing.md,
+              }}
+            >
+              Tutorial
+            </Text>
+            <Pressable
+              onPress={handleTutorialReset}
+              style={({ pressed }) => [
+                styles.listItem,
+                {
+                  backgroundColor: theme.colors.surface,
+                  borderRadius: radii.md,
+                  padding: spacing.md,
+                  minHeight: touchTarget.min,
+                  borderWidth: 1,
+                  borderColor: theme.colors.border,
+                },
+                pressed && { opacity: 0.75 },
+              ]}
+              accessibilityRole="button"
+              accessibilityLabel="Tutorial zurücksetzen"
+              accessibilityHint="Zeigt die Einführungs-Hinweise beim nächsten Check-in erneut an"
+            >
+              <Text
+                style={{
+                  fontFamily: typography.families.ui.medium,
+                  fontSize: typography.sizes.md,
+                  color: theme.colors.textSecondary,
+                }}
+              >
+                Tutorial zurücksetzen
+              </Text>
+            </Pressable>
+          </>
+        )}
 
         <Text
           style={{

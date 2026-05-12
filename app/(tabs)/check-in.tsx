@@ -1,11 +1,13 @@
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { View, Text, Pressable, StyleSheet, Alert, AccessibilityInfo, findNodeHandle } from 'react-native';
 import { useFocusEffect } from 'expo-router';
+import { SpotlightTourProvider, type SpotlightTour, type TourStep, type TourState } from 'react-native-spotlight-tour';
 import { useTheme } from '../../lib/hooks/useTheme';
 import { useDatabase } from '../../lib/hooks/useDatabase';
 import { CheckInDraft, EMPTY_DRAFT, EMPTY_BODY_SIGNALS } from '../../lib/types/checkin';
 import { FadeView } from '../../components/ui/FadeView';
-import { insertCheckIn } from '../../lib/database/checkins';
+import { insertCheckIn, countCheckIns } from '../../lib/database/checkins';
+import { getSettings, updateSettings } from '../../lib/database/settings';
 import { StepIndicator } from '../../components/check-in/StepIndicator';
 import { CheckInSuccessView } from '../../components/check-in/CheckInSuccessView';
 import { StepArrival } from '../../components/check-in/StepArrival';
@@ -17,6 +19,12 @@ import { StepDistress } from '../../components/check-in/StepDistress';
 import { StepThoughts } from '../../components/check-in/StepThoughts';
 import { StepSelfCare } from '../../components/check-in/StepSelfCare';
 import { StepSummary } from '../../components/check-in/StepSummary';
+import { CoachMarkTooltip } from '../../components/check-in/CoachMarkTooltip';
+import {
+  TUTORIAL_COACH_MARK_TEXTS,
+  TUTORIAL_CHECK_IN_STEPS,
+  TUTORIAL_TOUR_INDICES,
+} from '../../lib/constants/tutorialConfig';
 
 const TOTAL_STEPS = 9;
 const INACTIVITY_TIMEOUT_MS = 60 * 60 * 1000; // 1h
@@ -44,6 +52,124 @@ export default function CheckInScreen() {
   const stepContentRef = useRef<View>(null);
   const stepRef = useRef(step);
   const leftAtRef = useRef<number | null>(null);
+
+  // Tutorial state
+  const [tutorialActive, setTutorialActive] = useState(false);
+  const [isFirstCheckin, setIsFirstCheckin] = useState(false);
+  const tourRef = useRef<SpotlightTour>(null);
+  // Tracks which coach marks the user already saw (dismissed with "Ok")
+  const shownCoachMarksRef = useRef(new Set<number>());
+  // True when user pressed "Überspringen" — skip all remaining marks
+  const skipIntentRef = useRef(false);
+
+  // Load tutorial state once on mount
+  useEffect(() => {
+    async function loadTutorialState() {
+      try {
+        const [settings, count] = await Promise.all([getSettings(db), countCheckIns(db)]);
+        const active = settings.tutorialOffered && !settings.tutorialSeen;
+        setTutorialActive(active);
+        setIsFirstCheckin(count === 0);
+      } catch {
+        // Non-critical: tutorial stays inactive on error
+      }
+    }
+    loadTutorialState();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // db is a stable ref; load once at mount
+
+  // Control tour based on current check-in step
+  useEffect(() => {
+    if (!tutorialActive) return;
+    const tour = tourRef.current;
+    if (!tour) return;
+
+    const { levelSlider, feelingsChips, summary } = TUTORIAL_CHECK_IN_STEPS;
+    const { levelSlider: idx0, feelingsChips: idx1, summary: idx2 } = TUTORIAL_TOUR_INDICES;
+
+    if (step === levelSlider && !shownCoachMarksRef.current.has(idx0)) {
+      // Small delay to let the step render before showing the spotlight
+      const t = setTimeout(() => tour.start(), 200);
+      return () => clearTimeout(t);
+    }
+    if (step === feelingsChips && !shownCoachMarksRef.current.has(idx1)) {
+      const t = setTimeout(() => tour.goTo(idx1), 200);
+      return () => clearTimeout(t);
+    }
+    if (step === summary && !shownCoachMarksRef.current.has(idx2)) {
+      const t = setTimeout(() => tour.goTo(idx2), 200);
+      return () => clearTimeout(t);
+    }
+  }, [step, tutorialActive]);
+
+  async function markTutorialDone() {
+    setTutorialActive(false);
+    try {
+      await updateSettings(db, { tutorialSeen: true });
+    } catch {
+      // Non-critical
+    }
+  }
+
+  const handleTourStop = useCallback(({ index }: TourState) => {
+    if (skipIntentRef.current) {
+      skipIntentRef.current = false;
+      markTutorialDone();
+      return;
+    }
+    shownCoachMarksRef.current.add(index);
+    // All 3 coach marks shown → tutorial complete
+    if (shownCoachMarksRef.current.size >= 3) {
+      markTutorialDone();
+    }
+  // markTutorialDone closes over db + setTutorialActive — both stable refs
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  function makeSkipHandler(stop: () => void) {
+    return () => {
+      skipIntentRef.current = true;
+      stop();
+    };
+  }
+
+  const tourSteps = useMemo<TourStep[]>(() => [
+    {
+      render: ({ stop }) => (
+        <CoachMarkTooltip
+          text={TUTORIAL_COACH_MARK_TEXTS.levelSlider}
+          onDismiss={stop}
+          onSkip={makeSkipHandler(stop)}
+        />
+      ),
+      shape: { type: 'rectangle', padding: 8 },
+      motion: 'fade',
+    },
+    {
+      render: ({ stop }) => (
+        <CoachMarkTooltip
+          text={TUTORIAL_COACH_MARK_TEXTS.feelingsChips}
+          onDismiss={stop}
+          onSkip={makeSkipHandler(stop)}
+        />
+      ),
+      shape: { type: 'rectangle', padding: 8 },
+      motion: 'fade',
+    },
+    {
+      render: ({ stop }) => (
+        <CoachMarkTooltip
+          text={TUTORIAL_COACH_MARK_TEXTS.summary}
+          onDismiss={stop}
+          onSkip={makeSkipHandler(stop)}
+        />
+      ),
+      shape: { type: 'rectangle', padding: 8 },
+      motion: 'fade',
+    },
+  // makeSkipHandler only closes over skipIntentRef (stable ref), no reactive deps
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  ], []);
 
   useEffect(() => {
     stepRef.current = step;
@@ -74,7 +200,6 @@ export default function CheckInScreen() {
 
   const canGoBack = step > 0;
   const isLastStep = step === TOTAL_STEPS - 1;
-  // Require an active selection on energy and focus steps before proceeding
   const isStepBlocked =
     (step === 1 && draft.energyLevel === 0) ||
     (step === 2 && draft.focusLevel === 0);
@@ -150,6 +275,10 @@ export default function CheckInScreen() {
   }
 
   function renderStep() {
+    const levelSliderTutorial = tutorialActive ? TUTORIAL_TOUR_INDICES.levelSlider : undefined;
+    const feelingsTutorial = tutorialActive ? TUTORIAL_TOUR_INDICES.feelingsChips : undefined;
+    const summaryTutorial = tutorialActive ? TUTORIAL_TOUR_INDICES.summary : undefined;
+
     switch (step) {
       case 0:
         return <StepArrival />;
@@ -158,6 +287,7 @@ export default function CheckInScreen() {
           <StepEnergy
             value={draft.energyLevel}
             onValueChange={(v) => setDraft({ ...draft, energyLevel: v })}
+            tutorialIndex={levelSliderTutorial}
           />
         );
       case 2:
@@ -179,6 +309,7 @@ export default function CheckInScreen() {
           <StepFeelings
             value={draft.feelings}
             onValueChange={(v) => setDraft({ ...draft, feelings: v })}
+            tutorialIndex={feelingsTutorial}
           />
         );
       case 5:
@@ -207,13 +338,19 @@ export default function CheckInScreen() {
           />
         );
       case 8:
-        return <StepSummary draft={draft} />;
+        return (
+          <StepSummary
+            draft={draft}
+            tutorialIndex={summaryTutorial}
+            showPostFirstCheckinHint={isFirstCheckin && !tutorialActive}
+          />
+        );
       default:
         return null;
     }
   }
 
-  return (
+  const screenContent = (
     <View
       style={[styles.container, { backgroundColor: theme.colors.background }]}
     >
@@ -322,6 +459,23 @@ export default function CheckInScreen() {
       </View>
 
     </View>
+  );
+
+  if (!tutorialActive) {
+    return screenContent;
+  }
+
+  return (
+    <SpotlightTourProvider
+      ref={tourRef}
+      steps={tourSteps}
+      overlayColor={theme.colors.text}
+      overlayOpacity={0.6}
+      onStop={handleTourStop}
+      nativeDriver={false}
+    >
+      {screenContent}
+    </SpotlightTourProvider>
   );
 }
 

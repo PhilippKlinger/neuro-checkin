@@ -1,6 +1,6 @@
 import type { SQLiteDatabase } from 'expo-sqlite';
 
-const SCHEMA_VERSION = 7;
+const SCHEMA_VERSION = 8;
 
 export async function migrateDatabase(db: SQLiteDatabase): Promise<void> {
   await db.execAsync(`PRAGMA journal_mode = WAL;`);
@@ -95,6 +95,15 @@ export async function migrateDatabase(db: SQLiteDatabase): Promise<void> {
   if (currentVersion < 7) {
     await db.execAsync(`ALTER TABLE check_ins ADD COLUMN distress_level INTEGER;`);
     await db.execAsync(`ALTER TABLE check_ins ADD COLUMN distress_note TEXT;`);
+  }
+
+  if (currentVersion < 8) {
+    await db.execAsync(
+      `ALTER TABLE user_settings ADD COLUMN tutorial_offered INTEGER NOT NULL DEFAULT 0;`
+    );
+    await db.execAsync(
+      `ALTER TABLE user_settings ADD COLUMN tutorial_seen INTEGER NOT NULL DEFAULT 0;`
+    );
   }
 
   // String interpolation intentional: PRAGMA does not support parameterized
