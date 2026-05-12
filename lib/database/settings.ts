@@ -12,6 +12,10 @@ export async function getSettings(db: SQLiteDatabase): Promise<UserSettings> {
     onboarding_completed: number;
     tutorial_offered: number;
     tutorial_seen: number;
+    guided_mode_enabled: number;
+    guided_toggle_introduced: number;
+    last_active_date: string | null;
+    detail_view_introduced: number;
   }>('SELECT * FROM user_settings WHERE id = 1');
 
   if (!row) {
@@ -25,6 +29,10 @@ export async function getSettings(db: SQLiteDatabase): Promise<UserSettings> {
       onboardingCompleted: false,
       tutorialOffered: false,
       tutorialSeen: false,
+      guidedModeEnabled: true,
+      guidedToggleIntroduced: false,
+      lastActiveDate: null,
+      detailViewIntroduced: false,
     };
   }
 
@@ -38,6 +46,10 @@ export async function getSettings(db: SQLiteDatabase): Promise<UserSettings> {
     onboardingCompleted: row.onboarding_completed === 1,
     tutorialOffered: row.tutorial_offered === 1,
     tutorialSeen: row.tutorial_seen === 1,
+    guidedModeEnabled: (row.guided_mode_enabled ?? 1) === 1,
+    guidedToggleIntroduced: row.guided_toggle_introduced === 1,
+    lastActiveDate: row.last_active_date ?? null,
+    detailViewIntroduced: row.detail_view_introduced === 1,
   };
 }
 
@@ -79,6 +91,22 @@ export async function updateSettings(
   if (settings.tutorialSeen !== undefined) {
     updates.push('tutorial_seen = ?');
     values.push(settings.tutorialSeen ? 1 : 0);
+  }
+  if (settings.guidedModeEnabled !== undefined) {
+    updates.push('guided_mode_enabled = ?');
+    values.push(settings.guidedModeEnabled ? 1 : 0);
+  }
+  if (settings.guidedToggleIntroduced !== undefined) {
+    updates.push('guided_toggle_introduced = ?');
+    values.push(settings.guidedToggleIntroduced ? 1 : 0);
+  }
+  if (settings.lastActiveDate !== undefined) {
+    updates.push('last_active_date = ?');
+    values.push(settings.lastActiveDate ?? null);
+  }
+  if (settings.detailViewIntroduced !== undefined) {
+    updates.push('detail_view_introduced = ?');
+    values.push(settings.detailViewIntroduced ? 1 : 0);
   }
 
   if (updates.length > 0) {
