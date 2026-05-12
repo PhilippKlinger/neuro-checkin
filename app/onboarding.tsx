@@ -60,14 +60,12 @@ export default function OnboardingScreen() {
     AccessibilityInfo.announceForAccessibility(STEPS[step + 1].title);
   }
 
-  async function finish(acceptTutorial: boolean) {
+  async function finish() {
     try {
       await updateSettings(db, {
         onboardingCompleted: true,
         themeName: selectedTheme,
-        colorMode: 'system',
-        tutorialOffered: true,
-        tutorialSeen: !acceptTutorial,
+        colorMode: 'light',
       });
       router.replace('/(tabs)');
     } catch {
@@ -80,7 +78,7 @@ export default function OnboardingScreen() {
       <View style={[styles.skipRow, { paddingTop: spacing.md }]}>
         {!isLastStep ? (
           <Pressable
-            onPress={() => finish(false)}
+            onPress={() => finish()}
             style={({ pressed }) => [styles.skipButton, { padding: spacing.sm }, pressed && { opacity: 0.75 }]}
             accessibilityRole="button"
             accessibilityLabel="Onboarding überspringen"
@@ -244,72 +242,31 @@ export default function OnboardingScreen() {
         <StepIndicator totalSteps={STEPS.length} currentStep={step} />
 
         {isLastStep ? (
-          <View style={[styles.tutorialOptIn, { gap: spacing.sm }]}>
+          <Pressable
+            onPress={() => finish()}
+            style={({ pressed }) => [
+              styles.nextButton,
+              {
+                minHeight: touchTarget.min,
+                borderRadius: radii.md,
+                backgroundColor: theme.colors.primary,
+                paddingHorizontal: spacing.xl,
+              },
+              pressed && { opacity: 0.75 },
+            ]}
+            accessibilityRole="button"
+            accessibilityLabel="Loslegen"
+          >
             <Text
               style={{
-                fontFamily: typography.families.body.regular,
-                fontSize: typography.sizes.sm,
-                color: theme.colors.textSecondary,
-                textAlign: 'center',
-                fontStyle: 'italic',
-                marginBottom: spacing.xs,
+                fontFamily: typography.families.ui.semibold,
+                fontSize: typography.sizes.md,
+                color: theme.colors.textInverse,
               }}
             >
-              Drei kurze Hinweise erscheinen an bestimmten Stellen — du kannst jederzeit abbrechen.
+              Loslegen
             </Text>
-            <Pressable
-              onPress={() => finish(true)}
-              style={({ pressed }) => [
-                styles.nextButton,
-                {
-                  minHeight: touchTarget.min,
-                  borderRadius: radii.md,
-                  backgroundColor: theme.colors.primary,
-                  paddingHorizontal: spacing.xl,
-                },
-                pressed && { opacity: 0.75 },
-              ]}
-              accessibilityRole="button"
-              accessibilityLabel="Beim ersten Check-in begleiten"
-            >
-              <Text
-                style={{
-                  fontFamily: typography.families.ui.semibold,
-                  fontSize: typography.sizes.md,
-                  color: theme.colors.textInverse,
-                }}
-              >
-                Beim ersten Check-in begleiten
-              </Text>
-            </Pressable>
-            <Pressable
-              onPress={() => finish(false)}
-              style={({ pressed }) => [
-                styles.nextButton,
-                {
-                  minHeight: touchTarget.min,
-                  borderRadius: radii.md,
-                  borderWidth: 1,
-                  borderColor: theme.colors.border,
-                  backgroundColor: theme.colors.surface,
-                  paddingHorizontal: spacing.xl,
-                },
-                pressed && { opacity: 0.75 },
-              ]}
-              accessibilityRole="button"
-              accessibilityLabel="Direkt starten"
-            >
-              <Text
-                style={{
-                  fontFamily: typography.families.ui.medium,
-                  fontSize: typography.sizes.md,
-                  color: theme.colors.text,
-                }}
-              >
-                Direkt starten
-              </Text>
-            </Pressable>
-          </View>
+          </Pressable>
         ) : (
           <Pressable
             onPress={handleNext}
@@ -362,9 +319,6 @@ const styles = StyleSheet.create({
   nextButton: {
     alignItems: 'center',
     justifyContent: 'center',
-    alignSelf: 'stretch',
-  },
-  tutorialOptIn: {
     alignSelf: 'stretch',
   },
   learnMoreButton: {
