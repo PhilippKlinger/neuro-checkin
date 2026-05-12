@@ -205,7 +205,7 @@ export const themes: Record<ThemeName, { light: ThemeTokens; dark: ThemeTokens }
 };
 
 export const DEFAULT_THEME: ThemeName = 'warmEarth';
-export const DEFAULT_COLOR_MODE: ColorMode = 'system';
+export const DEFAULT_COLOR_MODE: ColorMode = 'light';
 
 // ---------------------------------------------------------------------------
 // Spacing — 8px grid

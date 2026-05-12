@@ -47,9 +47,11 @@ export function LevelSlider({
       </Text>
 
       {tutorialIndex !== undefined ? (
-        <AttachStep index={tutorialIndex}>
-          <RadioGroup title={title} labels={labels} value={value} onValueChange={onValueChange} />
-        </AttachStep>
+        <View style={styles.attachWrap}>
+          <AttachStep index={tutorialIndex}>
+            <RadioGroup title={title} labels={labels} value={value} onValueChange={onValueChange} />
+          </AttachStep>
+        </View>
       ) : (
         <RadioGroup title={title} labels={labels} value={value} onValueChange={onValueChange} />
       )}
@@ -122,6 +124,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
+  },
+  attachWrap: {
+    width: '100%',
   },
   optionList: {
     width: '100%',

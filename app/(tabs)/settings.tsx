@@ -1,4 +1,5 @@
 import { useState, useCallback, useRef } from 'react';
+import { ConfirmDialog } from '../../components/ui/ConfirmDialog';
 import { Text, Pressable, ScrollView, StyleSheet, Platform } from 'react-native';
 import * as Device from 'expo-device';
 import { useFocusEffect, useRouter } from 'expo-router';
@@ -41,6 +42,7 @@ export default function SettingsScreen() {
   const [checkInCount, setCheckInCount] = useState(0);
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
   const [tutorialResettable, setTutorialResettable] = useState(false);
+  const [showTutorialResetDialog, setShowTutorialResetDialog] = useState(false);
 
   useFocusEffect(
     useCallback(() => {
@@ -119,6 +121,7 @@ export default function SettingsScreen() {
   const handleTimePress = useCallback((id: 0 | 1) => setShowTimePicker(id), []);
 
   const handleTutorialReset = useCallback(async () => {
+    setShowTutorialResetDialog(false);
     try {
       await updateSettings(db, { tutorialSeen: false });
       setTutorialResettable(false);
@@ -208,7 +211,7 @@ export default function SettingsScreen() {
               Tutorial
             </Text>
             <Pressable
-              onPress={handleTutorialReset}
+              onPress={() => setShowTutorialResetDialog(true)}
               style={({ pressed }) => [
                 styles.listItem,
                 {
@@ -274,6 +277,16 @@ export default function SettingsScreen() {
       </ScrollView>
 
       <FeedbackModal visible={showFeedbackModal} onClose={() => setShowFeedbackModal(false)} />
+
+      <ConfirmDialog
+        visible={showTutorialResetDialog}
+        title="Tutorial zurücksetzen?"
+        message="Die Einführungs-Hinweise erscheinen beim nächsten Check-in erneut."
+        confirmLabel="Zurücksetzen"
+        cancelLabel="Abbrechen"
+        onConfirm={handleTutorialReset}
+        onCancel={() => setShowTutorialResetDialog(false)}
+      />
     </>
   );
 }
