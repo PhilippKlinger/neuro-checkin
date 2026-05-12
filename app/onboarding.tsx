@@ -245,6 +245,18 @@ export default function OnboardingScreen() {
 
         {isLastStep ? (
           <View style={[styles.tutorialOptIn, { gap: spacing.sm }]}>
+            <Text
+              style={{
+                fontFamily: typography.families.body.regular,
+                fontSize: typography.sizes.sm,
+                color: theme.colors.textSecondary,
+                textAlign: 'center',
+                fontStyle: 'italic',
+                marginBottom: spacing.xs,
+              }}
+            >
+              Drei kurze Hinweise erscheinen an bestimmten Stellen — du kannst jederzeit abbrechen.
+            </Text>
             <Pressable
               onPress={() => finish(true)}
               style={({ pressed }) => [
