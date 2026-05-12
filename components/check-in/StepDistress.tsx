@@ -8,6 +8,7 @@ interface StepDistressProps {
   distressNote: string;
   onLevelChange: (level: number | null) => void;
   onNoteChange: (note: string) => void;
+  hint?: string;
 }
 
 const LEVEL_OPTIONS = DISTRESS_LABELS.map((label, i) => ({
@@ -20,6 +21,7 @@ export function StepDistress({
   distressNote,
   onLevelChange,
   onNoteChange,
+  hint,
 }: StepDistressProps) {
   const { theme, spacing, typography, radii, touchTarget } = useTheme();
   const [cannotSay, setCannotSay] = useState(false);
@@ -62,11 +64,25 @@ export function StepDistress({
           fontSize: typography.sizes.md,
           color: theme.colors.textSecondary,
           textAlign: 'center',
-          marginBottom: spacing.xl,
+          marginBottom: hint ? spacing.sm : spacing.xl,
         }}
       >
         Wie belastet oder angespannt bist du gerade?
       </Text>
+      {hint && (
+        <Text
+          style={{
+            fontFamily: typography.families.body.regular,
+            fontSize: typography.sizes.sm,
+            color: theme.colors.textSecondary,
+            textAlign: 'center',
+            fontStyle: 'italic',
+            marginBottom: spacing.xl,
+          }}
+        >
+          {hint}
+        </Text>
+      )}
       <View style={[styles.optionList, { gap: spacing.sm }]} accessibilityRole="radiogroup" accessibilityLabel="Stress-Level">
         {LEVEL_OPTIONS.map(({ level, label }) => {
           const isSelected = distressLevel === level;

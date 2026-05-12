@@ -4,9 +4,10 @@ import { FOCUS_LABELS } from '../../lib/types/checkin';
 interface StepFocusProps {
   value: number;
   onValueChange: (value: number) => void;
+  hint?: string;
 }
 
-export function StepFocus({ value, onValueChange }: StepFocusProps) {
+export function StepFocus({ value, onValueChange, hint }: StepFocusProps) {
   return (
     <LevelSlider
       title="Fokus-Level"
@@ -14,6 +15,7 @@ export function StepFocus({ value, onValueChange }: StepFocusProps) {
       value={value}
       onValueChange={onValueChange}
       labels={FOCUS_LABELS}
+      hint={hint}
     />
   );
 }

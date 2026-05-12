@@ -9,6 +9,7 @@ interface StepThoughtsProps {
   note: string;
   onTypeChange: (type: ThoughtsType) => void;
   onNoteChange: (note: string) => void;
+  hint?: string;
 }
 
 interface OptionItem {
@@ -27,6 +28,7 @@ export function StepThoughts({
   note,
   onTypeChange,
   onNoteChange,
+  hint,
 }: StepThoughtsProps) {
   const { theme, spacing, typography, radii, touchTarget } = useTheme();
   const scrollRef = useRef<ScrollView>(null);
@@ -50,11 +52,25 @@ export function StepThoughts({
           fontSize: typography.sizes.md,
           color: theme.colors.textSecondary,
           textAlign: 'center',
-          marginBottom: spacing.xl,
+          marginBottom: hint ? spacing.sm : spacing.xl,
         }}
       >
         Wie würdest du deine Gedanken gerade beschreiben?
       </Text>
+      {hint && (
+        <Text
+          style={{
+            fontFamily: typography.families.body.regular,
+            fontSize: typography.sizes.sm,
+            color: theme.colors.textSecondary,
+            textAlign: 'center',
+            fontStyle: 'italic',
+            marginBottom: spacing.xl,
+          }}
+        >
+          {hint}
+        </Text>
+      )}
       <View style={[styles.optionList, { gap: spacing.sm }]}>
         {OPTIONS.map((option) => {
           const isSelected = type === option.value;
