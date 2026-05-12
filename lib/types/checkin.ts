@@ -32,7 +32,9 @@ export interface UserSettings {
   reminderTime: string | null; // HH:mm format — deprecated, kept for migration only
   language: 'de' | 'en';
   onboardingCompleted: boolean;
+  /** @deprecated S-31: spotlight tutorial removed. DB columns kept (additive rule). Do not write. */
   tutorialOffered: boolean;
+  /** @deprecated S-31: spotlight tutorial removed. DB columns kept (additive rule). Do not write. */
   tutorialSeen: boolean;
 }
 
