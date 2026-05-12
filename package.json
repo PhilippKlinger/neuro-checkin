@@ -15,7 +15,7 @@
   "dependencies": {
     "@expo/vector-icons": "^15.1.1",
     "@react-native-community/datetimepicker": "8.4.4",
-    "@sentry/react-native": "~8.10.0",
+    "@sentry/react-native": "~8.11.1",
     "expo": "~54.0.34",
     "expo-constants": "~18.0.13",
     "expo-device": "~8.0.10",
