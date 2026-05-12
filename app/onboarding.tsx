@@ -56,12 +56,8 @@ export default function OnboardingScreen() {
   }
 
   function handleNext() {
-    if (isLastStep) {
-      finish(true);
-    } else {
-      setStep(step + 1);
-      AccessibilityInfo.announceForAccessibility(STEPS[step + 1].title);
-    }
+    setStep(step + 1);
+    AccessibilityInfo.announceForAccessibility(STEPS[step + 1].title);
   }
 
   async function finish(acceptTutorial: boolean) {

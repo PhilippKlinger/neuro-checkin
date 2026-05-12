@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { View, Text, Pressable, StyleSheet, Alert, AccessibilityInfo, findNodeHandle } from 'react-native';
 import { useFocusEffect } from 'expo-router';
 import { SpotlightTourProvider, type SpotlightTour, type TourStep, type TourState } from 'react-native-spotlight-tour';
@@ -6,7 +6,7 @@ import { useTheme } from '../../lib/hooks/useTheme';
 import { useDatabase } from '../../lib/hooks/useDatabase';
 import { CheckInDraft, EMPTY_DRAFT, EMPTY_BODY_SIGNALS } from '../../lib/types/checkin';
 import { FadeView } from '../../components/ui/FadeView';
-import { insertCheckIn } from '../../lib/database/checkins';
+import { insertCheckIn, countCheckIns } from '../../lib/database/checkins';
 import { getSettings, updateSettings } from '../../lib/database/settings';
 import { StepIndicator } from '../../components/check-in/StepIndicator';
 import { CheckInSuccessView } from '../../components/check-in/CheckInSuccessView';
@@ -66,12 +66,10 @@ export default function CheckInScreen() {
   useEffect(() => {
     async function loadTutorialState() {
       try {
-        const settings = await getSettings(db);
+        const [settings, count] = await Promise.all([getSettings(db), countCheckIns(db)]);
         const active = settings.tutorialOffered && !settings.tutorialSeen;
         setTutorialActive(active);
-        // First check-in hint shown only when user has no tutorial active but still
-        // hasn't seen the post-first hint (re-use tutorialSeen as gate).
-        setIsFirstCheckin(!settings.tutorialSeen);
+        setIsFirstCheckin(count === 0);
       } catch {
         // Non-critical: tutorial stays inactive on error
       }
@@ -133,7 +131,7 @@ export default function CheckInScreen() {
     };
   }
 
-  const tourSteps: TourStep[] = [
+  const tourSteps = useMemo<TourStep[]>(() => [
     {
       render: ({ stop }) => (
         <CoachMarkTooltip
@@ -167,7 +165,9 @@ export default function CheckInScreen() {
       shape: { type: 'rectangle', padding: 8 },
       motion: 'fade',
     },
-  ];
+  // makeSkipHandler only closes over skipIntentRef (stable ref), no reactive deps
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  ], []);
 
   useEffect(() => {
     stepRef.current = step;
