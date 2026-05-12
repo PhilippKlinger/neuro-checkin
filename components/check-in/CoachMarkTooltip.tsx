@@ -49,7 +49,7 @@ export function CoachMarkTooltip({ text, onDismiss, onSkip }: CoachMarkTooltipPr
             pressed && { opacity: 0.75 },
           ]}
           accessibilityRole="button"
-          accessibilityLabel="Ok"
+          accessibilityLabel="Verstanden"
         >
           <Text
             style={{
@@ -58,7 +58,7 @@ export function CoachMarkTooltip({ text, onDismiss, onSkip }: CoachMarkTooltipPr
               color: theme.colors.textInverse,
             }}
           >
-            Ok
+            Verstanden
           </Text>
         </Pressable>
         <Pressable
@@ -72,7 +72,7 @@ export function CoachMarkTooltip({ text, onDismiss, onSkip }: CoachMarkTooltipPr
             pressed && { opacity: 0.6 },
           ]}
           accessibilityRole="button"
-          accessibilityLabel="Tutorial überspringen"
+          accessibilityLabel="Tutorial beenden"
         >
           <Text
             style={{
@@ -81,7 +81,7 @@ export function CoachMarkTooltip({ text, onDismiss, onSkip }: CoachMarkTooltipPr
               color: theme.colors.textSecondary,
             }}
           >
-            Überspringen
+            Tutorial beenden
           </Text>
         </Pressable>
       </View>

@@ -62,21 +62,26 @@ export default function CheckInScreen() {
   // True when user pressed "Überspringen" — skip all remaining marks
   const skipIntentRef = useRef(false);
 
-  // Load tutorial state once on mount
-  useEffect(() => {
-    async function loadTutorialState() {
-      try {
-        const [settings, count] = await Promise.all([getSettings(db), countCheckIns(db)]);
-        const active = settings.tutorialOffered && !settings.tutorialSeen;
-        setTutorialActive(active);
-        setIsFirstCheckin(count === 0);
-      } catch {
-        // Non-critical: tutorial stays inactive on error
+  // Reload tutorial state on every focus so settings-reset is picked up immediately
+  useFocusEffect(
+    useCallback(() => {
+      async function loadTutorialState() {
+        try {
+          const [settings, count] = await Promise.all([getSettings(db), countCheckIns(db)]);
+          const active = settings.tutorialOffered && !settings.tutorialSeen;
+          setTutorialActive(active);
+          setIsFirstCheckin(count === 0);
+          if (active) {
+            shownCoachMarksRef.current = new Set();
+            skipIntentRef.current = false;
+          }
+        } catch {
+          // Non-critical: tutorial stays inactive on error
+        }
       }
-    }
-    loadTutorialState();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // db is a stable ref; load once at mount
+      loadTutorialState();
+    }, [db])
+  );
 
   // Control tour based on current check-in step
   useEffect(() => {
@@ -262,6 +267,8 @@ export default function CheckInScreen() {
     setDraft({ ...EMPTY_DRAFT, bodySignals: { ...EMPTY_BODY_SIGNALS } });
     setIsDone(false);
     setWasReset(false);
+    shownCoachMarksRef.current = new Set();
+    skipIntentRef.current = false;
   }
 
   if (isDone) {

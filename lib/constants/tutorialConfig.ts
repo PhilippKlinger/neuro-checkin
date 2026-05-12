@@ -1,6 +1,6 @@
 export const TUTORIAL_COACH_MARK_TEXTS = {
   levelSlider: 'Schätz grob — es gibt kein Richtig oder Falsch.',
-  feelingsChips: 'Wähle, tippe, oder überspringe — alles ist ok.',
+  feelingsChips: 'Wähle einen oder mehrere Chips — oder tippe frei darunter.',
   summary: 'Das ist dein Check-in. Du kannst ihn jederzeit im Verlauf öffnen.',
 } as const;
 

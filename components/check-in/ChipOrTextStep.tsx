@@ -125,9 +125,11 @@ export function ChipOrTextStep({
       {mode === 'chips' ? (
         <>
           {tutorialIndex !== undefined ? (
-            <AttachStep index={tutorialIndex}>
-              <ChipWrap chips={chips} value={value} onValueChange={onValueChange} />
-            </AttachStep>
+            <View style={styles.attachWrap}>
+              <AttachStep index={tutorialIndex}>
+                <ChipWrap chips={chips} value={value} onValueChange={onValueChange} />
+              </AttachStep>
+            </View>
           ) : (
             <ChipWrap chips={chips} value={value} onValueChange={onValueChange} />
           )}
@@ -215,6 +217,9 @@ export function ChipOrTextStep({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  attachWrap: {
+    width: '100%',
   },
   chipWrap: {
     flexDirection: 'row',
