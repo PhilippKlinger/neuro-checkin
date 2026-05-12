@@ -10,6 +10,8 @@ export async function getSettings(db: SQLiteDatabase): Promise<UserSettings> {
     reminder_time: string | null;
     language: string;
     onboarding_completed: number;
+    tutorial_offered: number;
+    tutorial_seen: number;
   }>('SELECT * FROM user_settings WHERE id = 1');
 
   if (!row) {
@@ -21,6 +23,8 @@ export async function getSettings(db: SQLiteDatabase): Promise<UserSettings> {
       reminderTime: null,
       language: 'de',
       onboardingCompleted: false,
+      tutorialOffered: false,
+      tutorialSeen: false,
     };
   }
 
@@ -32,6 +36,8 @@ export async function getSettings(db: SQLiteDatabase): Promise<UserSettings> {
     reminderTime: row.reminder_time,
     language: row.language as 'de' | 'en',
     onboardingCompleted: row.onboarding_completed === 1,
+    tutorialOffered: row.tutorial_offered === 1,
+    tutorialSeen: row.tutorial_seen === 1,
   };
 }
 
@@ -65,6 +71,14 @@ export async function updateSettings(
   if (settings.onboardingCompleted !== undefined) {
     updates.push('onboarding_completed = ?');
     values.push(settings.onboardingCompleted ? 1 : 0);
+  }
+  if (settings.tutorialOffered !== undefined) {
+    updates.push('tutorial_offered = ?');
+    values.push(settings.tutorialOffered ? 1 : 0);
+  }
+  if (settings.tutorialSeen !== undefined) {
+    updates.push('tutorial_seen = ?');
+    values.push(settings.tutorialSeen ? 1 : 0);
   }
 
   if (updates.length > 0) {
