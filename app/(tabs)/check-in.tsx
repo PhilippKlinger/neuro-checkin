@@ -111,7 +111,7 @@ export default function CheckInScreen() {
     }
   }
 
-  function handleTourStop({ index }: TourState) {
+  const handleTourStop = useCallback(({ index }: TourState) => {
     if (skipIntentRef.current) {
       skipIntentRef.current = false;
       markTutorialDone();
@@ -122,7 +122,9 @@ export default function CheckInScreen() {
     if (shownCoachMarksRef.current.size >= 3) {
       markTutorialDone();
     }
-  }
+  // markTutorialDone closes over db + setTutorialActive — both stable refs
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   function makeSkipHandler(stop: () => void) {
     return () => {
