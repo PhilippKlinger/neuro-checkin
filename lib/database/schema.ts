@@ -1,6 +1,6 @@
 import type { SQLiteDatabase } from 'expo-sqlite';
 
-const SCHEMA_VERSION = 8;
+const SCHEMA_VERSION = 9;
 
 export async function migrateDatabase(db: SQLiteDatabase): Promise<void> {
   await db.execAsync(`PRAGMA journal_mode = WAL;`);
@@ -103,6 +103,21 @@ export async function migrateDatabase(db: SQLiteDatabase): Promise<void> {
     );
     await db.execAsync(
       `ALTER TABLE user_settings ADD COLUMN tutorial_seen INTEGER NOT NULL DEFAULT 0;`
+    );
+  }
+
+  if (currentVersion < 9) {
+    await db.execAsync(
+      `ALTER TABLE user_settings ADD COLUMN guided_mode_enabled INTEGER NOT NULL DEFAULT 1;`
+    );
+    await db.execAsync(
+      `ALTER TABLE user_settings ADD COLUMN guided_toggle_introduced INTEGER NOT NULL DEFAULT 0;`
+    );
+    await db.execAsync(
+      `ALTER TABLE user_settings ADD COLUMN last_active_date TEXT;`
+    );
+    await db.execAsync(
+      `ALTER TABLE user_settings ADD COLUMN detail_view_introduced INTEGER NOT NULL DEFAULT 0;`
     );
   }
 
