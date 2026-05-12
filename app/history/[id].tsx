@@ -4,6 +4,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTheme } from '../../lib/hooks/useTheme';
 import { useDatabase } from '../../lib/hooks/useDatabase';
 import { getCheckInById, deleteCheckIn } from '../../lib/database/checkins';
+import { getSettings, updateSettings } from '../../lib/database/settings';
 import { CheckIn } from '../../lib/types/checkin';
 import { CheckInDetailContent } from '../../components/history/CheckInDetailContent';
 
@@ -15,13 +16,21 @@ export default function CheckInDetailScreen() {
   const [checkIn, setCheckIn] = useState<CheckIn | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [showDetailHint, setShowDetailHint] = useState(false);
 
   useEffect(() => {
     async function load() {
       if (!id) return;
       try {
-        const data = await getCheckInById(db, Number(id));
+        const [data, settings] = await Promise.all([
+          getCheckInById(db, Number(id)),
+          getSettings(db),
+        ]);
         setCheckIn(data);
+        if (!settings.detailViewIntroduced) {
+          setShowDetailHint(true);
+          await updateSettings(db, { detailViewIntroduced: true });
+        }
       } finally {
         setIsLoading(false);
       }
@@ -52,6 +61,21 @@ export default function CheckInDetailScreen() {
 
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
+      {showDetailHint && (
+        <Text
+          style={{
+            fontFamily: typography.families.body.regular,
+            fontSize: typography.sizes.sm,
+            color: theme.colors.textSecondary,
+            fontStyle: 'italic',
+            textAlign: 'center',
+            paddingHorizontal: 24,
+            paddingVertical: 12,
+          }}
+        >
+          Einzelne Check-ins können über das Papierkorb-Symbol unten gelöscht werden.
+        </Text>
+      )}
       <CheckInDetailContent
         checkIn={checkIn}
         showDeleteDialog={showDeleteDialog}
