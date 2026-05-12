@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { View, Text, TextInput, Pressable, StyleSheet } from 'react-native';
-import { AttachStep } from 'react-native-spotlight-tour';
 import { useTheme } from '../../lib/hooks/useTheme';
 import { isChipSelected, toggleChip } from '../../lib/utils/chips';
 
@@ -13,7 +12,6 @@ interface ChipOrTextStepProps {
   textPlaceholder: string;
   textAccessibilityLabel: string;
   maxLength?: number;
-  tutorialIndex?: number;
 }
 
 function hasChipContent(val: string, chips: readonly string[]): boolean {
@@ -77,7 +75,6 @@ export function ChipOrTextStep({
   textPlaceholder,
   textAccessibilityLabel,
   maxLength = 150,
-  tutorialIndex,
 }: ChipOrTextStepProps) {
   const { theme, spacing, typography, radii, touchTarget } = useTheme();
 
@@ -124,15 +121,7 @@ export function ChipOrTextStep({
 
       {mode === 'chips' ? (
         <>
-          {tutorialIndex !== undefined ? (
-            <View style={styles.attachWrap}>
-              <AttachStep index={tutorialIndex}>
-                <ChipWrap chips={chips} value={value} onValueChange={onValueChange} />
-              </AttachStep>
-            </View>
-          ) : (
-            <ChipWrap chips={chips} value={value} onValueChange={onValueChange} />
-          )}
+          <ChipWrap chips={chips} value={value} onValueChange={onValueChange} />
 
           <Pressable
             onPress={switchToText}
@@ -217,9 +206,6 @@ export function ChipOrTextStep({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  attachWrap: {
-    width: '100%',
   },
   chipWrap: {
     flexDirection: 'row',
