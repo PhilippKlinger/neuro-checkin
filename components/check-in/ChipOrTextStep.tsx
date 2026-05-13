@@ -12,6 +12,7 @@ interface ChipOrTextStepProps {
   textPlaceholder: string;
   textAccessibilityLabel: string;
   maxLength?: number;
+  hint?: string;
 }
 
 function hasChipContent(val: string, chips: readonly string[]): boolean {
@@ -75,6 +76,7 @@ export function ChipOrTextStep({
   textPlaceholder,
   textAccessibilityLabel,
   maxLength = 150,
+  hint,
 }: ChipOrTextStepProps) {
   const { theme, spacing, typography, radii, touchTarget } = useTheme();
 
@@ -113,11 +115,25 @@ export function ChipOrTextStep({
           fontSize: typography.sizes.md,
           color: theme.colors.textSecondary,
           textAlign: 'center',
-          marginBottom: spacing.lg,
+          marginBottom: hint ? spacing.sm : spacing.lg,
         }}
       >
         {subtitle}
       </Text>
+      {hint && (
+        <Text
+          style={{
+            fontFamily: typography.families.body.regular,
+            fontSize: typography.sizes.sm,
+            color: theme.colors.textSecondary,
+            textAlign: 'center',
+            fontStyle: 'italic',
+            marginBottom: spacing.lg,
+          }}
+        >
+          {hint}
+        </Text>
+      )}
 
       {mode === 'chips' ? (
         <>

@@ -7,6 +7,7 @@ interface LevelSliderProps {
   value: number; // 0 = unselected, 1-5 = selected
   onValueChange: (value: number) => void;
   labels: readonly string[]; // exactly 5 semantic labels
+  hint?: string;
 }
 
 export function LevelSlider({
@@ -15,6 +16,7 @@ export function LevelSlider({
   value,
   onValueChange,
   labels,
+  hint,
 }: LevelSliderProps) {
   const { theme, spacing, typography } = useTheme();
 
@@ -37,11 +39,25 @@ export function LevelSlider({
           fontSize: typography.sizes.md,
           color: theme.colors.textSecondary,
           textAlign: 'center',
-          marginBottom: spacing.xl,
+          marginBottom: hint ? spacing.sm : spacing.xl,
         }}
       >
         {subtitle}
       </Text>
+      {hint && (
+        <Text
+          style={{
+            fontFamily: typography.families.body.regular,
+            fontSize: typography.sizes.sm,
+            color: theme.colors.textSecondary,
+            textAlign: 'center',
+            fontStyle: 'italic',
+            marginBottom: spacing.xl,
+          }}
+        >
+          {hint}
+        </Text>
+      )}
 
       <RadioGroup title={title} labels={labels} value={value} onValueChange={onValueChange} />
     </View>

@@ -36,6 +36,10 @@ export interface UserSettings {
   tutorialOffered: boolean;
   /** @deprecated S-31: spotlight tutorial removed. DB columns kept (additive rule). Do not write. */
   tutorialSeen: boolean;
+  guidedModeEnabled: boolean;
+  guidedToggleIntroduced: boolean;
+  lastActiveDate: string | null; // YYYY-MM-DD
+  detailViewIntroduced: boolean;
 }
 
 /** A single configurable notification time slot (e.g. morning or evening). */

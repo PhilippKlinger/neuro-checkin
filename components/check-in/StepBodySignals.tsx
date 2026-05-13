@@ -4,6 +4,7 @@ import { BodySignals } from '../../lib/types/checkin';
 interface StepBodySignalsProps {
   value: BodySignals;
   onValueChange: (value: BodySignals) => void;
+  hint?: string;
 }
 
 interface SignalItem {
@@ -22,7 +23,7 @@ const SIGNALS: SignalItem[] = [
   { key: 'externalStimuli', label: 'Reize', description: 'Stören dich Licht, Geräusche oder Gerüche?' },
 ];
 
-export function StepBodySignals({ value, onValueChange }: StepBodySignalsProps) {
+export function StepBodySignals({ value, onValueChange, hint }: StepBodySignalsProps) {
   const { theme, spacing, typography, radii, touchTarget } = useTheme();
 
   function handlePress(key: keyof BodySignals, pressed: boolean) {
@@ -51,11 +52,25 @@ export function StepBodySignals({ value, onValueChange }: StepBodySignalsProps) 
           fontSize: typography.sizes.md,
           color: theme.colors.textSecondary,
           textAlign: 'center',
-          marginBottom: spacing.lg,
+          marginBottom: hint ? spacing.sm : spacing.lg,
         }}
       >
         Was nimmt dein Körper gerade wahr?
       </Text>
+      {hint && (
+        <Text
+          style={{
+            fontFamily: typography.families.body.regular,
+            fontSize: typography.sizes.sm,
+            color: theme.colors.textSecondary,
+            textAlign: 'center',
+            fontStyle: 'italic',
+            marginBottom: spacing.lg,
+          }}
+        >
+          {hint}
+        </Text>
+      )}
 
       <ScrollView
         style={styles.scrollArea}

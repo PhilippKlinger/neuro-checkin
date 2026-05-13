@@ -6,7 +6,9 @@ import { useDatabase } from '../../lib/hooks/useDatabase';
 import { CheckInDraft, EMPTY_DRAFT, EMPTY_BODY_SIGNALS } from '../../lib/types/checkin';
 import { FadeView } from '../../components/ui/FadeView';
 import { insertCheckIn, countCheckIns } from '../../lib/database/checkins';
+import { getSettings, updateSettings } from '../../lib/database/settings';
 import { StepIndicator } from '../../components/check-in/StepIndicator';
+import { GuidedToggle } from '../../components/check-in/GuidedToggle';
 import { CheckInSuccessView } from '../../components/check-in/CheckInSuccessView';
 import { StepArrival } from '../../components/check-in/StepArrival';
 import { StepEnergy } from '../../components/check-in/StepEnergy';
@@ -17,9 +19,10 @@ import { StepDistress } from '../../components/check-in/StepDistress';
 import { StepThoughts } from '../../components/check-in/StepThoughts';
 import { StepSelfCare } from '../../components/check-in/StepSelfCare';
 import { StepSummary } from '../../components/check-in/StepSummary';
+import { STEP_HINTS } from '../../lib/constants/hintConfig';
+import { INACTIVITY_TIMEOUT_MS } from '../../lib/constants/timing';
 
 const TOTAL_STEPS = 9;
-const INACTIVITY_TIMEOUT_MS = 60 * 60 * 1000; // 1h
 
 const STEP_NAMES = [
   'Ankommen',
@@ -42,23 +45,41 @@ export default function CheckInScreen() {
   const [isDone, setIsDone] = useState(false);
   const [wasReset, setWasReset] = useState(false);
   const [isFirstCheckin, setIsFirstCheckin] = useState(false);
+  const [guidedMode, setGuidedMode] = useState(true);
+  const [showToggleIntroHint, setShowToggleIntroHint] = useState(false);
   const stepContentRef = useRef<View>(null);
   const stepRef = useRef(step);
   const leftAtRef = useRef<number | null>(null);
 
   useFocusEffect(
     useCallback(() => {
-      async function loadFirstCheckinState() {
+      async function loadState() {
         try {
-          const count = await countCheckIns(db);
+          const [settings, count] = await Promise.all([getSettings(db), countCheckIns(db)]);
           setIsFirstCheckin(count === 0);
+          setGuidedMode(settings.guidedModeEnabled);
+          setShowToggleIntroHint(!settings.guidedToggleIntroduced);
         } catch {
           // Non-critical
         }
       }
-      loadFirstCheckinState();
+      loadState();
     }, [db])
   );
+
+  async function handleGuidedToggle(value: boolean) {
+    setGuidedMode(value);
+    try {
+      if (showToggleIntroHint) {
+        setShowToggleIntroHint(false);
+        await updateSettings(db, { guidedModeEnabled: value, guidedToggleIntroduced: true });
+      } else {
+        await updateSettings(db, { guidedModeEnabled: value });
+      }
+    } catch {
+      // Non-critical
+    }
+  }
 
   useEffect(() => {
     stepRef.current = step;
@@ -66,7 +87,6 @@ export default function CheckInScreen() {
 
   useFocusEffect(
     useCallback(() => {
-      // On focus: reset if check-in was abandoned for too long
       if (leftAtRef.current !== null && stepRef.current > 0) {
         const elapsed = Date.now() - leftAtRef.current;
         if (elapsed > INACTIVITY_TIMEOUT_MS) {
@@ -79,7 +99,6 @@ export default function CheckInScreen() {
       leftAtRef.current = null;
 
       return () => {
-        // On blur: record leave time if check-in is in progress
         if (stepRef.current > 0) {
           leftAtRef.current = Date.now();
         }
@@ -172,6 +191,7 @@ export default function CheckInScreen() {
           <StepEnergy
             value={draft.energyLevel}
             onValueChange={(v) => setDraft({ ...draft, energyLevel: v })}
+            hint={guidedMode ? STEP_HINTS.energy : undefined}
           />
         );
       case 2:
@@ -179,6 +199,7 @@ export default function CheckInScreen() {
           <StepFocus
             value={draft.focusLevel}
             onValueChange={(v) => setDraft({ ...draft, focusLevel: v })}
+            hint={guidedMode ? STEP_HINTS.focus : undefined}
           />
         );
       case 3:
@@ -186,6 +207,7 @@ export default function CheckInScreen() {
           <StepBodySignals
             value={draft.bodySignals}
             onValueChange={(v) => setDraft({ ...draft, bodySignals: v })}
+            hint={guidedMode ? STEP_HINTS.bodySignals : undefined}
           />
         );
       case 4:
@@ -193,6 +215,7 @@ export default function CheckInScreen() {
           <StepFeelings
             value={draft.feelings}
             onValueChange={(v) => setDraft({ ...draft, feelings: v })}
+            hint={guidedMode ? STEP_HINTS.feelings : undefined}
           />
         );
       case 5:
@@ -202,6 +225,7 @@ export default function CheckInScreen() {
             distressNote={draft.distressNote}
             onLevelChange={(v) => setDraft({ ...draft, distressLevel: v })}
             onNoteChange={(v) => setDraft({ ...draft, distressNote: v })}
+            hint={guidedMode ? STEP_HINTS.distress : undefined}
           />
         );
       case 6:
@@ -211,6 +235,7 @@ export default function CheckInScreen() {
             note={draft.thoughtsNote}
             onTypeChange={(v) => setDraft({ ...draft, thoughtsType: v })}
             onNoteChange={(v) => setDraft({ ...draft, thoughtsNote: v })}
+            hint={guidedMode ? STEP_HINTS.thoughts : undefined}
           />
         );
       case 7:
@@ -218,6 +243,7 @@ export default function CheckInScreen() {
           <StepSelfCare
             value={draft.selfCareNote}
             onValueChange={(v) => setDraft({ ...draft, selfCareNote: v })}
+            hint={guidedMode ? STEP_HINTS.selfCare : undefined}
           />
         );
       case 8:
@@ -239,6 +265,12 @@ export default function CheckInScreen() {
       <View style={[styles.indicatorWrapper, { paddingTop: spacing.lg }]}>
         <StepIndicator totalSteps={TOTAL_STEPS} currentStep={step} />
       </View>
+
+      <GuidedToggle
+        enabled={guidedMode}
+        onToggle={handleGuidedToggle}
+        showIntroHint={showToggleIntroHint}
+      />
 
       {wasReset && step === 0 && (
         <View style={[styles.resetHint, { marginHorizontal: spacing.lg, marginTop: spacing.sm, backgroundColor: theme.colors.surface, borderRadius: radii.md, padding: spacing.md }]}>

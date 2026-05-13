@@ -1,17 +1,20 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { View, Text, Pressable, StyleSheet, Alert, AccessibilityInfo, findNodeHandle } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useRouter, useFocusEffect } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../lib/hooks/useTheme';
 import { useDatabase } from '../lib/hooks/useDatabase';
 import { EMPTY_BODY_SIGNALS } from '../lib/types/checkin';
 import { FadeView } from '../components/ui/FadeView';
 import { insertCheckIn } from '../lib/database/checkins';
+import { getSettings, updateSettings } from '../lib/database/settings';
 import { StepIndicator } from '../components/check-in/StepIndicator';
+import { GuidedToggle } from '../components/check-in/GuidedToggle';
 import { CheckInSuccessView } from '../components/check-in/CheckInSuccessView';
 import { StepEnergy } from '../components/check-in/StepEnergy';
 import { StepFocus } from '../components/check-in/StepFocus';
 import { QuickStepFeelings } from '../components/check-in/QuickStepFeelings';
+import { STEP_HINTS } from '../lib/constants/hintConfig';
 
 const TOTAL_STEPS = 3;
 const STEP_NAMES = ['Energie-Level', 'Fokus-Level', 'Gefühle'];
@@ -27,7 +30,38 @@ export default function QuickCheckInScreen() {
   const [feelings, setFeelings] = useState('');
   const [isSaving, setIsSaving] = useState(false);
   const [isDone, setIsDone] = useState(false);
+  const [guidedMode, setGuidedMode] = useState(true);
+  const [showToggleIntroHint, setShowToggleIntroHint] = useState(false);
   const stepContentRef = useRef<View>(null);
+
+  useFocusEffect(
+    useCallback(() => {
+      async function loadGuidedState() {
+        try {
+          const settings = await getSettings(db);
+          setGuidedMode(settings.guidedModeEnabled);
+          setShowToggleIntroHint(!settings.guidedToggleIntroduced);
+        } catch {
+          // Non-critical
+        }
+      }
+      loadGuidedState();
+    }, [db])
+  );
+
+  async function handleGuidedToggle(value: boolean) {
+    setGuidedMode(value);
+    try {
+      if (showToggleIntroHint) {
+        setShowToggleIntroHint(false);
+        await updateSettings(db, { guidedModeEnabled: value, guidedToggleIntroduced: true });
+      } else {
+        await updateSettings(db, { guidedModeEnabled: value });
+      }
+    } catch {
+      // Non-critical
+    }
+  }
 
   // Energy and focus are required; feelings are optional
   const isStepBlocked =
@@ -114,6 +148,7 @@ export default function QuickCheckInScreen() {
           <StepEnergy
             value={energyLevel}
             onValueChange={setEnergyLevel}
+            hint={guidedMode ? STEP_HINTS.energy : undefined}
           />
         );
       case 1:
@@ -121,6 +156,7 @@ export default function QuickCheckInScreen() {
           <StepFocus
             value={focusLevel}
             onValueChange={setFocusLevel}
+            hint={guidedMode ? STEP_HINTS.focus : undefined}
           />
         );
       case 2:
@@ -128,6 +164,7 @@ export default function QuickCheckInScreen() {
           <QuickStepFeelings
             value={feelings}
             onValueChange={setFeelings}
+            hint={guidedMode ? STEP_HINTS.feelings : undefined}
           />
         );
       default:
@@ -140,6 +177,12 @@ export default function QuickCheckInScreen() {
       <View style={[styles.indicatorWrapper, { paddingTop: spacing.lg }]}>
         <StepIndicator totalSteps={TOTAL_STEPS} currentStep={step} />
       </View>
+
+      <GuidedToggle
+        enabled={guidedMode}
+        onToggle={handleGuidedToggle}
+        showIntroHint={showToggleIntroHint}
+      />
 
       <FadeView
         triggerKey={step}

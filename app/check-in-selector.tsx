@@ -6,6 +6,7 @@ import { useTheme } from '../lib/hooks/useTheme';
 interface SelectorOption {
   title: string;
   subtitle: string;
+  context: string;
   accessibilityLabel: string;
   onPress: () => void;
 }
@@ -19,12 +20,14 @@ export default function CheckInSelectorScreen() {
     {
       title: 'Ich nehme mir kurz Zeit',
       subtitle: '3 Schritte · etwa 2 Minuten — Energie, Fokus, Gefühle',
+      context: 'Wenn du gerade wenig Kapazität hast oder es schnell gehen muss.',
       accessibilityLabel: 'Ich nehme mir kurz Zeit, 3 Schritte, etwa 2 Minuten, Energie, Fokus, Gefühle',
       onPress: () => router.replace('/quick-check-in'),
     },
     {
       title: 'Ich nehme mir Zeit',
       subtitle: 'alle 9 Schritte · etwa 5 Minuten — Körper, Gefühle, Stress, Gedanken',
+      context: 'Wenn du dir bewusst Zeit nimmst und tiefer hinschauen möchtest.',
       accessibilityLabel: 'Ich nehme mir Zeit, alle 9 Schritte, etwa 5 Minuten, Körper, Gefühle, Stress, Gedanken',
       onPress: () => router.replace('/(tabs)/check-in'),
     },
@@ -93,6 +96,18 @@ export default function CheckInSelectorScreen() {
               }}
             >
               {option.subtitle}
+            </Text>
+            <Text
+              style={{
+                fontFamily: typography.families.body.regular,
+                fontSize: typography.sizes.sm,
+                color: theme.colors.textSecondary,
+                fontStyle: 'italic',
+                marginTop: spacing.xs,
+                lineHeight: typography.sizes.sm * 1.5,
+              }}
+            >
+              {option.context}
             </Text>
           </Pressable>
         ))}
