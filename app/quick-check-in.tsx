@@ -52,11 +52,15 @@ export default function QuickCheckInScreen() {
 
   async function handleGuidedToggle(value: boolean) {
     setGuidedMode(value);
-    if (showToggleIntroHint) {
-      setShowToggleIntroHint(false);
-      await updateSettings(db, { guidedModeEnabled: value, guidedToggleIntroduced: true });
-    } else {
-      await updateSettings(db, { guidedModeEnabled: value });
+    try {
+      if (showToggleIntroHint) {
+        setShowToggleIntroHint(false);
+        await updateSettings(db, { guidedModeEnabled: value, guidedToggleIntroduced: true });
+      } else {
+        await updateSettings(db, { guidedModeEnabled: value });
+      }
+    } catch {
+      // Non-critical
     }
   }
 
@@ -139,14 +143,13 @@ export default function QuickCheckInScreen() {
   }
 
   function renderStep() {
-    const h = guidedMode;
     switch (step) {
       case 0:
         return (
           <StepEnergy
             value={energyLevel}
             onValueChange={setEnergyLevel}
-            hint={h ? STEP_HINTS.energy : undefined}
+            hint={guidedMode ? STEP_HINTS.energy : undefined}
           />
         );
       case 1:
@@ -154,7 +157,7 @@ export default function QuickCheckInScreen() {
           <StepFocus
             value={focusLevel}
             onValueChange={setFocusLevel}
-            hint={h ? STEP_HINTS.focus : undefined}
+            hint={guidedMode ? STEP_HINTS.focus : undefined}
           />
         );
       case 2:
@@ -162,7 +165,7 @@ export default function QuickCheckInScreen() {
           <QuickStepFeelings
             value={feelings}
             onValueChange={setFeelings}
-            hint={h ? STEP_HINTS.feelings : undefined}
+            hint={guidedMode ? STEP_HINTS.feelings : undefined}
           />
         );
       default:

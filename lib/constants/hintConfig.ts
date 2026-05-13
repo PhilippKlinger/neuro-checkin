@@ -1,4 +1,6 @@
-export const STEP_HINTS: Record<string, string> = {
+type StepHintKey = 'energy' | 'focus' | 'bodySignals' | 'feelings' | 'distress' | 'thoughts' | 'selfCare';
+
+export const STEP_HINTS: Record<StepHintKey, string> = {
   energy: 'Eine grobe Einschätzung reicht. Was sich gerade nach wahr anfühlt.',
   focus: 'Auch wenn der Fokus heute schwer fassbar ist — wähl was am nächsten kommt.',
   bodySignals: 'Geh kurz innerlich durch — manche Signale werden erst sichtbar, wenn man sie sucht.',

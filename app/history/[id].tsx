@@ -10,7 +10,7 @@ import { CheckInDetailContent } from '../../components/history/CheckInDetailCont
 
 export default function CheckInDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const { theme, typography } = useTheme();
+  const { theme, spacing, typography } = useTheme();
   const db = useDatabase();
   const router = useRouter();
   const [checkIn, setCheckIn] = useState<CheckIn | null>(null);
@@ -69,8 +69,8 @@ export default function CheckInDetailScreen() {
             color: theme.colors.textSecondary,
             fontStyle: 'italic',
             textAlign: 'center',
-            paddingHorizontal: 24,
-            paddingVertical: 12,
+            paddingHorizontal: spacing.lg,
+            paddingVertical: spacing.md,
           }}
         >
           Einzelne Check-ins können über das Papierkorb-Symbol unten gelöscht werden.

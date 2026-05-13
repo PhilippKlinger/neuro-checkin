@@ -12,7 +12,7 @@ export function GuidedToggle({ enabled, onToggle, showIntroHint }: GuidedToggleP
 
   return (
     <View style={[styles.container, { paddingHorizontal: spacing.lg, paddingVertical: spacing.sm }]}>
-      <View style={styles.row}>
+      <View style={[styles.row, { gap: spacing.sm }]}>
         <Text
           style={{
             fontFamily: typography.families.ui.medium,
@@ -58,6 +58,5 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 10,
   },
 });

@@ -70,7 +70,7 @@ function AppStack() {
         if (settings.lastActiveDate) {
           const last = new Date(settings.lastActiveDate);
           const daysSince = Math.floor((Date.now() - last.getTime()) / (1000 * 60 * 60 * 24));
-          if (daysSince >= REENTRY_THRESHOLD_DAYS) {
+          if (isNaN(daysSince) || daysSince >= REENTRY_THRESHOLD_DAYS) {
             updates.guidedModeEnabled = true;
             updates.guidedToggleIntroduced = false;
           }

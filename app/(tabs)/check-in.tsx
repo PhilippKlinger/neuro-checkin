@@ -69,11 +69,15 @@ export default function CheckInScreen() {
 
   async function handleGuidedToggle(value: boolean) {
     setGuidedMode(value);
-    if (showToggleIntroHint) {
-      setShowToggleIntroHint(false);
-      await updateSettings(db, { guidedModeEnabled: value, guidedToggleIntroduced: true });
-    } else {
-      await updateSettings(db, { guidedModeEnabled: value });
+    try {
+      if (showToggleIntroHint) {
+        setShowToggleIntroHint(false);
+        await updateSettings(db, { guidedModeEnabled: value, guidedToggleIntroduced: true });
+      } else {
+        await updateSettings(db, { guidedModeEnabled: value });
+      }
+    } catch {
+      // Non-critical
     }
   }
 
@@ -179,7 +183,6 @@ export default function CheckInScreen() {
   }
 
   function renderStep() {
-    const h = guidedMode;
     switch (step) {
       case 0:
         return <StepArrival />;
@@ -188,7 +191,7 @@ export default function CheckInScreen() {
           <StepEnergy
             value={draft.energyLevel}
             onValueChange={(v) => setDraft({ ...draft, energyLevel: v })}
-            hint={h ? STEP_HINTS.energy : undefined}
+            hint={guidedMode ? STEP_HINTS.energy : undefined}
           />
         );
       case 2:
@@ -196,7 +199,7 @@ export default function CheckInScreen() {
           <StepFocus
             value={draft.focusLevel}
             onValueChange={(v) => setDraft({ ...draft, focusLevel: v })}
-            hint={h ? STEP_HINTS.focus : undefined}
+            hint={guidedMode ? STEP_HINTS.focus : undefined}
           />
         );
       case 3:
@@ -204,7 +207,7 @@ export default function CheckInScreen() {
           <StepBodySignals
             value={draft.bodySignals}
             onValueChange={(v) => setDraft({ ...draft, bodySignals: v })}
-            hint={h ? STEP_HINTS.bodySignals : undefined}
+            hint={guidedMode ? STEP_HINTS.bodySignals : undefined}
           />
         );
       case 4:
@@ -212,7 +215,7 @@ export default function CheckInScreen() {
           <StepFeelings
             value={draft.feelings}
             onValueChange={(v) => setDraft({ ...draft, feelings: v })}
-            hint={h ? STEP_HINTS.feelings : undefined}
+            hint={guidedMode ? STEP_HINTS.feelings : undefined}
           />
         );
       case 5:
@@ -222,7 +225,7 @@ export default function CheckInScreen() {
             distressNote={draft.distressNote}
             onLevelChange={(v) => setDraft({ ...draft, distressLevel: v })}
             onNoteChange={(v) => setDraft({ ...draft, distressNote: v })}
-            hint={h ? STEP_HINTS.distress : undefined}
+            hint={guidedMode ? STEP_HINTS.distress : undefined}
           />
         );
       case 6:
@@ -232,7 +235,7 @@ export default function CheckInScreen() {
             note={draft.thoughtsNote}
             onTypeChange={(v) => setDraft({ ...draft, thoughtsType: v })}
             onNoteChange={(v) => setDraft({ ...draft, thoughtsNote: v })}
-            hint={h ? STEP_HINTS.thoughts : undefined}
+            hint={guidedMode ? STEP_HINTS.thoughts : undefined}
           />
         );
       case 7:
@@ -240,7 +243,7 @@ export default function CheckInScreen() {
           <StepSelfCare
             value={draft.selfCareNote}
             onValueChange={(v) => setDraft({ ...draft, selfCareNote: v })}
-            hint={h ? STEP_HINTS.selfCare : undefined}
+            hint={guidedMode ? STEP_HINTS.selfCare : undefined}
           />
         );
       case 8:
