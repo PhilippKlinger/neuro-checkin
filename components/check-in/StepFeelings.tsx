@@ -3,7 +3,6 @@ import { ChipOrTextStep } from './ChipOrTextStep';
 interface StepFeelingsProps {
   value: string;
   onValueChange: (value: string) => void;
-  tutorialIndex?: number;
 }
 
 export const FEELING_CHIPS = [
@@ -14,7 +13,7 @@ export const FEELING_CHIPS = [
   'Nicht definierbar',
 ] as const;
 
-export function StepFeelings({ value, onValueChange, tutorialIndex }: StepFeelingsProps) {
+export function StepFeelings({ value, onValueChange }: StepFeelingsProps) {
   return (
     <ChipOrTextStep
       title="Gefühle"
@@ -25,7 +24,6 @@ export function StepFeelings({ value, onValueChange, tutorialIndex }: StepFeelin
       textPlaceholder="Was nimmst du gerade wahr?"
       textAccessibilityLabel="Gefühle beschreiben"
       maxLength={150}
-      tutorialIndex={tutorialIndex}
     />
   );
 }

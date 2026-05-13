@@ -1,11 +1,9 @@
 import { View, Text, ScrollView, StyleSheet } from 'react-native';
-import { AttachStep } from 'react-native-spotlight-tour';
 import { useTheme } from '../../lib/hooks/useTheme';
 import { CheckInDraft, ENERGY_LABELS, FOCUS_LABELS, DISTRESS_LABELS, getLevelLabel } from '../../lib/types/checkin';
 
 interface StepSummaryProps {
   draft: CheckInDraft;
-  tutorialIndex?: number;
   showPostFirstCheckinHint?: boolean;
 }
 
@@ -30,7 +28,7 @@ function getSignalLabel(val: boolean | null): string {
   return '—';
 }
 
-export function StepSummary({ draft, tutorialIndex, showPostFirstCheckinHint }: StepSummaryProps) {
+export function StepSummary({ draft, showPostFirstCheckinHint }: StepSummaryProps) {
   const { theme, spacing, typography, radii } = useTheme();
 
   const bodySignalEntries = [
@@ -252,9 +250,6 @@ export function StepSummary({ draft, tutorialIndex, showPostFirstCheckinHint }: 
     </View>
   );
 
-  if (tutorialIndex !== undefined) {
-    return <AttachStep index={tutorialIndex}>{content}</AttachStep>;
-  }
   return content;
 }
 

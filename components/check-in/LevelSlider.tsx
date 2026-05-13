@@ -1,5 +1,4 @@
 import { View, Text, Pressable, StyleSheet } from 'react-native';
-import { AttachStep } from 'react-native-spotlight-tour';
 import { useTheme } from '../../lib/hooks/useTheme';
 
 interface LevelSliderProps {
@@ -8,7 +7,6 @@ interface LevelSliderProps {
   value: number; // 0 = unselected, 1-5 = selected
   onValueChange: (value: number) => void;
   labels: readonly string[]; // exactly 5 semantic labels
-  tutorialIndex?: number;
 }
 
 export function LevelSlider({
@@ -17,7 +15,6 @@ export function LevelSlider({
   value,
   onValueChange,
   labels,
-  tutorialIndex,
 }: LevelSliderProps) {
   const { theme, spacing, typography } = useTheme();
 
@@ -46,15 +43,7 @@ export function LevelSlider({
         {subtitle}
       </Text>
 
-      {tutorialIndex !== undefined ? (
-        <View style={styles.attachWrap}>
-          <AttachStep index={tutorialIndex}>
-            <RadioGroup title={title} labels={labels} value={value} onValueChange={onValueChange} />
-          </AttachStep>
-        </View>
-      ) : (
-        <RadioGroup title={title} labels={labels} value={value} onValueChange={onValueChange} />
-      )}
+      <RadioGroup title={title} labels={labels} value={value} onValueChange={onValueChange} />
     </View>
   );
 }
@@ -124,9 +113,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
-  },
-  attachWrap: {
-    width: '100%',
   },
   optionList: {
     width: '100%',
