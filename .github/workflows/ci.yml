@@ -27,8 +27,17 @@ jobs:
       - name: Dependency vulnerability check
         run: npm audit --audit-level=high
 
+      - name: Repo hygiene check
+        run: node scripts/check-repo-hygiene.mjs
+
+      - name: Format check
+        run: npm run format:check
+
       - name: Lint
         run: npx expo lint
 
       - name: TypeScript check
         run: npx tsc --noEmit
+
+      - name: Expo Doctor
+        run: npx expo-doctor
