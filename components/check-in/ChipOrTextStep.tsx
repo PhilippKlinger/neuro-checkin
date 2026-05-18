@@ -161,7 +161,7 @@ export function ChipOrTextStep({
         <>
           <TextInput
             value={value}
-            onChangeText={onValueChange}
+            onChangeText={(text) => onValueChange(text.slice(0, maxLength))}
             placeholder={textPlaceholder}
             placeholderTextColor={theme.colors.textSecondary}
             multiline

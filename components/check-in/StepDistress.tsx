@@ -178,7 +178,7 @@ export function StepDistress({
       {noteOpen && (
         <TextInput
           value={distressNote}
-          onChangeText={onNoteChange}
+          onChangeText={(text) => onNoteChange(text.slice(0, 200))}
           placeholder="(optional)"
           placeholderTextColor={theme.colors.textSecondary}
           multiline

@@ -116,7 +116,7 @@ export function StepThoughts({
 
       <TextInput
         value={note}
-        onChangeText={onNoteChange}
+        onChangeText={(text) => onNoteChange(text.slice(0, 200))}
         placeholder="Möchtest du dazu etwas notieren? (optional)"
         placeholderTextColor={theme.colors.textSecondary}
         multiline
