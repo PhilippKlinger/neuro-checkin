@@ -15,6 +15,7 @@ import { StepEnergy } from '../components/check-in/StepEnergy';
 import { StepFocus } from '../components/check-in/StepFocus';
 import { QuickStepFeelings } from '../components/check-in/QuickStepFeelings';
 import { STEP_HINTS } from '../lib/constants/hintConfig';
+import * as Sentry from '@sentry/react-native';
 
 const TOTAL_STEPS = 3;
 const STEP_NAMES = ['Energie-Level', 'Fokus-Level', 'Gefühle'];
@@ -36,16 +37,19 @@ export default function QuickCheckInScreen() {
 
   useFocusEffect(
     useCallback(() => {
+      let cancelled = false;
       async function loadGuidedState() {
         try {
           const settings = await getSettings(db);
+          if (cancelled) return;
           setGuidedMode(settings.guidedModeEnabled);
           setShowToggleIntroHint(!settings.guidedToggleIntroduced);
         } catch {
-          // Non-critical
+          // Non-critical — guided mode defaults are safe fallbacks
         }
       }
       loadGuidedState();
+      return () => { cancelled = true; };
     }, [db])
   );
 
@@ -59,7 +63,7 @@ export default function QuickCheckInScreen() {
         await updateSettings(db, { guidedModeEnabled: value });
       }
     } catch {
-      // Non-critical
+      setGuidedMode(!value);
     }
   }
 
@@ -116,7 +120,7 @@ export default function QuickCheckInScreen() {
       });
       setIsDone(true);
     } catch (error) {
-      console.error('[QuickCheckIn] save failed:', error instanceof Error ? error.message : String(error));
+      Sentry.captureException(error);
       Alert.alert('Fehler beim Speichern', 'Check-in konnte nicht gespeichert werden.');
     } finally {
       setIsSaving(false);

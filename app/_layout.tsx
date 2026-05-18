@@ -25,7 +25,7 @@ Sentry.init({
     // (component state, extra fields). The app promises local-only storage.
     const sensitiveKeys = [
       'feelings', 'thoughtsNote', 'selfCareNote', 'innerPart', 'note',
-      'draft', 'bodySignals',
+      'draft', 'bodySignals', 'distressLevel', 'distressNote', 'energyLevel', 'focusLevel',
     ];
     function scrub(obj: Record<string, unknown>) {
       for (const key of sensitiveKeys) {
@@ -41,8 +41,9 @@ Sentry.init({
     return event;
   },
   beforeBreadcrumb(breadcrumb) {
-    // Skip console breadcrumbs — they could contain user-entered content
-    if (breadcrumb.category === 'console') return null;
+    // Skip console + http breadcrumbs — console could contain user-entered content,
+    // http breadcrumbs could expose Formspree payloads
+    if (breadcrumb.category === 'console' || breadcrumb.category === 'http') return null;
     return breadcrumb;
   },
 });

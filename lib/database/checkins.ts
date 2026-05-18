@@ -96,7 +96,17 @@ export async function deleteAllCheckIns(db: SQLiteDatabase): Promise<void> {
 
 function parseBodySignals(raw: string): BodySignals {
   try {
-    return JSON.parse(raw) as BodySignals;
+    const parsed = JSON.parse(raw);
+    if (!parsed || typeof parsed !== 'object') return { ...EMPTY_BODY_SIGNALS };
+    return {
+      hunger: parsed.hunger === true ? true : parsed.hunger === false ? false : null,
+      thirst: parsed.thirst === true ? true : parsed.thirst === false ? false : null,
+      temperature: parsed.temperature === true ? true : parsed.temperature === false ? false : null,
+      pain: parsed.pain === true ? true : parsed.pain === false ? false : null,
+      restroom: parsed.restroom === true ? true : parsed.restroom === false ? false : null,
+      seating: parsed.seating === true ? true : parsed.seating === false ? false : null,
+      externalStimuli: parsed.externalStimuli === true ? true : parsed.externalStimuli === false ? false : null,
+    };
   } catch {
     return { ...EMPTY_BODY_SIGNALS };
   }
