@@ -4,10 +4,12 @@ import { ENERGY_LABELS } from '../../lib/types/checkin';
 interface StepEnergyProps {
   value: number;
   onValueChange: (value: number) => void;
+  skipped?: boolean;
+  onSkip?: () => void;
   hint?: string;
 }
 
-export function StepEnergy({ value, onValueChange, hint }: StepEnergyProps) {
+export function StepEnergy({ value, onValueChange, skipped, onSkip, hint }: StepEnergyProps) {
   return (
     <LevelSlider
       title="Energie-Level"
@@ -15,6 +17,8 @@ export function StepEnergy({ value, onValueChange, hint }: StepEnergyProps) {
       value={value}
       onValueChange={onValueChange}
       labels={ENERGY_LABELS}
+      skipped={skipped}
+      onSkip={onSkip}
       hint={hint}
     />
   );

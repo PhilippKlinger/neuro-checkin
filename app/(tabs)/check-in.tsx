@@ -127,7 +127,8 @@ export default function CheckInScreen() {
   const canGoBack = step > 0;
   const isLastStep = step === TOTAL_STEPS - 1;
   const isStepBlocked =
-    (step === 1 && draft.energyLevel === 0) || (step === 2 && draft.focusLevel === 0);
+    (step === 1 && draft.energyLevel === 0 && !draft.energySkipped) ||
+    (step === 2 && draft.focusLevel === 0 && !draft.focusSkipped);
   const isNextDisabled = isSaving || isStepBlocked;
 
   useEffect(() => {
@@ -165,6 +166,8 @@ export default function CheckInScreen() {
       await insertCheckIn(db, {
         energyLevel: draft.energyLevel,
         focusLevel: draft.focusLevel,
+        energySkipped: draft.energySkipped,
+        focusSkipped: draft.focusSkipped,
         bodySignals: draft.bodySignals,
         feelings: draft.feelings,
         distressLevel: draft.distressLevel,
@@ -213,7 +216,9 @@ export default function CheckInScreen() {
         return (
           <StepEnergy
             value={draft.energyLevel}
-            onValueChange={(v) => setDraft({ ...draft, energyLevel: v })}
+            onValueChange={(v) => setDraft({ ...draft, energyLevel: v, energySkipped: false })}
+            skipped={draft.energySkipped}
+            onSkip={() => setDraft({ ...draft, energyLevel: 0, energySkipped: true })}
             hint={guidedMode ? STEP_HINTS.energy : undefined}
           />
         );
@@ -221,7 +226,9 @@ export default function CheckInScreen() {
         return (
           <StepFocus
             value={draft.focusLevel}
-            onValueChange={(v) => setDraft({ ...draft, focusLevel: v })}
+            onValueChange={(v) => setDraft({ ...draft, focusLevel: v, focusSkipped: false })}
+            skipped={draft.focusSkipped}
+            onSkip={() => setDraft({ ...draft, focusLevel: 0, focusSkipped: true })}
             hint={guidedMode ? STEP_HINTS.focus : undefined}
           />
         );

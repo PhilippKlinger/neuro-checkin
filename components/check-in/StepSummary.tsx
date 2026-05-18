@@ -115,13 +115,13 @@ export function StepSummary({ draft, showPostFirstCheckinHint }: StepSummaryProp
           <View style={[styles.row, { marginBottom: spacing.sm }]}>
             <Text style={rowLabel(typography, theme)}>Energie</Text>
             <Text style={rowValue(typography, theme)}>
-              {getLevelLabel(draft.energyLevel, ENERGY_LABELS)}
+              {draft.energySkipped ? 'Nicht angegeben' : getLevelLabel(draft.energyLevel, ENERGY_LABELS)}
             </Text>
           </View>
           <View style={styles.row}>
             <Text style={rowLabel(typography, theme)}>Fokus</Text>
             <Text style={rowValue(typography, theme)}>
-              {getLevelLabel(draft.focusLevel, FOCUS_LABELS)}
+              {draft.focusSkipped ? 'Nicht angegeben' : getLevelLabel(draft.focusLevel, FOCUS_LABELS)}
             </Text>
           </View>
         </View>
