@@ -21,6 +21,7 @@ import { StepSelfCare } from '../../components/check-in/StepSelfCare';
 import { StepSummary } from '../../components/check-in/StepSummary';
 import { STEP_HINTS } from '../../lib/constants/hintConfig';
 import { INACTIVITY_TIMEOUT_MS } from '../../lib/constants/timing';
+import * as Sentry from '@sentry/react-native';
 
 const TOTAL_STEPS = 9;
 
@@ -158,7 +159,7 @@ export default function CheckInScreen() {
       });
       setIsDone(true);
     } catch (error) {
-      console.error('[CheckIn] save failed:', error instanceof Error ? error.message : String(error));
+      Sentry.captureException(error);
       Alert.alert('Fehler beim Speichern', 'Check-in konnte nicht gespeichert werden. Bitte versuche es erneut.');
     } finally {
       setIsSaving(false);

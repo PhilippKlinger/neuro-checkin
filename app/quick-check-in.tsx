@@ -15,6 +15,7 @@ import { StepEnergy } from '../components/check-in/StepEnergy';
 import { StepFocus } from '../components/check-in/StepFocus';
 import { QuickStepFeelings } from '../components/check-in/QuickStepFeelings';
 import { STEP_HINTS } from '../lib/constants/hintConfig';
+import * as Sentry from '@sentry/react-native';
 
 const TOTAL_STEPS = 3;
 const STEP_NAMES = ['Energie-Level', 'Fokus-Level', 'Gefühle'];
@@ -116,7 +117,7 @@ export default function QuickCheckInScreen() {
       });
       setIsDone(true);
     } catch (error) {
-      console.error('[QuickCheckIn] save failed:', error instanceof Error ? error.message : String(error));
+      Sentry.captureException(error);
       Alert.alert('Fehler beim Speichern', 'Check-in konnte nicht gespeichert werden.');
     } finally {
       setIsSaving(false);
