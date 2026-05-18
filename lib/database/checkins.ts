@@ -7,8 +7,9 @@ export async function insertCheckIn(db: SQLiteDatabase, data: CheckInInsert): Pr
     `INSERT INTO check_ins (
       energy_level, focus_level, body_signals, feelings,
       distress_level, distress_note,
-      thoughts_type, thoughts_note, self_care_note, inner_part, note
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      thoughts_type, thoughts_note, self_care_note, inner_part, note,
+      energy_skipped, focus_skipped
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     data.energyLevel,
     data.focusLevel,
     JSON.stringify(data.bodySignals),
@@ -19,7 +20,9 @@ export async function insertCheckIn(db: SQLiteDatabase, data: CheckInInsert): Pr
     data.thoughtsNote,
     data.selfCareNote,
     data.innerPart,
-    data.note
+    data.note,
+    data.energySkipped ? 1 : 0,
+    data.focusSkipped ? 1 : 0
   );
   return result.lastInsertRowId;
 }
@@ -30,6 +33,8 @@ export async function getCheckIns(db: SQLiteDatabase, limit = 50, offset = 0): P
     created_at: string;
     energy_level: number;
     focus_level: number;
+    energy_skipped: number;
+    focus_skipped: number;
     body_signals: string;
     feelings: string;
     distress_level: number | null;
@@ -50,6 +55,8 @@ export async function getCheckInById(db: SQLiteDatabase, id: number): Promise<Ch
     created_at: string;
     energy_level: number;
     focus_level: number;
+    energy_skipped: number;
+    focus_skipped: number;
     body_signals: string;
     feelings: string;
     distress_level: number | null;
@@ -101,6 +108,8 @@ function mapRowToCheckIn(row: {
   created_at: string;
   energy_level: number;
   focus_level: number;
+  energy_skipped: number;
+  focus_skipped: number;
   body_signals: string;
   feelings: string;
   distress_level: number | null;
@@ -116,6 +125,8 @@ function mapRowToCheckIn(row: {
     createdAt: row.created_at,
     energyLevel: row.energy_level,
     focusLevel: row.focus_level,
+    energySkipped: row.energy_skipped === 1,
+    focusSkipped: row.focus_skipped === 1,
     bodySignals: parseBodySignals(row.body_signals),
     feelings: row.feelings,
     distressLevel: row.distress_level,
