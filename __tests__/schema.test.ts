@@ -17,7 +17,7 @@ function makeDb(currentVersion = 0) {
       runCalls.push(sql);
       return Promise.resolve({ lastInsertRowId: 0, changes: 0 });
     }),
-    getFirstAsync: jest.fn((sql: string) => {
+    getFirstAsync: jest.fn((sql: string): Promise<unknown> => {
       if (sql === 'PRAGMA user_version;') {
         return Promise.resolve({ user_version: currentVersion });
       }
@@ -140,7 +140,7 @@ describe('migrateDatabase — v4 legacy reminder migration', () => {
   it('migrates a legacy enabled reminder into slot 0', async () => {
     // Override getFirstAsync to simulate an active legacy reminder
     const db = makeDb(3);
-    db.getFirstAsync = jest.fn((sql: string) => {
+    db.getFirstAsync = jest.fn((sql: string): Promise<unknown> => {
       if (sql === 'PRAGMA user_version;') return Promise.resolve({ user_version: 3 });
       if (sql.includes('SELECT reminder_enabled'))
         return Promise.resolve({ reminder_enabled: 1, reminder_time: '07:30' });

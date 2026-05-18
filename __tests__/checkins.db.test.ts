@@ -13,7 +13,13 @@ import { EMPTY_BODY_SIGNALS } from '../lib/types/checkin';
 // Minimal expo-sqlite mock
 // ---------------------------------------------------------------------------
 
-function makeDb(overrides: Partial<ReturnType<typeof makeDb>> = {}) {
+interface MockDb {
+  runAsync: jest.Mock;
+  getAllAsync: jest.Mock;
+  getFirstAsync: jest.Mock;
+}
+
+function makeDb(overrides: Partial<MockDb> = {}): MockDb {
   return {
     runAsync: jest.fn().mockResolvedValue({ lastInsertRowId: 1, changes: 1 }),
     getAllAsync: jest.fn().mockResolvedValue([]),
