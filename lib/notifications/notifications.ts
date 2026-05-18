@@ -52,7 +52,6 @@ export async function requestNotificationPermission(): Promise<boolean | 'emulat
   return status === 'granted';
 }
 
-
 function slotIdentifier(slotId: number, weekdayIndex: number): string {
   return `slot-${slotId}-wd-${weekdayIndex}`;
 }

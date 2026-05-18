@@ -34,11 +34,11 @@ Designed for people with autism, ADHD, or high inner complexity who need a calm,
 
 ## Prerequisites
 
-| Requirement | Version |
-|-------------|---------|
-| Node.js | 18 or later |
-| EAS CLI | latest (`npm install -g eas-cli`) |
-| Android emulator or physical device | API 26+ |
+| Requirement                         | Version                           |
+| ----------------------------------- | --------------------------------- |
+| Node.js                             | 18 or later                       |
+| EAS CLI                             | latest (`npm install -g eas-cli`) |
+| Android emulator or physical device | API 26+                           |
 
 The app runs as a custom development build. Expo Go is not supported.
 
@@ -111,9 +111,9 @@ Copy `.env.example` to `.env` and fill in the values.
 cp .env.example .env
 ```
 
-| Variable | Purpose |
-|----------|---------|
-| `SENTRY_DSN` | Sentry project DSN for crash reporting |
+| Variable        | Purpose                                         |
+| --------------- | ----------------------------------------------- |
+| `SENTRY_DSN`    | Sentry project DSN for crash reporting          |
 | `FORMSPREE_URL` | Formspree endpoint for the in-app feedback form |
 
 Values are read at build time via `app.config.js` and injected into the bundle through the Expo `extra` field. For EAS builds, set them as EAS Secrets.
@@ -127,13 +127,13 @@ eas secret:create --name FORMSPREE_URL --value "your-url"
 
 ## Scripts
 
-| Command | When to use |
-|---------|-------------|
-| `npx expo run:android` | First-time build or after adding native packages |
-| `npx expo start` | Normal development session |
-| `npx expo start --android` | Development session and open emulator |
-| `eas build --platform android` | Production build via EAS cloud |
-| `eas build --local --profile preview` | Local production build via WSL2 |
+| Command                               | When to use                                      |
+| ------------------------------------- | ------------------------------------------------ |
+| `npx expo run:android`                | First-time build or after adding native packages |
+| `npx expo start`                      | Normal development session                       |
+| `npx expo start --android`            | Development session and open emulator            |
+| `eas build --platform android`        | Production build via EAS cloud                   |
+| `eas build --local --profile preview` | Local production build via WSL2                  |
 
 ---
 

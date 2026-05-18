@@ -1,5 +1,13 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
-import { View, Text, Pressable, StyleSheet, Alert, AccessibilityInfo, findNodeHandle } from 'react-native';
+import {
+  View,
+  Text,
+  Pressable,
+  StyleSheet,
+  Alert,
+  AccessibilityInfo,
+  findNodeHandle,
+} from 'react-native';
 import { useRouter, useFocusEffect } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../lib/hooks/useTheme';
@@ -34,6 +42,7 @@ export default function QuickCheckInScreen() {
   const [guidedMode, setGuidedMode] = useState(true);
   const [showToggleIntroHint, setShowToggleIntroHint] = useState(false);
   const stepContentRef = useRef<View>(null);
+  const savingRef = useRef(false);
 
   useFocusEffect(
     useCallback(() => {
@@ -49,7 +58,9 @@ export default function QuickCheckInScreen() {
         }
       }
       loadGuidedState();
-      return () => { cancelled = true; };
+      return () => {
+        cancelled = true;
+      };
     }, [db])
   );
 
@@ -68,9 +79,7 @@ export default function QuickCheckInScreen() {
   }
 
   // Energy and focus are required; feelings are optional
-  const isStepBlocked =
-    (step === 0 && energyLevel === 0) ||
-    (step === 1 && focusLevel === 0);
+  const isStepBlocked = (step === 0 && energyLevel === 0) || (step === 1 && focusLevel === 0);
   const isNextDisabled = isSaving || isStepBlocked;
   const isLastStep = step === TOTAL_STEPS - 1;
 
@@ -103,6 +112,8 @@ export default function QuickCheckInScreen() {
   }
 
   async function handleSave() {
+    if (savingRef.current) return;
+    savingRef.current = true;
     setIsSaving(true);
     try {
       await insertCheckIn(db, {
@@ -124,6 +135,7 @@ export default function QuickCheckInScreen() {
       Alert.alert('Fehler beim Speichern', 'Check-in konnte nicht gespeichert werden.');
     } finally {
       setIsSaving(false);
+      savingRef.current = false;
     }
   }
 
@@ -137,11 +149,7 @@ export default function QuickCheckInScreen() {
 
   if (isDone) {
     return (
-      <CheckInSuccessView
-        onReset={handleReset}
-        energyLevel={energyLevel}
-        focusLevel={focusLevel}
-      />
+      <CheckInSuccessView onReset={handleReset} energyLevel={energyLevel} focusLevel={focusLevel} />
     );
   }
 
@@ -188,10 +196,7 @@ export default function QuickCheckInScreen() {
         showIntroHint={showToggleIntroHint}
       />
 
-      <FadeView
-        triggerKey={step}
-        style={[styles.stepContent, { padding: spacing.lg }]}
-      >
+      <FadeView triggerKey={step} style={[styles.stepContent, { padding: spacing.lg }]}>
         <View
           ref={stepContentRef}
           accessibilityLabel={`Schritt ${step + 1} von ${TOTAL_STEPS}: ${STEP_NAMES[step]}`}
@@ -247,9 +252,7 @@ export default function QuickCheckInScreen() {
             {
               minHeight: touchTarget.min,
               borderRadius: radii.md,
-              backgroundColor: isNextDisabled
-                ? theme.colors.border
-                : theme.colors.primary,
+              backgroundColor: isNextDisabled ? theme.colors.border : theme.colors.primary,
             },
             pressed && !isNextDisabled && { opacity: 0.75 },
           ]}

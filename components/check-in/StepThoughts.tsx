@@ -23,18 +23,17 @@ const OPTIONS: OptionItem[] = [
   { value: 'mixed', label: 'Gemischt' },
 ];
 
-export function StepThoughts({
-  type,
-  note,
-  onTypeChange,
-  onNoteChange,
-  hint,
-}: StepThoughtsProps) {
+export function StepThoughts({ type, note, onTypeChange, onNoteChange, hint }: StepThoughtsProps) {
   const { theme, spacing, typography, radii, touchTarget } = useTheme();
   const scrollRef = useRef<ScrollView>(null);
 
   return (
-    <ScrollView ref={scrollRef} style={styles.container} contentContainerStyle={styles.contentContainer} showsVerticalScrollIndicator={false}>
+    <ScrollView
+      ref={scrollRef}
+      style={styles.container}
+      contentContainerStyle={styles.contentContainer}
+      showsVerticalScrollIndicator={false}
+    >
       <Text
         style={{
           fontFamily: typography.families.heading.semibold,
@@ -77,22 +76,16 @@ export function StepThoughts({
           return (
             <Pressable
               key={option.value}
-              onPress={() =>
-                onTypeChange(isSelected ? null : option.value)
-              }
+              onPress={() => onTypeChange(isSelected ? null : option.value)}
               style={({ pressed }) => [
                 styles.optionButton,
                 {
                   minHeight: touchTarget.min,
                   borderRadius: radii.md,
                   paddingHorizontal: spacing.md,
-                  backgroundColor: isSelected
-                    ? theme.colors.accentSoft
-                    : theme.colors.surface,
+                  backgroundColor: isSelected ? theme.colors.accentSoft : theme.colors.surface,
                   borderWidth: 1,
-                  borderColor: isSelected
-                    ? theme.colors.accent
-                    : theme.colors.border,
+                  borderColor: isSelected ? theme.colors.accent : theme.colors.border,
                 },
                 pressed && { opacity: 0.75 },
               ]}
@@ -122,7 +115,10 @@ export function StepThoughts({
         multiline
         maxLength={200}
         textAlignVertical="top"
-        onFocus={() => setTimeout(() => scrollRef.current?.scrollToEnd({ animated: true }), 300)}
+        onFocus={() => {
+          const t = setTimeout(() => scrollRef.current?.scrollToEnd({ animated: true }), 300);
+          return () => clearTimeout(t);
+        }}
         style={[
           styles.noteInput,
           {
@@ -151,7 +147,6 @@ export function StepThoughts({
           {note.length >= 200 ? '✓' : `${note.length} / 200`}
         </Text>
       )}
-
     </ScrollView>
   );
 }

@@ -74,54 +74,44 @@ interface RadioGroupProps {
 function RadioGroup({ title, labels, value, onValueChange }: RadioGroupProps) {
   const { theme, spacing, typography, radii, touchTarget } = useTheme();
   return (
-      <View
-        accessibilityRole="radiogroup"
-        accessibilityLabel={title}
-        style={styles.optionList}
-      >
-        {labels.map((label, index) => {
-          const level = index + 1;
-          const isSelected = level === value;
-          return (
-            <Pressable
-              key={level}
-              onPress={() => onValueChange(level)}
-              style={[
-                styles.option,
-                {
-                  minHeight: touchTarget.min,
-                  borderRadius: radii.md,
-                  backgroundColor: isSelected
-                    ? theme.colors.accentSoft
-                    : theme.colors.surface,
-                  borderWidth: 1,
-                  borderColor: isSelected
-                    ? theme.colors.accent
-                    : theme.colors.border,
-                  marginBottom: spacing.sm,
-                  paddingHorizontal: spacing.md,
-                },
-              ]}
-              accessibilityRole="radio"
-              accessibilityLabel={label}
-              accessibilityHint={`${title} auf "${label}" setzen`}
-              accessibilityState={{ checked: isSelected }}
+    <View accessibilityRole="radiogroup" accessibilityLabel={title} style={styles.optionList}>
+      {labels.map((label, index) => {
+        const level = index + 1;
+        const isSelected = level === value;
+        return (
+          <Pressable
+            key={level}
+            onPress={() => onValueChange(level)}
+            style={[
+              styles.option,
+              {
+                minHeight: touchTarget.min,
+                borderRadius: radii.md,
+                backgroundColor: isSelected ? theme.colors.accentSoft : theme.colors.surface,
+                borderWidth: 1,
+                borderColor: isSelected ? theme.colors.accent : theme.colors.border,
+                marginBottom: spacing.sm,
+                paddingHorizontal: spacing.md,
+              },
+            ]}
+            accessibilityRole="radio"
+            accessibilityLabel={label}
+            accessibilityHint={`${title} auf "${label}" setzen`}
+            accessibilityState={{ checked: isSelected }}
+          >
+            <Text
+              style={{
+                fontFamily: typography.families.ui.medium,
+                fontSize: typography.sizes.md,
+                color: isSelected ? theme.colors.text : theme.colors.text,
+              }}
             >
-              <Text
-                style={{
-                  fontFamily: typography.families.ui.medium,
-                  fontSize: typography.sizes.md,
-                  color: isSelected
-                    ? theme.colors.text
-                    : theme.colors.text,
-                }}
-              >
-                {label}
-              </Text>
-            </Pressable>
-          );
-        })}
-      </View>
+              {label}
+            </Text>
+          </Pressable>
+        );
+      })}
+    </View>
   );
 }
 

@@ -28,8 +28,7 @@ export function StepIndicator({ totalSteps, currentStep }: StepIndicatorProps) {
           style={[
             styles.dot,
             {
-              backgroundColor:
-                i <= currentStep ? theme.colors.accent : theme.colors.border,
+              backgroundColor: i <= currentStep ? theme.colors.accent : theme.colors.border,
               borderRadius: radii.full,
               marginHorizontal: spacing.xs,
             },

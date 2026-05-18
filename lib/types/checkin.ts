@@ -44,9 +44,9 @@ export interface UserSettings {
 
 /** A single configurable notification time slot (e.g. morning or evening). */
 export interface NotificationSlot {
-  id: 0 | 1;       // 0 = morning, 1 = evening
+  id: 0 | 1; // 0 = morning, 1 = evening
   enabled: boolean;
-  time: string;     // HH:mm
+  time: string; // HH:mm
   weekdays: number; // bitmask: Mon=1, Tue=2, Wed=4, Thu=8, Fri=16, Sat=32, Sun=64
 }
 
@@ -132,16 +132,20 @@ export const SIGNAL_LABELS: Record<keyof BodySignals, string> = {
 
 export function getThoughtsLabel(type: string | null): string {
   switch (type) {
-    case 'supportive': return 'Unterstützend';
-    case 'burdening': return 'Belastend';
-    case 'mixed': return 'Gemischt';
-    default: return '—';
+    case 'supportive':
+      return 'Unterstützend';
+    case 'burdening':
+      return 'Belastend';
+    case 'mixed':
+      return 'Gemischt';
+    default:
+      return '—';
   }
 }
 
 export const EMPTY_DRAFT: CheckInDraft = {
   energyLevel: 0, // 0 = unselected, forces active choice
-  focusLevel: 0,  // 0 = unselected, forces active choice
+  focusLevel: 0, // 0 = unselected, forces active choice
   bodySignals: { ...EMPTY_BODY_SIGNALS },
   feelings: '',
   distressLevel: null,

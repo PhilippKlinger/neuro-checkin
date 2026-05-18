@@ -46,7 +46,12 @@ export function StepDistress({
   const showNoteToggle = distressLevel !== null && distressLevel >= DISTRESS_NOTE_THRESHOLD;
 
   return (
-    <ScrollView ref={scrollRef} style={styles.container} contentContainerStyle={styles.contentContainer} showsVerticalScrollIndicator={false}>
+    <ScrollView
+      ref={scrollRef}
+      style={styles.container}
+      contentContainerStyle={styles.contentContainer}
+      showsVerticalScrollIndicator={false}
+    >
       <Text
         style={{
           fontFamily: typography.families.heading.semibold,
@@ -83,7 +88,11 @@ export function StepDistress({
           {hint}
         </Text>
       )}
-      <View style={[styles.optionList, { gap: spacing.sm }]} accessibilityRole="radiogroup" accessibilityLabel="Stress-Level">
+      <View
+        style={[styles.optionList, { gap: spacing.sm }]}
+        accessibilityRole="radiogroup"
+        accessibilityLabel="Stress-Level"
+      >
         {LEVEL_OPTIONS.map(({ level, label }) => {
           const isSelected = distressLevel === level;
           return (
@@ -120,7 +129,12 @@ export function StepDistress({
         })}
       </View>
 
-      <View style={[styles.divider, { backgroundColor: theme.colors.border, marginVertical: spacing.md }]} />
+      <View
+        style={[
+          styles.divider,
+          { backgroundColor: theme.colors.border, marginVertical: spacing.md },
+        ]}
+      />
 
       <Pressable
         onPress={handleCannotSay}
@@ -156,9 +170,12 @@ export function StepDistress({
         <Pressable
           onPress={() => {
             setNoteOpen(true);
-            setTimeout(() => scrollRef.current?.scrollToEnd({ animated: true }), 300);
+            const t = setTimeout(() => scrollRef.current?.scrollToEnd({ animated: true }), 300);
+            return () => clearTimeout(t);
           }}
-          style={({ pressed }) => [{ marginTop: spacing.lg, alignItems: 'center', opacity: pressed ? 0.6 : 1 }]}
+          style={({ pressed }) => [
+            { marginTop: spacing.lg, alignItems: 'center', opacity: pressed ? 0.6 : 1 },
+          ]}
           accessibilityRole="button"
           accessibilityLabel="Notiz hinzufügen"
         >
@@ -184,7 +201,10 @@ export function StepDistress({
           multiline
           maxLength={200}
           textAlignVertical="top"
-          onFocus={() => setTimeout(() => scrollRef.current?.scrollToEnd({ animated: true }), 300)}
+          onFocus={() => {
+            const t = setTimeout(() => scrollRef.current?.scrollToEnd({ animated: true }), 300);
+            return () => clearTimeout(t);
+          }}
           style={[
             styles.noteInput,
             {

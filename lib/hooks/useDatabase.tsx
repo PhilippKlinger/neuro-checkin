@@ -47,22 +47,34 @@ export function DatabaseProvider({ children }: DatabaseProviderProps) {
     // ThemeProvider is unavailable here — use tokens directly from themes.ts
     const colors = themes.warmEarth.light.colors;
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: spacing.lg }}>
-        <Text style={{ fontSize: typography.sizes.lg, marginBottom: spacing.sm, textAlign: 'center', color: colors.text }}>
+      <View
+        style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: spacing.lg }}
+      >
+        <Text
+          style={{
+            fontSize: typography.sizes.lg,
+            marginBottom: spacing.sm,
+            textAlign: 'center',
+            color: colors.text,
+          }}
+        >
           Datenbank konnte nicht geladen werden
         </Text>
-        <Text style={{ fontSize: typography.sizes.sm, color: colors.textSecondary, textAlign: 'center' }}>
-          Bitte starte die App neu. Falls das Problem weiterhin besteht, deinstalliere und installiere die App erneut.
+        <Text
+          style={{
+            fontSize: typography.sizes.sm,
+            color: colors.textSecondary,
+            textAlign: 'center',
+          }}
+        >
+          Bitte starte die App neu. Falls das Problem weiterhin besteht, deinstalliere und
+          installiere die App erneut.
         </Text>
       </View>
     );
   }
 
-  return (
-    <DatabaseContext.Provider value={{ db, isReady }}>
-      {children}
-    </DatabaseContext.Provider>
-  );
+  return <DatabaseContext.Provider value={{ db, isReady }}>{children}</DatabaseContext.Provider>;
 }
 
 export function useDatabase(): SQLiteDatabase {

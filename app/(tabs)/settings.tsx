@@ -29,7 +29,17 @@ const DEFAULT_SLOTS: NotificationSlot[] = [
 ];
 
 export default function SettingsScreen() {
-  const { theme, themeName, colorMode, setThemeName, setColorMode, spacing, typography, radii, touchTarget } = useTheme();
+  const {
+    theme,
+    themeName,
+    colorMode,
+    setThemeName,
+    setColorMode,
+    spacing,
+    typography,
+    radii,
+    touchTarget,
+  } = useTheme();
   const db = useDatabase();
   const router = useRouter();
 
@@ -64,55 +74,82 @@ export default function SettingsScreen() {
     }, [db, setThemeName, setColorMode])
   );
 
-  const handleSlotToggle = useCallback(async (slotId: 0 | 1, value: boolean) => {
-    if (value) {
-      const result = await requestNotificationPermission();
-      if (result === false) return;
-    }
-    const updatedSlots = slotsRef.current.map((s) => s.id === slotId ? { ...s, enabled: value } : s);
-    setSlots(updatedSlots);
-    const updated = updatedSlots.find((s) => s.id === slotId)!;
-    await saveNotificationSlot(db, updated);
-    if (Device.isDevice) {
-      if (value) await scheduleSingleSlot(updated);
-      else await cancelSingleSlot(slotId);
-    }
-  }, [db]);
+  const handleSlotToggle = useCallback(
+    async (slotId: 0 | 1, value: boolean) => {
+      if (value) {
+        const result = await requestNotificationPermission();
+        if (result === false) return;
+      }
+      const updatedSlots = slotsRef.current.map((s) =>
+        s.id === slotId ? { ...s, enabled: value } : s
+      );
+      setSlots(updatedSlots);
+      const updated = updatedSlots.find((s) => s.id === slotId)!;
+      await saveNotificationSlot(db, updated);
+      if (Device.isDevice) {
+        if (value) await scheduleSingleSlot(updated);
+        else await cancelSingleSlot(slotId);
+      }
+    },
+    [db]
+  );
 
-  const handleTimeChange = useCallback(async (slotId: 0 | 1, _event: DateTimePickerEvent, selected?: Date) => {
-    if (Platform.OS === 'android') setShowTimePicker(null);
-    if (!selected) return;
-    const time = dateToTimeString(selected);
-    const updatedSlots = slotsRef.current.map((s) => s.id === slotId ? { ...s, time } : s);
-    setSlots(updatedSlots);
-    const updated = updatedSlots.find((s) => s.id === slotId)!;
-    await saveNotificationSlot(db, updated);
-    if (updated.enabled && Device.isDevice) await scheduleSingleSlot(updated);
-  }, [db]);
+  const handleTimeChange = useCallback(
+    async (slotId: 0 | 1, _event: DateTimePickerEvent, selected?: Date) => {
+      if (Platform.OS === 'android') setShowTimePicker(null);
+      if (!selected) return;
+      const time = dateToTimeString(selected);
+      const updatedSlots = slotsRef.current.map((s) => (s.id === slotId ? { ...s, time } : s));
+      setSlots(updatedSlots);
+      const updated = updatedSlots.find((s) => s.id === slotId)!;
+      await saveNotificationSlot(db, updated);
+      if (updated.enabled && Device.isDevice) await scheduleSingleSlot(updated);
+    },
+    [db]
+  );
 
-  const handleWeekdayToggle = useCallback(async (slotId: 0 | 1, bitIndex: number) => {
-    const bit = WEEKDAY_BITS[bitIndex];
-    const updatedSlots = slotsRef.current.map((s) => {
-      if (s.id !== slotId) return s;
-      const newWeekdays = (s.weekdays & bit) ? s.weekdays & ~bit : s.weekdays | bit;
-      if (newWeekdays === 0) return s;
-      return { ...s, weekdays: newWeekdays };
-    });
-    setSlots(updatedSlots);
-    const updated = updatedSlots.find((s) => s.id === slotId)!;
-    await saveNotificationSlot(db, updated);
-    if (updated.enabled && Device.isDevice) await scheduleSingleSlot(updated);
-  }, [db]);
+  const handleWeekdayToggle = useCallback(
+    async (slotId: 0 | 1, bitIndex: number) => {
+      const bit = WEEKDAY_BITS[bitIndex];
+      const updatedSlots = slotsRef.current.map((s) => {
+        if (s.id !== slotId) return s;
+        const newWeekdays = s.weekdays & bit ? s.weekdays & ~bit : s.weekdays | bit;
+        if (newWeekdays === 0) return s;
+        return { ...s, weekdays: newWeekdays };
+      });
+      setSlots(updatedSlots);
+      const updated = updatedSlots.find((s) => s.id === slotId)!;
+      await saveNotificationSlot(db, updated);
+      if (updated.enabled && Device.isDevice) await scheduleSingleSlot(updated);
+    },
+    [db]
+  );
 
-  const handleModeChange = useCallback(async (mode: ColorMode) => {
-    setColorMode(mode);
-    await updateSettings(db, { colorMode: mode });
-  }, [db, setColorMode]);
+  const handleModeChange = useCallback(
+    async (mode: ColorMode) => {
+      const previous = colorMode;
+      setColorMode(mode);
+      try {
+        await updateSettings(db, { colorMode: mode });
+      } catch {
+        setColorMode(previous);
+      }
+    },
+    [db, colorMode, setColorMode]
+  );
 
-  const handleThemeChange = useCallback(async (name: ThemeName) => {
-    setThemeName(name);
-    await updateSettings(db, { themeName: name });
-  }, [db, setThemeName]);
+  const handleThemeChange = useCallback(
+    async (name: ThemeName) => {
+      const previous = themeName;
+      setThemeName(name);
+      try {
+        await updateSettings(db, { themeName: name });
+      } catch {
+        setThemeName(previous);
+      }
+    },
+    [db, themeName, setThemeName]
+  );
 
   const handleTimePress = useCallback((id: 0 | 1) => setShowTimePicker(id), []);
 
@@ -209,10 +246,22 @@ export default function SettingsScreen() {
           accessibilityRole="button"
           accessibilityLabel="Was ist ein Check-in? Mehr erfahren"
         >
-          <Text style={{ fontFamily: typography.families.body.regular, fontSize: typography.sizes.md, color: theme.colors.text }}>
+          <Text
+            style={{
+              fontFamily: typography.families.body.regular,
+              fontSize: typography.sizes.md,
+              color: theme.colors.text,
+            }}
+          >
             Was ist ein Check-in?
           </Text>
-          <Text style={{ fontFamily: typography.families.body.regular, fontSize: typography.sizes.md, color: theme.colors.textSecondary }}>
+          <Text
+            style={{
+              fontFamily: typography.families.body.regular,
+              fontSize: typography.sizes.md,
+              color: theme.colors.textSecondary,
+            }}
+          >
             ›
           </Text>
         </Pressable>

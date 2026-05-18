@@ -1,5 +1,13 @@
 import { useState } from 'react';
-import { Modal, View, KeyboardAvoidingView, Platform, StyleSheet, Text, Pressable } from 'react-native';
+import {
+  Modal,
+  View,
+  KeyboardAvoidingView,
+  Platform,
+  StyleSheet,
+  Text,
+  Pressable,
+} from 'react-native';
 import Constants from 'expo-constants';
 import { useTheme } from '../../lib/hooks/useTheme';
 import { FORMSPREE_URL } from '../../lib/constants/config';
@@ -65,9 +73,22 @@ export function FeedbackModal({ visible, onClose }: FeedbackModalProps) {
         style={[styles.container, { padding: spacing.lg }]}
         pointerEvents="box-none"
       >
-        <View style={{ width: '100%', backgroundColor: theme.colors.background, borderRadius: radii.lg, padding: spacing.lg }}>
+        <View
+          style={{
+            width: '100%',
+            backgroundColor: theme.colors.background,
+            borderRadius: radii.lg,
+            padding: spacing.lg,
+          }}
+        >
           {!feedbackAvailable ? (
-            <Text style={{ fontFamily: typography.families.body.regular, fontSize: typography.sizes.md, color: theme.colors.textSecondary }}>
+            <Text
+              style={{
+                fontFamily: typography.families.body.regular,
+                fontSize: typography.sizes.md,
+                color: theme.colors.textSecondary,
+              }}
+            >
               Feedback ist derzeit nicht verfügbar.
             </Text>
           ) : feedbackSuccess ? (

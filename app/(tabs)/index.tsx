@@ -43,12 +43,16 @@ export default function HomeScreen() {
         }
       }
       load();
-      return () => { cancelled = true; };
+      return () => {
+        cancelled = true;
+      };
     }, [db])
   );
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.colors.background, padding: spacing.lg }]}>
+    <View
+      style={[styles.container, { backgroundColor: theme.colors.background, padding: spacing.lg }]}
+    >
       <Text
         style={{
           fontFamily: typography.families.heading.semibold,
@@ -63,8 +67,8 @@ export default function HomeScreen() {
         {getGreeting()}
       </Text>
 
-      {isLoaded && (
-        latestCheckIn ? (
+      {isLoaded &&
+        (latestCheckIn ? (
           <Pressable
             onPress={() => router.push(`/history/${latestCheckIn.id}`)}
             style={({ pressed }) => [
@@ -117,8 +121,7 @@ export default function HomeScreen() {
           >
             Bereit, wenn du es bist.
           </Text>
-        )
-      )}
+        ))}
 
       <View style={styles.spacer} />
 

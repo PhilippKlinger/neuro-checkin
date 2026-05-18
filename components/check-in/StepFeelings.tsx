@@ -7,10 +7,23 @@ interface StepFeelingsProps {
 }
 
 export const FEELING_CHIPS = [
-  'neutral', 'leer', 'erschöpft', 'angespannt', 'überwältigt',
-  'gereizt', 'abgestumpft', 'traurig', 'ängstlich', 'leicht',
-  'frustriert', 'zufrieden', 'freudig', 'dankbar', 'motiviert',
-  'verwirrt', 'aufgedreht',
+  'neutral',
+  'leer',
+  'erschöpft',
+  'angespannt',
+  'überwältigt',
+  'gereizt',
+  'abgestumpft',
+  'traurig',
+  'ängstlich',
+  'leicht',
+  'frustriert',
+  'zufrieden',
+  'freudig',
+  'dankbar',
+  'motiviert',
+  'verwirrt',
+  'aufgedreht',
   'Nicht definierbar',
 ] as const;
 

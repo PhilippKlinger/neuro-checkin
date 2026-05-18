@@ -20,7 +20,11 @@ const SIGNALS: SignalItem[] = [
   { key: 'pain', label: 'Schmerzen', description: 'Hast du irgendwo Schmerzen?' },
   { key: 'restroom', label: 'Toilette', description: 'Musst du auf Toilette?' },
   { key: 'seating', label: 'Sitzposition', description: 'Sitzt du unbequem?' },
-  { key: 'externalStimuli', label: 'Reize', description: 'Stören dich Licht, Geräusche oder Gerüche?' },
+  {
+    key: 'externalStimuli',
+    label: 'Reize',
+    description: 'Stören dich Licht, Geräusche oder Gerüche?',
+  },
 ];
 
 export function StepBodySignals({ value, onValueChange, hint }: StepBodySignalsProps) {
@@ -72,10 +76,7 @@ export function StepBodySignals({ value, onValueChange, hint }: StepBodySignalsP
         </Text>
       )}
 
-      <ScrollView
-        style={styles.scrollArea}
-        showsVerticalScrollIndicator={false}
-      >
+      <ScrollView style={styles.scrollArea} showsVerticalScrollIndicator={false}>
         <View style={[styles.signalList, { gap: spacing.sm }]}>
           {SIGNALS.map((signal) => {
             const state = value[signal.key];
@@ -92,9 +93,7 @@ export function StepBodySignals({ value, onValueChange, hint }: StepBodySignalsP
                     paddingVertical: spacing.sm,
                     minHeight: touchTarget.min,
                     borderWidth: 1,
-                    borderColor: state !== null
-                      ? theme.colors.accentSoft
-                      : theme.colors.border,
+                    borderColor: state !== null ? theme.colors.accentSoft : theme.colors.border,
                   },
                 ]}
                 accessibilityLabel={signal.label}
@@ -132,12 +131,9 @@ export function StepBodySignals({ value, onValueChange, hint }: StepBodySignalsP
                         minHeight: touchTarget.min,
                         borderRadius: radii.sm,
                         borderWidth: 2,
-                        backgroundColor: state === true
-                          ? theme.colors.accent
-                          : theme.colors.background,
-                        borderColor: state === true
-                          ? theme.colors.accent
-                          : theme.colors.border,
+                        backgroundColor:
+                          state === true ? theme.colors.accent : theme.colors.background,
+                        borderColor: state === true ? theme.colors.accent : theme.colors.border,
                       },
                     ]}
                     accessibilityRole="button"
@@ -148,9 +144,8 @@ export function StepBodySignals({ value, onValueChange, hint }: StepBodySignalsP
                       style={{
                         fontFamily: typography.families.ui.semibold,
                         fontSize: typography.sizes.sm,
-                        color: state === true
-                          ? theme.colors.textInverse
-                          : theme.colors.textSecondary,
+                        color:
+                          state === true ? theme.colors.textInverse : theme.colors.textSecondary,
                       }}
                     >
                       Ja
@@ -167,9 +162,7 @@ export function StepBodySignals({ value, onValueChange, hint }: StepBodySignalsP
                         borderRadius: radii.sm,
                         borderWidth: 2,
                         backgroundColor: theme.colors.background,
-                        borderColor: state === false
-                          ? theme.colors.text
-                          : theme.colors.border,
+                        borderColor: state === false ? theme.colors.text : theme.colors.border,
                       },
                     ]}
                     accessibilityRole="button"
@@ -180,9 +173,7 @@ export function StepBodySignals({ value, onValueChange, hint }: StepBodySignalsP
                       style={{
                         fontFamily: typography.families.ui.semibold,
                         fontSize: typography.sizes.sm,
-                        color: state === false
-                          ? theme.colors.text
-                          : theme.colors.textSecondary,
+                        color: state === false ? theme.colors.text : theme.colors.textSecondary,
                       }}
                     >
                       Nein
@@ -193,7 +184,6 @@ export function StepBodySignals({ value, onValueChange, hint }: StepBodySignalsP
             );
           })}
         </View>
-
       </ScrollView>
     </View>
   );

@@ -8,13 +8,7 @@ interface FadeViewProps extends ViewProps {
   duration?: number;
 }
 
-export function FadeView({
-  triggerKey,
-  duration = 250,
-  style,
-  children,
-  ...props
-}: FadeViewProps) {
+export function FadeView({ triggerKey, duration = 250, style, children, ...props }: FadeViewProps) {
   const opacity = useRef(new Animated.Value(1)).current;
   const reducedMotion = useReducedMotion();
 
@@ -30,7 +24,7 @@ export function FadeView({
       duration,
       useNativeDriver: true,
     }).start();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [triggerKey, reducedMotion]); // opacity is a stable Animated.Value ref; duration is design-time constant
 
   return (

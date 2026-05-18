@@ -12,9 +12,7 @@ interface CheckInCardProps {
 export const CheckInCard = memo(function CheckInCard({ checkIn, onPress }: CheckInCardProps) {
   const { theme, spacing, typography, radii } = useTheme();
 
-  const activeSignals = Object.values(checkIn.bodySignals).filter(
-    (v) => v === true
-  ).length;
+  const activeSignals = Object.values(checkIn.bodySignals).filter((v) => v === true).length;
 
   return (
     <Pressable

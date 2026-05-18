@@ -24,8 +24,17 @@ Sentry.init({
     // Strip sensitive check-in health data that may appear in crash contexts
     // (component state, extra fields). The app promises local-only storage.
     const sensitiveKeys = [
-      'feelings', 'thoughtsNote', 'selfCareNote', 'innerPart', 'note',
-      'draft', 'bodySignals', 'distressLevel', 'distressNote', 'energyLevel', 'focusLevel',
+      'feelings',
+      'thoughtsNote',
+      'selfCareNote',
+      'innerPart',
+      'note',
+      'draft',
+      'bodySignals',
+      'distressLevel',
+      'distressNote',
+      'energyLevel',
+      'focusLevel',
     ];
     function scrub(obj: Record<string, unknown>) {
       for (const key of sensitiveKeys) {
@@ -36,6 +45,15 @@ Sentry.init({
     if (event.contexts) {
       for (const ctx of Object.values(event.contexts)) {
         if (ctx && typeof ctx === 'object') scrub(ctx as Record<string, unknown>);
+      }
+    }
+    // Scrub breadcrumb data objects — may contain component state snapshots
+    const breadcrumbs = event.breadcrumbs?.values?.();
+    if (breadcrumbs) {
+      for (const breadcrumb of breadcrumbs) {
+        if (breadcrumb.data && typeof breadcrumb.data === 'object') {
+          scrub(breadcrumb.data as Record<string, unknown>);
+        }
       }
     }
     return event;
@@ -89,7 +107,7 @@ function AppStack() {
       }
     }
     checkOnboarding();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isReady]); // db and router are stable refs; segments intentionally omitted (one-time check on ready)
 
   if (!onboardingChecked) return null;
@@ -160,11 +178,12 @@ function AppStack() {
 
 function AppContent() {
   const isReady = useDatabaseReady();
+  const { resolvedMode } = useTheme();
   if (!isReady) return null;
 
   return (
     <>
-      <StatusBar style="dark" />
+      <StatusBar style={resolvedMode === 'dark' ? 'light' : 'dark'} />
       <AppStack />
     </>
   );
@@ -189,7 +208,7 @@ function RootLayout() {
 
     const subscription = Notifications.addNotificationResponseReceivedListener(handleResponse);
     return () => subscription.remove();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // router is a stable ref from expo-router; registering once at mount is intentional
 
   return (

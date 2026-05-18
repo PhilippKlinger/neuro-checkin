@@ -2,7 +2,13 @@ import { useState } from 'react';
 import { View, Text, Switch, Pressable, Platform, StyleSheet } from 'react-native';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { useTheme } from '../../lib/hooks/useTheme';
-import { type NotificationSlot, WEEKDAY_LABELS, WEEKDAY_BITS, ALL_WEEKDAYS, WORKDAYS } from '../../lib/types/checkin';
+import {
+  type NotificationSlot,
+  WEEKDAY_LABELS,
+  WEEKDAY_BITS,
+  ALL_WEEKDAYS,
+  WORKDAYS,
+} from '../../lib/types/checkin';
 import { timeStringToDate } from '../../lib/utils/time';
 
 export interface SlotCardProps {

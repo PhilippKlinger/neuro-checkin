@@ -33,8 +33,8 @@ export default function HistoryScreen() {
 
   const handlePress = useCallback((id: number) => {
     router.push(`/history/${id}`);
-  // router is a stable ref from expo-router
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // router is a stable ref from expo-router
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const renderItem = useCallback<ListRenderItem<CheckIn>>(
@@ -44,12 +44,7 @@ export default function HistoryScreen() {
 
   if (isLoading) {
     return (
-      <View
-        style={[
-          styles.centered,
-          { backgroundColor: theme.colors.background },
-        ]}
-      >
+      <View style={[styles.centered, { backgroundColor: theme.colors.background }]}>
         <Text
           style={{
             fontFamily: typography.families.body.regular,
@@ -66,10 +61,7 @@ export default function HistoryScreen() {
   if (checkIns.length === 0) {
     return (
       <View
-        style={[
-          styles.centered,
-          { backgroundColor: theme.colors.background, padding: spacing.lg },
-        ]}
+        style={[styles.centered, { backgroundColor: theme.colors.background, padding: spacing.lg }]}
       >
         <Text
           style={{

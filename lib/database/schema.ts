@@ -5,9 +5,7 @@ const SCHEMA_VERSION = 9;
 export async function migrateDatabase(db: SQLiteDatabase): Promise<void> {
   await db.execAsync(`PRAGMA journal_mode = WAL;`);
 
-  const result = await db.getFirstAsync<{ user_version: number }>(
-    'PRAGMA user_version;'
-  );
+  const result = await db.getFirstAsync<{ user_version: number }>('PRAGMA user_version;');
   const currentVersion = result?.user_version ?? 0;
 
   if (currentVersion < 1) {
@@ -66,9 +64,10 @@ export async function migrateDatabase(db: SQLiteDatabase): Promise<void> {
     `);
 
     // Migrate existing single-slot reminder settings into slot 0.
-    const legacy = await db.getFirstAsync<{ reminder_enabled: number; reminder_time: string | null }>(
-      'SELECT reminder_enabled, reminder_time FROM user_settings WHERE id = 1'
-    );
+    const legacy = await db.getFirstAsync<{
+      reminder_enabled: number;
+      reminder_time: string | null;
+    }>('SELECT reminder_enabled, reminder_time FROM user_settings WHERE id = 1');
     if (legacy?.reminder_enabled === 1) {
       await db.runAsync(
         'UPDATE notification_slots SET enabled = 1, time = ? WHERE id = 0',
@@ -113,9 +112,7 @@ export async function migrateDatabase(db: SQLiteDatabase): Promise<void> {
     await db.execAsync(
       `ALTER TABLE user_settings ADD COLUMN guided_toggle_introduced INTEGER NOT NULL DEFAULT 0;`
     );
-    await db.execAsync(
-      `ALTER TABLE user_settings ADD COLUMN last_active_date TEXT;`
-    );
+    await db.execAsync(`ALTER TABLE user_settings ADD COLUMN last_active_date TEXT;`);
     await db.execAsync(
       `ALTER TABLE user_settings ADD COLUMN detail_view_introduced INTEGER NOT NULL DEFAULT 0;`
     );

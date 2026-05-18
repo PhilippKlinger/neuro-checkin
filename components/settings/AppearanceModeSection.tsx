@@ -9,8 +9,8 @@ interface AppearanceModeSectionProps {
 }
 
 const MODE_OPTIONS: { key: ColorMode; label: string }[] = [
-  { key: 'light',  label: 'Hell' },
-  { key: 'dark',   label: 'Dunkel' },
+  { key: 'light', label: 'Hell' },
+  { key: 'dark', label: 'Dunkel' },
   { key: 'system', label: 'System' },
 ];
 
