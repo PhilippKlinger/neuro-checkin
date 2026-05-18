@@ -54,17 +54,20 @@ export default function CheckInScreen() {
 
   useFocusEffect(
     useCallback(() => {
+      let cancelled = false;
       async function loadState() {
         try {
           const [settings, count] = await Promise.all([getSettings(db), countCheckIns(db)]);
+          if (cancelled) return;
           setIsFirstCheckin(count === 0);
           setGuidedMode(settings.guidedModeEnabled);
           setShowToggleIntroHint(!settings.guidedToggleIntroduced);
         } catch {
-          // Non-critical
+          // Non-critical — guided mode defaults are safe fallbacks
         }
       }
       loadState();
+      return () => { cancelled = true; };
     }, [db])
   );
 
@@ -78,7 +81,7 @@ export default function CheckInScreen() {
         await updateSettings(db, { guidedModeEnabled: value });
       }
     } catch {
-      // Non-critical
+      setGuidedMode(!value);
     }
   }
 

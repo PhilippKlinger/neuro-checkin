@@ -37,16 +37,19 @@ export default function QuickCheckInScreen() {
 
   useFocusEffect(
     useCallback(() => {
+      let cancelled = false;
       async function loadGuidedState() {
         try {
           const settings = await getSettings(db);
+          if (cancelled) return;
           setGuidedMode(settings.guidedModeEnabled);
           setShowToggleIntroHint(!settings.guidedToggleIntroduced);
         } catch {
-          // Non-critical
+          // Non-critical — guided mode defaults are safe fallbacks
         }
       }
       loadGuidedState();
+      return () => { cancelled = true; };
     }, [db])
   );
 
@@ -60,7 +63,7 @@ export default function QuickCheckInScreen() {
         await updateSettings(db, { guidedModeEnabled: value });
       }
     } catch {
-      // Non-critical
+      setGuidedMode(!value);
     }
   }
 
