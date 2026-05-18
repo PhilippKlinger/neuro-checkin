@@ -38,6 +38,14 @@ Sentry.init({
         if (ctx && typeof ctx === 'object') scrub(ctx as Record<string, unknown>);
       }
     }
+    // Scrub breadcrumb data objects — may contain component state snapshots
+    if (event.breadcrumbs?.values) {
+      for (const breadcrumb of event.breadcrumbs.values) {
+        if (breadcrumb.data && typeof breadcrumb.data === 'object') {
+          scrub(breadcrumb.data as Record<string, unknown>);
+        }
+      }
+    }
     return event;
   },
   beforeBreadcrumb(breadcrumb) {
@@ -160,11 +168,12 @@ function AppStack() {
 
 function AppContent() {
   const isReady = useDatabaseReady();
+  const { resolvedMode } = useTheme();
   if (!isReady) return null;
 
   return (
     <>
-      <StatusBar style="dark" />
+      <StatusBar style={resolvedMode === 'dark' ? 'light' : 'dark'} />
       <AppStack />
     </>
   );
