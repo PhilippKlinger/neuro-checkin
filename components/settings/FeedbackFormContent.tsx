@@ -92,7 +92,7 @@ export function FeedbackFormContent({
       {feedbackError && (
         <Text style={s.errorText}>Senden hat nicht geklappt. Bitte versuche es später nochmal.</Text>
       )}
-      <Text style={s.privacyHint}>Bitte keine persönlichen Inhalte senden. Das Feedback wird ohne Namensangabe über Formspree (externer Dienst) übertragen — IP-Adresse kann dabei anfallen.</Text>
+      <Text style={s.privacyHint}>Bitte keine persönlichen Inhalte senden. Mit dem Absenden überträgst du deinen Text über Formspree (externer Dienst, EU-Datenschutz). Dabei wird deine IP-Adresse verarbeitet.</Text>
       <View style={s.buttonRow}>
         <Pressable
           onPress={onCancel}
