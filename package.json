@@ -12,7 +12,10 @@
     "format": "prettier --write \"**/*.{ts,tsx,json}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,json,md,yml,yaml}\"",
     "hygiene": "node scripts/check-repo-hygiene.mjs",
-    "seed": "node scripts/seed-checkins.js"
+    "seed": "node scripts/seed-checkins.js",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.1.1",
@@ -35,11 +38,14 @@
   },
   "devDependencies": {
     "@secretlint/secretlint-rule-preset-recommend": "^13.0.2",
+    "@types/jest": "^30.0.0",
     "@types/react": "~19.1.0",
     "eslint": "^9.0.0",
     "eslint-config-expo": "~10.0.0",
     "eslint-config-prettier": "^10.1.8",
     "expo-dev-client": "~6.0.21",
+    "jest": "^29.7.0",
+    "jest-expo": "^55.0.17",
     "prettier": "^3.8.3",
     "secretlint": "^13.0.2",
     "typescript": "~5.9.2"
