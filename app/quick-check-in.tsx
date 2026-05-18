@@ -34,6 +34,7 @@ export default function QuickCheckInScreen() {
   const [guidedMode, setGuidedMode] = useState(true);
   const [showToggleIntroHint, setShowToggleIntroHint] = useState(false);
   const stepContentRef = useRef<View>(null);
+  const savingRef = useRef(false);
 
   useFocusEffect(
     useCallback(() => {
@@ -103,6 +104,8 @@ export default function QuickCheckInScreen() {
   }
 
   async function handleSave() {
+    if (savingRef.current) return;
+    savingRef.current = true;
     setIsSaving(true);
     try {
       await insertCheckIn(db, {
@@ -124,6 +127,7 @@ export default function QuickCheckInScreen() {
       Alert.alert('Fehler beim Speichern', 'Check-in konnte nicht gespeichert werden.');
     } finally {
       setIsSaving(false);
+      savingRef.current = false;
     }
   }
 

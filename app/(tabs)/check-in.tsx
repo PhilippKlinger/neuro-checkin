@@ -51,6 +51,7 @@ export default function CheckInScreen() {
   const stepContentRef = useRef<View>(null);
   const stepRef = useRef(step);
   const leftAtRef = useRef<number | null>(null);
+  const savingRef = useRef(false);
 
   useFocusEffect(
     useCallback(() => {
@@ -145,6 +146,8 @@ export default function CheckInScreen() {
   }
 
   async function handleSave() {
+    if (savingRef.current) return;
+    savingRef.current = true;
     setIsSaving(true);
     try {
       await insertCheckIn(db, {
@@ -166,6 +169,7 @@ export default function CheckInScreen() {
       Alert.alert('Fehler beim Speichern', 'Check-in konnte nicht gespeichert werden. Bitte versuche es erneut.');
     } finally {
       setIsSaving(false);
+      savingRef.current = false;
     }
   }
 

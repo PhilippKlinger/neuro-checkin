@@ -20,10 +20,14 @@ export default function CheckInDetailScreen() {
 
   useEffect(() => {
     async function load() {
-      if (!id) return;
+      const parsedId = Number(id);
+      if (!id || !Number.isInteger(parsedId) || parsedId <= 0) {
+        setIsLoading(false);
+        return;
+      }
       try {
         const [data, settings] = await Promise.all([
-          getCheckInById(db, Number(id)),
+          getCheckInById(db, parsedId),
           getSettings(db),
         ]);
         setCheckIn(data);

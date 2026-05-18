@@ -105,14 +105,24 @@ export default function SettingsScreen() {
   }, [db]);
 
   const handleModeChange = useCallback(async (mode: ColorMode) => {
+    const previous = colorMode;
     setColorMode(mode);
-    await updateSettings(db, { colorMode: mode });
-  }, [db, setColorMode]);
+    try {
+      await updateSettings(db, { colorMode: mode });
+    } catch {
+      setColorMode(previous);
+    }
+  }, [db, colorMode, setColorMode]);
 
   const handleThemeChange = useCallback(async (name: ThemeName) => {
+    const previous = themeName;
     setThemeName(name);
-    await updateSettings(db, { themeName: name });
-  }, [db, setThemeName]);
+    try {
+      await updateSettings(db, { themeName: name });
+    } catch {
+      setThemeName(previous);
+    }
+  }, [db, themeName, setThemeName]);
 
   const handleTimePress = useCallback((id: 0 | 1) => setShowTimePicker(id), []);
 
