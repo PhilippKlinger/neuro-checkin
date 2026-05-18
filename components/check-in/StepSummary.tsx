@@ -1,15 +1,19 @@
 import { View, Text, ScrollView, StyleSheet } from 'react-native';
 import { useTheme } from '../../lib/hooks/useTheme';
-import { CheckInDraft, ENERGY_LABELS, FOCUS_LABELS, DISTRESS_LABELS, getLevelLabel } from '../../lib/types/checkin';
+import {
+  CheckInDraft,
+  ENERGY_LABELS,
+  FOCUS_LABELS,
+  DISTRESS_LABELS,
+  getLevelLabel,
+} from '../../lib/types/checkin';
 
 interface StepSummaryProps {
   draft: CheckInDraft;
   showPostFirstCheckinHint?: boolean;
 }
 
-function getThoughtsLabel(
-  type: 'supportive' | 'burdening' | 'mixed' | null
-): string {
+function getThoughtsLabel(type: 'supportive' | 'burdening' | 'mixed' | null): string {
   switch (type) {
     case 'supportive':
       return 'Unterstützend';
@@ -91,7 +95,8 @@ export function StepSummary({ draft, showPostFirstCheckinHint }: StepSummaryProp
             fontStyle: 'italic',
           }}
         >
-          Check-ins lassen sich jederzeit im Verlauf nachlesen — und Muster werden über Zeit sichtbar.
+          Check-ins lassen sich jederzeit im Verlauf nachlesen — und Muster werden über Zeit
+          sichtbar.
         </Text>
       )}
 
@@ -133,18 +138,11 @@ export function StepSummary({ draft, showPostFirstCheckinHint }: StepSummaryProp
               },
             ]}
           >
-            <Text style={sectionTitle(typography, theme, spacing)}>
-              Körpersignale
-            </Text>
+            <Text style={sectionTitle(typography, theme, spacing)}>Körpersignale</Text>
             {activeSignals.map((s) => (
-              <View
-                key={s.label}
-                style={[styles.row, { marginBottom: spacing.xs }]}
-              >
+              <View key={s.label} style={[styles.row, { marginBottom: spacing.xs }]}>
                 <Text style={rowLabel(typography, theme)}>{s.label}</Text>
-                <Text style={rowValue(typography, theme)}>
-                  {getSignalLabel(s.value)}
-                </Text>
+                <Text style={rowValue(typography, theme)}>{getSignalLabel(s.value)}</Text>
               </View>
             ))}
           </View>
@@ -162,9 +160,7 @@ export function StepSummary({ draft, showPostFirstCheckinHint }: StepSummaryProp
               },
             ]}
           >
-            <Text style={sectionTitle(typography, theme, spacing)}>
-              Gefühle
-            </Text>
+            <Text style={sectionTitle(typography, theme, spacing)}>Gefühle</Text>
             <Text style={bodyText(typography, theme)}>{draft.feelings}</Text>
           </View>
         )}
@@ -186,7 +182,12 @@ export function StepSummary({ draft, showPostFirstCheckinHint }: StepSummaryProp
               {getLevelLabel(draft.distressLevel, DISTRESS_LABELS)}
             </Text>
             {draft.distressNote.trim() !== '' && (
-              <Text style={[bodyText(typography, theme), { marginTop: spacing.xs, fontStyle: 'italic' }]}>
+              <Text
+                style={[
+                  bodyText(typography, theme),
+                  { marginTop: spacing.xs, fontStyle: 'italic' },
+                ]}
+              >
                 {draft.distressNote}
               </Text>
             )}
@@ -205,9 +206,7 @@ export function StepSummary({ draft, showPostFirstCheckinHint }: StepSummaryProp
               },
             ]}
           >
-            <Text style={sectionTitle(typography, theme, spacing)}>
-              Gedanken
-            </Text>
+            <Text style={sectionTitle(typography, theme, spacing)}>Gedanken</Text>
             {draft.thoughtsType !== null && (
               <Text style={bodyText(typography, theme)}>
                 {getThoughtsLabel(draft.thoughtsType)}
@@ -238,12 +237,8 @@ export function StepSummary({ draft, showPostFirstCheckinHint }: StepSummaryProp
               },
             ]}
           >
-            <Text style={sectionTitle(typography, theme, spacing)}>
-              Selbstfürsorge
-            </Text>
-            <Text style={bodyText(typography, theme)}>
-              {draft.selfCareNote}
-            </Text>
+            <Text style={sectionTitle(typography, theme, spacing)}>Selbstfürsorge</Text>
+            <Text style={bodyText(typography, theme)}>{draft.selfCareNote}</Text>
           </View>
         )}
       </ScrollView>

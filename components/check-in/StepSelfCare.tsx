@@ -7,9 +7,16 @@ interface StepSelfCareProps {
 }
 
 const SELF_CARE_CHIPS = [
-  'Pause', 'Wasser trinken', 'Frische Luft', 'Tief atmen',
-  'Bewegung', 'Stretching', 'Essen', 'Musik hören',
-  'Wärme', 'Nichts — passt gerade so',
+  'Pause',
+  'Wasser trinken',
+  'Frische Luft',
+  'Tief atmen',
+  'Bewegung',
+  'Stretching',
+  'Essen',
+  'Musik hören',
+  'Wärme',
+  'Nichts — passt gerade so',
 ] as const;
 
 export function StepSelfCare({ value, onValueChange, hint }: StepSelfCareProps) {

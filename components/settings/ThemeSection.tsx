@@ -14,7 +14,10 @@ const THEME_OPTIONS: { key: ThemeName; label: string }[] = [
   { key: 'softSage', label: 'Soft\nSage' },
 ];
 
-export const ThemeSection = memo(function ThemeSection({ currentTheme, onThemeChange }: ThemeSectionProps) {
+export const ThemeSection = memo(function ThemeSection({
+  currentTheme,
+  onThemeChange,
+}: ThemeSectionProps) {
   const { theme, spacing, typography, radii, resolvedMode } = useTheme();
 
   return (
@@ -54,9 +57,29 @@ export const ThemeSection = memo(function ThemeSection({ currentTheme, onThemeCh
               accessibilityState={{ selected: isSelected }}
             >
               <View style={[styles.swatches, { gap: spacing.xs, marginBottom: spacing.sm }]}>
-                <View style={[styles.dot, { backgroundColor: palette.colors.primary, borderRadius: radii.full }]} />
-                <View style={[styles.dot, { backgroundColor: palette.colors.accent, borderRadius: radii.full }]} />
-                <View style={[styles.dot, { backgroundColor: palette.colors.background, borderRadius: radii.full, borderWidth: 1, borderColor: palette.colors.border }]} />
+                <View
+                  style={[
+                    styles.dot,
+                    { backgroundColor: palette.colors.primary, borderRadius: radii.full },
+                  ]}
+                />
+                <View
+                  style={[
+                    styles.dot,
+                    { backgroundColor: palette.colors.accent, borderRadius: radii.full },
+                  ]}
+                />
+                <View
+                  style={[
+                    styles.dot,
+                    {
+                      backgroundColor: palette.colors.background,
+                      borderRadius: radii.full,
+                      borderWidth: 1,
+                      borderColor: palette.colors.border,
+                    },
+                  ]}
+                />
               </View>
               <Text
                 style={{
@@ -93,4 +116,3 @@ const styles = StyleSheet.create({
     height: 16,
   },
 });
-

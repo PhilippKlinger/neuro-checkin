@@ -109,7 +109,10 @@ export function DataSection({ db, checkInCount, onDeleteComplete }: DataSectionP
         confirmLabel="Löschen"
         cancelLabel="Abbrechen"
         destructive
-        onConfirm={() => { setShowStep1(false); setShowStep2(true); }}
+        onConfirm={() => {
+          setShowStep1(false);
+          setShowStep2(true);
+        }}
         onCancel={() => setShowStep1(false)}
       />
 

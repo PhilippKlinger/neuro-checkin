@@ -35,11 +35,7 @@ export function ConfirmDialog({
       onRequestClose={onCancel}
       accessibilityViewIsModal
     >
-      <Pressable
-        style={styles.backdrop}
-        onPress={onCancel}
-        accessibilityLabel="Dialog schließen"
-      >
+      <Pressable style={styles.backdrop} onPress={onCancel} accessibilityLabel="Dialog schließen">
         <View
           style={[
             styles.dialog,

@@ -128,7 +128,12 @@ export function CheckInSuccessView({ onReset, energyLevel, focusLevel }: CheckIn
         )}
       </View>
 
-      <View style={[styles.buttons, { gap: spacing.md, paddingBottom: Math.max(spacing.lg, insets.bottom + spacing.md) }]}>
+      <View
+        style={[
+          styles.buttons,
+          { gap: spacing.md, paddingBottom: Math.max(spacing.lg, insets.bottom + spacing.md) },
+        ]}
+      >
         <Pressable
           onPress={handleGoHome}
           style={({ pressed }) => [

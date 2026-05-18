@@ -26,10 +26,7 @@ export default function CheckInDetailScreen() {
         return;
       }
       try {
-        const [data, settings] = await Promise.all([
-          getCheckInById(db, parsedId),
-          getSettings(db),
-        ]);
+        const [data, settings] = await Promise.all([getCheckInById(db, parsedId), getSettings(db)]);
         setCheckIn(data);
         if (!settings.detailViewIntroduced) {
           setShowDetailHint(true);
@@ -56,7 +53,13 @@ export default function CheckInDetailScreen() {
   if (isLoading || !checkIn) {
     return (
       <View style={[styles.centered, { backgroundColor: theme.colors.background }]}>
-        <Text style={{ fontFamily: typography.families.body.regular, fontSize: typography.sizes.md, color: theme.colors.textSecondary }}>
+        <Text
+          style={{
+            fontFamily: typography.families.body.regular,
+            fontSize: typography.sizes.md,
+            color: theme.colors.textSecondary,
+          }}
+        >
           {isLoading ? 'Laden...' : 'Check-in nicht gefunden.'}
         </Text>
       </View>

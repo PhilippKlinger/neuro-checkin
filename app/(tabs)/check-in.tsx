@@ -1,5 +1,13 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
-import { View, Text, Pressable, StyleSheet, Alert, AccessibilityInfo, findNodeHandle } from 'react-native';
+import {
+  View,
+  Text,
+  Pressable,
+  StyleSheet,
+  Alert,
+  AccessibilityInfo,
+  findNodeHandle,
+} from 'react-native';
 import { useFocusEffect } from 'expo-router';
 import { useTheme } from '../../lib/hooks/useTheme';
 import { useDatabase } from '../../lib/hooks/useDatabase';
@@ -41,7 +49,10 @@ export default function CheckInScreen() {
   const { theme, spacing, typography, radii, touchTarget } = useTheme();
   const db = useDatabase();
   const [step, setStep] = useState(0);
-  const [draft, setDraft] = useState<CheckInDraft>({ ...EMPTY_DRAFT, bodySignals: { ...EMPTY_BODY_SIGNALS } });
+  const [draft, setDraft] = useState<CheckInDraft>({
+    ...EMPTY_DRAFT,
+    bodySignals: { ...EMPTY_BODY_SIGNALS },
+  });
   const [isSaving, setIsSaving] = useState(false);
   const [isDone, setIsDone] = useState(false);
   const [wasReset, setWasReset] = useState(false);
@@ -68,7 +79,9 @@ export default function CheckInScreen() {
         }
       }
       loadState();
-      return () => { cancelled = true; };
+      return () => {
+        cancelled = true;
+      };
     }, [db])
   );
 
@@ -114,8 +127,7 @@ export default function CheckInScreen() {
   const canGoBack = step > 0;
   const isLastStep = step === TOTAL_STEPS - 1;
   const isStepBlocked =
-    (step === 1 && draft.energyLevel === 0) ||
-    (step === 2 && draft.focusLevel === 0);
+    (step === 1 && draft.energyLevel === 0) || (step === 2 && draft.focusLevel === 0);
   const isNextDisabled = isSaving || isStepBlocked;
 
   useEffect(() => {
@@ -166,7 +178,10 @@ export default function CheckInScreen() {
       setIsDone(true);
     } catch (error) {
       Sentry.captureException(error);
-      Alert.alert('Fehler beim Speichern', 'Check-in konnte nicht gespeichert werden. Bitte versuche es erneut.');
+      Alert.alert(
+        'Fehler beim Speichern',
+        'Check-in konnte nicht gespeichert werden. Bitte versuche es erneut.'
+      );
     } finally {
       setIsSaving(false);
       savingRef.current = false;
@@ -255,21 +270,14 @@ export default function CheckInScreen() {
           />
         );
       case 8:
-        return (
-          <StepSummary
-            draft={draft}
-            showPostFirstCheckinHint={isFirstCheckin}
-          />
-        );
+        return <StepSummary draft={draft} showPostFirstCheckinHint={isFirstCheckin} />;
       default:
         return null;
     }
   }
 
   return (
-    <View
-      style={[styles.container, { backgroundColor: theme.colors.background }]}
-    >
+    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <View style={[styles.indicatorWrapper, { paddingTop: spacing.lg }]}>
         <StepIndicator totalSteps={TOTAL_STEPS} currentStep={step} />
       </View>
@@ -281,7 +289,18 @@ export default function CheckInScreen() {
       />
 
       {wasReset && step === 0 && (
-        <View style={[styles.resetHint, { marginHorizontal: spacing.lg, marginTop: spacing.sm, backgroundColor: theme.colors.surface, borderRadius: radii.md, padding: spacing.md }]}>
+        <View
+          style={[
+            styles.resetHint,
+            {
+              marginHorizontal: spacing.lg,
+              marginTop: spacing.sm,
+              backgroundColor: theme.colors.surface,
+              borderRadius: radii.md,
+              padding: spacing.md,
+            },
+          ]}
+        >
           <Text
             style={{
               fontFamily: typography.families.body.regular,
@@ -295,10 +314,7 @@ export default function CheckInScreen() {
         </View>
       )}
 
-      <FadeView
-        triggerKey={step}
-        style={[styles.stepContent, { padding: spacing.lg }]}
-      >
+      <FadeView triggerKey={step} style={[styles.stepContent, { padding: spacing.lg }]}>
         <View
           ref={stepContentRef}
           accessibilityLabel={`Schritt ${step + 1} von ${TOTAL_STEPS}: ${STEP_NAMES[step]}`}
@@ -358,9 +374,7 @@ export default function CheckInScreen() {
             {
               minHeight: touchTarget.min,
               borderRadius: radii.md,
-              backgroundColor: isNextDisabled
-                ? theme.colors.border
-                : theme.colors.primary,
+              backgroundColor: isNextDisabled ? theme.colors.border : theme.colors.primary,
             },
             pressed && !isNextDisabled && { opacity: 0.75 },
           ]}

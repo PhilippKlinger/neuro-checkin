@@ -11,7 +11,9 @@ export function GuidedToggle({ enabled, onToggle, showIntroHint }: GuidedToggleP
   const { theme, spacing, typography } = useTheme();
 
   return (
-    <View style={[styles.container, { paddingHorizontal: spacing.lg, paddingVertical: spacing.sm }]}>
+    <View
+      style={[styles.container, { paddingHorizontal: spacing.lg, paddingVertical: spacing.sm }]}
+    >
       <View style={[styles.row, { gap: spacing.sm }]}>
         <Text
           style={{

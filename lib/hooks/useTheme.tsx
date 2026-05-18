@@ -41,9 +41,7 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
 
   const value = useMemo<ThemeContextValue>(() => {
     const resolvedMode =
-      colorMode === 'system'
-        ? (systemColorScheme === 'dark' ? 'dark' : 'light')
-        : colorMode;
+      colorMode === 'system' ? (systemColorScheme === 'dark' ? 'dark' : 'light') : colorMode;
     return {
       theme: themes[themeName][resolvedMode],
       themeName,

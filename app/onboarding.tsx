@@ -1,5 +1,13 @@
 import { useState } from 'react';
-import { View, Text, Pressable, StyleSheet, AccessibilityInfo, Alert, ScrollView } from 'react-native';
+import {
+  View,
+  Text,
+  Pressable,
+  StyleSheet,
+  AccessibilityInfo,
+  Alert,
+  ScrollView,
+} from 'react-native';
 import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../lib/hooks/useTheme';
@@ -69,17 +77,26 @@ export default function OnboardingScreen() {
       });
       router.replace('/(tabs)');
     } catch {
-      Alert.alert('Fehler', 'Einstellungen konnten nicht gespeichert werden. Bitte versuche es erneut.');
+      Alert.alert(
+        'Fehler',
+        'Einstellungen konnten nicht gespeichert werden. Bitte versuche es erneut.'
+      );
     }
   }
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.colors.background, padding: spacing.lg }]}>
+    <View
+      style={[styles.container, { backgroundColor: theme.colors.background, padding: spacing.lg }]}
+    >
       <View style={[styles.skipRow, { paddingTop: spacing.md }]}>
         {!isLastStep ? (
           <Pressable
             onPress={() => finish()}
-            style={({ pressed }) => [styles.skipButton, { padding: spacing.sm }, pressed && { opacity: 0.75 }]}
+            style={({ pressed }) => [
+              styles.skipButton,
+              { padding: spacing.sm },
+              pressed && { opacity: 0.75 },
+            ]}
             accessibilityRole="button"
             accessibilityLabel="Onboarding überspringen"
           >
@@ -104,129 +121,157 @@ export default function OnboardingScreen() {
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
         >
-        <Text
-          style={{
-            fontFamily: typography.families.heading.bold,
-            fontSize: typography.sizes.xxl,
-            color: theme.colors.text,
-            textAlign: 'center',
-            marginBottom: spacing.lg,
-          }}
-          accessibilityRole="header"
-        >
-          {current.title}
-        </Text>
-        <Text
-          style={{
-            fontFamily: typography.families.body.regular,
-            fontSize: typography.sizes.md,
-            color: theme.colors.textSecondary,
-            textAlign: 'center',
-            lineHeight: typography.sizes.md * 1.6,
-            marginBottom: spacing.xl,
-          }}
-        >
-          {current.body}
-        </Text>
+          <Text
+            style={{
+              fontFamily: typography.families.heading.bold,
+              fontSize: typography.sizes.xxl,
+              color: theme.colors.text,
+              textAlign: 'center',
+              marginBottom: spacing.lg,
+            }}
+            accessibilityRole="header"
+          >
+            {current.title}
+          </Text>
+          <Text
+            style={{
+              fontFamily: typography.families.body.regular,
+              fontSize: typography.sizes.md,
+              color: theme.colors.textSecondary,
+              textAlign: 'center',
+              lineHeight: typography.sizes.md * 1.6,
+              marginBottom: spacing.xl,
+            }}
+          >
+            {current.body}
+          </Text>
 
-        {isLastStep ? (
-          <View style={[styles.paletteSection, { gap: spacing.md }]}>
-            <View style={[styles.paletteGrid, { gap: spacing.md }]}>
-            {(Object.keys(themes) as ThemeName[]).map((name) => {
-              const palette = themes[name].light;
-              const isSelected = selectedTheme === name;
-              return (
+          {isLastStep ? (
+            <View style={[styles.paletteSection, { gap: spacing.md }]}>
+              <View style={[styles.paletteGrid, { gap: spacing.md }]}>
+                {(Object.keys(themes) as ThemeName[]).map((name) => {
+                  const palette = themes[name].light;
+                  const isSelected = selectedTheme === name;
+                  return (
+                    <Pressable
+                      key={name}
+                      onPress={() => handleThemeSelect(name)}
+                      style={({ pressed }) => [
+                        styles.paletteCard,
+                        {
+                          borderRadius: radii.md,
+                          borderWidth: 2,
+                          borderColor: isSelected ? palette.colors.primary : palette.colors.border,
+                          backgroundColor: palette.colors.surface,
+                          padding: spacing.md,
+                          minHeight: touchTarget.min,
+                        },
+                        pressed && { opacity: 0.75 },
+                      ]}
+                      accessibilityRole="button"
+                      accessibilityLabel={PALETTE_LABELS[name]}
+                      accessibilityState={{ selected: isSelected }}
+                    >
+                      <View
+                        style={[
+                          styles.paletteSwatches,
+                          { gap: spacing.xs, marginBottom: spacing.sm },
+                        ]}
+                      >
+                        <View
+                          style={[
+                            styles.swatch,
+                            { backgroundColor: palette.colors.primary, borderRadius: radii.full },
+                          ]}
+                        />
+                        <View
+                          style={[
+                            styles.swatch,
+                            { backgroundColor: palette.colors.accent, borderRadius: radii.full },
+                          ]}
+                        />
+                        <View
+                          style={[
+                            styles.swatch,
+                            {
+                              backgroundColor: palette.colors.background,
+                              borderRadius: radii.full,
+                            },
+                          ]}
+                        />
+                      </View>
+                      <Text
+                        style={{
+                          fontFamily: typography.families.ui.semibold,
+                          fontSize: typography.sizes.sm,
+                          color: palette.colors.text,
+                          textAlign: 'center',
+                        }}
+                      >
+                        {PALETTE_LABELS[name]}
+                      </Text>
+                    </Pressable>
+                  );
+                })}
+              </View>
+            </View>
+          ) : (
+            <>
+              <Text
+                style={{
+                  fontFamily: typography.families.body.regular,
+                  fontSize: typography.sizes.sm,
+                  color: theme.colors.textSecondary,
+                  textAlign: 'center',
+                  fontStyle: 'italic',
+                }}
+              >
+                {current.hint}
+              </Text>
+              {step === 1 && (
                 <Pressable
-                  key={name}
-                  onPress={() => handleThemeSelect(name)}
+                  onPress={() => router.push('/check-in-info')}
                   style={({ pressed }) => [
-                    styles.paletteCard,
+                    styles.learnMoreButton,
                     {
-                      borderRadius: radii.md,
-                      borderWidth: 2,
-                      borderColor: isSelected ? palette.colors.primary : palette.colors.border,
-                      backgroundColor: palette.colors.surface,
-                      padding: spacing.md,
+                      marginTop: spacing.lg,
+                      alignSelf: 'center',
+                      paddingHorizontal: spacing.lg,
+                      paddingVertical: spacing.sm,
+                      borderRadius: radii.full,
+                      borderWidth: 1,
+                      borderColor: theme.colors.border,
+                      backgroundColor: theme.colors.surface,
                       minHeight: touchTarget.min,
                     },
-                    pressed && { opacity: 0.75 },
+                    pressed && { opacity: 0.6 },
                   ]}
                   accessibilityRole="button"
-                  accessibilityLabel={PALETTE_LABELS[name]}
-                  accessibilityState={{ selected: isSelected }}
+                  accessibilityLabel="Mehr über einen Check-in erfahren"
                 >
-                  <View style={[styles.paletteSwatches, { gap: spacing.xs, marginBottom: spacing.sm }]}>
-                    <View style={[styles.swatch, { backgroundColor: palette.colors.primary, borderRadius: radii.full }]} />
-                    <View style={[styles.swatch, { backgroundColor: palette.colors.accent, borderRadius: radii.full }]} />
-                    <View style={[styles.swatch, { backgroundColor: palette.colors.background, borderRadius: radii.full }]} />
-                  </View>
                   <Text
                     style={{
-                      fontFamily: typography.families.ui.semibold,
+                      fontFamily: typography.families.ui.medium,
                       fontSize: typography.sizes.sm,
-                      color: palette.colors.text,
+                      color: theme.colors.text,
                       textAlign: 'center',
                     }}
                   >
-                    {PALETTE_LABELS[name]}
+                    Mehr über einen Check-in erfahren
                   </Text>
                 </Pressable>
-              );
-            })}
-            </View>
-          </View>
-        ) : (
-          <>
-            <Text
-              style={{
-                fontFamily: typography.families.body.regular,
-                fontSize: typography.sizes.sm,
-                color: theme.colors.textSecondary,
-                textAlign: 'center',
-                fontStyle: 'italic',
-              }}
-            >
-              {current.hint}
-            </Text>
-            {step === 1 && (
-              <Pressable
-                onPress={() => router.push('/check-in-info')}
-                style={({ pressed }) => [
-                  styles.learnMoreButton,
-                  {
-                    marginTop: spacing.lg,
-                    alignSelf: 'center',
-                    paddingHorizontal: spacing.lg,
-                    paddingVertical: spacing.sm,
-                    borderRadius: radii.full,
-                    borderWidth: 1,
-                    borderColor: theme.colors.border,
-                    backgroundColor: theme.colors.surface,
-                    minHeight: touchTarget.min,
-                  },
-                  pressed && { opacity: 0.6 },
-                ]}
-                accessibilityRole="button"
-                accessibilityLabel="Mehr über einen Check-in erfahren"
-              >
-                <Text
-                  style={{
-                    fontFamily: typography.families.ui.medium,
-                    fontSize: typography.sizes.sm,
-                    color: theme.colors.text,
-                    textAlign: 'center',
-                  }}
-                >
-                  Mehr über einen Check-in erfahren
-                </Text>
-              </Pressable>
-            )}
-          </>
-        )}
+              )}
+            </>
+          )}
         </ScrollView>
       </FadeView>
 
-      <View style={[styles.footer, { gap: spacing.lg, paddingBottom: Math.max(spacing.xl, insets.bottom + spacing.md) }]}>
+      <View
+        style={[
+          styles.footer,
+          { gap: spacing.lg, paddingBottom: Math.max(spacing.xl, insets.bottom + spacing.md) },
+        ]}
+      >
         {isLastStep && (
           <Text
             style={{

@@ -52,10 +52,10 @@ const warmEarthLight: ThemeTokens = {
     background: '#FAF8F5',
     surface: '#F0ECE6',
     surfaceHover: '#E8E2D9',
-    primary: '#4A4540',     // dark gray-brown — buttons/CTAs (softer than near-black)
+    primary: '#4A4540', // dark gray-brown — buttons/CTAs (softer than near-black)
     primarySoft: '#E8E3DD', // subtle pressed/hover tint
-    accent: '#7A6344',      // warm earthy brown — identity signal
-    accentSoft: '#DDD1C4',  // light warm brown tint — selected backgrounds
+    accent: '#7A6344', // warm earthy brown — identity signal
+    accentSoft: '#DDD1C4', // light warm brown tint — selected backgrounds
     text: '#2D2A26',
     textSecondary: '#6B6358',
     textInverse: '#FFFFFF',
@@ -63,7 +63,7 @@ const warmEarthLight: ThemeTokens = {
     borderFocus: '#7A6344',
     error: '#C4736C',
     errorSoft: '#F0D5D2',
-    success: '#6B8F71',     // semantic green — independent of accent
+    success: '#6B8F71', // semantic green — independent of accent
     successSoft: '#D4E8D7',
   },
 };
@@ -77,11 +77,11 @@ const warmEarthDark: ThemeTokens = {
     background: '#1B1A18',
     surface: '#252321',
     surfaceHover: '#2F2C28',
-    primary: '#9A9088',     // warm mid-gray — softer than near-white, avoids harsh glare in dark
+    primary: '#9A9088', // warm mid-gray — softer than near-white, avoids harsh glare in dark
     primarySoft: '#3A3733',
-    accent: '#A88A65',      // warm brown lighter — readable on dark bg
-    accentSoft: '#403020',  // dark warm brown tint — selected backgrounds
-    text: '#D8D0CA',         // warm cream — softer than near-white, less glare for ND users
+    accent: '#A88A65', // warm brown lighter — readable on dark bg
+    accentSoft: '#403020', // dark warm brown tint — selected backgrounds
+    text: '#D8D0CA', // warm cream — softer than near-white, less glare for ND users
     textSecondary: '#B5AFA5',
     textInverse: '#1B1A18', // dark — for text on primary buttons
     border: '#3A3733',
@@ -103,10 +103,10 @@ const coolMistLight: ThemeTokens = {
     background: '#F5F7FA',
     surface: '#EBEEF3',
     surfaceHover: '#E0E4EB',
-    primary: '#3A4855',     // dark navy-gray — buttons/CTAs
+    primary: '#3A4855', // dark navy-gray — buttons/CTAs
     primarySoft: '#E0E5EC',
-    accent: '#4A6A89',      // steel blue — identity signal (original WCAG-approved palette color)
-    accentSoft: '#C8D8E8',  // light blue tint — selected backgrounds
+    accent: '#4A6A89', // steel blue — identity signal (original WCAG-approved palette color)
+    accentSoft: '#C8D8E8', // light blue tint — selected backgrounds
     text: '#1E2A36',
     textSecondary: '#566878',
     textInverse: '#FFFFFF',
@@ -114,7 +114,7 @@ const coolMistLight: ThemeTokens = {
     borderFocus: '#4A6A89',
     error: '#B86B6B',
     errorSoft: '#EED5D5',
-    success: '#6B9E84',     // semantic green — independent of accent
+    success: '#6B9E84', // semantic green — independent of accent
     successSoft: '#C8E0D4',
   },
 };
@@ -128,18 +128,18 @@ const coolMistDark: ThemeTokens = {
     background: '#1A1E22',
     surface: '#222830',
     surfaceHover: '#2A3240',
-    primary: '#8A98A8',     // cool mid-gray — softer than near-white, avoids harsh glare in dark
+    primary: '#8A98A8', // cool mid-gray — softer than near-white, avoids harsh glare in dark
     primarySoft: '#2E3540',
-    accent: '#7AAFC8',      // steel blue lighter — readable on dark bg
-    accentSoft: '#1A3252',  // dark navy blue — selected backgrounds
-    text: '#D0D8E4',         // cool light blue-gray — softer than near-white
+    accent: '#7AAFC8', // steel blue lighter — readable on dark bg
+    accentSoft: '#1A3252', // dark navy blue — selected backgrounds
+    text: '#D0D8E4', // cool light blue-gray — softer than near-white
     textSecondary: '#A8B5C2',
     textInverse: '#1A1E22',
     border: '#2E3540',
     borderFocus: '#7AAFC8',
     error: '#D98888',
     errorSoft: '#40282A',
-    success: '#8FBFA8',     // semantic green — independent of accent
+    success: '#8FBFA8', // semantic green — independent of accent
     successSoft: '#1E3830',
   },
 };
@@ -154,10 +154,10 @@ const softSageLight: ThemeTokens = {
     background: '#F7F8F5',
     surface: '#ECF0E8',
     surfaceHover: '#E2E8DC',
-    primary: '#464B43',     // dark sage-gray — buttons/CTAs
+    primary: '#464B43', // dark sage-gray — buttons/CTAs
     primarySoft: '#E3E8E0',
-    accent: '#527A58',      // sage green — identity signal
-    accentSoft: '#C0D8C4',  // light sage green tint — selected backgrounds
+    accent: '#527A58', // sage green — identity signal
+    accentSoft: '#C0D8C4', // light sage green tint — selected backgrounds
     text: '#2A2E28',
     textSecondary: '#5A6057',
     textInverse: '#FFFFFF',
@@ -165,7 +165,7 @@ const softSageLight: ThemeTokens = {
     borderFocus: '#527A58',
     error: '#B06A5E',
     errorSoft: '#F0D8D2',
-    success: '#527A58',     // = accent for Soft Sage (sage green is also success)
+    success: '#527A58', // = accent for Soft Sage (sage green is also success)
     successSoft: '#C0D8C4',
   },
 };
@@ -179,11 +179,11 @@ const softSageDark: ThemeTokens = {
     background: '#1A1F1B',
     surface: '#222924',
     surfaceHover: '#2C352D',
-    primary: '#8C9588',     // sage mid-gray — softer than near-white, avoids harsh glare in dark
+    primary: '#8C9588', // sage mid-gray — softer than near-white, avoids harsh glare in dark
     primarySoft: '#303830',
-    accent: '#80A885',      // sage green lighter — readable on dark bg
+    accent: '#80A885', // sage green lighter — readable on dark bg
     accentSoft: '#2E4A34',
-    text: '#D0D9CC',         // sage-tinted light gray — softer than near-white
+    text: '#D0D9CC', // sage-tinted light gray — softer than near-white
     textSecondary: '#A8B0A4',
     textInverse: '#1A1F1B',
     border: '#303830',
@@ -200,8 +200,8 @@ const softSageDark: ThemeTokens = {
 // ---------------------------------------------------------------------------
 export const themes: Record<ThemeName, { light: ThemeTokens; dark: ThemeTokens }> = {
   warmEarth: { light: warmEarthLight, dark: warmEarthDark },
-  coolMist:  { light: coolMistLight,  dark: coolMistDark  },
-  softSage:  { light: softSageLight,  dark: softSageDark  },
+  coolMist: { light: coolMistLight, dark: coolMistDark },
+  softSage: { light: softSageLight, dark: softSageDark },
 };
 
 export const DEFAULT_THEME: ThemeName = 'warmEarth';

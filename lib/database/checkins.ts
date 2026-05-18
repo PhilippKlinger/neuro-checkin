@@ -2,10 +2,7 @@ import type { SQLiteDatabase } from 'expo-sqlite';
 import type { CheckIn, CheckInInsert, BodySignals } from '../types/checkin';
 import { EMPTY_BODY_SIGNALS } from '../types/checkin';
 
-export async function insertCheckIn(
-  db: SQLiteDatabase,
-  data: CheckInInsert
-): Promise<number> {
+export async function insertCheckIn(db: SQLiteDatabase, data: CheckInInsert): Promise<number> {
   const result = await db.runAsync(
     `INSERT INTO check_ins (
       energy_level, focus_level, body_signals, feelings,
@@ -27,11 +24,7 @@ export async function insertCheckIn(
   return result.lastInsertRowId;
 }
 
-export async function getCheckIns(
-  db: SQLiteDatabase,
-  limit = 50,
-  offset = 0
-): Promise<CheckIn[]> {
+export async function getCheckIns(db: SQLiteDatabase, limit = 50, offset = 0): Promise<CheckIn[]> {
   const rows = await db.getAllAsync<{
     id: number;
     created_at: string;
@@ -46,19 +39,12 @@ export async function getCheckIns(
     self_care_note: string | null;
     inner_part: string | null;
     note: string | null;
-  }>(
-    'SELECT * FROM check_ins ORDER BY created_at DESC LIMIT ? OFFSET ?',
-    limit,
-    offset
-  );
+  }>('SELECT * FROM check_ins ORDER BY created_at DESC LIMIT ? OFFSET ?', limit, offset);
 
   return rows.map(mapRowToCheckIn);
 }
 
-export async function getCheckInById(
-  db: SQLiteDatabase,
-  id: number
-): Promise<CheckIn | null> {
+export async function getCheckInById(db: SQLiteDatabase, id: number): Promise<CheckIn | null> {
   const row = await db.getFirstAsync<{
     id: number;
     created_at: string;
@@ -78,10 +64,7 @@ export async function getCheckInById(
   return row ? mapRowToCheckIn(row) : null;
 }
 
-export async function deleteCheckIn(
-  db: SQLiteDatabase,
-  id: number
-): Promise<void> {
+export async function deleteCheckIn(db: SQLiteDatabase, id: number): Promise<void> {
   await db.runAsync('DELETE FROM check_ins WHERE id = ?', id);
 }
 
@@ -105,7 +88,8 @@ function parseBodySignals(raw: string): BodySignals {
       pain: parsed.pain === true ? true : parsed.pain === false ? false : null,
       restroom: parsed.restroom === true ? true : parsed.restroom === false ? false : null,
       seating: parsed.seating === true ? true : parsed.seating === false ? false : null,
-      externalStimuli: parsed.externalStimuli === true ? true : parsed.externalStimuli === false ? false : null,
+      externalStimuli:
+        parsed.externalStimuli === true ? true : parsed.externalStimuli === false ? false : null,
     };
   } catch {
     return { ...EMPTY_BODY_SIGNALS };

@@ -110,9 +110,6 @@ export async function updateSettings(
   }
 
   if (updates.length > 0) {
-    await db.runAsync(
-      `UPDATE user_settings SET ${updates.join(', ')} WHERE id = 1`,
-      ...values
-    );
+    await db.runAsync(`UPDATE user_settings SET ${updates.join(', ')} WHERE id = 1`, ...values);
   }
 }
