@@ -11,7 +11,7 @@ export function StepFocus({ value, onValueChange, hint }: StepFocusProps) {
   return (
     <LevelSlider
       title="Fokus-Level"
-      subtitle="Wie gut kannst du dich gerade konzentrieren?"
+      subtitle="Wie klar fühlt sich dein Kopf gerade an?"
       value={value}
       onValueChange={onValueChange}
       labels={FOCUS_LABELS}
