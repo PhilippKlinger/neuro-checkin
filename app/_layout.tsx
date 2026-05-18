@@ -24,8 +24,17 @@ Sentry.init({
     // Strip sensitive check-in health data that may appear in crash contexts
     // (component state, extra fields). The app promises local-only storage.
     const sensitiveKeys = [
-      'feelings', 'thoughtsNote', 'selfCareNote', 'innerPart', 'note',
-      'draft', 'bodySignals', 'distressLevel', 'distressNote', 'energyLevel', 'focusLevel',
+      'feelings',
+      'thoughtsNote',
+      'selfCareNote',
+      'innerPart',
+      'note',
+      'draft',
+      'bodySignals',
+      'distressLevel',
+      'distressNote',
+      'energyLevel',
+      'focusLevel',
     ];
     function scrub(obj: Record<string, unknown>) {
       for (const key of sensitiveKeys) {
@@ -39,8 +48,9 @@ Sentry.init({
       }
     }
     // Scrub breadcrumb data objects — may contain component state snapshots
-    if (event.breadcrumbs?.values) {
-      for (const breadcrumb of event.breadcrumbs.values) {
+    const breadcrumbs = event.breadcrumbs?.values?.();
+    if (breadcrumbs) {
+      for (const breadcrumb of breadcrumbs) {
         if (breadcrumb.data && typeof breadcrumb.data === 'object') {
           scrub(breadcrumb.data as Record<string, unknown>);
         }
@@ -97,7 +107,7 @@ function AppStack() {
       }
     }
     checkOnboarding();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isReady]); // db and router are stable refs; segments intentionally omitted (one-time check on ready)
 
   if (!onboardingChecked) return null;
@@ -198,7 +208,7 @@ function RootLayout() {
 
     const subscription = Notifications.addNotificationResponseReceivedListener(handleResponse);
     return () => subscription.remove();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // router is a stable ref from expo-router; registering once at mount is intentional
 
   return (
