@@ -85,13 +85,17 @@ export function CheckInDetailContent({
           <View style={[styles.row, { marginBottom: spacing.sm }]}>
             <Text style={label(typography, theme)}>Energie</Text>
             <Text style={value(typography, theme)}>
-              {checkIn.energySkipped ? 'Nicht angegeben' : getLevelLabel(checkIn.energyLevel, ENERGY_LABELS)}
+              {checkIn.energySkipped
+                ? 'Nicht angegeben'
+                : getLevelLabel(checkIn.energyLevel, ENERGY_LABELS)}
             </Text>
           </View>
           <View style={styles.row}>
             <Text style={label(typography, theme)}>Fokus</Text>
             <Text style={value(typography, theme)}>
-              {checkIn.focusSkipped ? 'Nicht angegeben' : getLevelLabel(checkIn.focusLevel, FOCUS_LABELS)}
+              {checkIn.focusSkipped
+                ? 'Nicht angegeben'
+                : getLevelLabel(checkIn.focusLevel, FOCUS_LABELS)}
             </Text>
           </View>
         </View>

@@ -8,11 +8,7 @@
  *   - mapRowToCheckIn (via getCheckIns / getCheckInById) converts 0/1 → boolean
  */
 
-import {
-  insertCheckIn,
-  getCheckIns,
-  getCheckInById,
-} from '../lib/database/checkins';
+import { insertCheckIn, getCheckIns, getCheckInById } from '../lib/database/checkins';
 import type { CheckInInsert } from '../lib/types/checkin';
 import { EMPTY_BODY_SIGNALS } from '../lib/types/checkin';
 import { migrateDatabase } from '../lib/database/schema';

@@ -63,11 +63,23 @@ export function LevelSlider({
         </Text>
       )}
 
-      <RadioGroup title={title} labels={labels} value={skipped ? 0 : value} onValueChange={(v) => { onValueChange(v); }} />
+      <RadioGroup
+        title={title}
+        labels={labels}
+        value={skipped ? 0 : value}
+        onValueChange={(v) => {
+          onValueChange(v);
+        }}
+      />
 
       {onSkip && (
         <>
-          <View style={[styles.divider, { backgroundColor: theme.colors.border, marginVertical: spacing.md }]} />
+          <View
+            style={[
+              styles.divider,
+              { backgroundColor: theme.colors.border, marginVertical: spacing.md },
+            ]}
+          />
           <Pressable
             onPress={onSkip}
             style={({ pressed }) => [
