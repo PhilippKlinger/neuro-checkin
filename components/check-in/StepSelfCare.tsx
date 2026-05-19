@@ -1,4 +1,4 @@
-import { ChipOrTextStep } from './ChipOrTextStep';
+import { ChipOrTextStep, type ChipGroup } from './ChipOrTextStep';
 
 interface StepSelfCareProps {
   value: string;
@@ -7,18 +7,22 @@ interface StepSelfCareProps {
   userChips?: string[];
 }
 
-export const SELF_CARE_CHIPS = [
-  'Pause',
-  'Wasser trinken',
-  'Frische Luft',
-  'Tief atmen',
-  'Bewegung',
-  'Stretching',
-  'Essen',
-  'Musik hören',
-  'Wärme',
-  'Nichts — passt gerade so',
-] as const;
+const SELF_CARE_GROUPS: ChipGroup[] = [
+  {
+    label: '0 Energie',
+    chips: ['Augen schließen', 'Licht dimmen', 'Nichts entscheiden', 'Einfach bleiben'],
+  },
+  {
+    label: 'Klein',
+    chips: ['Wasser trinken', 'Kurz raus', 'Tief atmen', 'Dehnen'],
+  },
+  {
+    label: 'Mehr Aufwand',
+    chips: ['Spazieren', 'Essen', 'Dusche', 'Musik hören'],
+  },
+];
+
+export const SELF_CARE_CHIPS: readonly string[] = SELF_CARE_GROUPS.flatMap((g) => [...g.chips]);
 
 export function StepSelfCare({ value, onValueChange, hint, userChips }: StepSelfCareProps) {
   return (
@@ -33,6 +37,7 @@ export function StepSelfCare({ value, onValueChange, hint, userChips }: StepSelf
       maxLength={150}
       hint={hint}
       userChips={userChips}
+      chipGroups={SELF_CARE_GROUPS}
     />
   );
 }

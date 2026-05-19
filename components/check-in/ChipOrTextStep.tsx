@@ -3,6 +3,11 @@ import { View, Text, TextInput, Pressable, StyleSheet } from 'react-native';
 import { useTheme } from '../../lib/hooks/useTheme';
 import { isChipSelected, toggleChip } from '../../lib/utils/chips';
 
+export interface ChipGroup {
+  label: string;
+  chips: readonly string[];
+}
+
 interface ChipOrTextStepProps {
   title: string;
   subtitle: string;
@@ -14,6 +19,7 @@ interface ChipOrTextStepProps {
   maxLength?: number;
   hint?: string;
   userChips?: string[];
+  chipGroups?: ChipGroup[];
 }
 
 function hasChipContent(val: string, chips: readonly string[]): boolean {
@@ -81,6 +87,7 @@ export function ChipOrTextStep({
   maxLength = 150,
   hint,
   userChips,
+  chipGroups,
 }: ChipOrTextStepProps) {
   const { theme, spacing, typography, radii, touchTarget } = useTheme();
 
@@ -141,7 +148,26 @@ export function ChipOrTextStep({
 
       {mode === 'chips' ? (
         <>
-          <ChipWrap chips={chips} value={value} onValueChange={onValueChange} />
+          {chipGroups ? (
+            chipGroups.map((group) => (
+              <View key={group.label}>
+                <Text
+                  style={{
+                    fontFamily: typography.families.body.regular,
+                    fontSize: typography.sizes.xs,
+                    color: theme.colors.textSecondary,
+                    fontStyle: 'italic',
+                    marginBottom: spacing.sm,
+                  }}
+                >
+                  {group.label}
+                </Text>
+                <ChipWrap chips={group.chips} value={value} onValueChange={onValueChange} />
+              </View>
+            ))
+          ) : (
+            <ChipWrap chips={chips} value={value} onValueChange={onValueChange} />
+          )}
 
           {userChips && userChips.length > 0 && (
             <>
