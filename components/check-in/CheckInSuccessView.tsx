@@ -43,9 +43,9 @@ export function CheckInSuccessView({ onReset, energyLevel, focusLevel }: CheckIn
       <View style={styles.textBlock}>
         <Ionicons
           name="checkmark-circle"
-          size={64}
-          color={theme.colors.success}
-          style={{ marginBottom: spacing.lg }}
+          size={36}
+          color={theme.colors.textSecondary}
+          style={{ marginBottom: spacing.md }}
           accessibilityElementsHidden
         />
         <Text
@@ -58,7 +58,7 @@ export function CheckInSuccessView({ onReset, energyLevel, focusLevel }: CheckIn
           }}
           accessibilityRole="header"
         >
-          Check-in gespeichert
+          Gespeichert.
         </Text>
 
         {showSummary && (

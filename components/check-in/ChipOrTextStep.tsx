@@ -36,7 +36,10 @@ interface ChipWrapProps {
 function ChipWrap({ chips, value, onValueChange, variant = 'default' }: ChipWrapProps) {
   const { theme, spacing, typography, radii } = useTheme();
   return (
-    <View style={[styles.chipWrap, { gap: spacing.sm, marginBottom: spacing.md }]}>
+    <View
+      style={[styles.chipWrap, { gap: spacing.sm, marginBottom: spacing.md }]}
+      accessibilityLabel="Mehrfachauswahl, optional — du kannst mehrere wählen."
+    >
       {chips.map((chip) => {
         const selected = isChipSelected(chip, value);
         return (

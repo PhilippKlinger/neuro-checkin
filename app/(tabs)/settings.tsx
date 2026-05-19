@@ -1,5 +1,6 @@
 import { useState, useCallback, useRef } from 'react';
-import { Text, Pressable, ScrollView, StyleSheet, Platform } from 'react-native';
+import { Text, Pressable, ScrollView, StyleSheet, Platform, View } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import * as Device from 'expo-device';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { DateTimePickerEvent } from '@react-native-community/datetimepicker';
@@ -50,6 +51,9 @@ export default function SettingsScreen() {
   const [isEmulator, setIsEmulator] = useState(false);
   const [checkInCount, setCheckInCount] = useState(0);
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
+  const [feedbackOpen, setFeedbackOpen] = useState(false);
+  const [dataOpen, setDataOpen] = useState(false);
+  const [aboutOpen, setAboutOpen] = useState(false);
 
   useFocusEffect(
     useCallback(() => {
@@ -173,98 +177,170 @@ export default function SettingsScreen() {
           onWeekdayToggle={handleWeekdayToggle}
         />
 
-        <Text
-          style={{
-            fontFamily: typography.families.heading.semibold,
-            fontSize: typography.sizes.lg,
-            color: theme.colors.text,
-            marginBottom: spacing.md,
-            marginTop: spacing.xl,
-          }}
-        >
-          Feedback
-        </Text>
         <Pressable
-          onPress={() => setShowFeedbackModal(true)}
+          onPress={() => setFeedbackOpen((o) => !o)}
           style={({ pressed }) => [
-            styles.listItem,
-            {
-              backgroundColor: theme.colors.surface,
-              borderRadius: radii.md,
-              padding: spacing.md,
-              minHeight: touchTarget.min,
-              borderWidth: 1,
-              borderColor: theme.colors.border,
-              marginBottom: spacing.xl,
-            },
+            styles.sectionHeader,
+            { marginTop: spacing.xl, minHeight: touchTarget.min },
             pressed && { opacity: 0.75 },
           ]}
           accessibilityRole="button"
-          accessibilityLabel="Feedback senden"
-          accessibilityHint="Öffnet ein Feedback-Formular"
+          accessibilityLabel="Feedback"
+          accessibilityHint={feedbackOpen ? 'Zuklappen' : 'Aufklappen'}
+          accessibilityState={{ expanded: feedbackOpen }}
         >
           <Text
             style={{
-              fontFamily: typography.families.ui.medium,
-              fontSize: typography.sizes.md,
-              color: theme.colors.textSecondary,
-            }}
-          >
-            Feedback senden
-          </Text>
-        </Pressable>
-
-        <DataSection
-          db={db}
-          checkInCount={checkInCount}
-          onDeleteComplete={() => setCheckInCount(0)}
-        />
-
-        <Text
-          style={{
-            fontFamily: typography.families.heading.semibold,
-            fontSize: typography.sizes.lg,
-            color: theme.colors.text,
-            marginTop: spacing.xl,
-            marginBottom: spacing.md,
-          }}
-        >
-          Über die App
-        </Text>
-        <Pressable
-          onPress={() => router.push('/check-in-info')}
-          style={({ pressed }) => [
-            styles.infoRow,
-            {
-              backgroundColor: theme.colors.surface,
-              borderRadius: radii.md,
-              padding: spacing.md,
-              minHeight: touchTarget.min,
-            },
-            pressed && { opacity: 0.75 },
-          ]}
-          accessibilityRole="button"
-          accessibilityLabel="Was ist ein Check-in? Mehr erfahren"
-        >
-          <Text
-            style={{
-              fontFamily: typography.families.body.regular,
-              fontSize: typography.sizes.md,
+              fontFamily: typography.families.heading.semibold,
+              fontSize: typography.sizes.lg,
               color: theme.colors.text,
             }}
           >
-            Was ist ein Check-in?
+            Feedback
           </Text>
+          <Ionicons
+            name={feedbackOpen ? 'chevron-up' : 'chevron-down'}
+            size={18}
+            color={theme.colors.textSecondary}
+            accessibilityElementsHidden
+          />
+        </Pressable>
+        {feedbackOpen && (
+          <Pressable
+            onPress={() => setShowFeedbackModal(true)}
+            style={({ pressed }) => [
+              styles.listItem,
+              {
+                backgroundColor: theme.colors.surface,
+                borderRadius: radii.md,
+                padding: spacing.md,
+                minHeight: touchTarget.min,
+                borderWidth: 1,
+                borderColor: theme.colors.border,
+                marginTop: spacing.sm,
+                marginBottom: spacing.xl,
+              },
+              pressed && { opacity: 0.75 },
+            ]}
+            accessibilityRole="button"
+            accessibilityLabel="Feedback senden"
+            accessibilityHint="Öffnet ein Feedback-Formular"
+          >
+            <Text
+              style={{
+                fontFamily: typography.families.ui.medium,
+                fontSize: typography.sizes.md,
+                color: theme.colors.textSecondary,
+              }}
+            >
+              Feedback senden
+            </Text>
+          </Pressable>
+        )}
+
+        <Pressable
+          onPress={() => setDataOpen((o) => !o)}
+          style={({ pressed }) => [
+            styles.sectionHeader,
+            { marginTop: feedbackOpen ? 0 : spacing.xl, minHeight: touchTarget.min },
+            pressed && { opacity: 0.75 },
+          ]}
+          accessibilityRole="button"
+          accessibilityLabel="Daten & Datenschutz"
+          accessibilityHint={dataOpen ? 'Zuklappen' : 'Aufklappen'}
+          accessibilityState={{ expanded: dataOpen }}
+        >
           <Text
             style={{
-              fontFamily: typography.families.body.regular,
-              fontSize: typography.sizes.md,
-              color: theme.colors.textSecondary,
+              fontFamily: typography.families.heading.semibold,
+              fontSize: typography.sizes.lg,
+              color: theme.colors.text,
             }}
           >
-            ›
+            Daten & Datenschutz
           </Text>
+          <Ionicons
+            name={dataOpen ? 'chevron-up' : 'chevron-down'}
+            size={18}
+            color={theme.colors.textSecondary}
+            accessibilityElementsHidden
+          />
         </Pressable>
+        {dataOpen && (
+          <View style={{ marginTop: spacing.sm, marginBottom: spacing.xl }}>
+            <DataSection
+              db={db}
+              checkInCount={checkInCount}
+              onDeleteComplete={() => setCheckInCount(0)}
+            />
+          </View>
+        )}
+
+        <Pressable
+          onPress={() => setAboutOpen((o) => !o)}
+          style={({ pressed }) => [
+            styles.sectionHeader,
+            { marginTop: dataOpen ? 0 : spacing.xl, minHeight: touchTarget.min },
+            pressed && { opacity: 0.75 },
+          ]}
+          accessibilityRole="button"
+          accessibilityLabel="Über die App"
+          accessibilityHint={aboutOpen ? 'Zuklappen' : 'Aufklappen'}
+          accessibilityState={{ expanded: aboutOpen }}
+        >
+          <Text
+            style={{
+              fontFamily: typography.families.heading.semibold,
+              fontSize: typography.sizes.lg,
+              color: theme.colors.text,
+            }}
+          >
+            Über die App
+          </Text>
+          <Ionicons
+            name={aboutOpen ? 'chevron-up' : 'chevron-down'}
+            size={18}
+            color={theme.colors.textSecondary}
+            accessibilityElementsHidden
+          />
+        </Pressable>
+        {aboutOpen && (
+          <Pressable
+            onPress={() => router.push('/check-in-info')}
+            style={({ pressed }) => [
+              styles.infoRow,
+              {
+                backgroundColor: theme.colors.surface,
+                borderRadius: radii.md,
+                padding: spacing.md,
+                minHeight: touchTarget.min,
+                marginTop: spacing.sm,
+              },
+              pressed && { opacity: 0.75 },
+            ]}
+            accessibilityRole="button"
+            accessibilityLabel="Was ist ein Check-in? Mehr erfahren"
+          >
+            <Text
+              style={{
+                fontFamily: typography.families.body.regular,
+                fontSize: typography.sizes.md,
+                color: theme.colors.text,
+              }}
+            >
+              Was ist ein Check-in?
+            </Text>
+            <Text
+              style={{
+                fontFamily: typography.families.body.regular,
+                fontSize: typography.sizes.md,
+                color: theme.colors.textSecondary,
+              }}
+            >
+              ›
+            </Text>
+          </Pressable>
+        )}
       </ScrollView>
 
       <FeedbackModal visible={showFeedbackModal} onClose={() => setShowFeedbackModal(false)} />
@@ -276,4 +352,5 @@ const styles = StyleSheet.create({
   container: { flex: 1 },
   listItem: { justifyContent: 'center' },
   infoRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  sectionHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
 });
