@@ -1,8 +1,4 @@
-import {
-  saveUserChips,
-  getUserChips,
-  deleteUserChips,
-} from '../lib/database/userChips';
+import { saveUserChips, getUserChips, deleteUserChips } from '../lib/database/userChips';
 
 // ---------------------------------------------------------------------------
 // Minimal expo-sqlite mock
@@ -71,7 +67,9 @@ describe('saveUserChips', () => {
     await saveUserChips(db as never, 'feelings', 'neblig, wattig', STANDARD_FEELINGS);
     // should call runAsync for each non-standard term
     const calls = db.runAsync.mock.calls.map((c: unknown[]) => c[1] as string[]);
-    const labels = calls.flatMap((args) => args.filter((a) => !['feelings', 'self_care'].includes(a)));
+    const labels = calls.flatMap((args) =>
+      args.filter((a) => !['feelings', 'self_care'].includes(a))
+    );
     expect(labels).toContain('neblig');
     expect(labels).toContain('wattig');
   });
@@ -86,7 +84,9 @@ describe('saveUserChips', () => {
     const db = makeDb();
     await saveUserChips(db as never, 'feelings', 'ruhig, neblig', STANDARD_FEELINGS);
     const calls = db.runAsync.mock.calls.map((c: unknown[]) => c[1] as string[]);
-    const labels = calls.flatMap((args) => args.filter((a) => !['feelings', 'self_care'].includes(a)));
+    const labels = calls.flatMap((args) =>
+      args.filter((a) => !['feelings', 'self_care'].includes(a))
+    );
     expect(labels).toContain('neblig');
     expect(labels).not.toContain('ruhig');
   });

@@ -26,7 +26,10 @@ export function DataSection({ db, checkInCount, onDeleteComplete }: DataSectionP
       await deleteUserChips(db);
       setShowChipsDone(true);
     } catch {
-      Alert.alert('Fehler', 'Eigene Chips konnten nicht gelöscht werden. Bitte versuche es erneut.');
+      Alert.alert(
+        'Fehler',
+        'Eigene Chips konnten nicht gelöscht werden. Bitte versuche es erneut.'
+      );
     }
   }
 
