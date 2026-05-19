@@ -8,63 +8,9 @@ import { DatabaseProvider, useDatabase, useDatabaseReady } from '../lib/hooks/us
 import { getSettings, updateSettings } from '../lib/database/settings';
 import { ThemeName } from '../lib/constants/themes';
 import { REENTRY_THRESHOLD_DAYS } from '../lib/constants/timing';
-import { SENTRY_DSN } from '../lib/constants/config';
+import { initSentry } from '../lib/observability/sentry';
 
-Sentry.init({
-  dsn: SENTRY_DSN,
-  environment: __DEV__ ? 'development' : 'production',
-  enabled: !__DEV__,
-  tracesSampleRate: 0,
-  beforeSend(event) {
-    // Strip user identifiers — never collected intentionally
-    if (event.user) {
-      delete event.user.ip_address;
-      delete event.user.email;
-    }
-    // Strip sensitive check-in health data that may appear in crash contexts
-    // (component state, extra fields). The app promises local-only storage.
-    const sensitiveKeys = [
-      'feelings',
-      'thoughtsNote',
-      'selfCareNote',
-      'innerPart',
-      'note',
-      'draft',
-      'bodySignals',
-      'distressLevel',
-      'distressNote',
-      'energyLevel',
-      'focusLevel',
-    ];
-    function scrub(obj: Record<string, unknown>) {
-      for (const key of sensitiveKeys) {
-        if (key in obj) obj[key] = '[scrubbed]';
-      }
-    }
-    if (event.extra) scrub(event.extra as Record<string, unknown>);
-    if (event.contexts) {
-      for (const ctx of Object.values(event.contexts)) {
-        if (ctx && typeof ctx === 'object') scrub(ctx as Record<string, unknown>);
-      }
-    }
-    // Scrub breadcrumb data objects — may contain component state snapshots
-    const breadcrumbs = event.breadcrumbs?.values?.();
-    if (breadcrumbs) {
-      for (const breadcrumb of breadcrumbs) {
-        if (breadcrumb.data && typeof breadcrumb.data === 'object') {
-          scrub(breadcrumb.data as Record<string, unknown>);
-        }
-      }
-    }
-    return event;
-  },
-  beforeBreadcrumb(breadcrumb) {
-    // Skip console + http breadcrumbs — console could contain user-entered content,
-    // http breadcrumbs could expose Formspree payloads
-    if (breadcrumb.category === 'console' || breadcrumb.category === 'http') return null;
-    return breadcrumb;
-  },
-});
+initSentry();
 
 function AppStack() {
   const { theme, typography, setThemeName, setColorMode } = useTheme();
