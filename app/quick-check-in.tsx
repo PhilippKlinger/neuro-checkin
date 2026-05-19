@@ -119,6 +119,8 @@ export default function QuickCheckInScreen() {
       await insertCheckIn(db, {
         energyLevel,
         focusLevel,
+        energySkipped: false,
+        focusSkipped: false,
         bodySignals: { ...EMPTY_BODY_SIGNALS },
         feelings,
         distressLevel: null,

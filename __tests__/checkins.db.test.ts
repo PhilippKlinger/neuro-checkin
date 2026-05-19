@@ -35,6 +35,8 @@ function makeDb(overrides: Partial<MockDb> = {}): MockDb {
 const FULL_INSERT: CheckInInsert = {
   energyLevel: 3,
   focusLevel: 4,
+  energySkipped: false,
+  focusSkipped: false,
   bodySignals: {
     hunger: true,
     thirst: false,
@@ -57,6 +59,8 @@ const FULL_INSERT: CheckInInsert = {
 const MINIMAL_INSERT: CheckInInsert = {
   energyLevel: 2,
   focusLevel: 2,
+  energySkipped: false,
+  focusSkipped: false,
   bodySignals: { ...EMPTY_BODY_SIGNALS },
   feelings: '',
   distressLevel: null,
@@ -107,11 +111,11 @@ describe('insertCheckIn', () => {
     expect(args[5]).toBeNull();
   });
 
-  it('passes all 11 field values in correct order', async () => {
+  it('passes all 13 field values in correct order', async () => {
     const db = makeDb();
     await insertCheckIn(db as any, FULL_INSERT);
     const [, ...values] = db.runAsync.mock.calls[0]; // drop SQL string
-    expect(values).toHaveLength(11);
+    expect(values).toHaveLength(13);
     expect(values[0]).toBe(FULL_INSERT.energyLevel);
     expect(values[1]).toBe(FULL_INSERT.focusLevel);
     expect(typeof values[2]).toBe('string'); // body_signals JSON
@@ -123,6 +127,8 @@ describe('insertCheckIn', () => {
     expect(values[8]).toBe(FULL_INSERT.selfCareNote);
     expect(values[9]).toBe(FULL_INSERT.innerPart);
     expect(values[10]).toBe(FULL_INSERT.note);
+    expect(values[11]).toBe(0); // energySkipped false → 0
+    expect(values[12]).toBe(0); // focusSkipped false → 0
   });
 });
 
@@ -135,6 +141,8 @@ const SAMPLE_ROW = {
   created_at: '2026-05-18 10:00:00',
   energy_level: 3,
   focus_level: 4,
+  energy_skipped: 0,
+  focus_skipped: 0,
   body_signals: JSON.stringify(FULL_INSERT.bodySignals),
   feelings: 'ruhig',
   distress_level: 2,

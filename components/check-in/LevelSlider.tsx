@@ -8,6 +8,8 @@ interface LevelSliderProps {
   onValueChange: (value: number) => void;
   labels: readonly string[]; // exactly 5 semantic labels
   hint?: string;
+  skipped?: boolean;
+  onSkip?: () => void;
 }
 
 export function LevelSlider({
@@ -17,8 +19,10 @@ export function LevelSlider({
   onValueChange,
   labels,
   hint,
+  skipped,
+  onSkip,
 }: LevelSliderProps) {
-  const { theme, spacing, typography } = useTheme();
+  const { theme, spacing, typography, radii, touchTarget } = useTheme();
 
   return (
     <View style={styles.container}>
@@ -59,7 +63,54 @@ export function LevelSlider({
         </Text>
       )}
 
-      <RadioGroup title={title} labels={labels} value={value} onValueChange={onValueChange} />
+      <RadioGroup
+        title={title}
+        labels={labels}
+        value={skipped ? 0 : value}
+        onValueChange={(v) => {
+          onValueChange(v);
+        }}
+      />
+
+      {onSkip && (
+        <>
+          <View
+            style={[
+              styles.divider,
+              { backgroundColor: theme.colors.border, marginVertical: spacing.md },
+            ]}
+          />
+          <Pressable
+            onPress={onSkip}
+            style={({ pressed }) => [
+              styles.skipButton,
+              {
+                minHeight: touchTarget.min,
+                borderRadius: radii.md,
+                paddingHorizontal: spacing.md,
+                backgroundColor: skipped ? theme.colors.accentSoft : theme.colors.surface,
+                borderWidth: 1,
+                borderColor: skipped ? theme.colors.accent : theme.colors.border,
+              },
+              pressed && { opacity: 0.75 },
+            ]}
+            accessibilityRole="button"
+            accessibilityLabel="Kann ich gerade nicht sagen"
+            accessibilityState={{ selected: skipped }}
+          >
+            <Text
+              style={{
+                fontFamily: typography.families.body.regular,
+                fontSize: typography.sizes.md,
+                color: theme.colors.textSecondary,
+                fontStyle: 'italic',
+              }}
+            >
+              Kann ich gerade nicht sagen
+            </Text>
+          </Pressable>
+        </>
+      )}
     </View>
   );
 }
@@ -124,6 +175,13 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   option: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  divider: {
+    height: 1,
+  },
+  skipButton: {
     alignItems: 'center',
     justifyContent: 'center',
   },

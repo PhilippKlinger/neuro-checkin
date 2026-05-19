@@ -3,6 +3,8 @@ export interface CheckIn {
   createdAt: string; // ISO 8601
   energyLevel: number; // 1-5
   focusLevel: number; // 1-5
+  energySkipped: boolean;
+  focusSkipped: boolean;
   bodySignals: BodySignals;
   feelings: string; // free text
   distressLevel: number | null; // 1-5, null = not answered
@@ -68,6 +70,8 @@ export type CheckInInsert = Omit<CheckIn, 'id' | 'createdAt'>;
 export interface CheckInDraft {
   energyLevel: number; // 1-5
   focusLevel: number; // 1-5
+  energySkipped: boolean;
+  focusSkipped: boolean;
   bodySignals: BodySignals;
   feelings: string;
   distressLevel: number | null; // 1-5, null = not answered
@@ -146,6 +150,8 @@ export function getThoughtsLabel(type: string | null): string {
 export const EMPTY_DRAFT: CheckInDraft = {
   energyLevel: 0, // 0 = unselected, forces active choice
   focusLevel: 0, // 0 = unselected, forces active choice
+  energySkipped: false,
+  focusSkipped: false,
   bodySignals: { ...EMPTY_BODY_SIGNALS },
   feelings: '',
   distressLevel: null,
