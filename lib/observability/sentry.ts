@@ -44,7 +44,7 @@ export function scrubObject(value: unknown, visited: WeakSet<object> = new WeakS
   return obj;
 }
 
-export function scrubEvent(event: Event): Event {
+export function scrubEvent<T extends Event>(event: T): T {
   if (event.extra) {
     scrubObject(event.extra);
   }
