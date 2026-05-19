@@ -90,10 +90,7 @@ export async function getCheckInsByIds(db: SQLiteDatabase, ids: number[]): Promi
     self_care_note: string | null;
     inner_part: string | null;
     note: string | null;
-  }>(
-    `SELECT * FROM check_ins WHERE id IN (${placeholders}) ORDER BY created_at DESC`,
-    ids
-  );
+  }>(`SELECT * FROM check_ins WHERE id IN (${placeholders}) ORDER BY created_at DESC`, ids);
   return rows.map(mapRowToCheckIn);
 }
 

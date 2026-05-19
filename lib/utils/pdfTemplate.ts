@@ -17,7 +17,9 @@ function buildCheckInBlock(c: CheckIn): string {
   const rows: string[] = [];
 
   if (!c.energySkipped && c.energyLevel > 0) {
-    rows.push(row('Energie', `${c.energyLevel}/5 — ${getLevelLabel(c.energyLevel, ENERGY_LABELS)}`));
+    rows.push(
+      row('Energie', `${c.energyLevel}/5 — ${getLevelLabel(c.energyLevel, ENERGY_LABELS)}`)
+    );
   }
   if (!c.focusSkipped && c.focusLevel > 0) {
     rows.push(row('Fokus', `${c.focusLevel}/5 — ${getLevelLabel(c.focusLevel, FOCUS_LABELS)}`));
