@@ -7,30 +7,48 @@ import { formatDate, formatTime } from '../../lib/utils/format';
 interface CheckInCardProps {
   checkIn: CheckIn;
   onPress: () => void;
+  selectable?: boolean;
+  selected?: boolean;
+  onToggle?: () => void;
 }
 
-export const CheckInCard = memo(function CheckInCard({ checkIn, onPress }: CheckInCardProps) {
+export const CheckInCard = memo(function CheckInCard({
+  checkIn,
+  onPress,
+  selectable = false,
+  selected = false,
+  onToggle,
+}: CheckInCardProps) {
   const { theme, spacing, typography, radii } = useTheme();
 
   const activeSignals = Object.values(checkIn.bodySignals).filter((v) => v === true).length;
 
   return (
     <Pressable
-      onPress={onPress}
+      onPress={selectable ? onToggle : onPress}
       style={({ pressed }) => [
         styles.card,
         {
-          backgroundColor: theme.colors.surface,
+          backgroundColor: selected ? theme.colors.accentSoft : theme.colors.surface,
           borderRadius: radii.md,
           paddingHorizontal: spacing.md,
           paddingVertical: spacing.sm,
           marginBottom: spacing.xs,
+          borderWidth: selected ? 1 : 0,
+          borderColor: selected ? theme.colors.accent : 'transparent',
         },
         pressed && { opacity: 0.75 },
       ]}
       accessibilityRole="button"
       accessibilityLabel={`Check-in vom ${formatDate(checkIn.createdAt)}`}
-      accessibilityHint="Tippen für Details"
+      accessibilityHint={
+        selectable
+          ? selected
+            ? 'Ausgewählt. Tippen zum Abwählen.'
+            : 'Tippen zum Auswählen.'
+          : 'Tippen für Details'
+      }
+      accessibilityState={selectable ? { selected } : undefined}
     >
       <View style={styles.header}>
         <Text

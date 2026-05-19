@@ -1,18 +1,23 @@
 import { useState, useCallback } from 'react';
-import { View, Text, FlatList, StyleSheet, ListRenderItem } from 'react-native';
+import { View, Text, FlatList, Pressable, StyleSheet, Alert, ListRenderItem } from 'react-native';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { useTheme } from '../../lib/hooks/useTheme';
 import { useDatabase } from '../../lib/hooks/useDatabase';
 import { getCheckIns } from '../../lib/database/checkins';
 import { CheckIn } from '../../lib/types/checkin';
 import { CheckInCard } from '../../components/history/CheckInCard';
+import { exportCheckInsAsPdf } from '../../lib/utils/pdfExport';
+import * as Sentry from '@sentry/react-native';
 
 export default function HistoryScreen() {
-  const { theme, typography, spacing } = useTheme();
+  const { theme, typography, spacing, radii, touchTarget } = useTheme();
   const db = useDatabase();
   const router = useRouter();
   const [checkIns, setCheckIns] = useState<CheckIn[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [selectionMode, setSelectionMode] = useState(false);
+  const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
+  const [isExporting, setIsExporting] = useState(false);
 
   useFocusEffect(
     useCallback(() => {
@@ -31,15 +36,68 @@ export default function HistoryScreen() {
     }, [db])
   );
 
-  const handlePress = useCallback((id: number) => {
-    router.push(`/history/${id}`);
+  function enterSelectionMode() {
+    setSelectionMode(true);
+    setSelectedIds(new Set());
+  }
+
+  function exitSelectionMode() {
+    setSelectionMode(false);
+    setSelectedIds(new Set());
+  }
+
+  function toggleSelection(id: number) {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }
+
+  function selectAll() {
+    setSelectedIds(new Set(checkIns.map((c) => c.id)));
+  }
+
+  async function handleExportSelected() {
+    const ids = Array.from(selectedIds);
+    if (ids.length === 0) return;
+    const toExport = checkIns.filter((c) => ids.includes(c.id));
+    setIsExporting(true);
+    try {
+      await exportCheckInsAsPdf(toExport);
+      exitSelectionMode();
+    } catch (error) {
+      Sentry.captureException(error);
+      Alert.alert(
+        'Export fehlgeschlagen',
+        'PDF konnte nicht erstellt werden. Bitte versuche es erneut.'
+      );
+    } finally {
+      setIsExporting(false);
+    }
+  }
+
+  const handlePress = useCallback(
+    (id: number) => {
+      router.push(`/history/${id}`);
+    },
     // router is a stable ref from expo-router
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    []
+  );
 
   const renderItem = useCallback<ListRenderItem<CheckIn>>(
-    ({ item }) => <CheckInCard checkIn={item} onPress={() => handlePress(item.id)} />,
-    [handlePress]
+    ({ item }) => (
+      <CheckInCard
+        checkIn={item}
+        onPress={() => handlePress(item.id)}
+        selectable={selectionMode}
+        selected={selectedIds.has(item.id)}
+        onToggle={() => toggleSelection(item.id)}
+      />
+    ),
+    [handlePress, selectionMode, selectedIds]
   );
 
   if (isLoading) {
@@ -90,23 +148,165 @@ export default function HistoryScreen() {
 
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
+      {/* Selection mode header */}
+      {selectionMode ? (
+        <View
+          style={[
+            styles.selectionHeader,
+            {
+              paddingHorizontal: spacing.md,
+              paddingVertical: spacing.sm,
+              backgroundColor: theme.colors.surface,
+              borderBottomWidth: 1,
+              borderBottomColor: theme.colors.border,
+            },
+          ]}
+        >
+          <Pressable
+            onPress={selectAll}
+            style={({ pressed }) => [pressed && { opacity: 0.7 }]}
+            accessibilityRole="button"
+            accessibilityLabel="Alle auswählen"
+          >
+            <Text
+              style={{
+                fontFamily: typography.families.ui.medium,
+                fontSize: typography.sizes.sm,
+                color: theme.colors.accent,
+              }}
+            >
+              Alle
+            </Text>
+          </Pressable>
+
+          <Text
+            style={{
+              fontFamily: typography.families.body.regular,
+              fontSize: typography.sizes.sm,
+              color: theme.colors.textSecondary,
+            }}
+          >
+            {selectedIds.size === 0 ? 'Nichts ausgewählt' : `${selectedIds.size} ausgewählt`}
+          </Text>
+
+          <Pressable
+            onPress={exitSelectionMode}
+            style={({ pressed }) => [pressed && { opacity: 0.7 }]}
+            accessibilityRole="button"
+            accessibilityLabel="Auswahl abbrechen"
+          >
+            <Text
+              style={{
+                fontFamily: typography.families.ui.medium,
+                fontSize: typography.sizes.sm,
+                color: theme.colors.textSecondary,
+              }}
+            >
+              Abbrechen
+            </Text>
+          </Pressable>
+        </View>
+      ) : (
+        <View
+          style={[
+            styles.selectionHeader,
+            {
+              paddingHorizontal: spacing.md,
+              paddingVertical: spacing.sm,
+              justifyContent: 'flex-end',
+            },
+          ]}
+        >
+          <Pressable
+            onPress={enterSelectionMode}
+            style={({ pressed }) => [pressed && { opacity: 0.7 }]}
+            accessibilityRole="button"
+            accessibilityLabel="Check-ins für Export auswählen"
+          >
+            <Text
+              style={{
+                fontFamily: typography.families.ui.medium,
+                fontSize: typography.sizes.sm,
+                color: theme.colors.accent,
+              }}
+            >
+              Exportieren
+            </Text>
+          </Pressable>
+        </View>
+      )}
+
       <FlatList
         data={checkIns}
         keyExtractor={(item) => item.id.toString()}
         renderItem={renderItem}
         contentContainerStyle={{ padding: spacing.md }}
+        extraData={selectionMode ? selectedIds : undefined}
       />
+
+      {/* Export confirm bar */}
+      {selectionMode && selectedIds.size > 0 && (
+        <View
+          style={[
+            styles.exportBar,
+            {
+              padding: spacing.md,
+              paddingBottom: spacing.lg,
+              backgroundColor: theme.colors.surface,
+              borderTopWidth: 1,
+              borderTopColor: theme.colors.border,
+              gap: spacing.sm,
+            },
+          ]}
+        >
+          {selectedIds.size > 100 && (
+            <Text
+              style={{
+                fontFamily: typography.families.body.regular,
+                fontSize: typography.sizes.xs,
+                color: theme.colors.textSecondary,
+                textAlign: 'center',
+              }}
+            >
+              {selectedIds.size} Check-ins — das kann einen Moment dauern.
+            </Text>
+          )}
+          <Pressable
+            onPress={handleExportSelected}
+            disabled={isExporting}
+            style={({ pressed }) => [
+              styles.exportButton,
+              {
+                minHeight: touchTarget.min,
+                borderRadius: radii.md,
+                backgroundColor: isExporting ? theme.colors.border : theme.colors.primary,
+              },
+              pressed && !isExporting && { opacity: 0.75 },
+            ]}
+            accessibilityRole="button"
+            accessibilityLabel={`${selectedIds.size} Check-ins als PDF exportieren`}
+            accessibilityState={{ disabled: isExporting }}
+          >
+            <Text
+              style={{
+                fontFamily: typography.families.ui.semibold,
+                fontSize: typography.sizes.md,
+                color: theme.colors.textInverse,
+              }}
+            >
+              {isExporting ? 'Erstelle PDF...' : `${selectedIds.size} als PDF exportieren`}
+            </Text>
+          </Pressable>
+        </View>
+      )}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  centered: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
+  container: { flex: 1 },
+  centered: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+  selectionHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  exportBar: {},
+  exportButton: { alignItems: 'center', justifyContent: 'center' },
 });
