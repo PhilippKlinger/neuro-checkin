@@ -1,11 +1,7 @@
 jest.mock('@sentry/react-native', () => ({ init: jest.fn() }));
 
 import type { Event } from '@sentry/core';
-import {
-  SENSITIVE_KEYS,
-  scrubObject,
-  scrubEvent,
-} from '../lib/observability/sentry';
+import { SENSITIVE_KEYS, scrubObject, scrubEvent } from '../lib/observability/sentry';
 
 describe('scrubObject', () => {
   it('replaces a sensitive top-level key with [scrubbed]', () => {
@@ -121,9 +117,7 @@ describe('scrubEvent', () => {
           bodySignals: ['headache', 'tight chest'],
         },
       },
-      breadcrumbs: [
-        { data: { distressLevel: 9, feelings: 'terrified' } },
-      ],
+      breadcrumbs: [{ data: { distressLevel: 9, feelings: 'terrified' } }],
       user: { ip_address: '10.0.0.1' },
     };
 
@@ -131,8 +125,14 @@ describe('scrubEvent', () => {
     const json = JSON.stringify(scrubbed);
 
     const sensitiveValues = [
-      'anxious', 'overwhelmed', 'private thought', 'some care note',
-      'inner manager', 'high distress level', 'terrified', '10.0.0.1',
+      'anxious',
+      'overwhelmed',
+      'private thought',
+      'some care note',
+      'inner manager',
+      'high distress level',
+      'terrified',
+      '10.0.0.1',
     ];
     for (const value of sensitiveValues) {
       expect(json).not.toContain(value);
