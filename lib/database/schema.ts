@@ -1,6 +1,6 @@
 import type { SQLiteDatabase } from 'expo-sqlite';
 
-const SCHEMA_VERSION = 10;
+const SCHEMA_VERSION = 11;
 
 export async function migrateDatabase(db: SQLiteDatabase): Promise<void> {
   await db.execAsync(`PRAGMA journal_mode = WAL;`);
@@ -125,6 +125,18 @@ export async function migrateDatabase(db: SQLiteDatabase): Promise<void> {
     await db.execAsync(
       `ALTER TABLE check_ins ADD COLUMN focus_skipped INTEGER NOT NULL DEFAULT 0;`
     );
+  }
+
+  if (currentVersion < 11) {
+    await db.execAsync(`
+      CREATE TABLE IF NOT EXISTS user_chips (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        category TEXT NOT NULL,
+        label TEXT NOT NULL,
+        use_count INTEGER NOT NULL DEFAULT 1,
+        UNIQUE(category, label)
+      );
+    `);
   }
 
   // String interpolation intentional: PRAGMA does not support parameterized
