@@ -2,6 +2,7 @@ import {
   insertCheckIn,
   getCheckIns,
   getCheckInById,
+  getCheckInsByIds,
   deleteCheckIn,
   countCheckIns,
   deleteAllCheckIns,
@@ -285,6 +286,48 @@ describe('deleteAllCheckIns', () => {
     const db = makeDb();
     await deleteAllCheckIns(db as any);
     expect(db.runAsync).toHaveBeenCalledWith(expect.stringMatching(/DELETE FROM check_ins/));
+  });
+});
+
+// ---------------------------------------------------------------------------
+// getCheckInsByIds
+// ---------------------------------------------------------------------------
+
+describe('getCheckInsByIds', () => {
+  it('returns an empty array when given no ids', async () => {
+    const db = makeDb();
+    const result = await getCheckInsByIds(db as any, []);
+    expect(result).toEqual([]);
+    expect(db.getAllAsync).not.toHaveBeenCalled();
+  });
+
+  it('returns mapped CheckIns for matching rows', async () => {
+    const db = makeDb({ getAllAsync: jest.fn().mockResolvedValue([SAMPLE_ROW]) });
+    const result = await getCheckInsByIds(db as any, [7]);
+    expect(result).toHaveLength(1);
+    expect(result[0].id).toBe(7);
+  });
+
+  it('passes all given ids to the IN clause', async () => {
+    const db = makeDb();
+    await getCheckInsByIds(db as any, [1, 2, 3]);
+    expect(db.getAllAsync).toHaveBeenCalledWith(
+      expect.stringContaining('IN'),
+      expect.arrayContaining([1, 2, 3])
+    );
+  });
+
+  it('orders results by created_at DESC', async () => {
+    const db = makeDb();
+    await getCheckInsByIds(db as any, [1]);
+    const sql: string = db.getAllAsync.mock.calls[0][0];
+    expect(sql).toMatch(/ORDER BY.*created_at.*DESC/i);
+  });
+
+  it('maps bodySignals JSON correctly', async () => {
+    const db = makeDb({ getAllAsync: jest.fn().mockResolvedValue([SAMPLE_ROW]) });
+    const [item] = await getCheckInsByIds(db as any, [7]);
+    expect(item.bodySignals.hunger).toBe(true);
   });
 });
 
