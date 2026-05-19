@@ -13,6 +13,7 @@ interface ChipOrTextStepProps {
   textAccessibilityLabel: string;
   maxLength?: number;
   hint?: string;
+  userChips?: string[];
 }
 
 function hasChipContent(val: string, chips: readonly string[]): boolean {
@@ -23,9 +24,10 @@ interface ChipWrapProps {
   chips: readonly string[];
   value: string;
   onValueChange: (value: string) => void;
+  variant?: 'default' | 'user';
 }
 
-function ChipWrap({ chips, value, onValueChange }: ChipWrapProps) {
+function ChipWrap({ chips, value, onValueChange, variant = 'default' }: ChipWrapProps) {
   const { theme, spacing, typography, radii } = useTheme();
   return (
     <View style={[styles.chipWrap, { gap: spacing.sm, marginBottom: spacing.md }]}>
@@ -43,6 +45,7 @@ function ChipWrap({ chips, value, onValueChange }: ChipWrapProps) {
                 paddingVertical: spacing.xs,
                 backgroundColor: selected ? theme.colors.accentSoft : theme.colors.surface,
                 borderWidth: 1,
+                borderStyle: variant === 'user' ? 'dashed' : 'solid',
                 borderColor: selected ? theme.colors.accent : theme.colors.border,
               },
               pressed && { opacity: 0.75 },
@@ -77,6 +80,7 @@ export function ChipOrTextStep({
   textAccessibilityLabel,
   maxLength = 150,
   hint,
+  userChips,
 }: ChipOrTextStepProps) {
   const { theme, spacing, typography, radii, touchTarget } = useTheme();
 
@@ -138,6 +142,27 @@ export function ChipOrTextStep({
       {mode === 'chips' ? (
         <>
           <ChipWrap chips={chips} value={value} onValueChange={onValueChange} />
+
+          {userChips && userChips.length > 0 && (
+            <>
+              <Text
+                style={{
+                  fontFamily: typography.families.body.regular,
+                  fontSize: typography.sizes.xs,
+                  color: theme.colors.textSecondary,
+                  marginBottom: spacing.sm,
+                }}
+              >
+                Deine Begriffe
+              </Text>
+              <ChipWrap
+                chips={userChips}
+                value={value}
+                onValueChange={onValueChange}
+                variant="user"
+              />
+            </>
+          )}
 
           <Pressable
             onPress={switchToText}

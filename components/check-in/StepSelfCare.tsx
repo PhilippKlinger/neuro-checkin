@@ -4,9 +4,10 @@ interface StepSelfCareProps {
   value: string;
   onValueChange: (value: string) => void;
   hint?: string;
+  userChips?: string[];
 }
 
-const SELF_CARE_CHIPS = [
+export const SELF_CARE_CHIPS = [
   'Pause',
   'Wasser trinken',
   'Frische Luft',
@@ -19,7 +20,7 @@ const SELF_CARE_CHIPS = [
   'Nichts — passt gerade so',
 ] as const;
 
-export function StepSelfCare({ value, onValueChange, hint }: StepSelfCareProps) {
+export function StepSelfCare({ value, onValueChange, hint, userChips }: StepSelfCareProps) {
   return (
     <ChipOrTextStep
       title="Selbstfürsorge"
@@ -31,6 +32,7 @@ export function StepSelfCare({ value, onValueChange, hint }: StepSelfCareProps) 
       textAccessibilityLabel="Selbstfürsorge-Notiz"
       maxLength={150}
       hint={hint}
+      userChips={userChips}
     />
   );
 }

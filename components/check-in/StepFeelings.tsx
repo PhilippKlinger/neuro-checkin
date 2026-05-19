@@ -4,6 +4,7 @@ interface StepFeelingsProps {
   value: string;
   onValueChange: (value: string) => void;
   hint?: string;
+  userChips?: string[];
 }
 
 export const FEELING_CHIPS = [
@@ -27,7 +28,7 @@ export const FEELING_CHIPS = [
   'Nicht definierbar',
 ] as const;
 
-export function StepFeelings({ value, onValueChange, hint }: StepFeelingsProps) {
+export function StepFeelings({ value, onValueChange, hint, userChips }: StepFeelingsProps) {
   return (
     <ChipOrTextStep
       title="Gefühle"
@@ -39,6 +40,7 @@ export function StepFeelings({ value, onValueChange, hint }: StepFeelingsProps) 
       textAccessibilityLabel="Gefühle beschreiben"
       maxLength={150}
       hint={hint}
+      userChips={userChips}
     />
   );
 }

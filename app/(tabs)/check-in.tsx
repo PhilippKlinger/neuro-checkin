@@ -15,6 +15,7 @@ import { CheckInDraft, EMPTY_DRAFT, EMPTY_BODY_SIGNALS } from '../../lib/types/c
 import { FadeView } from '../../components/ui/FadeView';
 import { insertCheckIn, countCheckIns } from '../../lib/database/checkins';
 import { getSettings, updateSettings } from '../../lib/database/settings';
+import { saveUserChips, getUserChips } from '../../lib/database/userChips';
 import { StepIndicator } from '../../components/check-in/StepIndicator';
 import { GuidedToggle } from '../../components/check-in/GuidedToggle';
 import { CheckInSuccessView } from '../../components/check-in/CheckInSuccessView';
@@ -22,10 +23,10 @@ import { StepArrival } from '../../components/check-in/StepArrival';
 import { StepEnergy } from '../../components/check-in/StepEnergy';
 import { StepFocus } from '../../components/check-in/StepFocus';
 import { StepBodySignals } from '../../components/check-in/StepBodySignals';
-import { StepFeelings } from '../../components/check-in/StepFeelings';
+import { StepFeelings, FEELING_CHIPS } from '../../components/check-in/StepFeelings';
 import { StepDistress } from '../../components/check-in/StepDistress';
 import { StepThoughts } from '../../components/check-in/StepThoughts';
-import { StepSelfCare } from '../../components/check-in/StepSelfCare';
+import { StepSelfCare, SELF_CARE_CHIPS } from '../../components/check-in/StepSelfCare';
 import { StepSummary } from '../../components/check-in/StepSummary';
 import { STEP_HINTS } from '../../lib/constants/hintConfig';
 import { INACTIVITY_TIMEOUT_MS } from '../../lib/constants/timing';
@@ -59,6 +60,8 @@ export default function CheckInScreen() {
   const [isFirstCheckin, setIsFirstCheckin] = useState(false);
   const [guidedMode, setGuidedMode] = useState(true);
   const [showToggleIntroHint, setShowToggleIntroHint] = useState(false);
+  const [feelingUserChips, setFeelingUserChips] = useState<string[]>([]);
+  const [selfCareUserChips, setSelfCareUserChips] = useState<string[]>([]);
   const stepContentRef = useRef<View>(null);
   const stepRef = useRef(step);
   const leftAtRef = useRef<number | null>(null);
@@ -69,13 +72,20 @@ export default function CheckInScreen() {
       let cancelled = false;
       async function loadState() {
         try {
-          const [settings, count] = await Promise.all([getSettings(db), countCheckIns(db)]);
+          const [settings, count, feelingChips, selfCareChips] = await Promise.all([
+            getSettings(db),
+            countCheckIns(db),
+            getUserChips(db, 'feelings'),
+            getUserChips(db, 'self_care'),
+          ]);
           if (cancelled) return;
           setIsFirstCheckin(count === 0);
           setGuidedMode(settings.guidedModeEnabled);
           setShowToggleIntroHint(!settings.guidedToggleIntroduced);
+          setFeelingUserChips(feelingChips);
+          setSelfCareUserChips(selfCareChips);
         } catch {
-          // Non-critical — guided mode defaults are safe fallbacks
+          // Non-critical — defaults are safe fallbacks
         }
       }
       loadState();
@@ -178,6 +188,10 @@ export default function CheckInScreen() {
         innerPart: draft.innerPart || null,
         note: draft.note || null,
       });
+      await Promise.all([
+        saveUserChips(db, 'feelings', draft.feelings, [...FEELING_CHIPS]),
+        saveUserChips(db, 'self_care', draft.selfCareNote, [...SELF_CARE_CHIPS]),
+      ]);
       setIsDone(true);
     } catch (error) {
       Sentry.captureException(error);
@@ -246,6 +260,7 @@ export default function CheckInScreen() {
             value={draft.feelings}
             onValueChange={(v) => setDraft({ ...draft, feelings: v })}
             hint={guidedMode ? STEP_HINTS.feelings : undefined}
+            userChips={feelingUserChips}
           />
         );
       case 5:
@@ -274,6 +289,7 @@ export default function CheckInScreen() {
             value={draft.selfCareNote}
             onValueChange={(v) => setDraft({ ...draft, selfCareNote: v })}
             hint={guidedMode ? STEP_HINTS.selfCare : undefined}
+            userChips={selfCareUserChips}
           />
         );
       case 8:
