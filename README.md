@@ -140,7 +140,7 @@ eas secret:create --name FORMSPREE_URL --value "your-url"
 ## Security Notes
 
 - Do not commit real `.env` files. The `.gitignore` covers all `.env` variants.
-- Sentry is configured with a `beforeSend` hook that strips all health-related fields before transmission. No check-in content leaves the device.
+- Sentry is configured with a recursive `beforeSend` scrubber that strips all health-related fields from event payloads, contexts, and breadcrumbs before transmission — at any nesting depth. The scrubber is implemented in `lib/observability/sentry.ts` and covered by unit tests.
 - Sentry is disabled in development (`enabled: !__DEV__`).
 - All SQLite queries use parameterised statements. No string concatenation with user input.
 
