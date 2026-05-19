@@ -71,6 +71,29 @@ export async function getCheckInById(db: SQLiteDatabase, id: number): Promise<Ch
   return row ? mapRowToCheckIn(row) : null;
 }
 
+export async function getCheckInsByIds(db: SQLiteDatabase, ids: number[]): Promise<CheckIn[]> {
+  if (ids.length === 0) return [];
+  const placeholders = ids.map(() => '?').join(', ');
+  const rows = await db.getAllAsync<{
+    id: number;
+    created_at: string;
+    energy_level: number;
+    focus_level: number;
+    energy_skipped: number;
+    focus_skipped: number;
+    body_signals: string;
+    feelings: string;
+    distress_level: number | null;
+    distress_note: string | null;
+    thoughts_type: string | null;
+    thoughts_note: string | null;
+    self_care_note: string | null;
+    inner_part: string | null;
+    note: string | null;
+  }>(`SELECT * FROM check_ins WHERE id IN (${placeholders}) ORDER BY created_at DESC`, ids);
+  return rows.map(mapRowToCheckIn);
+}
+
 export async function deleteCheckIn(db: SQLiteDatabase, id: number): Promise<void> {
   await db.runAsync('DELETE FROM check_ins WHERE id = ?', id);
 }

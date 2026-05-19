@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Alert } from 'react-native';
+import { View, Text, Pressable, StyleSheet, Alert } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTheme } from '../../lib/hooks/useTheme';
 import { useDatabase } from '../../lib/hooks/useDatabase';
@@ -7,10 +7,12 @@ import { getCheckInById, deleteCheckIn } from '../../lib/database/checkins';
 import { getSettings, updateSettings } from '../../lib/database/settings';
 import { CheckIn } from '../../lib/types/checkin';
 import { CheckInDetailContent } from '../../components/history/CheckInDetailContent';
+import { exportCheckInsAsPdf } from '../../lib/utils/pdfExport';
+import * as Sentry from '@sentry/react-native';
 
 export default function CheckInDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const { theme, spacing, typography } = useTheme();
+  const { theme, spacing, typography, radii, touchTarget } = useTheme();
   const db = useDatabase();
   const router = useRouter();
   const [checkIn, setCheckIn] = useState<CheckIn | null>(null);
@@ -38,6 +40,19 @@ export default function CheckInDetailScreen() {
     }
     load();
   }, [db, id]);
+
+  async function handleExport() {
+    if (!checkIn) return;
+    try {
+      await exportCheckInsAsPdf([checkIn]);
+    } catch (error) {
+      Sentry.captureException(error);
+      Alert.alert(
+        'Export fehlgeschlagen',
+        'PDF konnte nicht erstellt werden. Bitte versuche es erneut.'
+      );
+    }
+  }
 
   async function confirmDelete() {
     if (!checkIn) return;
@@ -90,6 +105,36 @@ export default function CheckInDetailScreen() {
         onDeleteConfirm={confirmDelete}
         onDeleteCancel={() => setShowDeleteDialog(false)}
       />
+
+      <View style={[styles.exportBar, { padding: spacing.md, paddingBottom: spacing.lg }]}>
+        <Pressable
+          onPress={handleExport}
+          style={({ pressed }) => [
+            styles.exportButton,
+            {
+              minHeight: touchTarget.min,
+              borderRadius: radii.md,
+              borderWidth: 1,
+              borderColor: theme.colors.border,
+              backgroundColor: theme.colors.surface,
+            },
+            pressed && { opacity: 0.75 },
+          ]}
+          accessibilityRole="button"
+          accessibilityLabel="Check-in als PDF exportieren"
+          accessibilityHint="Erstellt eine PDF-Datei und öffnet das Teilen-Menü"
+        >
+          <Text
+            style={{
+              fontFamily: typography.families.ui.medium,
+              fontSize: typography.sizes.sm,
+              color: theme.colors.textSecondary,
+            }}
+          >
+            Als PDF exportieren
+          </Text>
+        </Pressable>
+      </View>
     </View>
   );
 }
@@ -97,4 +142,6 @@ export default function CheckInDetailScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   centered: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: 24 },
+  exportBar: {},
+  exportButton: { alignItems: 'center', justifyContent: 'center' },
 });
