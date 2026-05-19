@@ -30,7 +30,6 @@ function makeDb(overrides: Partial<MockDb> = {}): MockDb {
 // ---------------------------------------------------------------------------
 
 const STANDARD_FEELINGS = ['neutral', 'leer', 'erschöpft', 'ruhig', 'angespannt'];
-const STANDARD_SELF_CARE = ['Pause', 'Wasser trinken', 'Frische Luft'];
 
 // ---------------------------------------------------------------------------
 // saveUserChips

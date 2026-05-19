@@ -15,6 +15,9 @@ import { CheckInDraft, EMPTY_DRAFT, EMPTY_BODY_SIGNALS } from '../../lib/types/c
 import { FadeView } from '../../components/ui/FadeView';
 import { insertCheckIn, countCheckIns } from '../../lib/database/checkins';
 import { getSettings, updateSettings } from '../../lib/database/settings';
+import { saveUserChips, getUserChips } from '../../lib/database/userChips';
+import { FEELING_CHIPS } from '../../components/check-in/StepFeelings';
+import { SELF_CARE_CHIPS } from '../../components/check-in/StepSelfCare';
 import { StepIndicator } from '../../components/check-in/StepIndicator';
 import { GuidedToggle } from '../../components/check-in/GuidedToggle';
 import { CheckInSuccessView } from '../../components/check-in/CheckInSuccessView';
@@ -59,6 +62,8 @@ export default function CheckInScreen() {
   const [isFirstCheckin, setIsFirstCheckin] = useState(false);
   const [guidedMode, setGuidedMode] = useState(true);
   const [showToggleIntroHint, setShowToggleIntroHint] = useState(false);
+  const [feelingUserChips, setFeelingUserChips] = useState<string[]>([]);
+  const [selfCareUserChips, setSelfCareUserChips] = useState<string[]>([]);
   const stepContentRef = useRef<View>(null);
   const stepRef = useRef(step);
   const leftAtRef = useRef<number | null>(null);
@@ -69,13 +74,20 @@ export default function CheckInScreen() {
       let cancelled = false;
       async function loadState() {
         try {
-          const [settings, count] = await Promise.all([getSettings(db), countCheckIns(db)]);
+          const [settings, count, feelingChips, selfCareChips] = await Promise.all([
+            getSettings(db),
+            countCheckIns(db),
+            getUserChips(db, 'feelings'),
+            getUserChips(db, 'self_care'),
+          ]);
           if (cancelled) return;
           setIsFirstCheckin(count === 0);
           setGuidedMode(settings.guidedModeEnabled);
           setShowToggleIntroHint(!settings.guidedToggleIntroduced);
+          setFeelingUserChips(feelingChips);
+          setSelfCareUserChips(selfCareChips);
         } catch {
-          // Non-critical — guided mode defaults are safe fallbacks
+          // Non-critical — defaults are safe fallbacks
         }
       }
       loadState();
@@ -178,6 +190,10 @@ export default function CheckInScreen() {
         innerPart: draft.innerPart || null,
         note: draft.note || null,
       });
+      await Promise.all([
+        saveUserChips(db, 'feelings', draft.feelings, [...FEELING_CHIPS]),
+        saveUserChips(db, 'self_care', draft.selfCareNote, [...SELF_CARE_CHIPS]),
+      ]);
       setIsDone(true);
     } catch (error) {
       Sentry.captureException(error);
@@ -246,6 +262,7 @@ export default function CheckInScreen() {
             value={draft.feelings}
             onValueChange={(v) => setDraft({ ...draft, feelings: v })}
             hint={guidedMode ? STEP_HINTS.feelings : undefined}
+            userChips={feelingUserChips}
           />
         );
       case 5:
@@ -274,6 +291,7 @@ export default function CheckInScreen() {
             value={draft.selfCareNote}
             onValueChange={(v) => setDraft({ ...draft, selfCareNote: v })}
             hint={guidedMode ? STEP_HINTS.selfCare : undefined}
+            userChips={selfCareUserChips}
           />
         );
       case 8:

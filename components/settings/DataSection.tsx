@@ -2,6 +2,7 @@ import { Alert, Text, Pressable, StyleSheet, Linking } from 'react-native';
 import { useTheme } from '../../lib/hooks/useTheme';
 import { ConfirmDialog } from '../ui/ConfirmDialog';
 import { deleteAllCheckIns } from '../../lib/database/checkins';
+import { deleteUserChips } from '../../lib/database/userChips';
 import { SQLiteDatabase } from 'expo-sqlite';
 import { useState } from 'react';
 
@@ -16,6 +17,18 @@ export function DataSection({ db, checkInCount, onDeleteComplete }: DataSectionP
   const [showStep1, setShowStep1] = useState(false);
   const [showStep2, setShowStep2] = useState(false);
   const [showDone, setShowDone] = useState(false);
+  const [showChipsConfirm, setShowChipsConfirm] = useState(false);
+  const [showChipsDone, setShowChipsDone] = useState(false);
+
+  async function handleConfirmDeleteChips() {
+    setShowChipsConfirm(false);
+    try {
+      await deleteUserChips(db);
+      setShowChipsDone(true);
+    } catch {
+      Alert.alert('Fehler', 'Eigene Chips konnten nicht gelöscht werden. Bitte versuche es erneut.');
+    }
+  }
 
   async function handleConfirmDeleteAll() {
     setShowStep2(false);
@@ -102,6 +115,36 @@ export function DataSection({ db, checkInCount, onDeleteComplete }: DataSectionP
         </Text>
       </Pressable>
 
+      <Pressable
+        onPress={() => setShowChipsConfirm(true)}
+        style={({ pressed }) => [
+          styles.button,
+          {
+            backgroundColor: theme.colors.surface,
+            borderRadius: radii.md,
+            padding: spacing.md,
+            minHeight: touchTarget.min,
+            borderWidth: 1,
+            borderColor: theme.colors.border,
+            marginTop: spacing.sm,
+            opacity: pressed ? 0.75 : 1,
+          },
+        ]}
+        accessibilityRole="button"
+        accessibilityLabel="Eigene Chips löschen"
+        accessibilityHint="Löscht alle selbst erstellten Gefühle- und Selbstfürsorge-Chips"
+      >
+        <Text
+          style={{
+            fontFamily: typography.families.ui.medium,
+            fontSize: typography.sizes.md,
+            color: theme.colors.text,
+          }}
+        >
+          Eigene Chips löschen
+        </Text>
+      </Pressable>
+
       <ConfirmDialog
         visible={showStep1}
         title="Alle Check-ins löschen"
@@ -135,6 +178,27 @@ export function DataSection({ db, checkInCount, onDeleteComplete }: DataSectionP
         hideCancel
         onConfirm={() => setShowDone(false)}
         onCancel={() => setShowDone(false)}
+      />
+
+      <ConfirmDialog
+        visible={showChipsConfirm}
+        title="Eigene Chips löschen"
+        message="Alle selbst erstellten Begriffe werden dauerhaft gelöscht."
+        confirmLabel="Löschen"
+        cancelLabel="Abbrechen"
+        destructive
+        onConfirm={handleConfirmDeleteChips}
+        onCancel={() => setShowChipsConfirm(false)}
+      />
+
+      <ConfirmDialog
+        visible={showChipsDone}
+        title="Erledigt"
+        message="Deine eigenen Chips wurden gelöscht."
+        confirmLabel="OK"
+        hideCancel
+        onConfirm={() => setShowChipsDone(false)}
+        onCancel={() => setShowChipsDone(false)}
       />
     </>
   );
