@@ -6,10 +6,10 @@ import { formatDate, formatTime } from '../../lib/utils/format';
 
 interface CheckInCardProps {
   checkIn: CheckIn;
-  onPress: () => void;
+  onPress: (id: number) => void;
   selectable?: boolean;
   selected?: boolean;
-  onToggle?: () => void;
+  onToggle?: (id: number) => void;
 }
 
 export const CheckInCard = memo(function CheckInCard({
@@ -25,7 +25,7 @@ export const CheckInCard = memo(function CheckInCard({
 
   return (
     <Pressable
-      onPress={selectable ? onToggle : onPress}
+      onPress={() => (selectable ? onToggle?.(checkIn.id) : onPress(checkIn.id))}
       style={({ pressed }) => [
         styles.card,
         {
