@@ -67,7 +67,11 @@ export function FeedbackModal({ visible, onClose }: FeedbackModalProps) {
     <Modal visible={visible} transparent animationType="fade" onRequestClose={handleClose}>
       {/* Full-screen background — separate from KeyboardAvoidingView so it
           covers the entire screen including nav bar on edge-to-edge Android */}
-      <Pressable style={[StyleSheet.absoluteFillObject, styles.backdrop]} onPress={handleClose} />
+      <Pressable
+        style={[StyleSheet.absoluteFillObject, styles.backdrop]}
+        onPress={handleClose}
+        accessible={false}
+      />
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={[styles.container, { padding: spacing.lg }]}
