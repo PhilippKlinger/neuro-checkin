@@ -46,14 +46,14 @@ export default function HistoryScreen() {
     setSelectedIds(new Set());
   }
 
-  function toggleSelection(id: number) {
+  const toggleSelection = useCallback((id: number) => {
     setSelectedIds((prev) => {
       const next = new Set(prev);
       if (next.has(id)) next.delete(id);
       else next.add(id);
       return next;
     });
-  }
+  }, []);
 
   function selectAll() {
     setSelectedIds(new Set(checkIns.map((c) => c.id)));
@@ -91,13 +91,13 @@ export default function HistoryScreen() {
     ({ item }) => (
       <CheckInCard
         checkIn={item}
-        onPress={() => handlePress(item.id)}
+        onPress={handlePress}
         selectable={selectionMode}
         selected={selectedIds.has(item.id)}
-        onToggle={() => toggleSelection(item.id)}
+        onToggle={toggleSelection}
       />
     ),
-    [handlePress, selectionMode, selectedIds]
+    [handlePress, selectionMode, selectedIds, toggleSelection]
   );
 
   if (isLoading) {
