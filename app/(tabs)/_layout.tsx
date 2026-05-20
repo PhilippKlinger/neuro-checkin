@@ -1,4 +1,4 @@
-import { Pressable } from 'react-native';
+import { Pressable, StyleSheet } from 'react-native';
 import { Tabs, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -6,10 +6,14 @@ import { useTheme } from '../../lib/hooks/useTheme';
 
 function CheckInInfoButton({ color }: { color: string }) {
   const router = useRouter();
+  const { touchTarget } = useTheme();
   return (
     <Pressable
       onPress={() => router.push('/check-in-info')}
-      style={{ marginRight: 16, padding: 4 }}
+      style={[
+        styles.helpButton,
+        { minWidth: touchTarget.min, minHeight: touchTarget.min },
+      ]}
       accessibilityRole="button"
       accessibilityLabel="Hilfe: Was ist ein Check-in?"
     >
@@ -100,3 +104,11 @@ export default function TabLayout() {
     </Tabs>
   );
 }
+
+const styles = StyleSheet.create({
+  helpButton: {
+    marginRight: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});
