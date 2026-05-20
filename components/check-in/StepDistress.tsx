@@ -1,6 +1,7 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { View, Text, TextInput, Pressable, ScrollView, StyleSheet } from 'react-native';
 import { useTheme } from '../../lib/hooks/useTheme';
+import { useReducedMotion } from '../../lib/hooks/useReducedMotion';
 import { DISTRESS_LABELS, DISTRESS_NOTE_THRESHOLD } from '../../lib/types/checkin';
 
 interface StepDistressProps {
@@ -24,9 +25,25 @@ export function StepDistress({
   hint,
 }: StepDistressProps) {
   const { theme, spacing, typography, radii, touchTarget } = useTheme();
+  const reducedMotion = useReducedMotion();
   const [cannotSay, setCannotSay] = useState(false);
   const [noteOpen, setNoteOpen] = useState(distressNote !== '');
   const scrollRef = useRef<ScrollView>(null);
+  const scrollTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (scrollTimerRef.current) clearTimeout(scrollTimerRef.current);
+    };
+  }, []);
+
+  function scheduleScrollToEnd() {
+    if (scrollTimerRef.current) clearTimeout(scrollTimerRef.current);
+    scrollTimerRef.current = setTimeout(
+      () => scrollRef.current?.scrollToEnd({ animated: !reducedMotion }),
+      300
+    );
+  }
 
   function handleLevelSelect(level: number) {
     setCannotSay(false);
@@ -170,8 +187,7 @@ export function StepDistress({
         <Pressable
           onPress={() => {
             setNoteOpen(true);
-            const t = setTimeout(() => scrollRef.current?.scrollToEnd({ animated: true }), 300);
-            return () => clearTimeout(t);
+            scheduleScrollToEnd();
           }}
           style={({ pressed }) => [
             { marginTop: spacing.lg, alignItems: 'center', opacity: pressed ? 0.6 : 1 },
@@ -201,10 +217,7 @@ export function StepDistress({
           multiline
           maxLength={200}
           textAlignVertical="top"
-          onFocus={() => {
-            const t = setTimeout(() => scrollRef.current?.scrollToEnd({ animated: true }), 300);
-            return () => clearTimeout(t);
-          }}
+          onFocus={scheduleScrollToEnd}
           style={[
             styles.noteInput,
             {
