@@ -10,10 +10,7 @@ function CheckInInfoButton({ color }: { color: string }) {
   return (
     <Pressable
       onPress={() => router.push('/check-in-info')}
-      style={[
-        styles.helpButton,
-        { minWidth: touchTarget.min, minHeight: touchTarget.min },
-      ]}
+      style={[styles.helpButton, { minWidth: touchTarget.min, minHeight: touchTarget.min }]}
       accessibilityRole="button"
       accessibilityLabel="Hilfe: Was ist ein Check-in?"
     >
