@@ -47,6 +47,7 @@ export default function SettingsScreen() {
   const [slots, setSlots] = useState<NotificationSlot[]>(DEFAULT_SLOTS);
   const slotsRef = useRef(slots);
   slotsRef.current = slots;
+  const lastScheduledSlotsRef = useRef<string | null>(null);
   const [showTimePicker, setShowTimePicker] = useState<0 | 1 | null>(null);
   const [isEmulator, setIsEmulator] = useState(false);
   const [checkInCount, setCheckInCount] = useState(0);
@@ -67,7 +68,11 @@ export default function SettingsScreen() {
         if (dbSlots.length >= 2) {
           setSlots(dbSlots as NotificationSlot[]);
           if (Device.isDevice) {
-            await scheduleAllSlots(dbSlots as NotificationSlot[]);
+            const slotsJson = JSON.stringify(dbSlots);
+            if (slotsJson !== lastScheduledSlotsRef.current) {
+              await scheduleAllSlots(dbSlots as NotificationSlot[]);
+              lastScheduledSlotsRef.current = slotsJson;
+            }
           }
         }
 
