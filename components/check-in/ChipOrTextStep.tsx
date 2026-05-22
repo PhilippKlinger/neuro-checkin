@@ -20,6 +20,8 @@ interface ChipOrTextStepProps {
   hint?: string;
   userChips?: string[];
   chipGroups?: ChipGroup[];
+  skipped?: boolean;
+  onSkip?: () => void;
 }
 
 function hasChipContent(val: string, chips: readonly string[]): boolean {
@@ -91,6 +93,8 @@ export function ChipOrTextStep({
   hint,
   userChips,
   chipGroups,
+  skipped,
+  onSkip,
 }: ChipOrTextStepProps) {
   const { theme, spacing, typography, radii, touchTarget } = useTheme();
 
@@ -214,6 +218,46 @@ export function ChipOrTextStep({
               Lieber frei beschreiben
             </Text>
           </Pressable>
+
+          {onSkip && (
+            <>
+              <View
+                style={[
+                  styles.divider,
+                  { backgroundColor: theme.colors.border, marginVertical: spacing.md },
+                ]}
+              />
+              <Pressable
+                onPress={onSkip}
+                style={({ pressed }) => [
+                  styles.skipButton,
+                  {
+                    minHeight: touchTarget.min,
+                    borderRadius: radii.md,
+                    paddingHorizontal: spacing.md,
+                    backgroundColor: skipped ? theme.colors.accentSoft : theme.colors.surface,
+                    borderWidth: 1,
+                    borderColor: skipped ? theme.colors.accent : theme.colors.border,
+                  },
+                  pressed && { opacity: 0.75 },
+                ]}
+                accessibilityRole="button"
+                accessibilityLabel="Kann ich nicht benennen"
+                accessibilityState={{ selected: skipped }}
+              >
+                <Text
+                  style={{
+                    fontFamily: typography.families.body.regular,
+                    fontSize: typography.sizes.md,
+                    color: theme.colors.textSecondary,
+                    fontStyle: 'italic',
+                  }}
+                >
+                  Kann ich nicht benennen
+                </Text>
+              </Pressable>
+            </>
+          )}
         </>
       ) : (
         <>
@@ -299,6 +343,13 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   modeSwitch: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  divider: {
+    height: 1,
+  },
+  skipButton: {
     alignItems: 'center',
     justifyContent: 'center',
   },

@@ -7,6 +7,7 @@ export interface CheckIn {
   focusSkipped: boolean;
   bodySignals: BodySignals;
   feelings: string; // free text
+  feelingsSkipped: boolean;
   distressLevel: number | null; // 1-5, null = not answered
   distressNote: string | null;
   thoughtsType: 'supportive' | 'burdening' | 'mixed' | null;
@@ -74,6 +75,7 @@ export interface CheckInDraft {
   focusSkipped: boolean;
   bodySignals: BodySignals;
   feelings: string;
+  feelingsSkipped: boolean;
   distressLevel: number | null; // 1-5, null = not answered
   distressNote: string;
   thoughtsType: 'supportive' | 'burdening' | 'mixed' | null;
@@ -154,6 +156,7 @@ export const EMPTY_DRAFT: CheckInDraft = {
   focusSkipped: false,
   bodySignals: { ...EMPTY_BODY_SIGNALS },
   feelings: '',
+  feelingsSkipped: false,
   distressLevel: null,
   distressNote: '',
   thoughtsType: null,

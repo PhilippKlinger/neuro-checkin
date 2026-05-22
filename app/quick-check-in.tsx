@@ -39,6 +39,7 @@ export default function QuickCheckInScreen() {
   const [focusLevel, setFocusLevel] = useState(0);
   const [focusSkipped, setFocusSkipped] = useState(false);
   const [feelings, setFeelings] = useState('');
+  const [feelingsSkipped, setFeelingsSkipped] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isDone, setIsDone] = useState(false);
   const [guidedMode, setGuidedMode] = useState(true);
@@ -127,6 +128,7 @@ export default function QuickCheckInScreen() {
         focusSkipped,
         bodySignals: { ...EMPTY_BODY_SIGNALS },
         feelings,
+        feelingsSkipped,
         distressLevel: null,
         distressNote: null,
         thoughtsType: null,
@@ -152,6 +154,7 @@ export default function QuickCheckInScreen() {
     setFocusLevel(0);
     setFocusSkipped(false);
     setFeelings('');
+    setFeelingsSkipped(false);
     setIsDone(false);
   }
 
@@ -199,8 +202,16 @@ export default function QuickCheckInScreen() {
         return (
           <QuickStepFeelings
             value={feelings}
-            onValueChange={setFeelings}
+            onValueChange={(v) => {
+              setFeelings(v);
+              setFeelingsSkipped(false);
+            }}
             hint={guidedMode ? STEP_HINTS.feelings : undefined}
+            skipped={feelingsSkipped}
+            onSkip={() => {
+              setFeelings('');
+              setFeelingsSkipped(true);
+            }}
           />
         );
       default:

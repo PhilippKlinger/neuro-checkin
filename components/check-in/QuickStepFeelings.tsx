@@ -7,14 +7,16 @@ interface QuickStepFeelingsProps {
   value: string; // comma-separated selected chips, or '' for none
   onValueChange: (value: string) => void;
   hint?: string;
+  skipped?: boolean;
+  onSkip?: () => void;
 }
 
 // Multi-select chip variant for the quick check-in flow.
 // No free-text toggle — keeps cognitive load low in difficult moments.
 // Selection is optional: "Weiter" is never blocked here.
 // ND reality: co-occurring emotional states are the norm, not the exception.
-export function QuickStepFeelings({ value, onValueChange, hint }: QuickStepFeelingsProps) {
-  const { theme, spacing, typography, radii } = useTheme();
+export function QuickStepFeelings({ value, onValueChange, hint, skipped, onSkip }: QuickStepFeelingsProps) {
+  const { theme, spacing, typography, radii, touchTarget } = useTheme();
 
   return (
     <View style={styles.container}>
@@ -91,6 +93,46 @@ export function QuickStepFeelings({ value, onValueChange, hint }: QuickStepFeeli
           );
         })}
       </View>
+
+      {onSkip && (
+        <>
+          <View
+            style={[
+              styles.divider,
+              { backgroundColor: theme.colors.border, marginVertical: spacing.md },
+            ]}
+          />
+          <Pressable
+            onPress={onSkip}
+            style={({ pressed }) => [
+              styles.skipButton,
+              {
+                minHeight: touchTarget.min,
+                borderRadius: radii.md,
+                paddingHorizontal: spacing.md,
+                backgroundColor: skipped ? theme.colors.accentSoft : theme.colors.surface,
+                borderWidth: 1,
+                borderColor: skipped ? theme.colors.accent : theme.colors.border,
+              },
+              pressed && { opacity: 0.75 },
+            ]}
+            accessibilityRole="button"
+            accessibilityLabel="Kann ich nicht benennen"
+            accessibilityState={{ selected: skipped }}
+          >
+            <Text
+              style={{
+                fontFamily: typography.families.body.regular,
+                fontSize: typography.sizes.md,
+                color: theme.colors.textSecondary,
+                fontStyle: 'italic',
+              }}
+            >
+              Kann ich nicht benennen
+            </Text>
+          </Pressable>
+        </>
+      )}
     </View>
   );
 }
@@ -104,6 +146,13 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
   },
   chip: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  divider: {
+    height: 1,
+  },
+  skipButton: {
     alignItems: 'center',
     justifyContent: 'center',
   },
