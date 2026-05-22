@@ -169,8 +169,12 @@ export function FeedbackFormContent({
         Feedback
       </Text>
       <Text style={s.subtitle}>
-        Was hat geholfen, was stört, was fehlt? Bitte nur App-Feedback — nicht wie es dir gerade
-        geht.
+        Was hat geholfen, was stört, was fehlt? Bitte nur App-Feedback — nicht zu deinem Befinden,
+        Gefühlen oder Check-in-Inhalten.
+      </Text>
+      <Text style={s.privacyHint}>
+        Bitte keine persönlichen Inhalte senden. Mit dem Absenden überträgst du deinen Text über
+        Formspree (externer Dienst, EU-Datenschutz). Dabei wird deine IP-Adresse verarbeitet.
       </Text>
       <TextInput
         value={feedbackText}
@@ -194,10 +198,6 @@ export function FeedbackFormContent({
           Senden hat nicht geklappt. Bitte versuche es später nochmal.
         </Text>
       )}
-      <Text style={s.privacyHint}>
-        Bitte keine persönlichen Inhalte senden. Mit dem Absenden überträgst du deinen Text über
-        Formspree (externer Dienst, EU-Datenschutz). Dabei wird deine IP-Adresse verarbeitet.
-      </Text>
       <View style={s.buttonRow}>
         <Pressable
           onPress={onCancel}
@@ -216,10 +216,10 @@ export function FeedbackFormContent({
             pressed && !isSubmitDisabled && { opacity: 0.75 },
           ]}
           accessibilityRole="button"
-          accessibilityLabel={feedbackSubmitting ? 'Sendet...' : 'Feedback absenden'}
+          accessibilityLabel={feedbackSubmitting ? 'Sendet...' : 'App-Feedback senden'}
           accessibilityState={{ disabled: isSubmitDisabled }}
         >
-          <Text style={s.submitText}>{feedbackSubmitting ? 'Sendet...' : 'Senden'}</Text>
+          <Text style={s.submitText}>{feedbackSubmitting ? 'Sendet...' : 'App-Feedback senden'}</Text>
         </Pressable>
       </View>
     </>
