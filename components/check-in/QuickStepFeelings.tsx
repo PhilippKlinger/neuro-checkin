@@ -15,7 +15,13 @@ interface QuickStepFeelingsProps {
 // No free-text toggle — keeps cognitive load low in difficult moments.
 // Selection is optional: "Weiter" is never blocked here.
 // ND reality: co-occurring emotional states are the norm, not the exception.
-export function QuickStepFeelings({ value, onValueChange, hint, skipped, onSkip }: QuickStepFeelingsProps) {
+export function QuickStepFeelings({
+  value,
+  onValueChange,
+  hint,
+  skipped,
+  onSkip,
+}: QuickStepFeelingsProps) {
   const { theme, spacing, typography, radii, touchTarget } = useTheme();
 
   return (

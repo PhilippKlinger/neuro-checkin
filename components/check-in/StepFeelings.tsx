@@ -29,7 +29,14 @@ export const FEELING_CHIPS = [
   'aufgedreht',
 ] as const;
 
-export function StepFeelings({ value, onValueChange, hint, userChips, skipped, onSkip }: StepFeelingsProps) {
+export function StepFeelings({
+  value,
+  onValueChange,
+  hint,
+  userChips,
+  skipped,
+  onSkip,
+}: StepFeelingsProps) {
   return (
     <ChipOrTextStep
       title="Gefühle"
