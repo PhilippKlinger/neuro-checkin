@@ -35,8 +35,11 @@ export default function QuickCheckInScreen() {
   const insets = useSafeAreaInsets();
   const [step, setStep] = useState(0);
   const [energyLevel, setEnergyLevel] = useState(0);
+  const [energySkipped, setEnergySkipped] = useState(false);
   const [focusLevel, setFocusLevel] = useState(0);
+  const [focusSkipped, setFocusSkipped] = useState(false);
   const [feelings, setFeelings] = useState('');
+  const [feelingsSkipped, setFeelingsSkipped] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isDone, setIsDone] = useState(false);
   const [guidedMode, setGuidedMode] = useState(true);
@@ -78,8 +81,10 @@ export default function QuickCheckInScreen() {
     }
   }
 
-  // Energy and focus are required; feelings are optional
-  const isStepBlocked = (step === 0 && energyLevel === 0) || (step === 1 && focusLevel === 0);
+  // Energy and focus are required unless skipped; feelings are optional
+  const isStepBlocked =
+    (step === 0 && energyLevel === 0 && !energySkipped) ||
+    (step === 1 && focusLevel === 0 && !focusSkipped);
   const isNextDisabled = isSaving || isStepBlocked;
   const isLastStep = step === TOTAL_STEPS - 1;
 
@@ -119,10 +124,11 @@ export default function QuickCheckInScreen() {
       await insertCheckIn(db, {
         energyLevel,
         focusLevel,
-        energySkipped: false,
-        focusSkipped: false,
+        energySkipped,
+        focusSkipped,
         bodySignals: { ...EMPTY_BODY_SIGNALS },
         feelings,
+        feelingsSkipped,
         distressLevel: null,
         distressNote: null,
         thoughtsType: null,
@@ -144,8 +150,11 @@ export default function QuickCheckInScreen() {
   function handleReset() {
     setStep(0);
     setEnergyLevel(0);
+    setEnergySkipped(false);
     setFocusLevel(0);
+    setFocusSkipped(false);
     setFeelings('');
+    setFeelingsSkipped(false);
     setIsDone(false);
   }
 
@@ -161,7 +170,15 @@ export default function QuickCheckInScreen() {
         return (
           <StepEnergy
             value={energyLevel}
-            onValueChange={setEnergyLevel}
+            onValueChange={(v) => {
+              setEnergyLevel(v);
+              setEnergySkipped(false);
+            }}
+            skipped={energySkipped}
+            onSkip={() => {
+              setEnergyLevel(0);
+              setEnergySkipped(true);
+            }}
             hint={guidedMode ? STEP_HINTS.energy : undefined}
           />
         );
@@ -169,7 +186,15 @@ export default function QuickCheckInScreen() {
         return (
           <StepFocus
             value={focusLevel}
-            onValueChange={setFocusLevel}
+            onValueChange={(v) => {
+              setFocusLevel(v);
+              setFocusSkipped(false);
+            }}
+            skipped={focusSkipped}
+            onSkip={() => {
+              setFocusLevel(0);
+              setFocusSkipped(true);
+            }}
             hint={guidedMode ? STEP_HINTS.focus : undefined}
           />
         );
@@ -177,8 +202,16 @@ export default function QuickCheckInScreen() {
         return (
           <QuickStepFeelings
             value={feelings}
-            onValueChange={setFeelings}
+            onValueChange={(v) => {
+              setFeelings(v);
+              setFeelingsSkipped(false);
+            }}
             hint={guidedMode ? STEP_HINTS.feelings : undefined}
+            skipped={feelingsSkipped}
+            onSkip={() => {
+              setFeelings('');
+              setFeelingsSkipped(true);
+            }}
           />
         );
       default:

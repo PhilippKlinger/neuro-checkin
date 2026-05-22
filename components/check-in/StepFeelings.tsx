@@ -5,6 +5,8 @@ interface StepFeelingsProps {
   onValueChange: (value: string) => void;
   hint?: string;
   userChips?: string[];
+  skipped?: boolean;
+  onSkip?: () => void;
 }
 
 export const FEELING_CHIPS = [
@@ -25,10 +27,16 @@ export const FEELING_CHIPS = [
   'motiviert',
   'verwirrt',
   'aufgedreht',
-  'Nicht definierbar',
 ] as const;
 
-export function StepFeelings({ value, onValueChange, hint, userChips }: StepFeelingsProps) {
+export function StepFeelings({
+  value,
+  onValueChange,
+  hint,
+  userChips,
+  skipped,
+  onSkip,
+}: StepFeelingsProps) {
   return (
     <ChipOrTextStep
       title="Gefühle"
@@ -41,6 +49,8 @@ export function StepFeelings({ value, onValueChange, hint, userChips }: StepFeel
       maxLength={150}
       hint={hint}
       userChips={userChips}
+      skipped={skipped}
+      onSkip={onSkip}
     />
   );
 }

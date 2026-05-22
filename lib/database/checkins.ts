@@ -8,8 +8,8 @@ export async function insertCheckIn(db: SQLiteDatabase, data: CheckInInsert): Pr
       energy_level, focus_level, body_signals, feelings,
       distress_level, distress_note,
       thoughts_type, thoughts_note, self_care_note, inner_part, note,
-      energy_skipped, focus_skipped
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      energy_skipped, focus_skipped, feelings_skipped
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     data.energyLevel,
     data.focusLevel,
     JSON.stringify(data.bodySignals),
@@ -22,7 +22,8 @@ export async function insertCheckIn(db: SQLiteDatabase, data: CheckInInsert): Pr
     data.innerPart,
     data.note,
     data.energySkipped ? 1 : 0,
-    data.focusSkipped ? 1 : 0
+    data.focusSkipped ? 1 : 0,
+    data.feelingsSkipped ? 1 : 0
   );
   return result.lastInsertRowId;
 }
@@ -35,6 +36,7 @@ export async function getCheckIns(db: SQLiteDatabase, limit = 50, offset = 0): P
     focus_level: number;
     energy_skipped: number;
     focus_skipped: number;
+    feelings_skipped: number;
     body_signals: string;
     feelings: string;
     distress_level: number | null;
@@ -57,6 +59,7 @@ export async function getCheckInById(db: SQLiteDatabase, id: number): Promise<Ch
     focus_level: number;
     energy_skipped: number;
     focus_skipped: number;
+    feelings_skipped: number;
     body_signals: string;
     feelings: string;
     distress_level: number | null;
@@ -81,6 +84,7 @@ export async function getCheckInsByIds(db: SQLiteDatabase, ids: number[]): Promi
     focus_level: number;
     energy_skipped: number;
     focus_skipped: number;
+    feelings_skipped: number;
     body_signals: string;
     feelings: string;
     distress_level: number | null;
@@ -133,6 +137,7 @@ function mapRowToCheckIn(row: {
   focus_level: number;
   energy_skipped: number;
   focus_skipped: number;
+  feelings_skipped: number;
   body_signals: string;
   feelings: string;
   distress_level: number | null;
@@ -150,6 +155,7 @@ function mapRowToCheckIn(row: {
     focusLevel: row.focus_level,
     energySkipped: row.energy_skipped === 1,
     focusSkipped: row.focus_skipped === 1,
+    feelingsSkipped: row.feelings_skipped === 1,
     bodySignals: parseBodySignals(row.body_signals),
     feelings: row.feelings,
     distressLevel: row.distress_level,

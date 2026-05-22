@@ -48,6 +48,7 @@ const FULL_INSERT: CheckInInsert = {
     externalStimuli: null,
   },
   feelings: 'ruhig, freudig',
+  feelingsSkipped: false,
   distressLevel: 2,
   distressNote: 'ein bisschen',
   thoughtsType: 'supportive',
@@ -64,6 +65,7 @@ const MINIMAL_INSERT: CheckInInsert = {
   focusSkipped: false,
   bodySignals: { ...EMPTY_BODY_SIGNALS },
   feelings: '',
+  feelingsSkipped: false,
   distressLevel: null,
   distressNote: null,
   thoughtsType: null,
@@ -112,11 +114,11 @@ describe('insertCheckIn', () => {
     expect(args[5]).toBeNull();
   });
 
-  it('passes all 13 field values in correct order', async () => {
+  it('passes all 14 field values in correct order', async () => {
     const db = makeDb();
     await insertCheckIn(db as any, FULL_INSERT);
     const [, ...values] = db.runAsync.mock.calls[0]; // drop SQL string
-    expect(values).toHaveLength(13);
+    expect(values).toHaveLength(14);
     expect(values[0]).toBe(FULL_INSERT.energyLevel);
     expect(values[1]).toBe(FULL_INSERT.focusLevel);
     expect(typeof values[2]).toBe('string'); // body_signals JSON
@@ -130,6 +132,7 @@ describe('insertCheckIn', () => {
     expect(values[10]).toBe(FULL_INSERT.note);
     expect(values[11]).toBe(0); // energySkipped false → 0
     expect(values[12]).toBe(0); // focusSkipped false → 0
+    expect(values[13]).toBe(0); // feelingsSkipped false → 0
   });
 });
 
@@ -144,6 +147,7 @@ const SAMPLE_ROW = {
   focus_level: 4,
   energy_skipped: 0,
   focus_skipped: 0,
+  feelings_skipped: 0,
   body_signals: JSON.stringify(FULL_INSERT.bodySignals),
   feelings: 'ruhig',
   distress_level: 2,

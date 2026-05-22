@@ -180,6 +180,7 @@ export default function CheckInScreen() {
         focusSkipped: draft.focusSkipped,
         bodySignals: draft.bodySignals,
         feelings: draft.feelings,
+        feelingsSkipped: draft.feelingsSkipped,
         distressLevel: draft.distressLevel,
         distressNote: draft.distressNote || null,
         thoughtsType: draft.thoughtsType,
@@ -258,9 +259,11 @@ export default function CheckInScreen() {
         return (
           <StepFeelings
             value={draft.feelings}
-            onValueChange={(v) => setDraft({ ...draft, feelings: v })}
+            onValueChange={(v) => setDraft({ ...draft, feelings: v, feelingsSkipped: false })}
             hint={guidedMode ? STEP_HINTS.feelings : undefined}
             userChips={feelingUserChips}
+            skipped={draft.feelingsSkipped}
+            onSkip={() => setDraft({ ...draft, feelings: '', feelingsSkipped: true })}
           />
         );
       case 5:

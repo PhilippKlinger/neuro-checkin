@@ -32,6 +32,7 @@ const SAMPLE: CheckIn = {
   focusSkipped: false,
   bodySignals: { ...EMPTY_BODY_SIGNALS },
   feelings: 'ruhig',
+  feelingsSkipped: false,
   distressLevel: null,
   distressNote: null,
   thoughtsType: null,

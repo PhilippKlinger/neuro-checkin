@@ -72,10 +72,10 @@ describe('migrateDatabase — v10 adds energy_skipped and focus_skipped', () => 
     expect(db._execCalls.some((s) => s.includes('focus_skipped'))).toBe(true);
   });
 
-  it('sets user_version to 11 at the end', async () => {
+  it('sets user_version to 12 at the end', async () => {
     const db = makeSchemaMockDb(0);
     await migrateDatabase(db as any);
-    expect(db._execCalls.some((s) => s.includes('user_version = 11'))).toBe(true);
+    expect(db._execCalls.some((s) => s.includes('user_version = 12'))).toBe(true);
   });
 
   it('partial upgrade from v9 only runs v10 statements', async () => {
@@ -86,8 +86,8 @@ describe('migrateDatabase — v10 adds energy_skipped and focus_skipped', () => 
     expect(db._execCalls.some((s) => s.includes('guided_mode_enabled'))).toBe(false);
   });
 
-  it('already at v11 — no DDL executed', async () => {
-    const db = makeSchemaMockDb(11);
+  it('already at v12 — no DDL executed', async () => {
+    const db = makeSchemaMockDb(12);
     await migrateDatabase(db as any);
     const ddl = db._execCalls.filter(
       (s) => s.includes('CREATE TABLE') || s.includes('ALTER TABLE')
@@ -107,6 +107,7 @@ const BASE_INSERT: CheckInInsert = {
   focusSkipped: false,
   bodySignals: { ...EMPTY_BODY_SIGNALS },
   feelings: 'ruhig',
+  feelingsSkipped: false,
   distressLevel: null,
   distressNote: null,
   thoughtsType: null,
@@ -117,11 +118,11 @@ const BASE_INSERT: CheckInInsert = {
 };
 
 describe('insertCheckIn — with skip flags', () => {
-  it('passes 13 positional values (11 original + 2 skip flags)', async () => {
+  it('passes 14 positional values (11 original + 3 skip flags)', async () => {
     const db = makeDb();
     await insertCheckIn(db as any, BASE_INSERT);
     const [, ...values] = db.runAsync.mock.calls[0];
-    expect(values).toHaveLength(13);
+    expect(values).toHaveLength(14);
   });
 
   it('passes energySkipped = false as 0 (SQLite integer)', async () => {
@@ -165,6 +166,7 @@ const SAMPLE_ROW = {
   focus_level: 4,
   energy_skipped: 0,
   focus_skipped: 0,
+  feelings_skipped: 0,
   body_signals: JSON.stringify({ ...EMPTY_BODY_SIGNALS }),
   feelings: 'ruhig',
   distress_level: null,
