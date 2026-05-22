@@ -83,14 +83,15 @@ export async function scheduleSingleSlot(slot: NotificationSlot): Promise<void> 
         body: 'Nur wenn du möchtest.',
         sound: false,
       },
-      // Inexact alarms are sufficient for non-urgent ND reminders.
-      // Drift under Doze mode is acceptable (and aligns with the app's "gentle, optional" framing).
-      // Removing SCHEDULE_EXACT_ALARM keeps the Play permissions footprint minimal.
+      // Exact alarms are required: autistic users rely on precise reminder timing as part of
+      // daily structure. A 60+ min Doze drift defeats the therapeutic purpose of the reminder.
+      // SCHEDULE_EXACT_ALARM is declared in app.json and justified by ND accessibility needs.
       trigger: {
         type: Notifications.SchedulableTriggerInputTypes.WEEKLY,
         hour,
         minute,
         weekday: expoWeekday,
+        ...(Platform.OS === 'android' ? { exact: true } : {}),
       },
     });
   }
