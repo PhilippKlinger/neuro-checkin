@@ -60,8 +60,8 @@ export function scrubEvent<T extends Event>(event: T): T {
   // Handle both Breadcrumb[] (v8 type) and legacy { values?: Breadcrumb[] } object shape
   const bcs = Array.isArray(event.breadcrumbs)
     ? event.breadcrumbs
-    : (event.breadcrumbs as unknown as { values?: Array<{ data?: Record<string, unknown> }> })
-        ?.values ?? [];
+    : ((event.breadcrumbs as unknown as { values?: Array<{ data?: Record<string, unknown> }> })
+        ?.values ?? []);
   for (const breadcrumb of bcs) {
     if (breadcrumb.data && typeof breadcrumb.data === 'object') {
       scrubObject(breadcrumb.data);
