@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { View, Text, TextInput, Pressable, StyleSheet } from 'react-native';
+import { View, Text, TextInput, Pressable, ScrollView, StyleSheet } from 'react-native';
 import { useTheme } from '../../lib/hooks/useTheme';
 import { isChipSelected, toggleChip } from '../../lib/utils/chips';
+import { NAV_AREA_PADDING } from '../../lib/constants/layout';
 import type { ChipGroup } from '../../lib/constants/chips';
 export type { ChipGroup } from '../../lib/constants/chips';
 
@@ -117,7 +118,12 @@ export function ChipOrTextStep({
   }
 
   return (
-    <View style={styles.container}>
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={styles.contentContainer}
+      keyboardShouldPersistTaps="handled"
+      showsVerticalScrollIndicator={false}
+    >
       <Text
         style={{
           fontFamily: typography.families.heading.semibold,
@@ -314,13 +320,17 @@ export function ChipOrTextStep({
           </Pressable>
         </>
       )}
-    </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  contentContainer: {
+    flexGrow: 1,
+    paddingBottom: NAV_AREA_PADDING,
   },
   chipWrap: {
     flexDirection: 'row',
