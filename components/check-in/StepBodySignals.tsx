@@ -1,6 +1,7 @@
 import { View, Text, Pressable, StyleSheet, ScrollView } from 'react-native';
 import { useTheme } from '../../lib/hooks/useTheme';
 import { BodySignals } from '../../lib/types/checkin';
+import { NAV_AREA_PADDING } from '../../lib/constants/layout';
 interface StepBodySignalsProps {
   value: BodySignals;
   onValueChange: (value: BodySignals) => void;
@@ -76,7 +77,11 @@ export function StepBodySignals({ value, onValueChange, hint }: StepBodySignalsP
         </Text>
       )}
 
-      <ScrollView style={styles.scrollArea} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        style={styles.scrollArea}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
         <View style={[styles.signalList, { gap: spacing.sm }]}>
           {SIGNALS.map((signal) => {
             const state = value[signal.key];
@@ -195,6 +200,9 @@ const styles = StyleSheet.create({
   },
   scrollArea: {
     flex: 1,
+  },
+  scrollContent: {
+    paddingBottom: NAV_AREA_PADDING,
   },
   signalList: {},
   signalRow: {

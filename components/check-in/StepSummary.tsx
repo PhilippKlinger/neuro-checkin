@@ -1,5 +1,6 @@
 import { View, Text, ScrollView, StyleSheet } from 'react-native';
 import { useTheme } from '../../lib/hooks/useTheme';
+import { NAV_AREA_PADDING } from '../../lib/constants/layout';
 import {
   CheckInDraft,
   ENERGY_LABELS,
@@ -100,7 +101,7 @@ export function StepSummary({ draft, showPostFirstCheckinHint }: StepSummaryProp
         </Text>
       )}
 
-      <ScrollView style={styles.scrollArea}>
+      <ScrollView style={styles.scrollArea} contentContainerStyle={styles.scrollContent}>
         <View
           style={[
             styles.card,
@@ -304,6 +305,9 @@ const styles = StyleSheet.create({
   },
   scrollArea: {
     flex: 1,
+  },
+  scrollContent: {
+    paddingBottom: NAV_AREA_PADDING,
   },
   card: {},
   row: {

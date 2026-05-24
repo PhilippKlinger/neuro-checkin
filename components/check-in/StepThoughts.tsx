@@ -1,6 +1,7 @@
 import { useRef } from 'react';
 import { View, Text, TextInput, Pressable, ScrollView, StyleSheet } from 'react-native';
 import { useTheme } from '../../lib/hooks/useTheme';
+import { NAV_AREA_PADDING } from '../../lib/constants/layout';
 
 type ThoughtsType = 'supportive' | 'burdening' | 'mixed' | null;
 
@@ -32,6 +33,7 @@ export function StepThoughts({ type, note, onTypeChange, onNoteChange, hint }: S
       ref={scrollRef}
       style={styles.container}
       contentContainerStyle={styles.contentContainer}
+      keyboardShouldPersistTaps="handled"
       showsVerticalScrollIndicator={false}
     >
       <Text
@@ -116,8 +118,7 @@ export function StepThoughts({ type, note, onTypeChange, onNoteChange, hint }: S
         maxLength={200}
         textAlignVertical="top"
         onFocus={() => {
-          const t = setTimeout(() => scrollRef.current?.scrollToEnd({ animated: true }), 300);
-          return () => clearTimeout(t);
+          setTimeout(() => scrollRef.current?.scrollToEnd({ animated: true }), 300);
         }}
         style={[
           styles.noteInput,
@@ -157,7 +158,7 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     flexGrow: 1,
-    justifyContent: 'center',
+    paddingBottom: NAV_AREA_PADDING,
   },
   optionList: {},
   optionButton: {
