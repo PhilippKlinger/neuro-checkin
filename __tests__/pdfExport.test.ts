@@ -7,6 +7,7 @@ import { EMPTY_BODY_SIGNALS } from '../lib/types/checkin';
 
 const mockPrintToFileAsync = jest.fn();
 const mockShareAsync = jest.fn();
+const mockMoveAsync = jest.fn();
 
 jest.mock('expo-print', () => ({
   printToFileAsync: (...args: unknown[]) => mockPrintToFileAsync(...args),
@@ -14,6 +15,10 @@ jest.mock('expo-print', () => ({
 
 jest.mock('expo-sharing', () => ({
   shareAsync: (...args: unknown[]) => mockShareAsync(...args),
+}));
+
+jest.mock('expo-file-system', () => ({
+  moveAsync: (...args: unknown[]) => mockMoveAsync(...args),
 }));
 
 // Import AFTER mocks are registered
@@ -51,6 +56,7 @@ describe('exportCheckInsAsPdf', () => {
     jest.clearAllMocks();
     mockPrintToFileAsync.mockResolvedValue({ uri: 'file:///tmp/export.pdf' });
     mockShareAsync.mockResolvedValue(undefined);
+    mockMoveAsync.mockResolvedValue(undefined);
   });
 
   it('calls printToFileAsync with an HTML string', async () => {
@@ -61,10 +67,14 @@ describe('exportCheckInsAsPdf', () => {
     expect(arg.html).toContain('<!DOCTYPE html>');
   });
 
-  it('calls shareAsync with the returned URI', async () => {
+  it('renames file and calls shareAsync with descriptive filename', async () => {
     await exportCheckInsAsPdf([SAMPLE]);
+    expect(mockMoveAsync).toHaveBeenCalledWith({
+      from: 'file:///tmp/export.pdf',
+      to: 'file:///tmp/Check-in 2026-05-19.pdf',
+    });
     expect(mockShareAsync).toHaveBeenCalledWith(
-      'file:///tmp/export.pdf',
+      'file:///tmp/Check-in 2026-05-19.pdf',
       expect.objectContaining({ mimeType: 'application/pdf' })
     );
   });

@@ -1,5 +1,6 @@
 import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
+import * as FileSystem from 'expo-file-system';
 import type { CheckIn } from '../types/checkin';
 import { buildPdfHtml } from './pdfTemplate';
 
@@ -21,9 +22,14 @@ function buildFileName(checkIns: CheckIn[]): string {
 
 export async function exportCheckInsAsPdf(checkIns: CheckIn[]): Promise<void> {
   const html = buildPdfHtml(checkIns);
+  const { uri } = await Print.printToFileAsync({ html });
+
   const fileName = buildFileName(checkIns);
-  const { uri } = await Print.printToFileAsync({ html, fileName });
-  await Sharing.shareAsync(uri, {
+  const dir = uri.substring(0, uri.lastIndexOf('/') + 1);
+  const namedUri = `${dir}${fileName}.pdf`;
+  await FileSystem.moveAsync({ from: uri, to: namedUri });
+
+  await Sharing.shareAsync(namedUri, {
     mimeType: 'application/pdf',
     UTI: 'com.adobe.pdf',
   });

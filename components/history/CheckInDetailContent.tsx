@@ -20,6 +20,7 @@ interface CheckInDetailContentProps {
   onDeleteRequest: () => void;
   onDeleteConfirm: () => void;
   onDeleteCancel: () => void;
+  onExport?: () => void;
 }
 
 export function CheckInDetailContent({
@@ -28,8 +29,9 @@ export function CheckInDetailContent({
   onDeleteRequest,
   onDeleteConfirm,
   onDeleteCancel,
+  onExport,
 }: CheckInDetailContentProps) {
-  const { theme, spacing, typography, radii } = useTheme();
+  const { theme, spacing, typography, radii, touchTarget } = useTheme();
   const insets = useSafeAreaInsets();
 
   const { activeSignals, inactiveSignals } = useMemo(
@@ -240,6 +242,39 @@ export function CheckInDetailContent({
             Check-in löschen
           </Text>
         </Pressable>
+
+        {onExport && (
+          <Pressable
+            onPress={onExport}
+            style={({ pressed }) => [
+              styles.deleteButton,
+              {
+                marginTop: spacing.md,
+                paddingVertical: spacing.md,
+                borderRadius: radii.md,
+                borderWidth: 1,
+                borderColor: theme.colors.border,
+                backgroundColor: theme.colors.surface,
+                minHeight: touchTarget.min,
+              },
+              pressed && { opacity: 0.75 },
+            ]}
+            accessibilityRole="button"
+            accessibilityLabel="Check-in als PDF exportieren"
+            accessibilityHint="Erstellt eine PDF-Datei und öffnet das Teilen-Menü"
+          >
+            <Text
+              style={{
+                fontFamily: typography.families.ui.medium,
+                fontSize: typography.sizes.sm,
+                color: theme.colors.textSecondary,
+                textAlign: 'center',
+              }}
+            >
+              Als PDF exportieren
+            </Text>
+          </Pressable>
+        )}
       </ScrollView>
 
       <ConfirmDialog
