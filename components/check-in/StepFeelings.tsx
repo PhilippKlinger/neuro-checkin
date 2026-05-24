@@ -1,4 +1,6 @@
 import { ChipOrTextStep } from './ChipOrTextStep';
+export { FEELING_CHIPS } from '../../lib/constants/chips';
+import { FEELING_CHIPS } from '../../lib/constants/chips';
 
 interface StepFeelingsProps {
   value: string;
@@ -8,26 +10,6 @@ interface StepFeelingsProps {
   skipped?: boolean;
   onSkip?: () => void;
 }
-
-export const FEELING_CHIPS = [
-  'neutral',
-  'leer',
-  'erschöpft',
-  'angespannt',
-  'überwältigt',
-  'gereizt',
-  'abgestumpft',
-  'traurig',
-  'ängstlich',
-  'leicht',
-  'frustriert',
-  'zufrieden',
-  'freudig',
-  'dankbar',
-  'motiviert',
-  'verwirrt',
-  'aufgedreht',
-] as const;
 
 export function StepFeelings({
   value,
