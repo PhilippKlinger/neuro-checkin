@@ -165,11 +165,13 @@ export default function CheckInScreen() {
         <StepIndicator totalSteps={TOTAL_STEPS} currentStep={step} />
       </View>
 
-      <GuidedToggle
-        enabled={guidedMode}
-        onToggle={handleGuidedToggle}
-        showIntroHint={showToggleIntroHint}
-      />
+      {step > 0 && step < TOTAL_STEPS - 1 && (
+        <GuidedToggle
+          enabled={guidedMode}
+          onToggle={handleGuidedToggle}
+          showIntroHint={showToggleIntroHint}
+        />
+      )}
 
       {wasReset && step === 0 && (
         <View

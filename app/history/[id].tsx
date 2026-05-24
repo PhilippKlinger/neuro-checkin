@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { View, Text, Pressable, StyleSheet, Alert } from 'react-native';
+import { View, Text, StyleSheet, Alert } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTheme } from '../../lib/hooks/useTheme';
 import { useDatabase } from '../../lib/hooks/useDatabase';
@@ -12,7 +12,7 @@ import * as Sentry from '@sentry/react-native';
 
 export default function CheckInDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const { theme, spacing, typography, radii, touchTarget } = useTheme();
+  const { theme, spacing, typography } = useTheme();
   const db = useDatabase();
   const router = useRouter();
   const [checkIn, setCheckIn] = useState<CheckIn | null>(null);
@@ -104,37 +104,8 @@ export default function CheckInDetailScreen() {
         onDeleteRequest={() => setShowDeleteDialog(true)}
         onDeleteConfirm={confirmDelete}
         onDeleteCancel={() => setShowDeleteDialog(false)}
+        onExport={handleExport}
       />
-
-      <View style={[styles.exportBar, { padding: spacing.md, paddingBottom: spacing.lg }]}>
-        <Pressable
-          onPress={handleExport}
-          style={({ pressed }) => [
-            styles.exportButton,
-            {
-              minHeight: touchTarget.min,
-              borderRadius: radii.md,
-              borderWidth: 1,
-              borderColor: theme.colors.border,
-              backgroundColor: theme.colors.surface,
-            },
-            pressed && { opacity: 0.75 },
-          ]}
-          accessibilityRole="button"
-          accessibilityLabel="Check-in als PDF exportieren"
-          accessibilityHint="Erstellt eine PDF-Datei und öffnet das Teilen-Menü"
-        >
-          <Text
-            style={{
-              fontFamily: typography.families.ui.medium,
-              fontSize: typography.sizes.sm,
-              color: theme.colors.textSecondary,
-            }}
-          >
-            Als PDF exportieren
-          </Text>
-        </Pressable>
-      </View>
     </View>
   );
 }
@@ -142,6 +113,4 @@ export default function CheckInDetailScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   centered: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: 24 },
-  exportBar: {},
-  exportButton: { alignItems: 'center', justifyContent: 'center' },
 });

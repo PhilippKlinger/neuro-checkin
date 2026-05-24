@@ -1,5 +1,15 @@
-import type { CheckIn } from '../types/checkin';
+import type { CheckIn, BodySignals } from '../types/checkin';
 import { getLevelLabel, ENERGY_LABELS, FOCUS_LABELS, DISTRESS_LABELS } from '../types/checkin';
+
+const BODY_SIGNAL_LABELS: Record<keyof BodySignals, string> = {
+  hunger: 'Hunger',
+  thirst: 'Durst',
+  temperature: 'Temperatur unangenehm',
+  pain: 'Schmerzen',
+  restroom: 'Toilette',
+  seating: 'Sitzposition unangenehm',
+  externalStimuli: 'Äußere Reize',
+};
 
 function formatDate(createdAt: string): string {
   // SQLite stores as "YYYY-MM-DD HH:MM:SS" — convert to readable German format
@@ -24,6 +34,15 @@ function buildCheckInBlock(c: CheckIn): string {
   if (!c.focusSkipped && c.focusLevel > 0) {
     rows.push(row('Fokus', `${c.focusLevel}/5 — ${getLevelLabel(c.focusLevel, FOCUS_LABELS)}`));
   }
+
+  const activeSignals = Object.entries(c.bodySignals)
+    .filter(([, val]) => val === true)
+    .map(([key]) => BODY_SIGNAL_LABELS[key as keyof BodySignals])
+    .filter(Boolean);
+  if (activeSignals.length > 0) {
+    rows.push(row('Körpersignale', activeSignals.join(', ')));
+  }
+
   if (c.feelings) {
     rows.push(row('Gefühle', c.feelings));
   }
@@ -81,12 +100,20 @@ export function buildPdfHtml(checkIns: CheckIn[]): string {
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Neuro Check-in Export</title>
   <style>
+    @page {
+      margin: 24px 32px 48px 32px;
+      @bottom-center {
+        content: counter(page) " / " counter(pages);
+        font-size: 9px;
+        color: #aaa;
+      }
+    }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: -apple-system, 'Helvetica Neue', Arial, sans-serif;
       font-size: 13px;
       color: #2c2c2c;
-      padding: 24px 32px;
+      padding: 0;
       line-height: 1.5;
     }
     header {

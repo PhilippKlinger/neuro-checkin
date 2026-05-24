@@ -46,36 +46,40 @@ export default function HistoryScreen() {
     setSelectedIds(new Set());
   }
 
-  const toggleSelection = useCallback((id: number) => {
-    setSelectedIds((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
-      return next;
-    });
-  }, []);
+  const toggleSelection = useCallback(
+    (id: number) => {
+      if (isExporting) return;
+      setSelectedIds((prev) => {
+        const next = new Set(prev);
+        if (next.has(id)) next.delete(id);
+        else next.add(id);
+        return next;
+      });
+    },
+    [isExporting]
+  );
 
   function selectAll() {
+    if (isExporting) return;
     setSelectedIds(new Set(checkIns.map((c) => c.id)));
   }
 
   async function handleExportSelected() {
     const ids = Array.from(selectedIds);
-    if (ids.length === 0) return;
+    if (ids.length === 0 || isExporting) return;
     const toExport = checkIns.filter((c) => ids.includes(c.id));
     setIsExporting(true);
     try {
       await exportCheckInsAsPdf(toExport);
-      exitSelectionMode();
     } catch (error) {
       Sentry.captureException(error);
       Alert.alert(
         'Export fehlgeschlagen',
         'PDF konnte nicht erstellt werden. Bitte versuche es erneut.'
       );
-    } finally {
-      setIsExporting(false);
     }
+    setIsExporting(false);
+    exitSelectionMode();
   }
 
   const handlePress = useCallback(

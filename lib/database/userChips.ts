@@ -27,7 +27,7 @@ export async function saveUserChips(
 
 export async function getUserChips(db: SQLiteDatabase, category: ChipCategory): Promise<string[]> {
   const rows = await db.getAllAsync<{ label: string; use_count: number }>(
-    `SELECT label, use_count FROM user_chips WHERE category = ? AND use_count >= 2 ORDER BY use_count DESC, id DESC LIMIT 20`,
+    `SELECT label, use_count FROM user_chips WHERE category = ? AND use_count >= 1 ORDER BY use_count DESC, id DESC LIMIT 20`,
     [category]
   );
   return rows.slice(0, 20).map((r) => r.label);

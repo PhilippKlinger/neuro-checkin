@@ -46,17 +46,6 @@ export function DataSection({ db, checkInCount, onDeleteComplete }: DataSectionP
 
   return (
     <>
-      <Text
-        style={{
-          fontFamily: typography.families.heading.semibold,
-          fontSize: typography.sizes.lg,
-          color: theme.colors.text,
-          marginBottom: spacing.md,
-        }}
-      >
-        Daten & Datenschutz
-      </Text>
-
       <Pressable
         onPress={() => Linking.openURL('https://neurocheckin.de/datenschutz')}
         style={({ pressed }) => [

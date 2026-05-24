@@ -97,11 +97,11 @@ describe('saveUserChips', () => {
 // ---------------------------------------------------------------------------
 
 describe('getUserChips', () => {
-  it('returns labels of chips with use_count >= 2', async () => {
+  it('returns labels of chips with use_count >= 1', async () => {
     const db = makeDb({
       getAllAsync: jest.fn().mockResolvedValue([
         { label: 'neblig', use_count: 3 },
-        { label: 'wattig', use_count: 2 },
+        { label: 'wattig', use_count: 1 },
       ]),
     });
     const chips = await getUserChips(db as never, 'feelings');

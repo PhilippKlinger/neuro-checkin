@@ -179,24 +179,12 @@ export function ChipOrTextStep({
           )}
 
           {userChips && userChips.length > 0 && (
-            <>
-              <Text
-                style={{
-                  fontFamily: typography.families.body.regular,
-                  fontSize: typography.sizes.xs,
-                  color: theme.colors.textSecondary,
-                  marginBottom: spacing.sm,
-                }}
-              >
-                Deine Begriffe
-              </Text>
-              <ChipWrap
-                chips={userChips}
-                value={value}
-                onValueChange={onValueChange}
-                variant="user"
-              />
-            </>
+            <ChipWrap
+              chips={userChips}
+              value={value}
+              onValueChange={onValueChange}
+              variant="user"
+            />
           )}
 
           {!chipsOnly && (
