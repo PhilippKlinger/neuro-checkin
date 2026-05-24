@@ -1,64 +1,40 @@
-import { View, Text, Switch, StyleSheet } from 'react-native';
+import { Pressable, StyleSheet } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../../lib/hooks/useTheme';
 
 interface GuidedToggleProps {
   enabled: boolean;
   onToggle: (value: boolean) => void;
-  showIntroHint: boolean;
 }
 
-export function GuidedToggle({ enabled, onToggle, showIntroHint }: GuidedToggleProps) {
-  const { theme, spacing, typography } = useTheme();
+export function GuidedToggle({ enabled, onToggle }: GuidedToggleProps) {
+  const { theme, touchTarget } = useTheme();
 
   return (
-    <View
-      style={[styles.container, { paddingHorizontal: spacing.lg, paddingVertical: spacing.sm }]}
+    <Pressable
+      onPress={() => onToggle(!enabled)}
+      style={({ pressed }) => [
+        styles.button,
+        { minWidth: touchTarget.min, minHeight: touchTarget.min },
+        pressed && { opacity: 0.6 },
+      ]}
+      accessibilityRole="switch"
+      accessibilityLabel="Hinweise"
+      accessibilityState={{ checked: enabled }}
+      hitSlop={8}
     >
-      <View style={[styles.row, { gap: spacing.sm }]}>
-        <Text
-          style={{
-            fontFamily: typography.families.ui.medium,
-            fontSize: typography.sizes.sm,
-            color: theme.colors.textSecondary,
-          }}
-        >
-          Hinweise
-        </Text>
-        <Switch
-          value={enabled}
-          onValueChange={onToggle}
-          trackColor={{ false: theme.colors.border, true: theme.colors.accent }}
-          thumbColor={theme.colors.background}
-          accessibilityRole="switch"
-          accessibilityLabel="Hinweise"
-          accessibilityState={{ checked: enabled }}
-        />
-      </View>
-
-      {showIntroHint && (
-        <Text
-          style={{
-            fontFamily: typography.families.body.regular,
-            fontSize: typography.sizes.xs,
-            color: theme.colors.textSecondary,
-            fontStyle: 'italic',
-            marginTop: spacing.xs,
-            textAlign: 'center',
-          }}
-        >
-          Hinweise an/aus — jederzeit umschaltbar
-        </Text>
-      )}
-    </View>
+      <Ionicons
+        name={enabled ? 'bulb' : 'bulb-outline'}
+        size={18}
+        color={enabled ? theme.colors.accent : theme.colors.border}
+      />
+    </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  button: {
     alignItems: 'center',
-  },
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    justifyContent: 'center',
   },
 });

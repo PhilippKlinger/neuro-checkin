@@ -1,5 +1,5 @@
 import { useState, useCallback, useRef } from 'react';
-import { Text, Pressable, ScrollView, StyleSheet, Platform, View } from 'react-native';
+import { Text, Pressable, ScrollView, Switch, StyleSheet, Platform, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as Device from 'expo-device';
 import { useFocusEffect, useRouter } from 'expo-router';
@@ -51,6 +51,7 @@ export default function SettingsScreen() {
   const [showTimePicker, setShowTimePicker] = useState<0 | 1 | null>(null);
   const [isEmulator, setIsEmulator] = useState(false);
   const [checkInCount, setCheckInCount] = useState(0);
+  const [guidedMode, setGuidedMode] = useState(true);
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
   const [feedbackOpen, setFeedbackOpen] = useState(false);
   const [dataOpen, setDataOpen] = useState(false);
@@ -75,6 +76,8 @@ export default function SettingsScreen() {
             }
           }
         }
+
+        setGuidedMode(settings.guidedModeEnabled);
 
         const count = await countCheckIns(db);
         setCheckInCount(count);
@@ -160,6 +163,19 @@ export default function SettingsScreen() {
     [db, themeName, setThemeName]
   );
 
+  const handleGuidedModeToggle = useCallback(
+    async (value: boolean) => {
+      const previous = guidedMode;
+      setGuidedMode(value);
+      try {
+        await updateSettings(db, { guidedModeEnabled: value });
+      } catch {
+        setGuidedMode(previous);
+      }
+    },
+    [db, guidedMode]
+  );
+
   const handleTimePress = useCallback((id: 0 | 1) => setShowTimePicker(id), []);
 
   return (
@@ -181,6 +197,27 @@ export default function SettingsScreen() {
           onTimeChange={handleTimeChange}
           onWeekdayToggle={handleWeekdayToggle}
         />
+
+        <View style={[styles.guidedRow, { marginTop: spacing.xl }]}>
+          <Text
+            style={{
+              fontFamily: typography.families.body.regular,
+              fontSize: typography.sizes.md,
+              color: theme.colors.text,
+            }}
+          >
+            Hinweise im Check-in
+          </Text>
+          <Switch
+            value={guidedMode}
+            onValueChange={handleGuidedModeToggle}
+            trackColor={{ false: theme.colors.border, true: theme.colors.accent }}
+            thumbColor={theme.colors.background}
+            accessibilityRole="switch"
+            accessibilityLabel="Hinweise im Check-in"
+            accessibilityState={{ checked: guidedMode }}
+          />
+        </View>
 
         <Pressable
           onPress={() => setFeedbackOpen((o) => !o)}
@@ -358,4 +395,5 @@ const styles = StyleSheet.create({
   listItem: { justifyContent: 'center' },
   infoRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   sectionHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  guidedRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
 });
