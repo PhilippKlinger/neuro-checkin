@@ -1,5 +1,6 @@
 # Neuro Check-in
 
+![Version](https://img.shields.io/badge/version-1.5.7-6C4FF0?logo=github&logoColor=white)
 ![Expo SDK](https://img.shields.io/badge/Expo-SDK%2054-4630EB?logo=expo&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178C6?logo=typescript&logoColor=white)
 ![Platform](https://img.shields.io/badge/Platform-Android-3DDC84?logo=android&logoColor=white)
@@ -13,16 +14,33 @@ Designed for people with autism, ADHD, or high inner complexity who need a calm,
 
 ## Table of Contents
 
+- [Features](#features)
 - [Screenshots](#screenshots)
 - [Prerequisites](#prerequisites)
 - [Quickstart](#quickstart)
 - [Project Structure](#project-structure)
 - [Environment Variables](#environment-variables)
 - [Scripts](#scripts)
+- [Tests](#tests)
 - [Security Notes](#security-notes)
 - [Status](#status)
 - [Product Principles](#product-principles)
 - [License](#license)
+
+---
+
+## Features
+
+- **Guided 9-step check-in** — body signals, energy, focus, feelings, self-care, thoughts, distress level, and a free-form note; every step is optional
+- **Quick check-in** — a condensed 4-step flow for low-energy moments
+- **Check-in history** — full log with detail view and chronological summary
+- **PDF export** — share individual or multiple check-ins as formatted PDF reports (e.g., for therapy appointments)
+- **Guided mode** — inline contextual hints per step, toggleable without leaving the flow
+- **User-defined chips** — add personal labels to the feelings and self-care steps
+- **Fully offline** — all data stored on-device via SQLite, no account required
+- **Dark mode** — three palette options (Calm / Warm / Sage) in light and dark variants
+- **Accessible** — WCAG AA contrast, 44 px touch targets, screen-reader labels, reduced-motion support throughout
+- **Neurodivergence-first UX** — no streaks, no gamification, no pressure language; alexithymia-safe "can't say" options on every emotional step
 
 ---
 
@@ -93,7 +111,9 @@ components/
 lib/
   constants/           Design tokens, app config
   database/            SQLite service layer (queries, schema, migrations)
-  hooks/               Custom hooks (useTheme, useDatabase)
+  hooks/               Custom hooks (useTheme, useDatabase, useReducedMotion)
+  notifications/       Notification scheduling and permission handling
+  observability/       Sentry integration with privacy-safe PII scrubber
   types/               Shared TypeScript interfaces
   utils/               Helper functions (format, chips, time)
 assets/                Icons, splash screen
@@ -132,8 +152,23 @@ eas secret:create --name FORMSPREE_URL --value "your-url"
 | `npx expo run:android`                | First-time build or after adding native packages |
 | `npx expo start`                      | Normal development session                       |
 | `npx expo start --android`            | Development session and open emulator            |
+| `npm test`                            | Run the full Jest test suite                     |
+| `npx expo lint`                       | ESLint check (also runs in CI)                   |
+| `npx tsc --noEmit`                    | TypeScript type check (also runs in CI)          |
 | `eas build --platform android`        | Production build via EAS cloud                   |
-| `eas build --local --profile preview` | Local production build via WSL2                  |
+| `eas build --local --profile preview` | Local preview build via WSL2                     |
+
+---
+
+## Tests
+
+The project uses Jest with jest-expo. Tests cover the logic layer (`lib/database/`, `lib/utils/`, `lib/types/`) with a focus on pure functions and database queries.
+
+```bash
+npm test
+```
+
+CI runs lint, type checks, and the full test suite on every push and pull request.
 
 ---
 
@@ -148,7 +183,7 @@ eas secret:create --name FORMSPREE_URL --value "your-url"
 
 ## Status
 
-Neuro Check-in is currently in preparation for a closed Android beta release.
+Neuro Check-in is at **v1.5.7** and preparing for public release on Google Play.
 
 Screenshots will be added before the public release.
 
