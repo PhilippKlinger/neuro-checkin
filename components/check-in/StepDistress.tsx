@@ -258,7 +258,6 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     flexGrow: 1,
-    paddingTop: 24,
     paddingBottom: NAV_AREA_PADDING,
   },
   optionList: {},

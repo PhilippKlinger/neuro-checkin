@@ -36,7 +36,7 @@ interface ChipWrapProps {
 }
 
 function ChipWrap({ chips, value, onValueChange, variant = 'default' }: ChipWrapProps) {
-  const { theme, spacing, typography, radii } = useTheme();
+  const { theme, spacing, typography, radii, touchTarget } = useTheme();
   return (
     <View
       style={[styles.chipWrap, { gap: spacing.sm, marginBottom: spacing.md }]}
@@ -54,6 +54,7 @@ function ChipWrap({ chips, value, onValueChange, variant = 'default' }: ChipWrap
                 borderRadius: radii.full,
                 paddingHorizontal: spacing.md,
                 paddingVertical: spacing.xs,
+                minHeight: touchTarget.min,
                 backgroundColor: selected ? theme.colors.accentSoft : theme.colors.surface,
                 borderWidth: 1,
                 borderStyle: variant === 'user' ? 'dashed' : 'solid',

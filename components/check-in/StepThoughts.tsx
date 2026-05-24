@@ -1,6 +1,7 @@
 import { useRef } from 'react';
 import { View, Text, TextInput, Pressable, ScrollView, StyleSheet } from 'react-native';
 import { useTheme } from '../../lib/hooks/useTheme';
+import { useReducedMotion } from '../../lib/hooks/useReducedMotion';
 import { NAV_AREA_PADDING } from '../../lib/constants/layout';
 
 type ThoughtsType = 'supportive' | 'burdening' | 'mixed' | null;
@@ -26,6 +27,7 @@ const OPTIONS: OptionItem[] = [
 
 export function StepThoughts({ type, note, onTypeChange, onNoteChange, hint }: StepThoughtsProps) {
   const { theme, spacing, typography, radii, touchTarget } = useTheme();
+  const reducedMotion = useReducedMotion();
   const scrollRef = useRef<ScrollView>(null);
 
   return (
@@ -118,7 +120,7 @@ export function StepThoughts({ type, note, onTypeChange, onNoteChange, hint }: S
         maxLength={200}
         textAlignVertical="top"
         onFocus={() => {
-          setTimeout(() => scrollRef.current?.scrollToEnd({ animated: true }), 300);
+          setTimeout(() => scrollRef.current?.scrollToEnd({ animated: !reducedMotion }), 300);
         }}
         style={[
           styles.noteInput,
