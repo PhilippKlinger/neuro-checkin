@@ -1,5 +1,15 @@
-import type { CheckIn } from '../types/checkin';
+import type { CheckIn, BodySignals } from '../types/checkin';
 import { getLevelLabel, ENERGY_LABELS, FOCUS_LABELS, DISTRESS_LABELS } from '../types/checkin';
+
+const BODY_SIGNAL_LABELS: Record<keyof BodySignals, string> = {
+  hunger: 'Hunger',
+  thirst: 'Durst',
+  temperature: 'Temperatur unangenehm',
+  pain: 'Schmerzen',
+  restroom: 'Toilette',
+  seating: 'Sitzposition unangenehm',
+  externalStimuli: 'Äußere Reize',
+};
 
 function formatDate(createdAt: string): string {
   // SQLite stores as "YYYY-MM-DD HH:MM:SS" — convert to readable German format
@@ -24,6 +34,15 @@ function buildCheckInBlock(c: CheckIn): string {
   if (!c.focusSkipped && c.focusLevel > 0) {
     rows.push(row('Fokus', `${c.focusLevel}/5 — ${getLevelLabel(c.focusLevel, FOCUS_LABELS)}`));
   }
+
+  const activeSignals = Object.entries(c.bodySignals)
+    .filter(([, val]) => val === true)
+    .map(([key]) => BODY_SIGNAL_LABELS[key as keyof BodySignals])
+    .filter(Boolean);
+  if (activeSignals.length > 0) {
+    rows.push(row('Körpersignale', activeSignals.join(', ')));
+  }
+
   if (c.feelings) {
     rows.push(row('Gefühle', c.feelings));
   }
