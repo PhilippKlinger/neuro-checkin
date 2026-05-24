@@ -83,7 +83,7 @@ export function CheckInNavButtons({
           pressed && !isNextDisabled && { opacity: 0.75 },
         ]}
         accessibilityRole="button"
-        accessibilityLabel={isLastStep ? 'Speichern' : 'Weiter'}
+        accessibilityLabel={nextLabel}
         accessibilityState={{ disabled: isNextDisabled }}
       >
         <Text
