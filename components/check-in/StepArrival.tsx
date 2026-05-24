@@ -1,4 +1,4 @@
-import { ScrollView, Text, StyleSheet } from 'react-native';
+import { ScrollView, View, Text, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../../lib/hooks/useTheme';
 import { NAV_AREA_PADDING } from '../../lib/constants/layout';
