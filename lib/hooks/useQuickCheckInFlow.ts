@@ -1,0 +1,167 @@
+import { useState, useRef, useCallback, type Dispatch, type SetStateAction } from 'react';
+import { Alert } from 'react-native';
+import { useFocusEffect } from 'expo-router';
+import type { SQLiteDatabase } from 'expo-sqlite';
+import { insertCheckIn } from '../database/checkins';
+import { getSettings, updateSettings } from '../database/settings';
+import { EMPTY_BODY_SIGNALS } from '../types/checkin';
+import * as Sentry from '@sentry/react-native';
+
+const TOTAL_STEPS = 3;
+
+export interface QuickCheckInDraft {
+  energyLevel: number;
+  energySkipped: boolean;
+  focusLevel: number;
+  focusSkipped: boolean;
+  feelings: string;
+  feelingsSkipped: boolean;
+}
+
+const EMPTY_QUICK_DRAFT: QuickCheckInDraft = {
+  energyLevel: 0,
+  energySkipped: false,
+  focusLevel: 0,
+  focusSkipped: false,
+  feelings: '',
+  feelingsSkipped: false,
+};
+
+export interface UseQuickCheckInFlowResult {
+  step: number;
+  draft: QuickCheckInDraft;
+  isSaving: boolean;
+  isDone: boolean;
+  guidedMode: boolean;
+  showToggleIntroHint: boolean;
+  isLastStep: boolean;
+  isStepBlocked: boolean;
+  isNextDisabled: boolean;
+  setDraft: Dispatch<SetStateAction<QuickCheckInDraft>>;
+  handleGuidedToggle: (value: boolean) => Promise<void>;
+  handleNext: () => void;
+  handleBack: () => void;
+  handleReset: () => void;
+}
+
+export function useQuickCheckInFlow(
+  db: SQLiteDatabase,
+  onExitFlow: () => void
+): UseQuickCheckInFlowResult {
+  const [step, setStep] = useState(0);
+  const [draft, setDraft] = useState<QuickCheckInDraft>({ ...EMPTY_QUICK_DRAFT });
+  const [isSaving, setIsSaving] = useState(false);
+  const [isDone, setIsDone] = useState(false);
+  const [guidedMode, setGuidedMode] = useState(true);
+  const [showToggleIntroHint, setShowToggleIntroHint] = useState(false);
+
+  const savingRef = useRef(false);
+
+  useFocusEffect(
+    useCallback(() => {
+      let cancelled = false;
+      async function loadSettings() {
+        try {
+          const settings = await getSettings(db);
+          if (cancelled) return;
+          setGuidedMode(settings.guidedModeEnabled);
+          setShowToggleIntroHint(!settings.guidedToggleIntroduced);
+        } catch {
+          // Non-critical — defaults are safe fallbacks
+        }
+      }
+      loadSettings();
+      return () => {
+        cancelled = true;
+      };
+    }, [db])
+  );
+
+  async function handleGuidedToggle(value: boolean) {
+    setGuidedMode(value);
+    try {
+      if (showToggleIntroHint) {
+        setShowToggleIntroHint(false);
+        await updateSettings(db, { guidedModeEnabled: value, guidedToggleIntroduced: true });
+      } else {
+        await updateSettings(db, { guidedModeEnabled: value });
+      }
+    } catch {
+      setGuidedMode(!value);
+    }
+  }
+
+  function handleNext() {
+    if (step === TOTAL_STEPS - 1) {
+      handleSave();
+    } else {
+      setStep(step + 1);
+    }
+  }
+
+  function handleBack() {
+    if (step > 0) {
+      setStep(step - 1);
+    } else {
+      onExitFlow();
+    }
+  }
+
+  async function handleSave() {
+    if (savingRef.current) return;
+    savingRef.current = true;
+    setIsSaving(true);
+    try {
+      await insertCheckIn(db, {
+        energyLevel: draft.energyLevel,
+        focusLevel: draft.focusLevel,
+        energySkipped: draft.energySkipped,
+        focusSkipped: draft.focusSkipped,
+        bodySignals: { ...EMPTY_BODY_SIGNALS },
+        feelings: draft.feelings,
+        feelingsSkipped: draft.feelingsSkipped,
+        distressLevel: null,
+        distressNote: null,
+        thoughtsType: null,
+        thoughtsNote: null,
+        selfCareNote: null,
+        innerPart: null,
+        note: null,
+      });
+      setIsDone(true);
+    } catch (error) {
+      Sentry.captureException(error);
+      Alert.alert('Fehler beim Speichern', 'Check-in konnte nicht gespeichert werden.');
+    } finally {
+      setIsSaving(false);
+      savingRef.current = false;
+    }
+  }
+
+  function handleReset() {
+    setStep(0);
+    setDraft({ ...EMPTY_QUICK_DRAFT });
+    setIsDone(false);
+  }
+
+  const blocked =
+    (step === 0 && draft.energyLevel === 0 && !draft.energySkipped) ||
+    (step === 1 && draft.focusLevel === 0 && !draft.focusSkipped);
+
+  return {
+    step,
+    draft,
+    isSaving,
+    isDone,
+    guidedMode,
+    showToggleIntroHint,
+    isLastStep: step === TOTAL_STEPS - 1,
+    isStepBlocked: blocked,
+    isNextDisabled: isSaving || blocked,
+    setDraft,
+    handleGuidedToggle,
+    handleNext,
+    handleBack,
+    handleReset,
+  };
+}
