@@ -1,11 +1,12 @@
 import { useEffect, useRef } from 'react';
-import { View, Text, Pressable, StyleSheet, AccessibilityInfo, findNodeHandle } from 'react-native';
+import { View, StyleSheet, AccessibilityInfo, findNodeHandle } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../lib/hooks/useTheme';
 import { useDatabase } from '../lib/hooks/useDatabase';
 import { useQuickCheckInFlow } from '../lib/hooks/useQuickCheckInFlow';
 import { FadeView } from '../components/ui/FadeView';
+import { CheckInNavButtons } from '../components/check-in/CheckInNavButtons';
 import { StepIndicator } from '../components/check-in/StepIndicator';
 import { GuidedToggle } from '../components/check-in/GuidedToggle';
 import { CheckInSuccessView } from '../components/check-in/CheckInSuccessView';
@@ -18,7 +19,7 @@ const TOTAL_STEPS = 3;
 const STEP_NAMES = ['Energie-Level', 'Fokus-Level', 'Gefühle'];
 
 export default function QuickCheckInScreen() {
-  const { theme, spacing, typography, radii, touchTarget } = useTheme();
+  const { theme, spacing } = useTheme();
   const db = useDatabase();
   const router = useRouter();
   const insets = useSafeAreaInsets();
@@ -122,70 +123,15 @@ export default function QuickCheckInScreen() {
         </View>
       </FadeView>
 
-      <View
-        style={[
-          styles.navigation,
-          {
-            padding: spacing.lg,
-            paddingBottom: Math.max(spacing.xl, insets.bottom + spacing.md),
-            gap: spacing.md,
-          },
-        ]}
-      >
-        <Pressable
-          onPress={handleBack}
-          style={({ pressed }) => [
-            styles.navButton,
-            {
-              minHeight: touchTarget.min,
-              borderRadius: radii.md,
-              borderWidth: 1,
-              borderColor: theme.colors.border,
-              backgroundColor: theme.colors.surface,
-            },
-            pressed && { opacity: 0.75 },
-          ]}
-          accessibilityRole="button"
-          accessibilityLabel={step === 0 ? 'Abbrechen' : 'Zurück'}
-        >
-          <Text
-            style={{
-              fontFamily: typography.families.ui.medium,
-              fontSize: typography.sizes.md,
-              color: theme.colors.text,
-            }}
-          >
-            {step === 0 ? 'Abbrechen' : 'Zurück'}
-          </Text>
-        </Pressable>
-
-        <Pressable
-          onPress={handleNext}
-          disabled={isNextDisabled}
-          style={({ pressed }) => [
-            styles.navButton,
-            {
-              minHeight: touchTarget.min,
-              borderRadius: radii.md,
-              backgroundColor: isNextDisabled ? theme.colors.border : theme.colors.primary,
-            },
-            pressed && !isNextDisabled && { opacity: 0.75 },
-          ]}
-          accessibilityRole="button"
-          accessibilityLabel={isLastStep ? 'Speichern' : 'Weiter'}
-          accessibilityState={{ disabled: isNextDisabled }}
-        >
-          <Text
-            style={{
-              fontFamily: typography.families.ui.semibold,
-              fontSize: typography.sizes.md,
-              color: theme.colors.textInverse,
-            }}
-          >
-            {isLastStep ? (isSaving ? 'Speichern...' : 'Speichern') : 'Weiter'}
-          </Text>
-        </Pressable>
-      </View>
+      <CheckInNavButtons
+        onBack={handleBack}
+        onNext={handleNext}
+        backLabel={step === 0 ? 'Abbrechen' : 'Zurück'}
+        isNextDisabled={isNextDisabled}
+        isLastStep={isLastStep}
+        isSaving={isSaving}
+        paddingBottom={Math.max(spacing.xl, insets.bottom + spacing.md)}
+      />
     </View>
   );
 }
@@ -202,13 +148,5 @@ const styles = StyleSheet.create({
   },
   stepInner: {
     flex: 1,
-  },
-  navigation: {
-    flexDirection: 'row',
-  },
-  navButton: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
 });
