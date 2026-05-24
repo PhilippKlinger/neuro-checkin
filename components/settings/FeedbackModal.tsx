@@ -36,7 +36,8 @@ export function FeedbackModal({ visible, onClose }: FeedbackModalProps) {
   }
 
   async function handleSubmit() {
-    if (!feedbackText.trim()) return;
+    const trimmed = feedbackText.trim().slice(0, 500);
+    if (!trimmed) return;
     setFeedbackSubmitting(true);
     setFeedbackError(false);
     try {
@@ -45,7 +46,7 @@ export function FeedbackModal({ visible, onClose }: FeedbackModalProps) {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
         body: JSON.stringify({
-          feedback: feedbackText.trim(),
+          feedback: trimmed,
           _subject: `Neuro Check-in Feedback v${appVersion}`,
           app_version: appVersion,
         }),

@@ -36,7 +36,10 @@ export function DatabaseProvider({ children }: DatabaseProviderProps) {
         setDb(database);
         setIsReady(true);
       } catch (e) {
-        console.error('Database initialization failed:', e);
+        console.error(
+          'Database initialization failed:',
+          e instanceof Error ? e.message : String(e)
+        );
         setError(true);
       }
     }

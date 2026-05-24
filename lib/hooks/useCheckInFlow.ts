@@ -99,10 +99,26 @@ export function useCheckInFlow(db: SQLiteDatabase): UseCheckInFlowResult {
     useCallback(() => {
       if (leftAtRef.current !== null && stepRef.current > 0) {
         if (isInactivityExpired(leftAtRef.current, Date.now(), INACTIVITY_TIMEOUT_MS)) {
-          setStep(0);
-          setDraft(freshDraft);
-          setIsDone(false);
-          setWasReset(true);
+          Alert.alert(
+            'Du warst eine Weile weg',
+            'Möchtest du bei deinem Check-in weitermachen oder neu beginnen?',
+            [
+              {
+                text: 'Weitermachen',
+                style: 'default',
+              },
+              {
+                text: 'Neu beginnen',
+                style: 'destructive',
+                onPress: () => {
+                  setStep(0);
+                  setDraft(freshDraft);
+                  setIsDone(false);
+                  setWasReset(true);
+                },
+              },
+            ]
+          );
         }
       }
       leftAtRef.current = null;

@@ -65,9 +65,8 @@ export default function HistoryScreen() {
   }
 
   async function handleExportSelected() {
-    const ids = Array.from(selectedIds);
-    if (ids.length === 0 || isExporting) return;
-    const toExport = checkIns.filter((c) => ids.includes(c.id));
+    if (selectedIds.size === 0 || isExporting) return;
+    const toExport = checkIns.filter((c) => selectedIds.has(c.id));
     setIsExporting(true);
     try {
       await exportCheckInsAsPdf(toExport);

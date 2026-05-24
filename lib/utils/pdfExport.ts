@@ -5,6 +5,8 @@ import type { CheckIn } from '../types/checkin';
 import { buildPdfHtml } from './pdfTemplate';
 
 function buildFileName(checkIns: CheckIn[]): string {
+  if (checkIns.length === 0) return 'Check-in Export';
+
   const formatDate = (iso: string) => iso.split(' ')[0] ?? iso;
 
   if (checkIns.length === 1) {
