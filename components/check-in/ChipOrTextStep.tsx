@@ -11,14 +11,16 @@ interface ChipOrTextStepProps {
   chips: readonly string[];
   value: string;
   onValueChange: (value: string) => void;
-  textPlaceholder: string;
-  textAccessibilityLabel: string;
+  textPlaceholder?: string;
+  textAccessibilityLabel?: string;
   maxLength?: number;
   hint?: string;
   userChips?: string[];
   chipGroups?: ChipGroup[];
   skipped?: boolean;
   onSkip?: () => void;
+  /** When true, hides the free-text toggle so only chips are available. */
+  chipsOnly?: boolean;
 }
 
 function hasChipContent(val: string, chips: readonly string[]): boolean {
@@ -84,20 +86,23 @@ export function ChipOrTextStep({
   chips,
   value,
   onValueChange,
-  textPlaceholder,
-  textAccessibilityLabel,
+  textPlaceholder = '',
+  textAccessibilityLabel = '',
   maxLength = 150,
   hint,
   userChips,
   chipGroups,
   skipped,
   onSkip,
+  chipsOnly = false,
 }: ChipOrTextStepProps) {
   const { theme, spacing, typography, radii, touchTarget } = useTheme();
 
   const [mode, setMode] = useState<'chips' | 'text'>(() =>
-    value.trim() !== '' && !hasChipContent(value, chips) ? 'text' : 'chips'
+    !chipsOnly && value.trim() !== '' && !hasChipContent(value, chips) ? 'text' : 'chips'
   );
+
+  const effectiveMode = chipsOnly ? 'chips' : mode;
 
   const counterThreshold = Math.floor(maxLength * 0.9);
 
@@ -150,7 +155,7 @@ export function ChipOrTextStep({
         </Text>
       )}
 
-      {mode === 'chips' ? (
+      {effectiveMode === 'chips' ? (
         <>
           {chipGroups ? (
             chipGroups.map((group) => (
@@ -194,27 +199,29 @@ export function ChipOrTextStep({
             </>
           )}
 
-          <Pressable
-            onPress={switchToText}
-            style={({ pressed }) => [
-              styles.modeSwitch,
-              { minHeight: touchTarget.min, paddingVertical: spacing.sm },
-              pressed && { opacity: 0.75 },
-            ]}
-            accessibilityRole="button"
-            accessibilityLabel="Stattdessen frei beschreiben"
-          >
-            <Text
-              style={{
-                fontFamily: typography.families.body.regular,
-                fontSize: typography.sizes.sm,
-                color: theme.colors.textSecondary,
-                textDecorationLine: 'underline',
-              }}
+          {!chipsOnly && (
+            <Pressable
+              onPress={switchToText}
+              style={({ pressed }) => [
+                styles.modeSwitch,
+                { minHeight: touchTarget.min, paddingVertical: spacing.sm },
+                pressed && { opacity: 0.75 },
+              ]}
+              accessibilityRole="button"
+              accessibilityLabel="Stattdessen frei beschreiben"
             >
-              Lieber frei beschreiben
-            </Text>
-          </Pressable>
+              <Text
+                style={{
+                  fontFamily: typography.families.body.regular,
+                  fontSize: typography.sizes.sm,
+                  color: theme.colors.textSecondary,
+                  textDecorationLine: 'underline',
+                }}
+              >
+                Lieber frei beschreiben
+              </Text>
+            </Pressable>
+          )}
 
           {onSkip && (
             <>
