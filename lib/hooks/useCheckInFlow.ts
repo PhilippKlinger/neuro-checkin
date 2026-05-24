@@ -18,7 +18,7 @@ import { INACTIVITY_TIMEOUT_MS } from '../constants/timing';
 import { isStepBlocked as checkStepBlocked, isInactivityExpired } from '../utils/checkInFlow';
 import * as Sentry from '@sentry/react-native';
 
-const TOTAL_STEPS = 9;
+export const TOTAL_STEPS = 9;
 
 export interface UseCheckInFlowResult {
   step: number;

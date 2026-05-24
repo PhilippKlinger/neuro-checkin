@@ -1,6 +1,6 @@
 import { ChipOrTextStep } from './ChipOrTextStep';
-export { SELF_CARE_CHIPS } from '../../lib/constants/chips';
 import { SELF_CARE_CHIPS, SELF_CARE_GROUPS } from '../../lib/constants/chips';
+export { SELF_CARE_CHIPS } from '../../lib/constants/chips';
 
 interface StepSelfCareProps {
   value: string;

@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, AccessibilityInfo, findNodeHandle } from 'react-native';
 import { useTheme } from '../../lib/hooks/useTheme';
 import { useDatabase } from '../../lib/hooks/useDatabase';
-import { useCheckInFlow } from '../../lib/hooks/useCheckInFlow';
+import { useCheckInFlow, TOTAL_STEPS } from '../../lib/hooks/useCheckInFlow';
 import { FadeView } from '../../components/ui/FadeView';
 import { CheckInNavButtons } from '../../components/check-in/CheckInNavButtons';
 import { StepIndicator } from '../../components/check-in/StepIndicator';
@@ -18,8 +18,6 @@ import { StepThoughts } from '../../components/check-in/StepThoughts';
 import { StepSelfCare } from '../../components/check-in/StepSelfCare';
 import { StepSummary } from '../../components/check-in/StepSummary';
 import { STEP_HINTS } from '../../lib/constants/hintConfig';
-
-const TOTAL_STEPS = 9;
 
 const STEP_NAMES = [
   'Ankommen',

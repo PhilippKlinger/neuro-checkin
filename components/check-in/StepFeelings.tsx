@@ -1,6 +1,6 @@
 import { ChipOrTextStep } from './ChipOrTextStep';
-export { FEELING_CHIPS } from '../../lib/constants/chips';
 import { FEELING_CHIPS } from '../../lib/constants/chips';
+export { FEELING_CHIPS } from '../../lib/constants/chips';
 
 interface StepFeelingsProps {
   value: string;
