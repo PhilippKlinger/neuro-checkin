@@ -83,7 +83,7 @@ export default function CheckInScreen() {
   function renderStep() {
     switch (step) {
       case 0:
-        return <StepArrival />;
+        return <StepArrival showHintIntro={showToggleIntroHint} />;
       case 1:
         return (
           <StepEnergy
@@ -161,17 +161,15 @@ export default function CheckInScreen() {
 
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
-      <View style={[styles.indicatorWrapper, { paddingTop: spacing.lg }]}>
+      <View style={[styles.indicatorRow, { paddingTop: spacing.lg, paddingHorizontal: spacing.lg }]}>
+        <View style={styles.indicatorSpacer} />
         <StepIndicator totalSteps={TOTAL_STEPS} currentStep={step} />
+        <View style={styles.indicatorSpacer}>
+          {step > 0 && step < TOTAL_STEPS - 1 && (
+            <GuidedToggle enabled={guidedMode} onToggle={handleGuidedToggle} />
+          )}
+        </View>
       </View>
-
-      {step > 0 && step < TOTAL_STEPS - 1 && (
-        <GuidedToggle
-          enabled={guidedMode}
-          onToggle={handleGuidedToggle}
-          showIntroHint={showToggleIntroHint}
-        />
-      )}
 
       {wasReset && step === 0 && (
         <View
@@ -227,8 +225,15 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  indicatorWrapper: {
+  indicatorRow: {
+    flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
+  },
+  indicatorSpacer: {
+    width: 44,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   stepContent: {
     flex: 1,

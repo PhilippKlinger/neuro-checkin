@@ -32,7 +32,6 @@ export default function QuickCheckInScreen() {
     isSaving,
     isDone,
     guidedMode,
-    showToggleIntroHint,
     isLastStep,
     isNextDisabled,
     handleGuidedToggle,
@@ -102,15 +101,13 @@ export default function QuickCheckInScreen() {
 
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
-      <View style={[styles.indicatorWrapper, { paddingTop: spacing.lg }]}>
+      <View style={[styles.indicatorRow, { paddingTop: spacing.lg, paddingHorizontal: spacing.lg }]}>
+        <View style={styles.indicatorSpacer} />
         <StepIndicator totalSteps={TOTAL_STEPS} currentStep={step} />
+        <View style={styles.indicatorSpacer}>
+          <GuidedToggle enabled={guidedMode} onToggle={handleGuidedToggle} />
+        </View>
       </View>
-
-      <GuidedToggle
-        enabled={guidedMode}
-        onToggle={handleGuidedToggle}
-        showIntroHint={showToggleIntroHint}
-      />
 
       <FadeView triggerKey={step} style={[styles.stepContent, { padding: spacing.lg }]}>
         <View
@@ -140,8 +137,15 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  indicatorWrapper: {
+  indicatorRow: {
+    flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
+  },
+  indicatorSpacer: {
+    width: 44,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   stepContent: {
     flex: 1,

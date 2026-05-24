@@ -1,7 +1,12 @@
 import { View, Text, StyleSheet } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../../lib/hooks/useTheme';
 
-export function StepArrival() {
+interface StepArrivalProps {
+  showHintIntro?: boolean;
+}
+
+export function StepArrival({ showHintIntro }: StepArrivalProps) {
   const { theme, spacing, typography } = useTheme();
 
   return (
@@ -61,6 +66,22 @@ export function StepArrival() {
       >
         Es gibt kein Richtig oder Falsch. Einfach wahrnehmen, was da ist.
       </Text>
+      {showHintIntro && (
+        <View style={[styles.hintIntro, { marginTop: spacing.xl, gap: spacing.xs }]}>
+          <Ionicons name="bulb" size={14} color={theme.colors.accent} />
+          <Text
+            style={{
+              fontFamily: typography.families.body.regular,
+              fontSize: typography.sizes.xs,
+              color: theme.colors.textSecondary,
+              fontStyle: 'italic',
+            }}
+          >
+            Bei jedem Schritt siehst du einen kurzen Hinweis. Das Symbol oben rechts schaltet sie
+            aus.
+          </Text>
+        </View>
+      )}
     </View>
   );
 }
@@ -80,5 +101,10 @@ const styles = StyleSheet.create({
   hint: {
     textAlign: 'center',
     fontStyle: 'italic',
+  },
+  hintIntro: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });
