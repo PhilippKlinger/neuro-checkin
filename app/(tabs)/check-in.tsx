@@ -1,9 +1,10 @@
 import { useEffect, useRef } from 'react';
-import { View, Text, Pressable, StyleSheet, AccessibilityInfo, findNodeHandle } from 'react-native';
+import { View, Text, StyleSheet, AccessibilityInfo, findNodeHandle } from 'react-native';
 import { useTheme } from '../../lib/hooks/useTheme';
 import { useDatabase } from '../../lib/hooks/useDatabase';
 import { useCheckInFlow } from '../../lib/hooks/useCheckInFlow';
 import { FadeView } from '../../components/ui/FadeView';
+import { CheckInNavButtons } from '../../components/check-in/CheckInNavButtons';
 import { StepIndicator } from '../../components/check-in/StepIndicator';
 import { GuidedToggle } from '../../components/check-in/GuidedToggle';
 import { CheckInSuccessView } from '../../components/check-in/CheckInSuccessView';
@@ -33,7 +34,7 @@ const STEP_NAMES = [
 ];
 
 export default function CheckInScreen() {
-  const { theme, spacing, typography, radii, touchTarget } = useTheme();
+  const { theme, spacing, typography, radii } = useTheme();
   const db = useDatabase();
   const flow = useCheckInFlow(db);
   const stepContentRef = useRef<View>(null);
@@ -209,74 +210,15 @@ export default function CheckInScreen() {
         </View>
       </FadeView>
 
-      <View
-        style={[
-          styles.navigation,
-          {
-            padding: spacing.lg,
-            paddingBottom: spacing.xl,
-            gap: spacing.md,
-          },
-        ]}
-      >
-        {canGoBack ? (
-          <Pressable
-            onPress={handleBack}
-            style={({ pressed }) => [
-              styles.navButton,
-              {
-                minHeight: touchTarget.min,
-                borderRadius: radii.md,
-                borderWidth: 1,
-                borderColor: theme.colors.border,
-                backgroundColor: theme.colors.surface,
-              },
-              pressed && { opacity: 0.75 },
-            ]}
-            accessibilityRole="button"
-            accessibilityLabel="Zurück"
-          >
-            <Text
-              style={{
-                fontFamily: typography.families.ui.medium,
-                fontSize: typography.sizes.md,
-                color: theme.colors.text,
-              }}
-            >
-              Zurück
-            </Text>
-          </Pressable>
-        ) : (
-          <View style={styles.navButton} />
-        )}
-
-        <Pressable
-          onPress={handleNext}
-          disabled={isNextDisabled}
-          style={({ pressed }) => [
-            styles.navButton,
-            {
-              minHeight: touchTarget.min,
-              borderRadius: radii.md,
-              backgroundColor: isNextDisabled ? theme.colors.border : theme.colors.primary,
-            },
-            pressed && !isNextDisabled && { opacity: 0.75 },
-          ]}
-          accessibilityRole="button"
-          accessibilityLabel={isLastStep ? 'Speichern' : 'Weiter'}
-          accessibilityState={{ disabled: isNextDisabled }}
-        >
-          <Text
-            style={{
-              fontFamily: typography.families.ui.semibold,
-              fontSize: typography.sizes.md,
-              color: theme.colors.textInverse,
-            }}
-          >
-            {isLastStep ? (isSaving ? 'Speichern...' : 'Speichern') : 'Weiter'}
-          </Text>
-        </Pressable>
-      </View>
+      <CheckInNavButtons
+        onBack={handleBack}
+        onNext={handleNext}
+        showBack={canGoBack}
+        isNextDisabled={isNextDisabled}
+        isLastStep={isLastStep}
+        isSaving={isSaving}
+        paddingBottom={spacing.xl}
+      />
     </View>
   );
 }
@@ -293,14 +235,6 @@ const styles = StyleSheet.create({
   },
   stepInner: {
     flex: 1,
-  },
-  navigation: {
-    flexDirection: 'row',
-  },
-  navButton: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   resetHint: {
     alignItems: 'center',
