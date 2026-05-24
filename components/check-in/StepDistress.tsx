@@ -257,7 +257,7 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     flexGrow: 1,
-    justifyContent: 'center',
+    paddingTop: 24,
   },
   optionList: {},
   optionButton: {
