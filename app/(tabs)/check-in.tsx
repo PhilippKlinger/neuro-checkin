@@ -161,7 +161,9 @@ export default function CheckInScreen() {
 
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
-      <View style={[styles.indicatorRow, { paddingTop: spacing.lg, paddingHorizontal: spacing.lg }]}>
+      <View
+        style={[styles.indicatorRow, { paddingTop: spacing.lg, paddingHorizontal: spacing.lg }]}
+      >
         <View style={styles.indicatorSpacer} />
         <StepIndicator totalSteps={TOTAL_STEPS} currentStep={step} />
         <View style={styles.indicatorSpacer}>
