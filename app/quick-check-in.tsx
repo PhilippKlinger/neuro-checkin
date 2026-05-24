@@ -1,21 +1,11 @@
-import { useState, useRef, useEffect, useCallback } from 'react';
-import {
-  View,
-  Text,
-  Pressable,
-  StyleSheet,
-  Alert,
-  AccessibilityInfo,
-  findNodeHandle,
-} from 'react-native';
-import { useRouter, useFocusEffect } from 'expo-router';
+import { useEffect, useRef } from 'react';
+import { View, Text, Pressable, StyleSheet, AccessibilityInfo, findNodeHandle } from 'react-native';
+import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../lib/hooks/useTheme';
 import { useDatabase } from '../lib/hooks/useDatabase';
-import { EMPTY_BODY_SIGNALS } from '../lib/types/checkin';
+import { useQuickCheckInFlow } from '../lib/hooks/useQuickCheckInFlow';
 import { FadeView } from '../components/ui/FadeView';
-import { insertCheckIn } from '../lib/database/checkins';
-import { getSettings, updateSettings } from '../lib/database/settings';
 import { StepIndicator } from '../components/check-in/StepIndicator';
 import { GuidedToggle } from '../components/check-in/GuidedToggle';
 import { CheckInSuccessView } from '../components/check-in/CheckInSuccessView';
@@ -23,7 +13,6 @@ import { StepEnergy } from '../components/check-in/StepEnergy';
 import { StepFocus } from '../components/check-in/StepFocus';
 import { QuickStepFeelings } from '../components/check-in/QuickStepFeelings';
 import { STEP_HINTS } from '../lib/constants/hintConfig';
-import * as Sentry from '@sentry/react-native';
 
 const TOTAL_STEPS = 3;
 const STEP_NAMES = ['Energie-Level', 'Fokus-Level', 'Gefühle'];
@@ -33,60 +22,23 @@ export default function QuickCheckInScreen() {
   const db = useDatabase();
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const [step, setStep] = useState(0);
-  const [energyLevel, setEnergyLevel] = useState(0);
-  const [energySkipped, setEnergySkipped] = useState(false);
-  const [focusLevel, setFocusLevel] = useState(0);
-  const [focusSkipped, setFocusSkipped] = useState(false);
-  const [feelings, setFeelings] = useState('');
-  const [feelingsSkipped, setFeelingsSkipped] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
-  const [isDone, setIsDone] = useState(false);
-  const [guidedMode, setGuidedMode] = useState(true);
-  const [showToggleIntroHint, setShowToggleIntroHint] = useState(false);
   const stepContentRef = useRef<View>(null);
-  const savingRef = useRef(false);
 
-  useFocusEffect(
-    useCallback(() => {
-      let cancelled = false;
-      async function loadGuidedState() {
-        try {
-          const settings = await getSettings(db);
-          if (cancelled) return;
-          setGuidedMode(settings.guidedModeEnabled);
-          setShowToggleIntroHint(!settings.guidedToggleIntroduced);
-        } catch {
-          // Non-critical — guided mode defaults are safe fallbacks
-        }
-      }
-      loadGuidedState();
-      return () => {
-        cancelled = true;
-      };
-    }, [db])
-  );
-
-  async function handleGuidedToggle(value: boolean) {
-    setGuidedMode(value);
-    try {
-      if (showToggleIntroHint) {
-        setShowToggleIntroHint(false);
-        await updateSettings(db, { guidedModeEnabled: value, guidedToggleIntroduced: true });
-      } else {
-        await updateSettings(db, { guidedModeEnabled: value });
-      }
-    } catch {
-      setGuidedMode(!value);
-    }
-  }
-
-  // Energy and focus are required unless skipped; feelings are optional
-  const isStepBlocked =
-    (step === 0 && energyLevel === 0 && !energySkipped) ||
-    (step === 1 && focusLevel === 0 && !focusSkipped);
-  const isNextDisabled = isSaving || isStepBlocked;
-  const isLastStep = step === TOTAL_STEPS - 1;
+  const {
+    step,
+    draft,
+    setDraft,
+    isSaving,
+    isDone,
+    guidedMode,
+    showToggleIntroHint,
+    isLastStep,
+    isNextDisabled,
+    handleGuidedToggle,
+    handleNext,
+    handleBack,
+    handleReset,
+  } = useQuickCheckInFlow(db, () => router.back());
 
   useEffect(() => {
     AccessibilityInfo.announceForAccessibility(
@@ -100,67 +52,13 @@ export default function QuickCheckInScreen() {
     }
   }, [step]);
 
-  function handleNext() {
-    if (isLastStep) {
-      handleSave();
-    } else {
-      setStep(step + 1);
-    }
-  }
-
-  function handleBack() {
-    if (step > 0) {
-      setStep(step - 1);
-    } else {
-      router.back();
-    }
-  }
-
-  async function handleSave() {
-    if (savingRef.current) return;
-    savingRef.current = true;
-    setIsSaving(true);
-    try {
-      await insertCheckIn(db, {
-        energyLevel,
-        focusLevel,
-        energySkipped,
-        focusSkipped,
-        bodySignals: { ...EMPTY_BODY_SIGNALS },
-        feelings,
-        feelingsSkipped,
-        distressLevel: null,
-        distressNote: null,
-        thoughtsType: null,
-        thoughtsNote: null,
-        selfCareNote: null,
-        innerPart: null,
-        note: null,
-      });
-      setIsDone(true);
-    } catch (error) {
-      Sentry.captureException(error);
-      Alert.alert('Fehler beim Speichern', 'Check-in konnte nicht gespeichert werden.');
-    } finally {
-      setIsSaving(false);
-      savingRef.current = false;
-    }
-  }
-
-  function handleReset() {
-    setStep(0);
-    setEnergyLevel(0);
-    setEnergySkipped(false);
-    setFocusLevel(0);
-    setFocusSkipped(false);
-    setFeelings('');
-    setFeelingsSkipped(false);
-    setIsDone(false);
-  }
-
   if (isDone) {
     return (
-      <CheckInSuccessView onReset={handleReset} energyLevel={energyLevel} focusLevel={focusLevel} />
+      <CheckInSuccessView
+        onReset={handleReset}
+        energyLevel={draft.energyLevel}
+        focusLevel={draft.focusLevel}
+      />
     );
   }
 
@@ -169,49 +67,31 @@ export default function QuickCheckInScreen() {
       case 0:
         return (
           <StepEnergy
-            value={energyLevel}
-            onValueChange={(v) => {
-              setEnergyLevel(v);
-              setEnergySkipped(false);
-            }}
-            skipped={energySkipped}
-            onSkip={() => {
-              setEnergyLevel(0);
-              setEnergySkipped(true);
-            }}
+            value={draft.energyLevel}
+            onValueChange={(v) => setDraft({ ...draft, energyLevel: v, energySkipped: false })}
+            skipped={draft.energySkipped}
+            onSkip={() => setDraft({ ...draft, energyLevel: 0, energySkipped: true })}
             hint={guidedMode ? STEP_HINTS.energy : undefined}
           />
         );
       case 1:
         return (
           <StepFocus
-            value={focusLevel}
-            onValueChange={(v) => {
-              setFocusLevel(v);
-              setFocusSkipped(false);
-            }}
-            skipped={focusSkipped}
-            onSkip={() => {
-              setFocusLevel(0);
-              setFocusSkipped(true);
-            }}
+            value={draft.focusLevel}
+            onValueChange={(v) => setDraft({ ...draft, focusLevel: v, focusSkipped: false })}
+            skipped={draft.focusSkipped}
+            onSkip={() => setDraft({ ...draft, focusLevel: 0, focusSkipped: true })}
             hint={guidedMode ? STEP_HINTS.focus : undefined}
           />
         );
       case 2:
         return (
           <QuickStepFeelings
-            value={feelings}
-            onValueChange={(v) => {
-              setFeelings(v);
-              setFeelingsSkipped(false);
-            }}
+            value={draft.feelings}
+            onValueChange={(v) => setDraft({ ...draft, feelings: v, feelingsSkipped: false })}
             hint={guidedMode ? STEP_HINTS.feelings : undefined}
-            skipped={feelingsSkipped}
-            onSkip={() => {
-              setFeelings('');
-              setFeelingsSkipped(true);
-            }}
+            skipped={draft.feelingsSkipped}
+            onSkip={() => setDraft({ ...draft, feelings: '', feelingsSkipped: true })}
           />
         );
       default:
