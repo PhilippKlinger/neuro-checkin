@@ -1,6 +1,7 @@
-import { View, Text, StyleSheet } from 'react-native';
+import { ScrollView, Text, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../../lib/hooks/useTheme';
+import { NAV_AREA_PADDING } from '../../lib/constants/layout';
 
 interface StepArrivalProps {
   showHintIntro?: boolean;
@@ -10,7 +11,11 @@ export function StepArrival({ showHintIntro }: StepArrivalProps) {
   const { theme, spacing, typography } = useTheme();
 
   return (
-    <View style={styles.container}>
+    <ScrollView
+      style={styles.scroll}
+      contentContainerStyle={styles.container}
+      showsVerticalScrollIndicator={false}
+    >
       <Text
         style={[
           styles.title,
@@ -82,15 +87,19 @@ export function StepArrival({ showHintIntro }: StepArrivalProps) {
           </Text>
         </View>
       )}
-    </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  scroll: {
     flex: 1,
+  },
+  container: {
+    flexGrow: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    paddingBottom: NAV_AREA_PADDING,
   },
   title: {
     textAlign: 'center',
