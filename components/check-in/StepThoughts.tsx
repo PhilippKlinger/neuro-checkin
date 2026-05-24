@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useRef, useEffect } from 'react';
 import { View, Text, TextInput, Pressable, ScrollView, StyleSheet } from 'react-native';
 import { useTheme } from '../../lib/hooks/useTheme';
 import { useReducedMotion } from '../../lib/hooks/useReducedMotion';
@@ -29,6 +29,13 @@ export function StepThoughts({ type, note, onTypeChange, onNoteChange, hint }: S
   const { theme, spacing, typography, radii, touchTarget } = useTheme();
   const reducedMotion = useReducedMotion();
   const scrollRef = useRef<ScrollView>(null);
+  const scrollTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (scrollTimerRef.current) clearTimeout(scrollTimerRef.current);
+    };
+  }, []);
 
   return (
     <ScrollView
@@ -120,7 +127,11 @@ export function StepThoughts({ type, note, onTypeChange, onNoteChange, hint }: S
         maxLength={200}
         textAlignVertical="top"
         onFocus={() => {
-          setTimeout(() => scrollRef.current?.scrollToEnd({ animated: !reducedMotion }), 300);
+          if (scrollTimerRef.current) clearTimeout(scrollTimerRef.current);
+          scrollTimerRef.current = setTimeout(
+            () => scrollRef.current?.scrollToEnd({ animated: !reducedMotion }),
+            300
+          );
         }}
         style={[
           styles.noteInput,
