@@ -1,6 +1,6 @@
 # Neuro Check-in
 
-![Version](https://img.shields.io/badge/version-1.5.7-6C4FF0?logo=github&logoColor=white)
+![Version](https://img.shields.io/badge/version-1.5.8-6C4FF0?logo=github&logoColor=white)
 ![Expo SDK](https://img.shields.io/badge/Expo-SDK%2054-4630EB?logo=expo&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178C6?logo=typescript&logoColor=white)
 ![Platform](https://img.shields.io/badge/Platform-Android-3DDC84?logo=android&logoColor=white)
@@ -183,7 +183,7 @@ CI runs lint, type checks, and the full test suite on every push and pull reques
 
 ## Status
 
-Neuro Check-in is at **v1.5.7** and preparing for public release on Google Play.
+Neuro Check-in is at **v1.5.8** and preparing for public release on Google Play.
 
 Screenshots will be added before the public release.
 
