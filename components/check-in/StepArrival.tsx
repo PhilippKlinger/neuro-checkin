@@ -82,8 +82,8 @@ export function StepArrival({ showHintIntro }: StepArrivalProps) {
               fontStyle: 'italic',
             }}
           >
-            Bei jedem Schritt siehst du einen kurzen Hinweis. Das Symbol oben rechts schaltet sie
-            aus.
+            Bei jedem Schritt siehst du einen kurzen Hinweis. Ab dem nächsten Schritt kannst du sie
+            mit diesem Symbol oben rechts ausschalten.
           </Text>
         </View>
       )}

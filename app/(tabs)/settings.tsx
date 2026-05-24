@@ -51,7 +51,7 @@ export default function SettingsScreen() {
   const [showTimePicker, setShowTimePicker] = useState<0 | 1 | null>(null);
   const [isEmulator, setIsEmulator] = useState(false);
   const [checkInCount, setCheckInCount] = useState(0);
-  const [guidedMode, setGuidedMode] = useState(true);
+  const [guidedMode, setGuidedMode] = useState(false);
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
   const [feedbackOpen, setFeedbackOpen] = useState(false);
   const [dataOpen, setDataOpen] = useState(false);
@@ -199,15 +199,18 @@ export default function SettingsScreen() {
         />
 
         <View style={[styles.guidedRow, { marginTop: spacing.xl }]}>
-          <Text
-            style={{
-              fontFamily: typography.families.body.regular,
-              fontSize: typography.sizes.md,
-              color: theme.colors.text,
-            }}
-          >
-            Hinweise im Check-in
-          </Text>
+          <View style={styles.guidedLabel}>
+            <Ionicons name="bulb-outline" size={16} color={theme.colors.textSecondary} />
+            <Text
+              style={{
+                fontFamily: typography.families.body.regular,
+                fontSize: typography.sizes.md,
+                color: theme.colors.text,
+              }}
+            >
+              Hinweise im Check-in
+            </Text>
+          </View>
           <Switch
             value={guidedMode}
             onValueChange={handleGuidedModeToggle}
@@ -396,4 +399,5 @@ const styles = StyleSheet.create({
   infoRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   sectionHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   guidedRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  guidedLabel: { flexDirection: 'row', alignItems: 'center', gap: 6 },
 });

@@ -76,6 +76,7 @@ export async function getCheckInById(db: SQLiteDatabase, id: number): Promise<Ch
 
 export async function getCheckInsByIds(db: SQLiteDatabase, ids: number[]): Promise<CheckIn[]> {
   if (ids.length === 0) return [];
+  // ids come from internal state (number[]); placeholders use ? not values — safe
   const placeholders = ids.map(() => '?').join(', ');
   const rows = await db.getAllAsync<{
     id: number;

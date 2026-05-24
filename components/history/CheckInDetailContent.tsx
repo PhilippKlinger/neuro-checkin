@@ -218,7 +218,7 @@ export function CheckInDetailContent({
         <Pressable
           onPress={onDeleteRequest}
           style={({ pressed }) => [
-            styles.deleteButton,
+            styles.actionButton,
             {
               marginTop: spacing.xl,
               paddingVertical: spacing.md,
@@ -247,7 +247,7 @@ export function CheckInDetailContent({
           <Pressable
             onPress={onExport}
             style={({ pressed }) => [
-              styles.deleteButton,
+              styles.actionButton,
               {
                 marginTop: spacing.md,
                 paddingVertical: spacing.md,
@@ -339,5 +339,5 @@ const styles = StyleSheet.create({
   scroll: { flex: 1 },
   card: {},
   row: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  deleteButton: { alignItems: 'center' },
+  actionButton: { alignItems: 'center' },
 });

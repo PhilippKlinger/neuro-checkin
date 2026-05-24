@@ -8,7 +8,6 @@ import { useQuickCheckInFlow } from '../lib/hooks/useQuickCheckInFlow';
 import { FadeView } from '../components/ui/FadeView';
 import { CheckInNavButtons } from '../components/check-in/CheckInNavButtons';
 import { StepIndicator } from '../components/check-in/StepIndicator';
-import { GuidedToggle } from '../components/check-in/GuidedToggle';
 import { CheckInSuccessView } from '../components/check-in/CheckInSuccessView';
 import { StepEnergy } from '../components/check-in/StepEnergy';
 import { StepFocus } from '../components/check-in/StepFocus';
@@ -34,7 +33,6 @@ export default function QuickCheckInScreen() {
     guidedMode,
     isLastStep,
     isNextDisabled,
-    handleGuidedToggle,
     handleNext,
     handleBack,
     handleReset,
@@ -106,9 +104,7 @@ export default function QuickCheckInScreen() {
       >
         <View style={styles.indicatorSpacer} />
         <StepIndicator totalSteps={TOTAL_STEPS} currentStep={step} />
-        <View style={styles.indicatorSpacer}>
-          <GuidedToggle enabled={guidedMode} onToggle={handleGuidedToggle} />
-        </View>
+        <View style={styles.indicatorSpacer} />
       </View>
 
       <FadeView triggerKey={step} style={[styles.stepContent, { padding: spacing.lg }]}>
