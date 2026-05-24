@@ -2,11 +2,8 @@ import { useState } from 'react';
 import { View, Text, TextInput, Pressable, StyleSheet } from 'react-native';
 import { useTheme } from '../../lib/hooks/useTheme';
 import { isChipSelected, toggleChip } from '../../lib/utils/chips';
-
-export interface ChipGroup {
-  label: string;
-  chips: readonly string[];
-}
+import type { ChipGroup } from '../../lib/constants/chips';
+export type { ChipGroup } from '../../lib/constants/chips';
 
 interface ChipOrTextStepProps {
   title: string;
