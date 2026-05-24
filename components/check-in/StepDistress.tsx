@@ -3,6 +3,7 @@ import { View, Text, TextInput, Pressable, ScrollView, StyleSheet } from 'react-
 import { useTheme } from '../../lib/hooks/useTheme';
 import { useReducedMotion } from '../../lib/hooks/useReducedMotion';
 import { DISTRESS_LABELS, DISTRESS_NOTE_THRESHOLD } from '../../lib/types/checkin';
+import { NAV_AREA_PADDING } from '../../lib/constants/layout';
 
 interface StepDistressProps {
   distressLevel: number | null;
@@ -258,6 +259,7 @@ const styles = StyleSheet.create({
   contentContainer: {
     flexGrow: 1,
     paddingTop: 24,
+    paddingBottom: NAV_AREA_PADDING,
   },
   optionList: {},
   optionButton: {
