@@ -100,12 +100,20 @@ export function buildPdfHtml(checkIns: CheckIn[]): string {
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Neuro Check-in Export</title>
   <style>
+    @page {
+      margin: 24px 32px 48px 32px;
+      @bottom-center {
+        content: counter(page) " / " counter(pages);
+        font-size: 9px;
+        color: #aaa;
+      }
+    }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: -apple-system, 'Helvetica Neue', Arial, sans-serif;
       font-size: 13px;
       color: #2c2c2c;
-      padding: 24px 32px;
+      padding: 0;
       line-height: 1.5;
     }
     header {
