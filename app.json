@@ -3,7 +3,7 @@
     "name": "Neuro Check-in",
     "slug": "neuro-checkin",
     "scheme": "neuro-checkin",
-    "version": "1.5.6",
+    "version": "1.5.7",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
@@ -21,7 +21,7 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#F5EFE8"
       },
-      "versionCode": 11,
+      "versionCode": 12,
       "allowBackup": false,
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
