@@ -1,5 +1,6 @@
-import { View, Text, Pressable, StyleSheet } from 'react-native';
+import { View, Text, Pressable, ScrollView, StyleSheet } from 'react-native';
 import { useTheme } from '../../lib/hooks/useTheme';
+import { NAV_AREA_PADDING } from '../../lib/constants/layout';
 
 interface LevelSliderProps {
   title: string;
@@ -25,7 +26,11 @@ export function LevelSlider({
   const { theme, spacing, typography, radii, touchTarget } = useTheme();
 
   return (
-    <View style={styles.container}>
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={styles.contentContainer}
+      showsVerticalScrollIndicator={false}
+    >
       <Text
         style={{
           fontFamily: typography.families.heading.semibold,
@@ -111,7 +116,7 @@ export function LevelSlider({
           </Pressable>
         </>
       )}
-    </View>
+    </ScrollView>
   );
 }
 
@@ -169,7 +174,11 @@ function RadioGroup({ title, labels, value, onValueChange }: RadioGroupProps) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  contentContainer: {
+    flexGrow: 1,
     justifyContent: 'center',
+    paddingBottom: NAV_AREA_PADDING,
   },
   optionList: {
     width: '100%',
