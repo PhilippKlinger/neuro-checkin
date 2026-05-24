@@ -1,12 +1,5 @@
 import { useEffect, useRef } from 'react';
-import {
-  View,
-  Text,
-  Pressable,
-  StyleSheet,
-  AccessibilityInfo,
-  findNodeHandle,
-} from 'react-native';
+import { View, Text, Pressable, StyleSheet, AccessibilityInfo, findNodeHandle } from 'react-native';
 import { useTheme } from '../../lib/hooks/useTheme';
 import { useDatabase } from '../../lib/hooks/useDatabase';
 import { useCheckInFlow } from '../../lib/hooks/useCheckInFlow';
