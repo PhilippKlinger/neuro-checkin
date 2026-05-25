@@ -1,5 +1,6 @@
 import { memo } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, Pressable, StyleSheet, Linking, Platform } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { useTheme } from '../../lib/hooks/useTheme';
 import { type NotificationSlot } from '../../lib/types/checkin';
@@ -9,6 +10,7 @@ interface NotificationsSectionProps {
   slots: NotificationSlot[];
   showTimePicker: 0 | 1 | null;
   isEmulator: boolean;
+  permissionDenied: boolean;
   onToggle: (slotId: 0 | 1, value: boolean) => void;
   onTimePress: (slotId: 0 | 1) => void;
   onTimeChange: (slotId: 0 | 1, event: DateTimePickerEvent, date?: Date) => void;
@@ -24,13 +26,20 @@ export const NotificationsSection = memo(function NotificationsSection({
   slots,
   showTimePicker,
   isEmulator,
+  permissionDenied,
   onToggle,
   onTimePress,
   onTimeChange,
   onWeekdayToggle,
 }: NotificationsSectionProps) {
-  const { theme, spacing, typography } = useTheme();
+  const { theme, spacing, typography, radii } = useTheme();
   const anySlotEnabled = slots.some((s) => s.enabled);
+
+  function openAppSettings() {
+    if (Platform.OS === 'android') {
+      Linking.openSettings();
+    }
+  }
 
   return (
     <>
@@ -71,6 +80,42 @@ export const NotificationsSection = memo(function NotificationsSection({
         </Text>
       )}
 
+      {permissionDenied && !isEmulator && (
+        <Pressable
+          onPress={openAppSettings}
+          style={({ pressed }) => [
+            styles.permissionHint,
+            {
+              backgroundColor: theme.colors.surface,
+              borderRadius: radii.md,
+              borderWidth: 1,
+              borderColor: theme.colors.border,
+              padding: spacing.sm,
+              marginBottom: spacing.md,
+              opacity: pressed ? 0.75 : 1,
+            },
+          ]}
+          accessibilityRole="button"
+          accessibilityLabel="Benachrichtigungen sind deaktiviert"
+          accessibilityHint="Öffnet die Systemeinstellungen um Benachrichtigungen zu erlauben"
+        >
+          <Ionicons name="notifications-off-outline" size={16} color={theme.colors.textSecondary} />
+          <Text
+            style={{
+              fontFamily: typography.families.body.regular,
+              fontSize: typography.sizes.sm,
+              color: theme.colors.textSecondary,
+              flex: 1,
+              marginLeft: spacing.xs,
+              lineHeight: typography.sizes.sm * 1.4,
+            }}
+          >
+            Benachrichtigungen sind in den Systemeinstellungen deaktiviert. Tippe hier um sie zu
+            erlauben.
+          </Text>
+        </Pressable>
+      )}
+
       <View style={styles.slots}>
         {slots.map((slot) => (
           <SlotCard
@@ -91,4 +136,8 @@ export const NotificationsSection = memo(function NotificationsSection({
 
 const styles = StyleSheet.create({
   slots: {},
+  permissionHint: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
 });

@@ -2,6 +2,7 @@ import { useState, useCallback, useRef } from 'react';
 import { Text, Pressable, ScrollView, Switch, StyleSheet, Platform, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as Device from 'expo-device';
+import * as Notifications from 'expo-notifications';
 import * as Sentry from '@sentry/react-native';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { DateTimePickerEvent } from '@react-native-community/datetimepicker';
@@ -55,6 +56,7 @@ export default function SettingsScreen() {
   const [checkInCount, setCheckInCount] = useState(0);
   const [chipCount, setChipCount] = useState(0);
   const [guidedMode, setGuidedMode] = useState(false);
+  const [notificationPermission, setNotificationPermission] = useState<boolean | null>(null);
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
   const [feedbackOpen, setFeedbackOpen] = useState(false);
   const [dataOpen, setDataOpen] = useState(false);
@@ -68,6 +70,11 @@ export default function SettingsScreen() {
           setThemeName(settings.themeName as ThemeName);
           setColorMode(settings.colorMode);
           setIsEmulator(!Device.isDevice);
+
+          if (Device.isDevice) {
+            const { status } = await Notifications.getPermissionsAsync();
+            setNotificationPermission(status === 'granted');
+          }
 
           const dbSlots = await getNotificationSlots(db);
           if (dbSlots.length >= 2) {
@@ -99,7 +106,11 @@ export default function SettingsScreen() {
     async (slotId: 0 | 1, value: boolean) => {
       if (value) {
         const result = await requestNotificationPermission();
-        if (result === false) return;
+        if (result === false) {
+          setNotificationPermission(false);
+          return;
+        }
+        setNotificationPermission(true);
       }
       const updatedSlots = slotsRef.current.map((s) =>
         s.id === slotId ? { ...s, enabled: value } : s
@@ -202,6 +213,7 @@ export default function SettingsScreen() {
           slots={slots}
           showTimePicker={showTimePicker}
           isEmulator={isEmulator}
+          permissionDenied={notificationPermission === false}
           onToggle={handleSlotToggle}
           onTimePress={handleTimePress}
           onTimeChange={handleTimeChange}
