@@ -60,6 +60,120 @@ beforeEach(() => {
 });
 
 // ---------------------------------------------------------------------------
+// DraftActions — field-coupling (K-1)
+// ---------------------------------------------------------------------------
+
+describe('DraftActions — field-coupling', () => {
+  it('setEnergy sets level and clears skipped flag', async () => {
+    await mount();
+    act(() => snapshot.actions.setEnergy(4));
+    expect(snapshot.draft.energyLevel).toBe(4);
+    expect(snapshot.draft.energySkipped).toBe(false);
+  });
+
+  it('skipEnergy resets level to 0 and sets skipped flag', async () => {
+    await mount();
+    act(() => snapshot.actions.setEnergy(3));
+    act(() => snapshot.actions.skipEnergy());
+    expect(snapshot.draft.energyLevel).toBe(0);
+    expect(snapshot.draft.energySkipped).toBe(true);
+  });
+
+  it('setFocus sets level and clears skipped flag', async () => {
+    await mount();
+    act(() => snapshot.actions.setFocus(5));
+    expect(snapshot.draft.focusLevel).toBe(5);
+    expect(snapshot.draft.focusSkipped).toBe(false);
+  });
+
+  it('skipFocus resets level to 0 and sets skipped flag', async () => {
+    await mount();
+    act(() => snapshot.actions.setFocus(2));
+    act(() => snapshot.actions.skipFocus());
+    expect(snapshot.draft.focusLevel).toBe(0);
+    expect(snapshot.draft.focusSkipped).toBe(true);
+  });
+
+  it('setFeelings sets text and clears skipped flag', async () => {
+    await mount();
+    act(() => snapshot.actions.setFeelings('ruhig'));
+    expect(snapshot.draft.feelings).toBe('ruhig');
+    expect(snapshot.draft.feelingsSkipped).toBe(false);
+  });
+
+  it('skipFeelings clears text and sets skipped flag', async () => {
+    await mount();
+    act(() => snapshot.actions.setFeelings('freudig'));
+    act(() => snapshot.actions.skipFeelings());
+    expect(snapshot.draft.feelings).toBe('');
+    expect(snapshot.draft.feelingsSkipped).toBe(true);
+  });
+
+  it('setDistressLevel sets level', async () => {
+    await mount();
+    act(() => snapshot.actions.setDistressLevel(3));
+    expect(snapshot.draft.distressLevel).toBe(3);
+  });
+
+  it('setDistressLevel(null) clears level', async () => {
+    await mount();
+    act(() => snapshot.actions.setDistressLevel(4));
+    act(() => snapshot.actions.setDistressLevel(null));
+    expect(snapshot.draft.distressLevel).toBeNull();
+  });
+
+  it('setDistressNote sets note text', async () => {
+    await mount();
+    act(() => snapshot.actions.setDistressNote('Stress'));
+    expect(snapshot.draft.distressNote).toBe('Stress');
+  });
+
+  it('setThoughtsType sets type', async () => {
+    await mount();
+    act(() => snapshot.actions.setThoughtsType('burdening'));
+    expect(snapshot.draft.thoughtsType).toBe('burdening');
+  });
+
+  it('setThoughtsNote sets note text', async () => {
+    await mount();
+    act(() => snapshot.actions.setThoughtsNote('viel los'));
+    expect(snapshot.draft.thoughtsNote).toBe('viel los');
+  });
+
+  it('setSelfCare sets self care note', async () => {
+    await mount();
+    act(() => snapshot.actions.setSelfCare('Spaziergang'));
+    expect(snapshot.draft.selfCareNote).toBe('Spaziergang');
+  });
+
+  it('setBodySignals replaces body signals', async () => {
+    await mount();
+    const signals = { ...EMPTY_BODY_SIGNALS, hunger: true, pain: true };
+    act(() => snapshot.actions.setBodySignals(signals));
+    expect(snapshot.draft.bodySignals.hunger).toBe(true);
+    expect(snapshot.draft.bodySignals.pain).toBe(true);
+    expect(snapshot.draft.bodySignals.thirst).toBeNull();
+  });
+
+  it('actions are independent: setEnergy does not affect focus', async () => {
+    await mount();
+    act(() => snapshot.actions.setFocus(2));
+    act(() => snapshot.actions.setEnergy(4));
+    expect(snapshot.draft.focusLevel).toBe(2);
+    expect(snapshot.draft.energyLevel).toBe(4);
+  });
+
+  it('skip then set reverses the skip', async () => {
+    await mount();
+    act(() => snapshot.actions.skipEnergy());
+    expect(snapshot.draft.energySkipped).toBe(true);
+    act(() => snapshot.actions.setEnergy(1));
+    expect(snapshot.draft.energySkipped).toBe(false);
+    expect(snapshot.draft.energyLevel).toBe(1);
+  });
+});
+
+// ---------------------------------------------------------------------------
 // Initial state
 // ---------------------------------------------------------------------------
 
