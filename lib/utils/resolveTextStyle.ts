@@ -54,11 +54,14 @@ export function resolveTextStyle(
   const effectiveColor = options.color ?? tokens.defaultColor;
   const effectiveFontSize = options.size ? typography.sizes[options.size] : tokens.fontSize;
   const effectiveFontFamily = resolveFontFamily(options.variant, options.weight);
+  const effectiveLineHeight = options.size
+    ? effectiveFontSize * (tokens.family === 'heading' ? typography.lineHeights.tight : typography.lineHeights.normal)
+    : tokens.lineHeight;
 
   const result: ResolvedTextStyle = {
     fontFamily: effectiveFontFamily,
     fontSize: effectiveFontSize,
-    lineHeight: tokens.lineHeight,
+    lineHeight: effectiveLineHeight,
     color: resolveColor(effectiveColor, colors),
     maxFontSizeMultiplier: tokens.maxFontSizeMultiplier,
   };

@@ -91,6 +91,21 @@ describe('resolveTextStyle — size override', () => {
     const result = resolveTextStyle({ variant: 'title', size: 'xl' }, MOCK_COLORS);
     expect(result.fontSize).toBe(typography.sizes.xl);
   });
+
+  it('adjusts lineHeight proportionally when size is overridden', () => {
+    const result = resolveTextStyle({ variant: 'title', size: 'sm' }, MOCK_COLORS);
+    expect(result.lineHeight).toBe(typography.sizes.sm * typography.lineHeights.tight);
+  });
+
+  it('uses normal lineHeight ratio for body family size override', () => {
+    const result = resolveTextStyle({ variant: 'body', size: 'xs' }, MOCK_COLORS);
+    expect(result.lineHeight).toBe(typography.sizes.xs * typography.lineHeights.normal);
+  });
+
+  it('keeps variant lineHeight when no size override', () => {
+    const result = resolveTextStyle({ variant: 'title' }, MOCK_COLORS);
+    expect(result.lineHeight).toBe(typography.sizes.lg * typography.lineHeights.tight);
+  });
 });
 
 describe('resolveTextStyle — weight override', () => {

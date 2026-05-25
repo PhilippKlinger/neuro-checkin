@@ -39,7 +39,7 @@ export const TEXT_VARIANTS: Record<TextVariant, TextVariantTokens> = {
     fontFamily: typography.families.body.regular,
     fontSize: typography.sizes.md,
     lineHeight: typography.sizes.md * typography.lineHeights.normal,
-    maxFontSizeMultiplier: 1.5,
+    maxFontSizeMultiplier: 1.6,
     defaultColor: 'primary',
   },
   hint: {
