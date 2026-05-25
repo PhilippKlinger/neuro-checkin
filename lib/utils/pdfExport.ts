@@ -28,6 +28,14 @@ export async function exportCheckInsAsPdf(checkIns: CheckIn[]): Promise<void> {
 
   const fileName = buildFileName(checkIns);
   const file = new File(uri);
+
+  // Prevent FileAlreadyExistsException if same filename was exported earlier today
+  const dir = uri.substring(0, uri.lastIndexOf('/') + 1);
+  const target = new File(`${dir}${fileName}.pdf`);
+  if (target.exists) {
+    target.delete();
+  }
+
   file.rename(`${fileName}.pdf`);
 
   await Sharing.shareAsync(file.uri, {

@@ -1,5 +1,14 @@
 import { useState, useCallback } from 'react';
-import { View, Text, FlatList, Pressable, StyleSheet, Alert, ListRenderItem } from 'react-native';
+import {
+  View,
+  Text,
+  FlatList,
+  Pressable,
+  StyleSheet,
+  Alert,
+  ToastAndroid,
+  ListRenderItem,
+} from 'react-native';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { useTheme } from '../../lib/hooks/useTheme';
 import { useDatabase } from '../../lib/hooks/useDatabase';
@@ -70,6 +79,7 @@ export default function HistoryScreen() {
     setIsExporting(true);
     try {
       await exportCheckInsAsPdf(toExport);
+      ToastAndroid.show('PDF erstellt', ToastAndroid.SHORT);
     } catch (error) {
       Sentry.captureException(error);
       Alert.alert(
