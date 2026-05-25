@@ -1,81 +1,33 @@
-import type { CheckIn, BodySignals } from '../types/checkin';
-import { getLevelLabel, ENERGY_LABELS, FOCUS_LABELS, DISTRESS_LABELS } from '../types/checkin';
-
-const BODY_SIGNAL_LABELS: Record<keyof BodySignals, string> = {
-  hunger: 'Hunger',
-  thirst: 'Durst',
-  temperature: 'Temperatur unangenehm',
-  pain: 'Schmerzen',
-  restroom: 'Toilette',
-  seating: 'Sitzposition unangenehm',
-  externalStimuli: 'Äußere Reize',
-};
-
-function formatDate(createdAt: string): string {
-  // SQLite stores as "YYYY-MM-DD HH:MM:SS" — convert to readable German format
-  const parts = createdAt.split(' ');
-  const datePart = parts[0] ?? createdAt;
-  const timePart = parts[1] ? parts[1].slice(0, 5) : '';
-  return timePart ? `${datePart}, ${timePart} Uhr` : datePart;
-}
+import type { CheckIn } from '../types/checkin';
+import { presentCheckIn } from './presentCheckIn';
+import { formatDate, formatTime } from './format';
 
 function row(label: string, value: string): string {
   return `<tr><td class="label">${label}</td><td class="value">${value}</td></tr>`;
 }
 
 function buildCheckInBlock(c: CheckIn): string {
+  const p = presentCheckIn(c);
   const rows: string[] = [];
 
-  if (!c.energySkipped && c.energyLevel > 0) {
-    rows.push(
-      row('Energie', `${c.energyLevel}/5 — ${getLevelLabel(c.energyLevel, ENERGY_LABELS)}`)
-    );
+  if (p.energy) rows.push(row('Energie', p.energy));
+  if (p.focus) rows.push(row('Fokus', p.focus));
+  if (p.activeSignals.length > 0) rows.push(row('Körpersignale', p.activeSignals.join(', ')));
+  if (p.feelings) rows.push(row('Gefühle', p.feelings));
+  if (p.distressWithNote) rows.push(row('Stress', p.distressWithNote));
+  if (p.thoughtsType) {
+    const note = p.thoughtsNote ? ` — ${p.thoughtsNote}` : '';
+    rows.push(row('Gedanken', `${p.thoughtsType}${note}`));
   }
-  if (!c.focusSkipped && c.focusLevel > 0) {
-    rows.push(row('Fokus', `${c.focusLevel}/5 — ${getLevelLabel(c.focusLevel, FOCUS_LABELS)}`));
-  }
-
-  const activeSignals = Object.entries(c.bodySignals)
-    .filter(([, val]) => val === true)
-    .map(([key]) => BODY_SIGNAL_LABELS[key as keyof BodySignals])
-    .filter(Boolean);
-  if (activeSignals.length > 0) {
-    rows.push(row('Körpersignale', activeSignals.join(', ')));
-  }
-
-  if (c.feelings) {
-    rows.push(row('Gefühle', c.feelings));
-  }
-  if (c.distressLevel !== null) {
-    const label = getLevelLabel(c.distressLevel, DISTRESS_LABELS);
-    const note = c.distressNote ? ` — ${c.distressNote}` : '';
-    rows.push(row('Stress', `${c.distressLevel}/5 — ${label}${note}`));
-  }
-  if (c.thoughtsType) {
-    const typeLabel =
-      c.thoughtsType === 'supportive'
-        ? 'Unterstützend'
-        : c.thoughtsType === 'burdening'
-          ? 'Belastend'
-          : 'Gemischt';
-    const note = c.thoughtsNote ? ` — ${c.thoughtsNote}` : '';
-    rows.push(row('Gedanken', `${typeLabel}${note}`));
-  }
-  if (c.selfCareNote) {
-    rows.push(row('Selbstfürsorge', c.selfCareNote));
-  }
-  if (c.innerPart) {
-    rows.push(row('IFS-Anteil', c.innerPart));
-  }
-  if (c.note) {
-    rows.push(row('Notiz', c.note));
-  }
+  if (p.selfCare) rows.push(row('Selbstfürsorge', p.selfCare));
+  if (p.innerPart) rows.push(row('IFS-Anteil', p.innerPart));
+  if (p.note) rows.push(row('Notiz', p.note));
 
   const tableContent = rows.length > 0 ? rows.join('\n') : '<tr><td colspan="2">—</td></tr>';
 
   return `
   <div class="checkin-block">
-    <h2 class="checkin-date">${formatDate(c.createdAt)}</h2>
+    <h2 class="checkin-date">${formatDate(c.createdAt)}, ${formatTime(c.createdAt)} Uhr</h2>
     <table>
       <tbody>
         ${tableContent}

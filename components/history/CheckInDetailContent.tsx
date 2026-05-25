@@ -2,15 +2,8 @@ import { useMemo } from 'react';
 import { View, Text, ScrollView, Pressable, StyleSheet } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../../lib/hooks/useTheme';
-import {
-  CheckIn,
-  ENERGY_LABELS,
-  FOCUS_LABELS,
-  DISTRESS_LABELS,
-  getLevelLabel,
-  SIGNAL_LABELS,
-  getThoughtsLabel,
-} from '../../lib/types/checkin';
+import { CheckIn } from '../../lib/types/checkin';
+import { presentCheckIn } from '../../lib/utils/presentCheckIn';
 import { formatDateTime } from '../../lib/utils/format';
 import { ConfirmDialog } from '../ui/ConfirmDialog';
 
@@ -34,17 +27,9 @@ export function CheckInDetailContent({
   const { theme, spacing, typography, radii, touchTarget } = useTheme();
   const insets = useSafeAreaInsets();
 
-  const { activeSignals, inactiveSignals } = useMemo(
-    () => ({
-      activeSignals: Object.entries(checkIn.bodySignals)
-        .filter(([, v]) => v === true)
-        .map(([key]) => SIGNAL_LABELS[key as keyof typeof SIGNAL_LABELS] || key),
-      inactiveSignals: Object.entries(checkIn.bodySignals)
-        .filter(([, v]) => v === false)
-        .map(([key]) => SIGNAL_LABELS[key as keyof typeof SIGNAL_LABELS] || key),
-    }),
-    [checkIn.bodySignals]
-  );
+  const p = useMemo(() => presentCheckIn(checkIn), [checkIn]);
+  const activeSignals = p.bodySignals.filter((s) => s.active).map((s) => s.label);
+  const inactiveSignals = p.bodySignals.filter((s) => !s.active).map((s) => s.label);
 
   return (
     <View style={styles.container}>
@@ -86,19 +71,11 @@ export function CheckInDetailContent({
         >
           <View style={[styles.row, { marginBottom: spacing.sm }]}>
             <Text style={label(typography, theme)}>Energie</Text>
-            <Text style={value(typography, theme)}>
-              {checkIn.energySkipped
-                ? 'Nicht angegeben'
-                : getLevelLabel(checkIn.energyLevel, ENERGY_LABELS)}
-            </Text>
+            <Text style={value(typography, theme)}>{p.energy ?? 'Nicht angegeben'}</Text>
           </View>
           <View style={styles.row}>
             <Text style={label(typography, theme)}>Fokus</Text>
-            <Text style={value(typography, theme)}>
-              {checkIn.focusSkipped
-                ? 'Nicht angegeben'
-                : getLevelLabel(checkIn.focusLevel, FOCUS_LABELS)}
-            </Text>
+            <Text style={value(typography, theme)}>{p.focus ?? 'Nicht angegeben'}</Text>
           </View>
         </View>
 
@@ -126,7 +103,7 @@ export function CheckInDetailContent({
           </View>
         )}
 
-        {checkIn.feelings.trim() !== '' && (
+        {p.feelings && (
           <View
             style={[
               styles.card,
@@ -139,11 +116,11 @@ export function CheckInDetailContent({
             ]}
           >
             <Text style={sectionTitle(typography, theme, spacing)}>Gefühle</Text>
-            <Text style={body(typography, theme)}>{checkIn.feelings}</Text>
+            <Text style={body(typography, theme)}>{p.feelings}</Text>
           </View>
         )}
 
-        {checkIn.distressLevel !== null && (
+        {p.distress && (
           <View
             style={[
               styles.card,
@@ -156,9 +133,7 @@ export function CheckInDetailContent({
             ]}
           >
             <Text style={sectionTitle(typography, theme, spacing)}>Stress-Level</Text>
-            <Text style={body(typography, theme)}>
-              {getLevelLabel(checkIn.distressLevel, DISTRESS_LABELS)}
-            </Text>
+            <Text style={body(typography, theme)}>{p.distress}</Text>
             {checkIn.distressNote && checkIn.distressNote.trim() !== '' && (
               <Text
                 style={[body(typography, theme), { marginTop: spacing.xs, fontStyle: 'italic' }]}
@@ -169,7 +144,7 @@ export function CheckInDetailContent({
           </View>
         )}
 
-        {(checkIn.thoughtsType || (checkIn.thoughtsNote && checkIn.thoughtsNote.trim() !== '')) && (
+        {(p.thoughtsType || p.thoughtsNote) && (
           <View
             style={[
               styles.card,
@@ -182,23 +157,21 @@ export function CheckInDetailContent({
             ]}
           >
             <Text style={sectionTitle(typography, theme, spacing)}>Gedanken</Text>
-            {checkIn.thoughtsType && (
-              <Text style={body(typography, theme)}>{getThoughtsLabel(checkIn.thoughtsType)}</Text>
-            )}
-            {checkIn.thoughtsNote && checkIn.thoughtsNote.trim() !== '' && (
+            {p.thoughtsType && <Text style={body(typography, theme)}>{p.thoughtsType}</Text>}
+            {p.thoughtsNote && (
               <Text
                 style={[
                   body(typography, theme),
-                  { marginTop: checkIn.thoughtsType ? spacing.xs : 0, fontStyle: 'italic' },
+                  { marginTop: p.thoughtsType ? spacing.xs : 0, fontStyle: 'italic' },
                 ]}
               >
-                {checkIn.thoughtsNote}
+                {p.thoughtsNote}
               </Text>
             )}
           </View>
         )}
 
-        {checkIn.selfCareNote && checkIn.selfCareNote.trim() !== '' && (
+        {p.selfCare && (
           <View
             style={[
               styles.card,
@@ -211,7 +184,7 @@ export function CheckInDetailContent({
             ]}
           >
             <Text style={sectionTitle(typography, theme, spacing)}>Selbstfürsorge</Text>
-            <Text style={body(typography, theme)}>{checkIn.selfCareNote}</Text>
+            <Text style={body(typography, theme)}>{p.selfCare}</Text>
           </View>
         )}
 

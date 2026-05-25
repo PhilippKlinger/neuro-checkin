@@ -1,46 +1,18 @@
 import { View, Text, StyleSheet } from 'react-native';
 import { useTheme } from '../../lib/hooks/useTheme';
 import { StepScaffold } from './StepScaffold';
-import {
-  CheckInDraft,
-  ENERGY_LABELS,
-  FOCUS_LABELS,
-  DISTRESS_LABELS,
-  getLevelLabel,
-} from '../../lib/types/checkin';
+import { CheckInDraft } from '../../lib/types/checkin';
+import { presentCheckIn } from '../../lib/utils/presentCheckIn';
 
 interface StepSummaryProps {
   draft: CheckInDraft;
   showPostFirstCheckinHint?: boolean;
 }
 
-function getThoughtsLabel(type: 'supportive' | 'burdening' | 'mixed' | null): string {
-  switch (type) {
-    case 'supportive':
-      return 'Unterstützend';
-    case 'burdening':
-      return 'Belastend';
-    case 'mixed':
-      return 'Gemischt';
-    default:
-      return '—';
-  }
-}
-
 export function StepSummary({ draft, showPostFirstCheckinHint }: StepSummaryProps) {
   const { theme, spacing, typography, radii } = useTheme();
-
-  const bodySignalEntries = [
-    { label: 'Hunger', value: draft.bodySignals.hunger },
-    { label: 'Durst', value: draft.bodySignals.thirst },
-    { label: 'Temperatur', value: draft.bodySignals.temperature },
-    { label: 'Schmerzen', value: draft.bodySignals.pain },
-    { label: 'Toilette', value: draft.bodySignals.restroom },
-    { label: 'Sitzposition', value: draft.bodySignals.seating },
-    { label: 'Reize', value: draft.bodySignals.externalStimuli },
-  ];
-
-  const activeSignals = bodySignalEntries.filter((s) => s.value === true);
+  const p = presentCheckIn(draft);
+  const activeSignals = p.bodySignals.filter((s) => s.active);
 
   return (
     <StepScaffold title="Zusammenfassung" subtitle="Dein Check-in auf einen Blick">
@@ -73,17 +45,11 @@ export function StepSummary({ draft, showPostFirstCheckinHint }: StepSummaryProp
       >
         <View style={[styles.row, { marginBottom: spacing.sm }]}>
           <Text style={rowLabel(typography, theme)}>Energie</Text>
-          <Text style={rowValue(typography, theme)}>
-            {draft.energySkipped
-              ? 'Nicht angegeben'
-              : getLevelLabel(draft.energyLevel, ENERGY_LABELS)}
-          </Text>
+          <Text style={rowValue(typography, theme)}>{p.energy ?? 'Nicht angegeben'}</Text>
         </View>
         <View style={styles.row}>
           <Text style={rowLabel(typography, theme)}>Fokus</Text>
-          <Text style={rowValue(typography, theme)}>
-            {draft.focusSkipped ? 'Nicht angegeben' : getLevelLabel(draft.focusLevel, FOCUS_LABELS)}
-          </Text>
+          <Text style={rowValue(typography, theme)}>{p.focus ?? 'Nicht angegeben'}</Text>
         </View>
       </View>
 
@@ -109,7 +75,7 @@ export function StepSummary({ draft, showPostFirstCheckinHint }: StepSummaryProp
         </View>
       )}
 
-      {draft.feelings.trim() !== '' && (
+      {p.feelings && (
         <View
           style={[
             styles.card,
@@ -122,11 +88,11 @@ export function StepSummary({ draft, showPostFirstCheckinHint }: StepSummaryProp
           ]}
         >
           <Text style={sectionTitle(typography, theme, spacing)}>Gefühle</Text>
-          <Text style={bodyText(typography, theme)}>{draft.feelings}</Text>
+          <Text style={bodyText(typography, theme)}>{p.feelings}</Text>
         </View>
       )}
 
-      {draft.distressLevel !== null && (
+      {p.distress && (
         <View
           style={[
             styles.card,
@@ -139,9 +105,7 @@ export function StepSummary({ draft, showPostFirstCheckinHint }: StepSummaryProp
           ]}
         >
           <Text style={sectionTitle(typography, theme, spacing)}>Stress-Level</Text>
-          <Text style={bodyText(typography, theme)}>
-            {getLevelLabel(draft.distressLevel, DISTRESS_LABELS)}
-          </Text>
+          <Text style={bodyText(typography, theme)}>{p.distress}</Text>
           {draft.distressNote.trim() !== '' && (
             <Text
               style={[bodyText(typography, theme), { marginTop: spacing.xs, fontStyle: 'italic' }]}
@@ -152,7 +116,7 @@ export function StepSummary({ draft, showPostFirstCheckinHint }: StepSummaryProp
         </View>
       )}
 
-      {(draft.thoughtsType !== null || draft.thoughtsNote.trim() !== '') && (
+      {(p.thoughtsType || p.thoughtsNote) && (
         <View
           style={[
             styles.card,
@@ -165,23 +129,21 @@ export function StepSummary({ draft, showPostFirstCheckinHint }: StepSummaryProp
           ]}
         >
           <Text style={sectionTitle(typography, theme, spacing)}>Gedanken</Text>
-          {draft.thoughtsType !== null && (
-            <Text style={bodyText(typography, theme)}>{getThoughtsLabel(draft.thoughtsType)}</Text>
-          )}
-          {draft.thoughtsNote.trim() !== '' && (
+          {p.thoughtsType && <Text style={bodyText(typography, theme)}>{p.thoughtsType}</Text>}
+          {p.thoughtsNote && (
             <Text
               style={[
                 bodyText(typography, theme),
-                { marginTop: draft.thoughtsType !== null ? spacing.xs : 0, fontStyle: 'italic' },
+                { marginTop: p.thoughtsType ? spacing.xs : 0, fontStyle: 'italic' },
               ]}
             >
-              {draft.thoughtsNote}
+              {p.thoughtsNote}
             </Text>
           )}
         </View>
       )}
 
-      {draft.selfCareNote.trim() !== '' && (
+      {p.selfCare && (
         <View
           style={[
             styles.card,
@@ -194,7 +156,7 @@ export function StepSummary({ draft, showPostFirstCheckinHint }: StepSummaryProp
           ]}
         >
           <Text style={sectionTitle(typography, theme, spacing)}>Selbstfürsorge</Text>
-          <Text style={bodyText(typography, theme)}>{draft.selfCareNote}</Text>
+          <Text style={bodyText(typography, theme)}>{p.selfCare}</Text>
         </View>
       )}
     </StepScaffold>
