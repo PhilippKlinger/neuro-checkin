@@ -126,6 +126,7 @@ export function ChipOrTextStep({
       subtitle={subtitle}
       hint={hint}
       keyboardPersistTaps
+      avoidKeyboard
       skipConfig={onSkip ? { onSkip, skipped } : undefined}
     >
       {effectiveMode === 'chips' ? (

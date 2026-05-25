@@ -5,6 +5,8 @@ import {
   ScrollView,
   Pressable,
   StyleSheet,
+  KeyboardAvoidingView,
+  Platform,
   NativeScrollEvent,
   NativeSyntheticEvent,
   LayoutChangeEvent,
@@ -24,6 +26,7 @@ interface StepScaffoldProps {
   skipConfig?: SkipConfig;
   centerContent?: boolean;
   keyboardPersistTaps?: boolean;
+  avoidKeyboard?: boolean;
   children: React.ReactNode;
 }
 
@@ -35,6 +38,7 @@ export const StepScaffold = forwardRef<ScrollView, StepScaffoldProps>(function S
     skipConfig,
     centerContent = false,
     keyboardPersistTaps = false,
+    avoidKeyboard = false,
     children,
   },
   ref
@@ -100,7 +104,10 @@ export const StepScaffold = forwardRef<ScrollView, StepScaffoldProps>(function S
         )}
       </View>
 
-      <View style={styles.scrollWrapper}>
+      <KeyboardAvoidingView
+        behavior={avoidKeyboard ? (Platform.OS === 'ios' ? 'padding' : 'height') : undefined}
+        style={styles.scrollWrapper}
+      >
         <ScrollView
           ref={ref}
           style={styles.scrollArea}
@@ -167,7 +174,7 @@ export const StepScaffold = forwardRef<ScrollView, StepScaffoldProps>(function S
             pointerEvents="none"
           />
         )}
-      </View>
+      </KeyboardAvoidingView>
     </View>
   );
 });

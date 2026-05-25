@@ -70,6 +70,7 @@ export function StepDistress({
       subtitle="Wie belastet oder angespannt bist du gerade?"
       hint={hint}
       keyboardPersistTaps
+      avoidKeyboard
     >
       <View
         style={[styles.optionList, { gap: spacing.sm }]}

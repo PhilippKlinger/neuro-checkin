@@ -44,6 +44,7 @@ export function StepThoughts({ type, note, onTypeChange, onNoteChange, hint }: S
       subtitle="Wie würdest du deine Gedanken gerade beschreiben?"
       hint={hint}
       keyboardPersistTaps
+      avoidKeyboard
     >
       <View style={[styles.optionList, { gap: spacing.sm }]}>
         {OPTIONS.map((option) => {
