@@ -142,6 +142,7 @@ export function FeedbackFormContent({
         submitButton: {
           borderRadius: radii.md,
           padding: spacing.md,
+          marginTop: spacing.md,
           alignItems: 'center',
           minHeight: touchTarget.min,
           justifyContent: 'center',

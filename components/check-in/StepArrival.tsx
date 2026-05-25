@@ -46,13 +46,16 @@ export function StepArrival({ showHintIntro }: StepArrivalProps) {
       </Text>
       {showHintIntro && (
         <View style={[styles.hintIntro, { marginTop: spacing.xl, gap: spacing.xs }]}>
-          <Ionicons name="bulb" size={14} color={theme.colors.accent} />
+          <View style={styles.hintIcon}>
+            <Ionicons name="bulb" size={18} color={theme.colors.accent} />
+          </View>
           <Text
             style={{
               fontFamily: typography.families.body.regular,
-              fontSize: typography.sizes.xs,
+              fontSize: typography.sizes.sm,
               color: theme.colors.textSecondary,
               fontStyle: 'italic',
+              flexShrink: 1,
             }}
           >
             Bei jedem Schritt siehst du einen kurzen Hinweis. Ab dem nächsten Schritt kannst du sie
@@ -74,7 +77,11 @@ const styles = StyleSheet.create({
   },
   hintIntro: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     justifyContent: 'center',
+  },
+  hintIcon: {
+    flexShrink: 0,
+    marginTop: 2,
   },
 });
