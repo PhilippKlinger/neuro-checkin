@@ -9,6 +9,8 @@ import { EMPTY_BODY_SIGNALS } from '../lib/types/checkin';
 const mockPrintToFileAsync = jest.fn();
 const mockShareAsync = jest.fn();
 const mockRename = jest.fn();
+const mockDelete = jest.fn();
+const mockExists = jest.fn<boolean, [string]>().mockReturnValue(false);
 
 jest.mock('expo-print', () => ({
   printToFileAsync: (...args: unknown[]) => mockPrintToFileAsync(...args),
@@ -21,6 +23,12 @@ jest.mock('expo-sharing', () => ({
 jest.mock('expo-file-system', () => ({
   File: jest.fn().mockImplementation((uri: string) => ({
     uri,
+    get exists() {
+      return mockExists(uri);
+    },
+    delete() {
+      mockDelete(uri);
+    },
     rename(newName: string) {
       mockRename(newName);
       // rename mutates uri in real impl
@@ -99,6 +107,7 @@ describe('exportCheckInsAsPdf', () => {
     jest.clearAllMocks();
     mockPrintToFileAsync.mockResolvedValue({ uri: 'file:///tmp/export.pdf' });
     mockShareAsync.mockResolvedValue(undefined);
+    mockExists.mockReturnValue(false);
   });
 
   it('generates HTML and calls printToFileAsync', async () => {
@@ -136,5 +145,21 @@ describe('exportCheckInsAsPdf', () => {
   it('handles multiple check-ins with date range filename', async () => {
     await exportCheckInsAsPdf([SAMPLE, SAMPLE_2]);
     expect(mockRename).toHaveBeenCalledWith('Check-ins 2026-05-19 bis 2026-05-21.pdf');
+  });
+
+  // H2-01 regression: same-day duplicate export must not crash with FileAlreadyExistsException
+  it('deletes existing target file before rename on same-day duplicate export', async () => {
+    mockExists.mockImplementation((uri: string) => uri.endsWith('Check-in 2026-05-19.pdf'));
+
+    await exportCheckInsAsPdf([SAMPLE]);
+
+    expect(mockDelete).toHaveBeenCalledWith('file:///tmp/Check-in 2026-05-19.pdf');
+    expect(mockRename).toHaveBeenCalledWith('Check-in 2026-05-19.pdf');
+    expect(mockShareAsync).toHaveBeenCalled();
+  });
+
+  it('skips delete when target file does not already exist', async () => {
+    await exportCheckInsAsPdf([SAMPLE]);
+    expect(mockDelete).not.toHaveBeenCalled();
   });
 });
