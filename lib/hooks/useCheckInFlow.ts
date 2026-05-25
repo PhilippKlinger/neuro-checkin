@@ -9,7 +9,7 @@ import {
 import { Alert } from 'react-native';
 import { useFocusEffect } from 'expo-router';
 import type { SQLiteDatabase } from 'expo-sqlite';
-import { CheckInDraft, EMPTY_DRAFT, EMPTY_BODY_SIGNALS } from '../types/checkin';
+import { CheckInDraft, BodySignals, EMPTY_DRAFT, EMPTY_BODY_SIGNALS } from '../types/checkin';
 import { insertCheckIn, countCheckIns } from '../database/checkins';
 import { getSettings, updateSettings } from '../database/settings';
 import { saveUserChips, getUserChips } from '../database/userChips';
@@ -20,9 +20,25 @@ import * as Sentry from '@sentry/react-native';
 
 export const TOTAL_STEPS = 9;
 
+export interface DraftActions {
+  setEnergy: (value: number) => void;
+  skipEnergy: () => void;
+  setFocus: (value: number) => void;
+  skipFocus: () => void;
+  setBodySignals: (value: BodySignals) => void;
+  setFeelings: (value: string) => void;
+  skipFeelings: () => void;
+  setDistressLevel: (value: number | null) => void;
+  setDistressNote: (value: string) => void;
+  setThoughtsType: (value: 'supportive' | 'burdening' | 'mixed' | null) => void;
+  setThoughtsNote: (value: string) => void;
+  setSelfCare: (value: string) => void;
+}
+
 export interface UseCheckInFlowResult {
   step: number;
   draft: CheckInDraft;
+  actions: DraftActions;
   isSaving: boolean;
   isDone: boolean;
   wasReset: boolean;
@@ -35,6 +51,7 @@ export interface UseCheckInFlowResult {
   isLastStep: boolean;
   isStepBlocked: boolean;
   isNextDisabled: boolean;
+  /** @deprecated Use actions instead */
   setDraft: Dispatch<SetStateAction<CheckInDraft>>;
   setWasReset: Dispatch<SetStateAction<boolean>>;
   handleGuidedToggle: (value: boolean) => Promise<void>;
@@ -205,11 +222,27 @@ export function useCheckInFlow(db: SQLiteDatabase): UseCheckInFlowResult {
     setWasReset(false);
   }
 
+  const actions: DraftActions = {
+    setEnergy: (value) => setDraft((d) => ({ ...d, energyLevel: value, energySkipped: false })),
+    skipEnergy: () => setDraft((d) => ({ ...d, energyLevel: 0, energySkipped: true })),
+    setFocus: (value) => setDraft((d) => ({ ...d, focusLevel: value, focusSkipped: false })),
+    skipFocus: () => setDraft((d) => ({ ...d, focusLevel: 0, focusSkipped: true })),
+    setBodySignals: (value) => setDraft((d) => ({ ...d, bodySignals: value })),
+    setFeelings: (value) => setDraft((d) => ({ ...d, feelings: value, feelingsSkipped: false })),
+    skipFeelings: () => setDraft((d) => ({ ...d, feelings: '', feelingsSkipped: true })),
+    setDistressLevel: (value) => setDraft((d) => ({ ...d, distressLevel: value })),
+    setDistressNote: (value) => setDraft((d) => ({ ...d, distressNote: value })),
+    setThoughtsType: (value) => setDraft((d) => ({ ...d, thoughtsType: value })),
+    setThoughtsNote: (value) => setDraft((d) => ({ ...d, thoughtsNote: value })),
+    setSelfCare: (value) => setDraft((d) => ({ ...d, selfCareNote: value })),
+  };
+
   const blocked = checkStepBlocked(step, draft);
 
   return {
     step,
     draft,
+    actions,
     isSaving,
     isDone,
     wasReset,

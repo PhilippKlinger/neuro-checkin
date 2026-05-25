@@ -27,9 +27,19 @@ const EMPTY_QUICK_DRAFT: QuickCheckInDraft = {
   feelingsSkipped: false,
 };
 
+export interface QuickDraftActions {
+  setEnergy: (value: number) => void;
+  skipEnergy: () => void;
+  setFocus: (value: number) => void;
+  skipFocus: () => void;
+  setFeelings: (value: string) => void;
+  skipFeelings: () => void;
+}
+
 export interface UseQuickCheckInFlowResult {
   step: number;
   draft: QuickCheckInDraft;
+  actions: QuickDraftActions;
   isSaving: boolean;
   isDone: boolean;
   guidedMode: boolean;
@@ -37,6 +47,7 @@ export interface UseQuickCheckInFlowResult {
   isLastStep: boolean;
   isStepBlocked: boolean;
   isNextDisabled: boolean;
+  /** @deprecated Use actions instead */
   setDraft: Dispatch<SetStateAction<QuickCheckInDraft>>;
   handleGuidedToggle: (value: boolean) => Promise<void>;
   handleNext: () => void;
@@ -144,6 +155,15 @@ export function useQuickCheckInFlow(
     setIsDone(false);
   }
 
+  const actions: QuickDraftActions = {
+    setEnergy: (value) => setDraft((d) => ({ ...d, energyLevel: value, energySkipped: false })),
+    skipEnergy: () => setDraft((d) => ({ ...d, energyLevel: 0, energySkipped: true })),
+    setFocus: (value) => setDraft((d) => ({ ...d, focusLevel: value, focusSkipped: false })),
+    skipFocus: () => setDraft((d) => ({ ...d, focusLevel: 0, focusSkipped: true })),
+    setFeelings: (value) => setDraft((d) => ({ ...d, feelings: value, feelingsSkipped: false })),
+    skipFeelings: () => setDraft((d) => ({ ...d, feelings: '', feelingsSkipped: true })),
+  };
+
   const blocked =
     (step === 0 && draft.energyLevel === 0 && !draft.energySkipped) ||
     (step === 1 && draft.focusLevel === 0 && !draft.focusSkipped);
@@ -151,6 +171,7 @@ export function useQuickCheckInFlow(
   return {
     step,
     draft,
+    actions,
     isSaving,
     isDone,
     guidedMode,

@@ -27,7 +27,7 @@ export default function QuickCheckInScreen() {
   const {
     step,
     draft,
-    setDraft,
+    actions,
     isSaving,
     isDone,
     guidedMode,
@@ -66,9 +66,9 @@ export default function QuickCheckInScreen() {
         return (
           <StepEnergy
             value={draft.energyLevel}
-            onValueChange={(v) => setDraft({ ...draft, energyLevel: v, energySkipped: false })}
+            onValueChange={actions.setEnergy}
             skipped={draft.energySkipped}
-            onSkip={() => setDraft({ ...draft, energyLevel: 0, energySkipped: true })}
+            onSkip={actions.skipEnergy}
             hint={guidedMode ? STEP_HINTS.energy : undefined}
           />
         );
@@ -76,9 +76,9 @@ export default function QuickCheckInScreen() {
         return (
           <StepFocus
             value={draft.focusLevel}
-            onValueChange={(v) => setDraft({ ...draft, focusLevel: v, focusSkipped: false })}
+            onValueChange={actions.setFocus}
             skipped={draft.focusSkipped}
-            onSkip={() => setDraft({ ...draft, focusLevel: 0, focusSkipped: true })}
+            onSkip={actions.skipFocus}
             hint={guidedMode ? STEP_HINTS.focus : undefined}
           />
         );
@@ -86,10 +86,10 @@ export default function QuickCheckInScreen() {
         return (
           <QuickStepFeelings
             value={draft.feelings}
-            onValueChange={(v) => setDraft({ ...draft, feelings: v, feelingsSkipped: false })}
+            onValueChange={actions.setFeelings}
             hint={guidedMode ? STEP_HINTS.feelings : undefined}
             skipped={draft.feelingsSkipped}
-            onSkip={() => setDraft({ ...draft, feelings: '', feelingsSkipped: true })}
+            onSkip={actions.skipFeelings}
           />
         );
       default:
