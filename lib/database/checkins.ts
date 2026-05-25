@@ -2,7 +2,66 @@ import type { SQLiteDatabase } from 'expo-sqlite';
 import type { CheckIn, CheckInInsert, BodySignals } from '../types/checkin';
 import { EMPTY_BODY_SIGNALS } from '../types/checkin';
 
+const VALID_THOUGHTS_TYPES = ['supportive', 'burdening', 'mixed'] as const;
+
+function clampLevel(value: number, min: number, max: number): number {
+  return Math.max(min, Math.min(max, Math.round(value)));
+}
+
+function trimOrNull(value: string | null | undefined): string | null {
+  if (value == null) return null;
+  const trimmed = value.trim();
+  return trimmed === '' ? null : trimmed;
+}
+
+function normalizeSignal(value: unknown): boolean | null {
+  if (value === true || value === false) return value;
+  return null;
+}
+
+export function normalizeCheckInInsert(data: CheckInInsert): CheckInInsert {
+  const energyLevel = clampLevel(data.energyLevel, 0, 5);
+  const focusLevel = clampLevel(data.focusLevel, 0, 5);
+  const distressLevel =
+    data.distressLevel == null ? null : clampLevel(data.distressLevel, 1, 5);
+
+  const feelings = (data.feelings ?? '').trim();
+
+  const thoughtsType =
+    data.thoughtsType && VALID_THOUGHTS_TYPES.includes(data.thoughtsType as any)
+      ? data.thoughtsType
+      : null;
+
+  const bodySignals: BodySignals = {
+    hunger: normalizeSignal(data.bodySignals.hunger),
+    thirst: normalizeSignal(data.bodySignals.thirst),
+    temperature: normalizeSignal(data.bodySignals.temperature),
+    pain: normalizeSignal(data.bodySignals.pain),
+    restroom: normalizeSignal(data.bodySignals.restroom),
+    seating: normalizeSignal(data.bodySignals.seating),
+    externalStimuli: normalizeSignal(data.bodySignals.externalStimuli),
+  };
+
+  return {
+    energyLevel,
+    focusLevel,
+    energySkipped: data.energySkipped,
+    focusSkipped: data.focusSkipped,
+    bodySignals,
+    feelings,
+    feelingsSkipped: data.feelingsSkipped,
+    distressLevel,
+    distressNote: trimOrNull(data.distressNote),
+    thoughtsType,
+    thoughtsNote: trimOrNull(data.thoughtsNote),
+    selfCareNote: trimOrNull(data.selfCareNote),
+    innerPart: trimOrNull(data.innerPart),
+    note: trimOrNull(data.note),
+  };
+}
+
 export async function insertCheckIn(db: SQLiteDatabase, data: CheckInInsert): Promise<number> {
+  const normalized = normalizeCheckInInsert(data);
   const result = await db.runAsync(
     `INSERT INTO check_ins (
       energy_level, focus_level, body_signals, feelings,
@@ -10,20 +69,20 @@ export async function insertCheckIn(db: SQLiteDatabase, data: CheckInInsert): Pr
       thoughts_type, thoughts_note, self_care_note, inner_part, note,
       energy_skipped, focus_skipped, feelings_skipped
     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-    data.energyLevel,
-    data.focusLevel,
-    JSON.stringify(data.bodySignals),
-    data.feelings,
-    data.distressLevel,
-    data.distressNote,
-    data.thoughtsType,
-    data.thoughtsNote,
-    data.selfCareNote,
-    data.innerPart,
-    data.note,
-    data.energySkipped ? 1 : 0,
-    data.focusSkipped ? 1 : 0,
-    data.feelingsSkipped ? 1 : 0
+    normalized.energyLevel,
+    normalized.focusLevel,
+    JSON.stringify(normalized.bodySignals),
+    normalized.feelings,
+    normalized.distressLevel,
+    normalized.distressNote,
+    normalized.thoughtsType,
+    normalized.thoughtsNote,
+    normalized.selfCareNote,
+    normalized.innerPart,
+    normalized.note,
+    normalized.energySkipped ? 1 : 0,
+    normalized.focusSkipped ? 1 : 0,
+    normalized.feelingsSkipped ? 1 : 0
   );
   return result.lastInsertRowId;
 }
