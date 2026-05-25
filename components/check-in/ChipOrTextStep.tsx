@@ -67,11 +67,7 @@ function ChipWrap({ chips, value, onValueChange, variant = 'default' }: ChipWrap
             accessibilityLabel={chip}
             accessibilityState={{ selected }}
           >
-            <AppText
-              variant="label"
-              size="sm"
-              color={selected ? 'primary' : 'secondary'}
-            >
+            <AppText variant="label" size="sm" color={selected ? 'primary' : 'secondary'}>
               {chip}
             </AppText>
           </Pressable>
@@ -134,11 +130,7 @@ export function ChipOrTextStep({
           {chipGroups ? (
             chipGroups.map((group) => (
               <View key={group.label}>
-                <AppText
-                  variant="hint"
-                  size="xs"
-                  style={{ marginBottom: spacing.sm }}
-                >
+                <AppText variant="hint" size="xs" style={{ marginBottom: spacing.sm }}>
                   {group.label}
                 </AppText>
                 <ChipWrap chips={group.chips} value={value} onValueChange={onValueChange} />

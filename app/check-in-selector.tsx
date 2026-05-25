@@ -75,9 +75,15 @@ export default function CheckInSelectorScreen() {
             accessibilityLabel={option.accessibilityLabel}
             accessibilityHint="Tippen zum Starten"
           >
-            <AppText variant="title" style={{ marginBottom: spacing.xs }}>{option.title}</AppText>
-            <AppText variant="body" size="sm" color="secondary">{option.subtitle}</AppText>
-            <AppText variant="hint" style={{ marginTop: spacing.xs }}>{option.context}</AppText>
+            <AppText variant="title" style={{ marginBottom: spacing.xs }}>
+              {option.title}
+            </AppText>
+            <AppText variant="body" size="sm" color="secondary">
+              {option.subtitle}
+            </AppText>
+            <AppText variant="hint" style={{ marginTop: spacing.xs }}>
+              {option.context}
+            </AppText>
           </Pressable>
         ))}
       </View>

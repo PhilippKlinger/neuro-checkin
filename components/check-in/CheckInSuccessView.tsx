@@ -126,7 +126,9 @@ export function CheckInSuccessView({ onReset, energyLevel, focusLevel }: CheckIn
           accessibilityRole="button"
           accessibilityLabel="Zurück zu Home"
         >
-          <AppText variant="label" weight="semibold" color="inverse">Zurück zu Home</AppText>
+          <AppText variant="label" weight="semibold" color="inverse">
+            Zurück zu Home
+          </AppText>
         </Pressable>
 
         <Pressable

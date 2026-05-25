@@ -116,7 +116,9 @@ export default function HistoryScreen() {
   if (isLoading) {
     return (
       <View style={[styles.centered, { backgroundColor: theme.colors.background }]}>
-        <AppText variant="body" color="secondary">Laden...</AppText>
+        <AppText variant="body" color="secondary">
+          Laden...
+        </AppText>
       </View>
     );
   }
@@ -126,7 +128,11 @@ export default function HistoryScreen() {
       <View
         style={[styles.centered, { backgroundColor: theme.colors.background, padding: spacing.lg }]}
       >
-        <AppText variant="title" size="xl" style={{ textAlign: 'center', marginBottom: spacing.md }}>
+        <AppText
+          variant="title"
+          size="xl"
+          style={{ textAlign: 'center', marginBottom: spacing.md }}
+        >
           Noch keine Check-ins
         </AppText>
         <AppText variant="body" color="secondary" style={{ textAlign: 'center' }}>
@@ -158,7 +164,9 @@ export default function HistoryScreen() {
             accessibilityRole="button"
             accessibilityLabel="Alle auswählen"
           >
-            <AppText variant="label" size="sm" color="accent">Alle</AppText>
+            <AppText variant="label" size="sm" color="accent">
+              Alle
+            </AppText>
           </Pressable>
 
           <AppText variant="body" size="sm" color="secondary">
@@ -171,7 +179,9 @@ export default function HistoryScreen() {
             accessibilityRole="button"
             accessibilityLabel="Auswahl abbrechen"
           >
-            <AppText variant="label" size="sm" color="secondary">Abbrechen</AppText>
+            <AppText variant="label" size="sm" color="secondary">
+              Abbrechen
+            </AppText>
           </Pressable>
         </View>
       ) : (
@@ -191,7 +201,9 @@ export default function HistoryScreen() {
             accessibilityRole="button"
             accessibilityLabel="Check-ins für Export auswählen"
           >
-            <AppText variant="label" size="sm" color="accent">Exportieren</AppText>
+            <AppText variant="label" size="sm" color="accent">
+              Exportieren
+            </AppText>
           </Pressable>
         </View>
       )}

@@ -202,7 +202,15 @@ export function DataSection({
         >
           {feelingsChips.length > 0 && (
             <>
-              <AppText variant="label" size="sm" color="secondary" accessibilityRole="header" style={{ marginBottom: spacing.xs }}>Gefühle</AppText>
+              <AppText
+                variant="label"
+                size="sm"
+                color="secondary"
+                accessibilityRole="header"
+                style={{ marginBottom: spacing.xs }}
+              >
+                Gefühle
+              </AppText>
               <View style={[styles.chipGrid, { gap: spacing.xs }]}>
                 {feelingsChips.map((chip) => (
                   <View
@@ -220,7 +228,9 @@ export function DataSection({
                       },
                     ]}
                   >
-                    <AppText variant="body" size="sm" style={{ flex: 1 }} numberOfLines={1}>{chip.label}</AppText>
+                    <AppText variant="body" size="sm" style={{ flex: 1 }} numberOfLines={1}>
+                      {chip.label}
+                    </AppText>
                     <Pressable
                       onPress={() => setChipToDelete(chip)}
                       hitSlop={8}
@@ -243,7 +253,18 @@ export function DataSection({
 
           {selfCareChips.length > 0 && (
             <>
-              <AppText variant="label" size="sm" color="secondary" accessibilityRole="header" style={{ marginTop: feelingsChips.length > 0 ? spacing.sm : 0, marginBottom: spacing.xs }}>Selbstfürsorge</AppText>
+              <AppText
+                variant="label"
+                size="sm"
+                color="secondary"
+                accessibilityRole="header"
+                style={{
+                  marginTop: feelingsChips.length > 0 ? spacing.sm : 0,
+                  marginBottom: spacing.xs,
+                }}
+              >
+                Selbstfürsorge
+              </AppText>
               <View style={[styles.chipGrid, { gap: spacing.xs }]}>
                 {selfCareChips.map((chip) => (
                   <View
@@ -261,7 +282,9 @@ export function DataSection({
                       },
                     ]}
                   >
-                    <AppText variant="body" size="sm" style={{ flex: 1 }} numberOfLines={1}>{chip.label}</AppText>
+                    <AppText variant="body" size="sm" style={{ flex: 1 }} numberOfLines={1}>
+                      {chip.label}
+                    </AppText>
                     <Pressable
                       onPress={() => setChipToDelete(chip)}
                       hitSlop={8}
@@ -300,7 +323,9 @@ export function DataSection({
             accessibilityLabel="Alle eigenen Chips löschen"
             accessibilityHint="Löscht alle selbst erstellten Begriffe dauerhaft"
           >
-            <AppText variant="label" size="sm" color="secondary" style={{ textAlign: 'center' }}>Alle löschen</AppText>
+            <AppText variant="label" size="sm" color="secondary" style={{ textAlign: 'center' }}>
+              Alle löschen
+            </AppText>
           </Pressable>
         </View>
       )}

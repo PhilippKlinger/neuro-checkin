@@ -1,12 +1,5 @@
 import { useState } from 'react';
-import {
-  Modal,
-  View,
-  KeyboardAvoidingView,
-  Platform,
-  StyleSheet,
-  Pressable,
-} from 'react-native';
+import { Modal, View, KeyboardAvoidingView, Platform, StyleSheet, Pressable } from 'react-native';
 import { AppText } from '../ui/AppText';
 import Constants from 'expo-constants';
 import { useTheme } from '../../lib/hooks/useTheme';
@@ -87,7 +80,9 @@ export function FeedbackModal({ visible, onClose }: FeedbackModalProps) {
           }}
         >
           {!feedbackAvailable ? (
-            <AppText variant="body" color="secondary">Feedback ist derzeit nicht verfügbar.</AppText>
+            <AppText variant="body" color="secondary">
+              Feedback ist derzeit nicht verfügbar.
+            </AppText>
           ) : feedbackSuccess ? (
             <FeedbackSuccessContent onClose={handleClose} />
           ) : (

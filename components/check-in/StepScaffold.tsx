@@ -81,10 +81,7 @@ export const StepScaffold = forwardRef<ScrollView, StepScaffoldProps>(function S
           {subtitle}
         </AppText>
         {hint && (
-          <AppText
-            variant="hint"
-            style={{ textAlign: 'center', marginBottom: spacing.lg }}
-          >
+          <AppText variant="hint" style={{ textAlign: 'center', marginBottom: spacing.lg }}>
             {hint}
           </AppText>
         )}

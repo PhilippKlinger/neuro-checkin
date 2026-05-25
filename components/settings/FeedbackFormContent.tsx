@@ -42,7 +42,9 @@ export function FeedbackSuccessContent({ onClose }: FeedbackSuccessContentProps)
         accessibilityRole="button"
         accessibilityLabel="Schließen"
       >
-        <AppText variant="label" weight="semibold" color="inverse">Schließen</AppText>
+        <AppText variant="label" weight="semibold" color="inverse">
+          Schließen
+        </AppText>
       </Pressable>
     </>
   );
@@ -62,7 +64,9 @@ export function FeedbackFormContent({
   return (
     <>
       <View style={styles.header}>
-        <AppText variant="title" size="lg">Feedback</AppText>
+        <AppText variant="title" size="lg">
+          Feedback
+        </AppText>
         <Pressable
           onPress={onClose}
           style={({ pressed }) => [
@@ -77,18 +81,16 @@ export function FeedbackFormContent({
           accessibilityLabel="Dialog schließen"
           hitSlop={8}
         >
-          <AppText variant="label" size="lg" color="secondary">✕</AppText>
+          <AppText variant="label" size="lg" color="secondary">
+            ✕
+          </AppText>
         </Pressable>
       </View>
       <AppText variant="body" size="sm" color="secondary" style={{ marginBottom: spacing.md }}>
         Was hat geholfen, was stört, was fehlt? Bitte nur App-Feedback — nicht zu deinem Befinden,
         Gefühlen oder Check-in-Inhalten.
       </AppText>
-      <AppText
-        variant="hint"
-        size="xs"
-        style={{ marginTop: spacing.sm, marginBottom: spacing.md }}
-      >
+      <AppText variant="hint" size="xs" style={{ marginTop: spacing.sm, marginBottom: spacing.md }}>
         Bitte keine persönlichen Inhalte senden. Mit dem Absenden überträgst du deinen Text über
         Formspree (externer Dienst, EU-Datenschutz).
       </AppText>

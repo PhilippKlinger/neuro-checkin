@@ -79,7 +79,9 @@ export function CheckInNavButtons({
         accessibilityLabel={nextLabel}
         accessibilityState={{ disabled: isNextDisabled }}
       >
-        <AppText variant="label" weight="semibold" color="inverse">{nextLabel}</AppText>
+        <AppText variant="label" weight="semibold" color="inverse">
+          {nextLabel}
+        </AppText>
       </Pressable>
     </View>
   );

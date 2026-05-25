@@ -17,11 +17,7 @@ export function StepArrival({ showHintIntro }: StepArrivalProps) {
       subtitle="Wenn du magst, halte einen Moment inne — bevor es weitergeht."
       centerContent
     >
-      <AppText
-        variant="body"
-        color="secondary"
-        style={[styles.body, { marginBottom: spacing.md }]}
-      >
+      <AppText variant="body" color="secondary" style={[styles.body, { marginBottom: spacing.md }]}>
         Wenn du magst, bemerke wie du gerade atmest — oder wie du sitzt oder stehst.{'\n'}
         Oder einfach, wie es dir in diesem Moment geht.
       </AppText>

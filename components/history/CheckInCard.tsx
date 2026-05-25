@@ -52,9 +52,13 @@ export const CheckInCard = memo(function CheckInCard({
       accessibilityState={selectable ? { selected } : undefined}
     >
       <View style={styles.header}>
-        <AppText variant="label" size="sm">{formatDate(checkIn.createdAt)}</AppText>
+        <AppText variant="label" size="sm">
+          {formatDate(checkIn.createdAt)}
+        </AppText>
         <View style={styles.headerRight}>
-          <AppText variant="body" size="xs" color="secondary">{formatTime(checkIn.createdAt)}</AppText>
+          <AppText variant="body" size="xs" color="secondary">
+            {formatTime(checkIn.createdAt)}
+          </AppText>
           <AppText
             variant="label"
             style={{ color: theme.colors.border, marginLeft: spacing.xs }}
@@ -67,14 +71,18 @@ export const CheckInCard = memo(function CheckInCard({
 
       <View style={[styles.metricsRow, { marginTop: spacing.xs, gap: spacing.md }]}>
         <View style={styles.metric}>
-          <AppText variant="body" size="xs" color="secondary">Energie</AppText>
+          <AppText variant="body" size="xs" color="secondary">
+            Energie
+          </AppText>
           <AppText variant="label" weight="semibold" size="sm" color="accent">
             {getLevelLabel(checkIn.energyLevel, ENERGY_LABELS)}
           </AppText>
         </View>
 
         <View style={styles.metric}>
-          <AppText variant="body" size="xs" color="secondary">Fokus</AppText>
+          <AppText variant="body" size="xs" color="secondary">
+            Fokus
+          </AppText>
           <AppText variant="label" weight="semibold" size="sm" color="accent">
             {getLevelLabel(checkIn.focusLevel, FOCUS_LABELS)}
           </AppText>
@@ -82,8 +90,12 @@ export const CheckInCard = memo(function CheckInCard({
 
         {activeSignals > 0 && (
           <View style={styles.metric}>
-            <AppText variant="body" size="xs" color="secondary">Signale</AppText>
-            <AppText variant="label" weight="semibold" size="sm" color="accent">{activeSignals}</AppText>
+            <AppText variant="body" size="xs" color="secondary">
+              Signale
+            </AppText>
+            <AppText variant="label" weight="semibold" size="sm" color="accent">
+              {activeSignals}
+            </AppText>
           </View>
         )}
       </View>

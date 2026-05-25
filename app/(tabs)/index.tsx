@@ -81,7 +81,12 @@ export default function HomeScreen() {
             accessibilityRole="button"
             accessibilityLabel={`Letzter Check-in, ansehen`}
           >
-            <AppText variant="label" size="sm" color="secondary" style={{ marginBottom: spacing.xs }}>
+            <AppText
+              variant="label"
+              size="sm"
+              color="secondary"
+              style={{ marginBottom: spacing.xs }}
+            >
               Letzter Check-in
             </AppText>
             <AppText variant="body">
@@ -113,10 +118,17 @@ export default function HomeScreen() {
         accessibilityRole="button"
         accessibilityLabel="Beginnen, Tiefe wählen"
       >
-        <AppText variant="label" weight="semibold" size="lg" color="inverse">Beginnen</AppText>
+        <AppText variant="label" weight="semibold" size="lg" color="inverse">
+          Beginnen
+        </AppText>
       </Pressable>
 
-      <AppText variant="body" size="xs" color="secondary" style={[styles.footer, { marginTop: spacing.lg }]}>
+      <AppText
+        variant="body"
+        size="xs"
+        color="secondary"
+        style={[styles.footer, { marginTop: spacing.lg }]}
+      >
         Lokal gespeichert · kein Therapieersatz
       </AppText>
     </View>

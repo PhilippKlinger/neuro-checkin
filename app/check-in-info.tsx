@@ -53,10 +53,17 @@ export default function CheckInInfoScreen() {
             },
           ]}
         >
-          <AppText variant="title" size="md" accessibilityRole="header" style={{ marginBottom: spacing.sm }}>
+          <AppText
+            variant="title"
+            size="md"
+            accessibilityRole="header"
+            style={{ marginBottom: spacing.sm }}
+          >
             {section.title}
           </AppText>
-          <AppText variant="body" color="secondary">{section.body}</AppText>
+          <AppText variant="body" color="secondary">
+            {section.body}
+          </AppText>
         </View>
       ))}
     </ScrollView>

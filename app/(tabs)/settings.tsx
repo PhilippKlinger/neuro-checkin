@@ -34,16 +34,8 @@ const DEFAULT_SLOTS: NotificationSlot[] = [
 ];
 
 export default function SettingsScreen() {
-  const {
-    theme,
-    themeName,
-    colorMode,
-    setThemeName,
-    setColorMode,
-    spacing,
-    radii,
-    touchTarget,
-  } = useTheme();
+  const { theme, themeName, colorMode, setThemeName, setColorMode, spacing, radii, touchTarget } =
+    useTheme();
   const db = useDatabase();
   const router = useRouter();
 
@@ -225,7 +217,9 @@ export default function SettingsScreen() {
             <Ionicons name="bulb-outline" size={16} color={theme.colors.textSecondary} />
             <View>
               <AppText variant="body">Hinweise im Check-in</AppText>
-              <AppText variant="body" size="sm" color="secondary">Zeigt kurze Erklärungen in jedem Schritt</AppText>
+              <AppText variant="body" size="sm" color="secondary">
+                Zeigt kurze Erklärungen in jedem Schritt
+              </AppText>
             </View>
           </View>
           <Switch
@@ -281,7 +275,9 @@ export default function SettingsScreen() {
             accessibilityLabel="Feedback senden"
             accessibilityHint="Öffnet ein Feedback-Formular"
           >
-            <AppText variant="label" color="secondary">Feedback senden</AppText>
+            <AppText variant="label" color="secondary">
+              Feedback senden
+            </AppText>
           </Pressable>
         )}
 
@@ -358,7 +354,9 @@ export default function SettingsScreen() {
             accessibilityLabel="Was ist ein Check-in? Mehr erfahren"
           >
             <AppText variant="body">Was ist ein Check-in?</AppText>
-            <AppText variant="body" color="secondary">›</AppText>
+            <AppText variant="body" color="secondary">
+              ›
+            </AppText>
           </Pressable>
         )}
       </ScrollView>

@@ -82,7 +82,11 @@ export default function CheckInDetailScreen() {
       {showDetailHint && (
         <AppText
           variant="hint"
-          style={{ textAlign: 'center', paddingHorizontal: spacing.lg, paddingVertical: spacing.md }}
+          style={{
+            textAlign: 'center',
+            paddingHorizontal: spacing.lg,
+            paddingVertical: spacing.md,
+          }}
         >
           Einzelne Check-ins können über das Papierkorb-Symbol unten gelöscht werden.
         </AppText>

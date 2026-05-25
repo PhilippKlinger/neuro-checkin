@@ -55,7 +55,8 @@ export function resolveTextStyle(
   const effectiveFontSize = options.size ? typography.sizes[options.size] : tokens.fontSize;
   const effectiveFontFamily = resolveFontFamily(options.variant, options.weight);
   const effectiveLineHeight = options.size
-    ? effectiveFontSize * (tokens.family === 'heading' ? typography.lineHeights.tight : typography.lineHeights.normal)
+    ? effectiveFontSize *
+      (tokens.family === 'heading' ? typography.lineHeights.tight : typography.lineHeights.normal)
     : tokens.lineHeight;
 
   const result: ResolvedTextStyle = {

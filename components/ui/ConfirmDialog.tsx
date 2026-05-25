@@ -77,7 +77,9 @@ export function ConfirmDialog({
                 accessibilityRole="button"
                 accessibilityLabel={cancelLabel}
               >
-                <AppText variant="label" style={{ textAlign: 'center' }}>{cancelLabel}</AppText>
+                <AppText variant="label" style={{ textAlign: 'center' }}>
+                  {cancelLabel}
+                </AppText>
               </Pressable>
             )}
 
@@ -97,7 +99,14 @@ export function ConfirmDialog({
               accessibilityRole="button"
               accessibilityLabel={confirmLabel}
             >
-              <AppText variant="label" weight="semibold" color="inverse" style={{ textAlign: 'center' }}>{confirmLabel}</AppText>
+              <AppText
+                variant="label"
+                weight="semibold"
+                color="inverse"
+                style={{ textAlign: 'center' }}
+              >
+                {confirmLabel}
+              </AppText>
             </Pressable>
           </View>
         </View>

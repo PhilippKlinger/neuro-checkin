@@ -18,10 +18,7 @@ export function StepSummary({ draft, showPostFirstCheckinHint }: StepSummaryProp
   return (
     <StepScaffold title="Zusammenfassung" subtitle="Dein Check-in auf einen Blick">
       {showPostFirstCheckinHint && (
-        <AppText
-          variant="hint"
-          style={{ textAlign: 'center', marginBottom: spacing.md }}
-        >
+        <AppText variant="hint" style={{ textAlign: 'center', marginBottom: spacing.md }}>
           Check-ins lassen sich jederzeit im Verlauf nachlesen — und Muster werden über Zeit
           sichtbar.
         </AppText>
@@ -39,12 +36,20 @@ export function StepSummary({ draft, showPostFirstCheckinHint }: StepSummaryProp
         ]}
       >
         <View style={[styles.row, { marginBottom: spacing.sm }]}>
-          <AppText variant="body" color="secondary">Energie</AppText>
-          <AppText variant="label" weight="semibold">{p.energy ?? 'Nicht angegeben'}</AppText>
+          <AppText variant="body" color="secondary">
+            Energie
+          </AppText>
+          <AppText variant="label" weight="semibold">
+            {p.energy ?? 'Nicht angegeben'}
+          </AppText>
         </View>
         <View style={styles.row}>
-          <AppText variant="body" color="secondary">Fokus</AppText>
-          <AppText variant="label" weight="semibold">{p.focus ?? 'Nicht angegeben'}</AppText>
+          <AppText variant="body" color="secondary">
+            Fokus
+          </AppText>
+          <AppText variant="label" weight="semibold">
+            {p.focus ?? 'Nicht angegeben'}
+          </AppText>
         </View>
       </View>
 
@@ -60,11 +65,17 @@ export function StepSummary({ draft, showPostFirstCheckinHint }: StepSummaryProp
             },
           ]}
         >
-          <AppText variant="label" color="accent" style={{ marginBottom: spacing.sm }}>Körpersignale</AppText>
+          <AppText variant="label" color="accent" style={{ marginBottom: spacing.sm }}>
+            Körpersignale
+          </AppText>
           {activeSignals.map((s) => (
             <View key={s.label} style={[styles.row, { marginBottom: spacing.xs }]}>
-              <AppText variant="body" color="secondary">{s.label}</AppText>
-              <AppText variant="label" weight="semibold">Ja</AppText>
+              <AppText variant="body" color="secondary">
+                {s.label}
+              </AppText>
+              <AppText variant="label" weight="semibold">
+                Ja
+              </AppText>
             </View>
           ))}
         </View>
@@ -82,7 +93,9 @@ export function StepSummary({ draft, showPostFirstCheckinHint }: StepSummaryProp
             },
           ]}
         >
-          <AppText variant="label" color="accent" style={{ marginBottom: spacing.sm }}>Gefühle</AppText>
+          <AppText variant="label" color="accent" style={{ marginBottom: spacing.sm }}>
+            Gefühle
+          </AppText>
           <AppText variant="body">{p.feelings}</AppText>
         </View>
       )}
@@ -99,7 +112,9 @@ export function StepSummary({ draft, showPostFirstCheckinHint }: StepSummaryProp
             },
           ]}
         >
-          <AppText variant="label" color="accent" style={{ marginBottom: spacing.sm }}>Stress-Level</AppText>
+          <AppText variant="label" color="accent" style={{ marginBottom: spacing.sm }}>
+            Stress-Level
+          </AppText>
           <AppText variant="body">{p.distress}</AppText>
           {draft.distressNote.trim() !== '' && (
             <AppText variant="hint" style={{ marginTop: spacing.xs }}>
@@ -121,13 +136,12 @@ export function StepSummary({ draft, showPostFirstCheckinHint }: StepSummaryProp
             },
           ]}
         >
-          <AppText variant="label" color="accent" style={{ marginBottom: spacing.sm }}>Gedanken</AppText>
+          <AppText variant="label" color="accent" style={{ marginBottom: spacing.sm }}>
+            Gedanken
+          </AppText>
           {p.thoughtsType && <AppText variant="body">{p.thoughtsType}</AppText>}
           {p.thoughtsNote && (
-            <AppText
-              variant="hint"
-              style={{ marginTop: p.thoughtsType ? spacing.xs : 0 }}
-            >
+            <AppText variant="hint" style={{ marginTop: p.thoughtsType ? spacing.xs : 0 }}>
               {p.thoughtsNote}
             </AppText>
           )}
@@ -146,14 +160,15 @@ export function StepSummary({ draft, showPostFirstCheckinHint }: StepSummaryProp
             },
           ]}
         >
-          <AppText variant="label" color="accent" style={{ marginBottom: spacing.sm }}>Selbstfürsorge</AppText>
+          <AppText variant="label" color="accent" style={{ marginBottom: spacing.sm }}>
+            Selbstfürsorge
+          </AppText>
           <AppText variant="body">{p.selfCare}</AppText>
         </View>
       )}
     </StepScaffold>
   );
 }
-
 
 const styles = StyleSheet.create({
   card: {},

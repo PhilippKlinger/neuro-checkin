@@ -57,7 +57,9 @@ export function SlotCard({
     >
       {/* Header row: label + switch */}
       <View style={styles.row}>
-        <AppText variant="label" style={{ flex: 1 }}>{label}</AppText>
+        <AppText variant="label" style={{ flex: 1 }}>
+          {label}
+        </AppText>
         <Switch
           value={slot.enabled}
           onValueChange={onToggle}
@@ -119,7 +121,9 @@ export function SlotCard({
                   accessibilityRole="button"
                   accessibilityLabel={`Uhrzeit: ${slot.time}. Tippen zum Ändern`}
                 >
-                  <AppText variant="label" color="accent">{slot.time}</AppText>
+                  <AppText variant="label" color="accent">
+                    {slot.time}
+                  </AppText>
                 </Pressable>
                 {showTimePicker && (
                   <DateTimePicker
@@ -189,11 +193,7 @@ export function SlotCard({
                     accessibilityLabel={`Wochentag ${dayLabel}`}
                     accessibilityState={{ checked: isActive }}
                   >
-                    <AppText
-                      variant="label"
-                      size="xs"
-                      color={isActive ? 'primary' : 'secondary'}
-                    >
+                    <AppText variant="label" size="xs" color={isActive ? 'primary' : 'secondary'}>
                       {dayLabel}
                     </AppText>
                   </Pressable>

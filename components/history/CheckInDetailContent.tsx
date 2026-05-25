@@ -38,7 +38,9 @@ export function CheckInDetailContent({
         style={styles.scroll}
         contentContainerStyle={{ padding: spacing.lg, paddingBottom: spacing.xxl + insets.bottom }}
       >
-        <AppText variant="title" size="xl" style={{ marginBottom: spacing.xs }}>Check-in</AppText>
+        <AppText variant="title" size="xl" style={{ marginBottom: spacing.xs }}>
+          Check-in
+        </AppText>
         <AppText variant="body" size="sm" color="secondary" style={{ marginBottom: spacing.xl }}>
           {formatDateTime(checkIn.createdAt)}
         </AppText>
@@ -55,12 +57,20 @@ export function CheckInDetailContent({
           ]}
         >
           <View style={[styles.row, { marginBottom: spacing.sm }]}>
-            <AppText variant="body" color="secondary">Energie</AppText>
-            <AppText variant="label" weight="semibold">{p.energy ?? 'Nicht angegeben'}</AppText>
+            <AppText variant="body" color="secondary">
+              Energie
+            </AppText>
+            <AppText variant="label" weight="semibold">
+              {p.energy ?? 'Nicht angegeben'}
+            </AppText>
           </View>
           <View style={styles.row}>
-            <AppText variant="body" color="secondary">Fokus</AppText>
-            <AppText variant="label" weight="semibold">{p.focus ?? 'Nicht angegeben'}</AppText>
+            <AppText variant="body" color="secondary">
+              Fokus
+            </AppText>
+            <AppText variant="label" weight="semibold">
+              {p.focus ?? 'Nicht angegeben'}
+            </AppText>
           </View>
         </View>
 
@@ -76,9 +86,13 @@ export function CheckInDetailContent({
               },
             ]}
           >
-            <AppText variant="label" size="sm" color="accent" style={{ marginBottom: spacing.sm }}>Körpersignale</AppText>
+            <AppText variant="label" size="sm" color="accent" style={{ marginBottom: spacing.sm }}>
+              Körpersignale
+            </AppText>
             {activeSignals.length > 0 && (
-              <AppText variant="body" style={{ marginBottom: spacing.xs }}>Ja: {activeSignals.join(', ')}</AppText>
+              <AppText variant="body" style={{ marginBottom: spacing.xs }}>
+                Ja: {activeSignals.join(', ')}
+              </AppText>
             )}
             {inactiveSignals.length > 0 && (
               <AppText variant="body">Nein: {inactiveSignals.join(', ')}</AppText>
@@ -98,7 +112,9 @@ export function CheckInDetailContent({
               },
             ]}
           >
-            <AppText variant="label" size="sm" color="accent" style={{ marginBottom: spacing.sm }}>Gefühle</AppText>
+            <AppText variant="label" size="sm" color="accent" style={{ marginBottom: spacing.sm }}>
+              Gefühle
+            </AppText>
             <AppText variant="body">{p.feelings}</AppText>
           </View>
         )}
@@ -115,7 +131,9 @@ export function CheckInDetailContent({
               },
             ]}
           >
-            <AppText variant="label" size="sm" color="accent" style={{ marginBottom: spacing.sm }}>Stress-Level</AppText>
+            <AppText variant="label" size="sm" color="accent" style={{ marginBottom: spacing.sm }}>
+              Stress-Level
+            </AppText>
             <AppText variant="body">{p.distress}</AppText>
             {checkIn.distressNote && checkIn.distressNote.trim() !== '' && (
               <AppText variant="body" style={{ marginTop: spacing.xs, fontStyle: 'italic' }}>
@@ -137,10 +155,15 @@ export function CheckInDetailContent({
               },
             ]}
           >
-            <AppText variant="label" size="sm" color="accent" style={{ marginBottom: spacing.sm }}>Gedanken</AppText>
+            <AppText variant="label" size="sm" color="accent" style={{ marginBottom: spacing.sm }}>
+              Gedanken
+            </AppText>
             {p.thoughtsType && <AppText variant="body">{p.thoughtsType}</AppText>}
             {p.thoughtsNote && (
-              <AppText variant="body" style={{ marginTop: p.thoughtsType ? spacing.xs : 0, fontStyle: 'italic' }}>
+              <AppText
+                variant="body"
+                style={{ marginTop: p.thoughtsType ? spacing.xs : 0, fontStyle: 'italic' }}
+              >
                 {p.thoughtsNote}
               </AppText>
             )}
@@ -159,7 +182,9 @@ export function CheckInDetailContent({
               },
             ]}
           >
-            <AppText variant="label" size="sm" color="accent" style={{ marginBottom: spacing.sm }}>Selbstfürsorge</AppText>
+            <AppText variant="label" size="sm" color="accent" style={{ marginBottom: spacing.sm }}>
+              Selbstfürsorge
+            </AppText>
             <AppText variant="body">{p.selfCare}</AppText>
           </View>
         )}
@@ -180,7 +205,9 @@ export function CheckInDetailContent({
           accessibilityRole="button"
           accessibilityLabel="Check-in löschen"
         >
-          <AppText variant="label" color="secondary" style={{ textAlign: 'center' }}>Check-in löschen</AppText>
+          <AppText variant="label" color="secondary" style={{ textAlign: 'center' }}>
+            Check-in löschen
+          </AppText>
         </Pressable>
 
         {onExport && (
@@ -203,7 +230,9 @@ export function CheckInDetailContent({
             accessibilityLabel="Check-in als PDF exportieren"
             accessibilityHint="Erstellt eine PDF-Datei und öffnet das Teilen-Menü"
           >
-            <AppText variant="label" size="sm" color="secondary" style={{ textAlign: 'center' }}>Als PDF exportieren</AppText>
+            <AppText variant="label" size="sm" color="secondary" style={{ textAlign: 'center' }}>
+              Als PDF exportieren
+            </AppText>
           </Pressable>
         )}
       </ScrollView>

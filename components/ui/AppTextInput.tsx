@@ -10,13 +10,7 @@ interface AppTextInputProps extends Omit<TextInputProps, 'maxFontSizeMultiplier'
   size?: keyof typeof typography.sizes;
 }
 
-export function AppTextInput({
-  variant = 'body',
-  color,
-  size,
-  style,
-  ...rest
-}: AppTextInputProps) {
+export function AppTextInput({ variant = 'body', color, size, style, ...rest }: AppTextInputProps) {
   const { theme } = useTheme();
 
   const resolved = resolveTextStyle(
