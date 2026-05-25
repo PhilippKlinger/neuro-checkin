@@ -8,7 +8,7 @@
 
 A minimalist, neurodivergence-friendly check-in app for daily self-awareness — built with React Native and Expo.
 
-Designed for people with autism, ADHD, or high inner complexity who need a calm, low-pressure way to notice how they are doing right now. Check-in data stays on your device. Optional feedback is sent via Formspree. No account, no tracking.
+Designed for people with autism, ADHD, or high inner complexity who need a calm, low-pressure way to notice how they are doing right now. No account, no ads, no behavioral tracking. Check-in contents stay on your device. Crash reports (Sentry) and optional feedback (Formspree) are handled as described in the [privacy policy](https://neurocheckin.de/datenschutz).
 
 ---
 
@@ -32,7 +32,7 @@ Designed for people with autism, ADHD, or high inner complexity who need a calm,
 ## Features
 
 - **Guided 9-step check-in** — body signals, energy, focus, feelings, self-care, thoughts, distress level, and a free-form note; every step is optional
-- **Quick check-in** — a condensed 4-step flow for low-energy moments
+- **Quick check-in** — a condensed 3-step flow for low-energy moments
 - **Check-in history** — full log with detail view and chronological summary
 - **PDF export** — share individual or multiple check-ins as formatted PDF reports (e.g., for therapy appointments)
 - **Guided mode** — inline contextual hints per step, toggleable without leaving the flow
@@ -183,7 +183,7 @@ CI runs lint, type checks, and the full test suite on every push and pull reques
 
 ## Status
 
-Neuro Check-in is at **v1.5.8** and preparing for public release on Google Play.
+Neuro Check-in is at **v1.5.9** and preparing for public release on Google Play.
 
 Screenshots will be added before the public release.
 
