@@ -1,5 +1,14 @@
 import { forwardRef, useState, useCallback, useRef } from 'react';
-import { View, Text, ScrollView, Pressable, StyleSheet, NativeScrollEvent, NativeSyntheticEvent, LayoutChangeEvent } from 'react-native';
+import {
+  View,
+  Text,
+  ScrollView,
+  Pressable,
+  StyleSheet,
+  NativeScrollEvent,
+  NativeSyntheticEvent,
+  LayoutChangeEvent,
+} from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useTheme } from '../../lib/hooks/useTheme';
 
@@ -92,72 +101,72 @@ export const StepScaffold = forwardRef<ScrollView, StepScaffoldProps>(function S
       </View>
 
       <View style={styles.scrollWrapper}>
-      <ScrollView
-        ref={ref}
-        style={styles.scrollArea}
-        contentContainerStyle={[
-          styles.scrollContent,
-          { paddingBottom: spacing.lg },
-          centerContent && styles.scrollContentCentered,
-        ]}
-        showsVerticalScrollIndicator
-        keyboardShouldPersistTaps={keyboardPersistTaps ? 'handled' : 'never'}
-        onContentSizeChange={handleContentSizeChange}
-        onLayout={handleLayout}
-        onScroll={handleScroll}
-        scrollEventThrottle={16}
-      >
-        {children}
+        <ScrollView
+          ref={ref}
+          style={styles.scrollArea}
+          contentContainerStyle={[
+            styles.scrollContent,
+            { paddingBottom: spacing.lg },
+            centerContent && styles.scrollContentCentered,
+          ]}
+          showsVerticalScrollIndicator
+          keyboardShouldPersistTaps={keyboardPersistTaps ? 'handled' : 'never'}
+          onContentSizeChange={handleContentSizeChange}
+          onLayout={handleLayout}
+          onScroll={handleScroll}
+          scrollEventThrottle={16}
+        >
+          {children}
 
-        {skipConfig && (
-          <>
-            <View
-              style={[
-                styles.divider,
-                { backgroundColor: theme.colors.border, marginVertical: spacing.md },
-              ]}
-            />
-            <Pressable
-              onPress={skipConfig.onSkip}
-              style={({ pressed }) => [
-                styles.skipButton,
-                {
-                  minHeight: touchTarget.min,
-                  borderRadius: radii.md,
-                  paddingHorizontal: spacing.md,
-                  backgroundColor: skipConfig.skipped
-                    ? theme.colors.accentSoft
-                    : theme.colors.surface,
-                  borderWidth: 1,
-                  borderColor: skipConfig.skipped ? theme.colors.accent : theme.colors.border,
-                },
-                pressed && { opacity: 0.75 },
-              ]}
-              accessibilityRole="button"
-              accessibilityLabel="Kann ich gerade nicht sagen"
-              accessibilityState={{ selected: skipConfig.skipped }}
-            >
-              <Text
-                style={{
-                  fontFamily: typography.families.body.regular,
-                  fontSize: typography.sizes.md,
-                  color: theme.colors.textSecondary,
-                  fontStyle: 'italic',
-                }}
+          {skipConfig && (
+            <>
+              <View
+                style={[
+                  styles.divider,
+                  { backgroundColor: theme.colors.border, marginVertical: spacing.md },
+                ]}
+              />
+              <Pressable
+                onPress={skipConfig.onSkip}
+                style={({ pressed }) => [
+                  styles.skipButton,
+                  {
+                    minHeight: touchTarget.min,
+                    borderRadius: radii.md,
+                    paddingHorizontal: spacing.md,
+                    backgroundColor: skipConfig.skipped
+                      ? theme.colors.accentSoft
+                      : theme.colors.surface,
+                    borderWidth: 1,
+                    borderColor: skipConfig.skipped ? theme.colors.accent : theme.colors.border,
+                  },
+                  pressed && { opacity: 0.75 },
+                ]}
+                accessibilityRole="button"
+                accessibilityLabel="Kann ich gerade nicht sagen"
+                accessibilityState={{ selected: skipConfig.skipped }}
               >
-                Kann ich gerade nicht sagen
-              </Text>
-            </Pressable>
-          </>
+                <Text
+                  style={{
+                    fontFamily: typography.families.body.regular,
+                    fontSize: typography.sizes.md,
+                    color: theme.colors.textSecondary,
+                    fontStyle: 'italic',
+                  }}
+                >
+                  Kann ich gerade nicht sagen
+                </Text>
+              </Pressable>
+            </>
+          )}
+        </ScrollView>
+        {hasOverflow && !isAtBottom && (
+          <LinearGradient
+            colors={[`${theme.colors.background}00`, theme.colors.background] as const}
+            style={styles.fadeOverlay}
+            pointerEvents="none"
+          />
         )}
-      </ScrollView>
-      {hasOverflow && !isAtBottom && (
-        <LinearGradient
-          colors={[`${theme.colors.background}00`, theme.colors.background] as const}
-          style={styles.fadeOverlay}
-          pointerEvents="none"
-        />
-      )}
       </View>
     </View>
   );
