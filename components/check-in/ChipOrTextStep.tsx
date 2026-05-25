@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { View, Text, TextInput, Pressable, ScrollView, StyleSheet } from 'react-native';
+import { View, Text, TextInput, Pressable, StyleSheet } from 'react-native';
 import { useTheme } from '../../lib/hooks/useTheme';
 import { isChipSelected, toggleChip } from '../../lib/utils/chips';
-import { NAV_AREA_PADDING } from '../../lib/constants/layout';
+import { StepScaffold } from './StepScaffold';
 import type { ChipGroup } from '../../lib/constants/chips';
 export type { ChipGroup } from '../../lib/constants/chips';
 
@@ -20,7 +20,6 @@ interface ChipOrTextStepProps {
   chipGroups?: ChipGroup[];
   skipped?: boolean;
   onSkip?: () => void;
-  /** When true, hides the free-text toggle so only chips are available. */
   chipsOnly?: boolean;
 }
 
@@ -105,7 +104,6 @@ export function ChipOrTextStep({
   );
 
   const effectiveMode = chipsOnly ? 'chips' : mode;
-
   const counterThreshold = Math.floor(maxLength * 0.9);
 
   function switchToText() {
@@ -119,49 +117,13 @@ export function ChipOrTextStep({
   }
 
   return (
-    <ScrollView
-      style={styles.container}
-      contentContainerStyle={styles.contentContainer}
-      keyboardShouldPersistTaps="handled"
-      showsVerticalScrollIndicator={false}
+    <StepScaffold
+      title={title}
+      subtitle={subtitle}
+      hint={hint}
+      keyboardPersistTaps
+      skipConfig={onSkip ? { onSkip, skipped } : undefined}
     >
-      <Text
-        style={{
-          fontFamily: typography.families.heading.semibold,
-          fontSize: typography.sizes.xl,
-          color: theme.colors.text,
-          textAlign: 'center',
-          marginBottom: spacing.sm,
-        }}
-      >
-        {title}
-      </Text>
-      <Text
-        style={{
-          fontFamily: typography.families.body.regular,
-          fontSize: typography.sizes.md,
-          color: theme.colors.textSecondary,
-          textAlign: 'center',
-          marginBottom: hint ? spacing.sm : spacing.lg,
-        }}
-      >
-        {subtitle}
-      </Text>
-      {hint && (
-        <Text
-          style={{
-            fontFamily: typography.families.body.regular,
-            fontSize: typography.sizes.sm,
-            color: theme.colors.textSecondary,
-            textAlign: 'center',
-            fontStyle: 'italic',
-            marginBottom: spacing.lg,
-          }}
-        >
-          {hint}
-        </Text>
-      )}
-
       {effectiveMode === 'chips' ? (
         <>
           {chipGroups ? (
@@ -217,46 +179,6 @@ export function ChipOrTextStep({
               </Text>
             </Pressable>
           )}
-
-          {onSkip && (
-            <>
-              <View
-                style={[
-                  styles.divider,
-                  { backgroundColor: theme.colors.border, marginVertical: spacing.md },
-                ]}
-              />
-              <Pressable
-                onPress={onSkip}
-                style={({ pressed }) => [
-                  styles.skipButton,
-                  {
-                    minHeight: touchTarget.min,
-                    borderRadius: radii.md,
-                    paddingHorizontal: spacing.md,
-                    backgroundColor: skipped ? theme.colors.accentSoft : theme.colors.surface,
-                    borderWidth: 1,
-                    borderColor: skipped ? theme.colors.accent : theme.colors.border,
-                  },
-                  pressed && { opacity: 0.75 },
-                ]}
-                accessibilityRole="button"
-                accessibilityLabel="Kann ich nicht benennen"
-                accessibilityState={{ selected: skipped }}
-              >
-                <Text
-                  style={{
-                    fontFamily: typography.families.body.regular,
-                    fontSize: typography.sizes.md,
-                    color: theme.colors.textSecondary,
-                    fontStyle: 'italic',
-                  }}
-                >
-                  Kann ich nicht benennen
-                </Text>
-              </Pressable>
-            </>
-          )}
         </>
       ) : (
         <>
@@ -283,6 +205,17 @@ export function ChipOrTextStep({
             ]}
             accessibilityLabel={textAccessibilityLabel}
           />
+          <Text
+            style={{
+              fontFamily: typography.families.body.regular,
+              fontSize: typography.sizes.xs,
+              color: theme.colors.textSecondary,
+              marginTop: spacing.xs,
+              fontStyle: 'italic',
+            }}
+          >
+            Mehrere Begriffe mit Komma trennen — sie werden als eigene Chips gespeichert.
+          </Text>
           {value.length >= counterThreshold && (
             <Text
               style={{
@@ -321,18 +254,11 @@ export function ChipOrTextStep({
           </Pressable>
         </>
       )}
-    </ScrollView>
+    </StepScaffold>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  contentContainer: {
-    flexGrow: 1,
-    paddingBottom: NAV_AREA_PADDING,
-  },
   chipWrap: {
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -346,13 +272,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   modeSwitch: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  divider: {
-    height: 1,
-  },
-  skipButton: {
     alignItems: 'center',
     justifyContent: 'center',
   },

@@ -8,6 +8,7 @@ import { useTheme } from '../../lib/hooks/useTheme';
 import { useDatabase } from '../../lib/hooks/useDatabase';
 import { getSettings, updateSettings } from '../../lib/database/settings';
 import { countCheckIns } from '../../lib/database/checkins';
+import { countUserChips } from '../../lib/database/userChips';
 import { getNotificationSlots, saveNotificationSlot } from '../../lib/database/notificationQueries';
 import { ThemeName, ColorMode } from '../../lib/constants/themes';
 import { AppearanceModeSection } from '../../components/settings/AppearanceModeSection';
@@ -51,6 +52,7 @@ export default function SettingsScreen() {
   const [showTimePicker, setShowTimePicker] = useState<0 | 1 | null>(null);
   const [isEmulator, setIsEmulator] = useState(false);
   const [checkInCount, setCheckInCount] = useState(0);
+  const [chipCount, setChipCount] = useState(0);
   const [guidedMode, setGuidedMode] = useState(false);
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
   const [feedbackOpen, setFeedbackOpen] = useState(false);
@@ -81,6 +83,8 @@ export default function SettingsScreen() {
 
         const count = await countCheckIns(db);
         setCheckInCount(count);
+        const chips = await countUserChips(db);
+        setChipCount(chips);
       }
       load();
     }, [db, setThemeName, setColorMode])
@@ -316,7 +320,9 @@ export default function SettingsScreen() {
             <DataSection
               db={db}
               checkInCount={checkInCount}
+              chipCount={chipCount}
               onDeleteComplete={() => setCheckInCount(0)}
+              onChipsDeleteComplete={() => setChipCount(0)}
             />
           </View>
         )}

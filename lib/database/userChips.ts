@@ -33,6 +33,21 @@ export async function getUserChips(db: SQLiteDatabase, category: ChipCategory): 
   return rows.slice(0, 20).map((r) => r.label);
 }
 
+export async function countUserChips(db: SQLiteDatabase): Promise<number> {
+  const row = await db.getFirstAsync<{ count: number }>(
+    `SELECT COUNT(*) as count FROM user_chips WHERE use_count >= 1`
+  );
+  return row?.count ?? 0;
+}
+
+export async function deleteUserChipByLabel(
+  db: SQLiteDatabase,
+  category: ChipCategory,
+  label: string
+): Promise<void> {
+  await db.runAsync(`DELETE FROM user_chips WHERE category = ? AND label = ?`, [category, label]);
+}
+
 export async function deleteUserChips(db: SQLiteDatabase, category?: ChipCategory): Promise<void> {
   if (category) {
     await db.runAsync(`DELETE FROM user_chips WHERE category = ?`, [category]);
