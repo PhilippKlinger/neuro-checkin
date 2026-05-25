@@ -22,8 +22,7 @@ function normalizeSignal(value: unknown): boolean | null {
 export function normalizeCheckInInsert(data: CheckInInsert): CheckInInsert {
   const energyLevel = clampLevel(data.energyLevel, 0, 5);
   const focusLevel = clampLevel(data.focusLevel, 0, 5);
-  const distressLevel =
-    data.distressLevel == null ? null : clampLevel(data.distressLevel, 1, 5);
+  const distressLevel = data.distressLevel == null ? null : clampLevel(data.distressLevel, 1, 5);
 
   const feelings = (data.feelings ?? '').trim();
 
