@@ -205,6 +205,17 @@ export function ChipOrTextStep({
             ]}
             accessibilityLabel={textAccessibilityLabel}
           />
+          <Text
+            style={{
+              fontFamily: typography.families.body.regular,
+              fontSize: typography.sizes.xs,
+              color: theme.colors.textSecondary,
+              marginTop: spacing.xs,
+              fontStyle: 'italic',
+            }}
+          >
+            Mehrere Begriffe mit Komma trennen — sie werden als eigene Chips gespeichert.
+          </Text>
           {value.length >= counterThreshold && (
             <Text
               style={{

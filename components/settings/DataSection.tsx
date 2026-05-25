@@ -9,10 +9,12 @@ import { useState } from 'react';
 interface DataSectionProps {
   db: SQLiteDatabase;
   checkInCount: number;
+  chipCount: number;
   onDeleteComplete: () => void;
+  onChipsDeleteComplete: () => void;
 }
 
-export function DataSection({ db, checkInCount, onDeleteComplete }: DataSectionProps) {
+export function DataSection({ db, checkInCount, chipCount, onDeleteComplete, onChipsDeleteComplete }: DataSectionProps) {
   const { theme, spacing, typography, radii, touchTarget } = useTheme();
   const [showStep1, setShowStep1] = useState(false);
   const [showStep2, setShowStep2] = useState(false);
@@ -24,6 +26,7 @@ export function DataSection({ db, checkInCount, onDeleteComplete }: DataSectionP
     setShowChipsConfirm(false);
     try {
       await deleteUserChips(db);
+      onChipsDeleteComplete();
       setShowChipsDone(true);
     } catch {
       Alert.alert(
@@ -109,6 +112,7 @@ export function DataSection({ db, checkInCount, onDeleteComplete }: DataSectionP
 
       <Pressable
         onPress={() => setShowChipsConfirm(true)}
+        disabled={chipCount === 0}
         style={({ pressed }) => [
           styles.button,
           {
@@ -119,12 +123,13 @@ export function DataSection({ db, checkInCount, onDeleteComplete }: DataSectionP
             borderWidth: 1,
             borderColor: theme.colors.border,
             marginTop: spacing.sm,
-            opacity: pressed ? 0.75 : 1,
+            opacity: chipCount === 0 ? 0.4 : pressed ? 0.75 : 1,
           },
         ]}
         accessibilityRole="button"
-        accessibilityLabel="Eigene Chips löschen"
+        accessibilityLabel={`Eigene Chips löschen${chipCount > 0 ? ` (${chipCount})` : ''}`}
         accessibilityHint="Löscht alle selbst erstellten Gefühle- und Selbstfürsorge-Chips"
+        accessibilityState={{ disabled: chipCount === 0 }}
       >
         <Text
           style={{
@@ -133,7 +138,7 @@ export function DataSection({ db, checkInCount, onDeleteComplete }: DataSectionP
             color: theme.colors.text,
           }}
         >
-          Eigene Chips löschen
+          Eigene Chips löschen{chipCount > 0 ? ` (${chipCount})` : ''}
         </Text>
       </Pressable>
 
@@ -175,7 +180,7 @@ export function DataSection({ db, checkInCount, onDeleteComplete }: DataSectionP
       <ConfirmDialog
         visible={showChipsConfirm}
         title="Eigene Chips löschen"
-        message="Alle selbst erstellten Begriffe werden dauerhaft gelöscht."
+        message={`${chipCount === 1 ? '1 selbst erstellter Begriff wird' : `Alle ${chipCount} selbst erstellten Begriffe werden`} dauerhaft gelöscht.`}
         confirmLabel="Löschen"
         cancelLabel="Abbrechen"
         destructive
