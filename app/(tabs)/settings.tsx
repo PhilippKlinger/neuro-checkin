@@ -2,6 +2,7 @@ import { useState, useCallback, useRef } from 'react';
 import { Text, Pressable, ScrollView, Switch, StyleSheet, Platform, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as Device from 'expo-device';
+import * as Sentry from '@sentry/react-native';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { useTheme } from '../../lib/hooks/useTheme';
@@ -62,29 +63,33 @@ export default function SettingsScreen() {
   useFocusEffect(
     useCallback(() => {
       async function load() {
-        const settings = await getSettings(db);
-        setThemeName(settings.themeName as ThemeName);
-        setColorMode(settings.colorMode);
-        setIsEmulator(!Device.isDevice);
+        try {
+          const settings = await getSettings(db);
+          setThemeName(settings.themeName as ThemeName);
+          setColorMode(settings.colorMode);
+          setIsEmulator(!Device.isDevice);
 
-        const dbSlots = await getNotificationSlots(db);
-        if (dbSlots.length >= 2) {
-          setSlots(dbSlots as NotificationSlot[]);
-          if (Device.isDevice) {
-            const slotsJson = JSON.stringify(dbSlots);
-            if (slotsJson !== lastScheduledSlotsRef.current) {
-              await scheduleAllSlots(dbSlots as NotificationSlot[]);
-              lastScheduledSlotsRef.current = slotsJson;
+          const dbSlots = await getNotificationSlots(db);
+          if (dbSlots.length >= 2) {
+            setSlots(dbSlots as NotificationSlot[]);
+            if (Device.isDevice) {
+              const slotsJson = JSON.stringify(dbSlots);
+              if (slotsJson !== lastScheduledSlotsRef.current) {
+                await scheduleAllSlots(dbSlots as NotificationSlot[]);
+                lastScheduledSlotsRef.current = slotsJson;
+              }
             }
           }
+
+          setGuidedMode(settings.guidedModeEnabled);
+
+          const count = await countCheckIns(db);
+          setCheckInCount(count);
+          const chips = await countUserChips(db);
+          setChipCount(chips);
+        } catch (e) {
+          Sentry.captureException(e);
         }
-
-        setGuidedMode(settings.guidedModeEnabled);
-
-        const count = await countCheckIns(db);
-        setCheckInCount(count);
-        const chips = await countUserChips(db);
-        setChipCount(chips);
       }
       load();
     }, [db, setThemeName, setColorMode])
@@ -173,7 +178,8 @@ export default function SettingsScreen() {
       setGuidedMode(value);
       try {
         await updateSettings(db, { guidedModeEnabled: value });
-      } catch {
+      } catch (e) {
+        Sentry.captureException(e);
         setGuidedMode(previous);
       }
     },
