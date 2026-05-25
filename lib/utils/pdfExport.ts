@@ -1,10 +1,10 @@
 import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
-import * as FileSystem from 'expo-file-system';
+import { File } from 'expo-file-system';
 import type { CheckIn } from '../types/checkin';
 import { buildPdfHtml } from './pdfTemplate';
 
-function buildFileName(checkIns: CheckIn[]): string {
+export function buildFileName(checkIns: CheckIn[]): string {
   if (checkIns.length === 0) return 'Check-in Export';
 
   const formatDate = (iso: string) => iso.split(' ')[0] ?? iso;
@@ -27,11 +27,10 @@ export async function exportCheckInsAsPdf(checkIns: CheckIn[]): Promise<void> {
   const { uri } = await Print.printToFileAsync({ html });
 
   const fileName = buildFileName(checkIns);
-  const dir = uri.substring(0, uri.lastIndexOf('/') + 1);
-  const namedUri = `${dir}${fileName}.pdf`;
-  await FileSystem.moveAsync({ from: uri, to: namedUri });
+  const file = new File(uri);
+  file.rename(`${fileName}.pdf`);
 
-  await Sharing.shareAsync(namedUri, {
+  await Sharing.shareAsync(file.uri, {
     mimeType: 'application/pdf',
     UTI: 'com.adobe.pdf',
   });
