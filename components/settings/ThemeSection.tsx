@@ -1,6 +1,7 @@
 import { memo } from 'react';
-import { View, Text, Pressable, StyleSheet } from 'react-native';
+import { View, Pressable, StyleSheet } from 'react-native';
 import { useTheme } from '../../lib/hooks/useTheme';
+import { AppText } from '../ui/AppText';
 import { themes, ThemeName } from '../../lib/constants/themes';
 
 interface ThemeSectionProps {
@@ -18,20 +19,13 @@ export const ThemeSection = memo(function ThemeSection({
   currentTheme,
   onThemeChange,
 }: ThemeSectionProps) {
-  const { theme, spacing, typography, radii, resolvedMode } = useTheme();
+  const { spacing, radii, resolvedMode } = useTheme();
 
   return (
     <>
-      <Text
-        style={{
-          fontFamily: typography.families.heading.semibold,
-          fontSize: typography.sizes.lg,
-          color: theme.colors.text,
-          marginBottom: spacing.md,
-        }}
-      >
+      <AppText variant="title" size="lg" style={{ marginBottom: spacing.md }}>
         Farbpalette
-      </Text>
+      </AppText>
 
       <View style={[styles.grid, { gap: spacing.sm, marginBottom: spacing.xl }]}>
         {THEME_OPTIONS.map((option) => {
@@ -81,16 +75,14 @@ export const ThemeSection = memo(function ThemeSection({
                   ]}
                 />
               </View>
-              <Text
-                style={{
-                  fontFamily: typography.families.ui.medium,
-                  fontSize: typography.sizes.sm,
-                  color: palette.colors.text,
-                  textAlign: 'center',
-                }}
+              {/* palette.colors.text is not the active theme — override via style */}
+              <AppText
+                variant="label"
+                size="sm"
+                style={{ textAlign: 'center', color: palette.colors.text }}
               >
                 {option.label}
-              </Text>
+              </AppText>
             </Pressable>
           );
         })}

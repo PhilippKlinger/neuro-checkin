@@ -1,5 +1,6 @@
 import { useState, useCallback, useRef } from 'react';
-import { Text, Pressable, ScrollView, Switch, StyleSheet, Platform, View } from 'react-native';
+import { Pressable, ScrollView, Switch, StyleSheet, Platform, View } from 'react-native';
+import { AppText } from '../../components/ui/AppText';
 import { Ionicons } from '@expo/vector-icons';
 import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
@@ -40,7 +41,6 @@ export default function SettingsScreen() {
     setThemeName,
     setColorMode,
     spacing,
-    typography,
     radii,
     touchTarget,
   } = useTheme();
@@ -224,24 +224,8 @@ export default function SettingsScreen() {
           <View style={styles.guidedLabel}>
             <Ionicons name="bulb-outline" size={16} color={theme.colors.textSecondary} />
             <View>
-              <Text
-                style={{
-                  fontFamily: typography.families.body.regular,
-                  fontSize: typography.sizes.md,
-                  color: theme.colors.text,
-                }}
-              >
-                Hinweise im Check-in
-              </Text>
-              <Text
-                style={{
-                  fontFamily: typography.families.body.regular,
-                  fontSize: typography.sizes.sm,
-                  color: theme.colors.textSecondary,
-                }}
-              >
-                Zeigt kurze Erklärungen in jedem Schritt
-              </Text>
+              <AppText variant="body">Hinweise im Check-in</AppText>
+              <AppText variant="body" size="sm" color="secondary">Zeigt kurze Erklärungen in jedem Schritt</AppText>
             </View>
           </View>
           <Switch
@@ -268,15 +252,7 @@ export default function SettingsScreen() {
           accessibilityHint={feedbackOpen ? 'Zuklappen' : 'Aufklappen'}
           accessibilityState={{ expanded: feedbackOpen }}
         >
-          <Text
-            style={{
-              fontFamily: typography.families.heading.semibold,
-              fontSize: typography.sizes.lg,
-              color: theme.colors.text,
-            }}
-          >
-            Feedback
-          </Text>
+          <AppText variant="title">Feedback</AppText>
           <Ionicons
             name={feedbackOpen ? 'chevron-up' : 'chevron-down'}
             size={18}
@@ -305,15 +281,7 @@ export default function SettingsScreen() {
             accessibilityLabel="Feedback senden"
             accessibilityHint="Öffnet ein Feedback-Formular"
           >
-            <Text
-              style={{
-                fontFamily: typography.families.ui.medium,
-                fontSize: typography.sizes.md,
-                color: theme.colors.textSecondary,
-              }}
-            >
-              Feedback senden
-            </Text>
+            <AppText variant="label" color="secondary">Feedback senden</AppText>
           </Pressable>
         )}
 
@@ -329,15 +297,7 @@ export default function SettingsScreen() {
           accessibilityHint={dataOpen ? 'Zuklappen' : 'Aufklappen'}
           accessibilityState={{ expanded: dataOpen }}
         >
-          <Text
-            style={{
-              fontFamily: typography.families.heading.semibold,
-              fontSize: typography.sizes.lg,
-              color: theme.colors.text,
-            }}
-          >
-            Daten & Datenschutz
-          </Text>
+          <AppText variant="title">Daten & Datenschutz</AppText>
           <Ionicons
             name={dataOpen ? 'chevron-up' : 'chevron-down'}
             size={18}
@@ -372,15 +332,7 @@ export default function SettingsScreen() {
           accessibilityHint={aboutOpen ? 'Zuklappen' : 'Aufklappen'}
           accessibilityState={{ expanded: aboutOpen }}
         >
-          <Text
-            style={{
-              fontFamily: typography.families.heading.semibold,
-              fontSize: typography.sizes.lg,
-              color: theme.colors.text,
-            }}
-          >
-            Über die App
-          </Text>
+          <AppText variant="title">Über die App</AppText>
           <Ionicons
             name={aboutOpen ? 'chevron-up' : 'chevron-down'}
             size={18}
@@ -405,24 +357,8 @@ export default function SettingsScreen() {
             accessibilityRole="button"
             accessibilityLabel="Was ist ein Check-in? Mehr erfahren"
           >
-            <Text
-              style={{
-                fontFamily: typography.families.body.regular,
-                fontSize: typography.sizes.md,
-                color: theme.colors.text,
-              }}
-            >
-              Was ist ein Check-in?
-            </Text>
-            <Text
-              style={{
-                fontFamily: typography.families.body.regular,
-                fontSize: typography.sizes.md,
-                color: theme.colors.textSecondary,
-              }}
-            >
-              ›
-            </Text>
+            <AppText variant="body">Was ist ein Check-in?</AppText>
+            <AppText variant="body" color="secondary">›</AppText>
           </Pressable>
         )}
       </ScrollView>

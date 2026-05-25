@@ -1,8 +1,9 @@
 import { memo } from 'react';
-import { View, Text, Pressable, StyleSheet, Linking, Platform } from 'react-native';
+import { View, Pressable, StyleSheet, Linking, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { useTheme } from '../../lib/hooks/useTheme';
+import { AppText } from '../ui/AppText';
 import { type NotificationSlot } from '../../lib/types/checkin';
 import { SlotCard } from './SlotCard';
 
@@ -32,7 +33,7 @@ export const NotificationsSection = memo(function NotificationsSection({
   onTimeChange,
   onWeekdayToggle,
 }: NotificationsSectionProps) {
-  const { theme, spacing, typography, radii } = useTheme();
+  const { theme, spacing, radii } = useTheme();
   const anySlotEnabled = slots.some((s) => s.enabled);
 
   function openAppSettings() {
@@ -43,41 +44,18 @@ export const NotificationsSection = memo(function NotificationsSection({
 
   return (
     <>
-      <Text
-        style={{
-          fontFamily: typography.families.heading.semibold,
-          fontSize: typography.sizes.lg,
-          color: theme.colors.text,
-          marginBottom: spacing.md,
-        }}
-      >
+      <AppText variant="title" size="lg" style={{ marginBottom: spacing.md }}>
         Erinnerungen
-      </Text>
+      </AppText>
 
-      <Text
-        style={{
-          fontFamily: typography.families.body.regular,
-          fontSize: typography.sizes.sm,
-          color: theme.colors.textSecondary,
-          marginBottom: spacing.md,
-          lineHeight: typography.sizes.sm * 1.5,
-        }}
-      >
+      <AppText variant="body" size="sm" color="secondary" style={{ marginBottom: spacing.md }}>
         Du kannst eine oder zwei Erinnerungen einstellen — oder keine.
-      </Text>
+      </AppText>
 
       {isEmulator && anySlotEnabled && (
-        <Text
-          style={{
-            fontFamily: typography.families.body.regular,
-            fontSize: typography.sizes.xs,
-            color: theme.colors.textSecondary,
-            marginBottom: spacing.sm,
-            fontStyle: 'italic',
-          }}
-        >
+        <AppText variant="hint" size="xs" style={{ marginBottom: spacing.sm }}>
           Hinweis: Benachrichtigungen funktionieren nur auf einem echten Gerät, nicht im Emulator.
-        </Text>
+        </AppText>
       )}
 
       {permissionDenied && !isEmulator && (
@@ -100,19 +78,15 @@ export const NotificationsSection = memo(function NotificationsSection({
           accessibilityHint="Öffnet die Systemeinstellungen um Benachrichtigungen zu erlauben"
         >
           <Ionicons name="notifications-off-outline" size={16} color={theme.colors.textSecondary} />
-          <Text
-            style={{
-              fontFamily: typography.families.body.regular,
-              fontSize: typography.sizes.sm,
-              color: theme.colors.textSecondary,
-              flex: 1,
-              marginLeft: spacing.xs,
-              lineHeight: typography.sizes.sm * 1.4,
-            }}
+          <AppText
+            variant="body"
+            size="sm"
+            color="secondary"
+            style={{ flex: 1, marginLeft: spacing.xs }}
           >
             Benachrichtigungen sind in den Systemeinstellungen deaktiviert. Tippe hier um sie zu
             erlauben.
-          </Text>
+          </AppText>
         </Pressable>
       )}
 

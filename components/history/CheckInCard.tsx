@@ -1,5 +1,6 @@
 import { memo } from 'react';
-import { View, Text, Pressable, StyleSheet } from 'react-native';
+import { View, Pressable, StyleSheet } from 'react-native';
+import { AppText } from '../ui/AppText';
 import { useTheme } from '../../lib/hooks/useTheme';
 import { CheckIn, ENERGY_LABELS, FOCUS_LABELS, getLevelLabel } from '../../lib/types/checkin';
 import { formatDate, formatTime } from '../../lib/utils/format';
@@ -19,7 +20,7 @@ export const CheckInCard = memo(function CheckInCard({
   selected = false,
   onToggle,
 }: CheckInCardProps) {
-  const { theme, spacing, typography, radii } = useTheme();
+  const { theme, spacing, radii } = useTheme();
 
   const activeSignals = Object.values(checkIn.bodySignals).filter((v) => v === true).length;
 
@@ -51,102 +52,38 @@ export const CheckInCard = memo(function CheckInCard({
       accessibilityState={selectable ? { selected } : undefined}
     >
       <View style={styles.header}>
-        <Text
-          style={{
-            fontFamily: typography.families.ui.medium,
-            fontSize: typography.sizes.sm,
-            color: theme.colors.text,
-          }}
-        >
-          {formatDate(checkIn.createdAt)}
-        </Text>
+        <AppText variant="label" size="sm">{formatDate(checkIn.createdAt)}</AppText>
         <View style={styles.headerRight}>
-          <Text
-            style={{
-              fontFamily: typography.families.body.regular,
-              fontSize: typography.sizes.xs,
-              color: theme.colors.textSecondary,
-            }}
-          >
-            {formatTime(checkIn.createdAt)}
-          </Text>
-          <Text
-            style={{
-              fontFamily: typography.families.ui.medium,
-              fontSize: typography.sizes.md,
-              color: theme.colors.border,
-              marginLeft: spacing.xs,
-            }}
+          <AppText variant="body" size="xs" color="secondary">{formatTime(checkIn.createdAt)}</AppText>
+          <AppText
+            variant="label"
+            style={{ color: theme.colors.border, marginLeft: spacing.xs }}
             accessibilityElementsHidden
           >
             ›
-          </Text>
+          </AppText>
         </View>
       </View>
 
       <View style={[styles.metricsRow, { marginTop: spacing.xs, gap: spacing.md }]}>
         <View style={styles.metric}>
-          <Text
-            style={{
-              fontFamily: typography.families.body.regular,
-              fontSize: typography.sizes.xs,
-              color: theme.colors.textSecondary,
-            }}
-          >
-            Energie
-          </Text>
-          <Text
-            style={{
-              fontFamily: typography.families.ui.semibold,
-              fontSize: typography.sizes.sm,
-              color: theme.colors.accent,
-            }}
-          >
+          <AppText variant="body" size="xs" color="secondary">Energie</AppText>
+          <AppText variant="label" weight="semibold" size="sm" color="accent">
             {getLevelLabel(checkIn.energyLevel, ENERGY_LABELS)}
-          </Text>
+          </AppText>
         </View>
 
         <View style={styles.metric}>
-          <Text
-            style={{
-              fontFamily: typography.families.body.regular,
-              fontSize: typography.sizes.xs,
-              color: theme.colors.textSecondary,
-            }}
-          >
-            Fokus
-          </Text>
-          <Text
-            style={{
-              fontFamily: typography.families.ui.semibold,
-              fontSize: typography.sizes.sm,
-              color: theme.colors.accent,
-            }}
-          >
+          <AppText variant="body" size="xs" color="secondary">Fokus</AppText>
+          <AppText variant="label" weight="semibold" size="sm" color="accent">
             {getLevelLabel(checkIn.focusLevel, FOCUS_LABELS)}
-          </Text>
+          </AppText>
         </View>
 
         {activeSignals > 0 && (
           <View style={styles.metric}>
-            <Text
-              style={{
-                fontFamily: typography.families.body.regular,
-                fontSize: typography.sizes.xs,
-                color: theme.colors.textSecondary,
-              }}
-            >
-              Signale
-            </Text>
-            <Text
-              style={{
-                fontFamily: typography.families.ui.semibold,
-                fontSize: typography.sizes.sm,
-                color: theme.colors.accent,
-              }}
-            >
-              {activeSignals}
-            </Text>
+            <AppText variant="body" size="xs" color="secondary">Signale</AppText>
+            <AppText variant="label" weight="semibold" size="sm" color="accent">{activeSignals}</AppText>
           </View>
         )}
       </View>

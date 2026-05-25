@@ -1,11 +1,12 @@
 import { useMemo } from 'react';
-import { View, Text, ScrollView, Pressable, StyleSheet } from 'react-native';
+import { View, ScrollView, Pressable, StyleSheet } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../../lib/hooks/useTheme';
 import { CheckIn } from '../../lib/types/checkin';
 import { presentCheckIn } from '../../lib/utils/presentCheckIn';
 import { formatDateTime } from '../../lib/utils/format';
 import { ConfirmDialog } from '../ui/ConfirmDialog';
+import { AppText } from '../ui/AppText';
 
 interface CheckInDetailContentProps {
   checkIn: CheckIn;
@@ -24,7 +25,7 @@ export function CheckInDetailContent({
   onDeleteCancel,
   onExport,
 }: CheckInDetailContentProps) {
-  const { theme, spacing, typography, radii, touchTarget } = useTheme();
+  const { theme, spacing, radii, touchTarget } = useTheme();
   const insets = useSafeAreaInsets();
 
   const p = useMemo(() => presentCheckIn(checkIn), [checkIn]);
@@ -37,26 +38,10 @@ export function CheckInDetailContent({
         style={styles.scroll}
         contentContainerStyle={{ padding: spacing.lg, paddingBottom: spacing.xxl + insets.bottom }}
       >
-        <Text
-          style={{
-            fontFamily: typography.families.heading.semibold,
-            fontSize: typography.sizes.xl,
-            color: theme.colors.text,
-            marginBottom: spacing.xs,
-          }}
-        >
-          Check-in
-        </Text>
-        <Text
-          style={{
-            fontFamily: typography.families.body.regular,
-            fontSize: typography.sizes.sm,
-            color: theme.colors.textSecondary,
-            marginBottom: spacing.xl,
-          }}
-        >
+        <AppText variant="title" size="xl" style={{ marginBottom: spacing.xs }}>Check-in</AppText>
+        <AppText variant="body" size="sm" color="secondary" style={{ marginBottom: spacing.xl }}>
           {formatDateTime(checkIn.createdAt)}
-        </Text>
+        </AppText>
 
         <View
           style={[
@@ -70,12 +55,12 @@ export function CheckInDetailContent({
           ]}
         >
           <View style={[styles.row, { marginBottom: spacing.sm }]}>
-            <Text style={label(typography, theme)}>Energie</Text>
-            <Text style={value(typography, theme)}>{p.energy ?? 'Nicht angegeben'}</Text>
+            <AppText variant="body" color="secondary">Energie</AppText>
+            <AppText variant="label" weight="semibold">{p.energy ?? 'Nicht angegeben'}</AppText>
           </View>
           <View style={styles.row}>
-            <Text style={label(typography, theme)}>Fokus</Text>
-            <Text style={value(typography, theme)}>{p.focus ?? 'Nicht angegeben'}</Text>
+            <AppText variant="body" color="secondary">Fokus</AppText>
+            <AppText variant="label" weight="semibold">{p.focus ?? 'Nicht angegeben'}</AppText>
           </View>
         </View>
 
@@ -91,14 +76,12 @@ export function CheckInDetailContent({
               },
             ]}
           >
-            <Text style={sectionTitle(typography, theme, spacing)}>Körpersignale</Text>
+            <AppText variant="label" size="sm" color="accent" style={{ marginBottom: spacing.sm }}>Körpersignale</AppText>
             {activeSignals.length > 0 && (
-              <Text style={[body(typography, theme), { marginBottom: spacing.xs }]}>
-                Ja: {activeSignals.join(', ')}
-              </Text>
+              <AppText variant="body" style={{ marginBottom: spacing.xs }}>Ja: {activeSignals.join(', ')}</AppText>
             )}
             {inactiveSignals.length > 0 && (
-              <Text style={body(typography, theme)}>Nein: {inactiveSignals.join(', ')}</Text>
+              <AppText variant="body">Nein: {inactiveSignals.join(', ')}</AppText>
             )}
           </View>
         )}
@@ -115,8 +98,8 @@ export function CheckInDetailContent({
               },
             ]}
           >
-            <Text style={sectionTitle(typography, theme, spacing)}>Gefühle</Text>
-            <Text style={body(typography, theme)}>{p.feelings}</Text>
+            <AppText variant="label" size="sm" color="accent" style={{ marginBottom: spacing.sm }}>Gefühle</AppText>
+            <AppText variant="body">{p.feelings}</AppText>
           </View>
         )}
 
@@ -132,14 +115,12 @@ export function CheckInDetailContent({
               },
             ]}
           >
-            <Text style={sectionTitle(typography, theme, spacing)}>Stress-Level</Text>
-            <Text style={body(typography, theme)}>{p.distress}</Text>
+            <AppText variant="label" size="sm" color="accent" style={{ marginBottom: spacing.sm }}>Stress-Level</AppText>
+            <AppText variant="body">{p.distress}</AppText>
             {checkIn.distressNote && checkIn.distressNote.trim() !== '' && (
-              <Text
-                style={[body(typography, theme), { marginTop: spacing.xs, fontStyle: 'italic' }]}
-              >
+              <AppText variant="body" style={{ marginTop: spacing.xs, fontStyle: 'italic' }}>
                 {checkIn.distressNote}
-              </Text>
+              </AppText>
             )}
           </View>
         )}
@@ -156,17 +137,12 @@ export function CheckInDetailContent({
               },
             ]}
           >
-            <Text style={sectionTitle(typography, theme, spacing)}>Gedanken</Text>
-            {p.thoughtsType && <Text style={body(typography, theme)}>{p.thoughtsType}</Text>}
+            <AppText variant="label" size="sm" color="accent" style={{ marginBottom: spacing.sm }}>Gedanken</AppText>
+            {p.thoughtsType && <AppText variant="body">{p.thoughtsType}</AppText>}
             {p.thoughtsNote && (
-              <Text
-                style={[
-                  body(typography, theme),
-                  { marginTop: p.thoughtsType ? spacing.xs : 0, fontStyle: 'italic' },
-                ]}
-              >
+              <AppText variant="body" style={{ marginTop: p.thoughtsType ? spacing.xs : 0, fontStyle: 'italic' }}>
                 {p.thoughtsNote}
-              </Text>
+              </AppText>
             )}
           </View>
         )}
@@ -183,8 +159,8 @@ export function CheckInDetailContent({
               },
             ]}
           >
-            <Text style={sectionTitle(typography, theme, spacing)}>Selbstfürsorge</Text>
-            <Text style={body(typography, theme)}>{p.selfCare}</Text>
+            <AppText variant="label" size="sm" color="accent" style={{ marginBottom: spacing.sm }}>Selbstfürsorge</AppText>
+            <AppText variant="body">{p.selfCare}</AppText>
           </View>
         )}
 
@@ -204,16 +180,7 @@ export function CheckInDetailContent({
           accessibilityRole="button"
           accessibilityLabel="Check-in löschen"
         >
-          <Text
-            style={{
-              fontFamily: typography.families.ui.medium,
-              fontSize: typography.sizes.md,
-              color: theme.colors.textSecondary,
-              textAlign: 'center',
-            }}
-          >
-            Check-in löschen
-          </Text>
+          <AppText variant="label" color="secondary" style={{ textAlign: 'center' }}>Check-in löschen</AppText>
         </Pressable>
 
         {onExport && (
@@ -236,16 +203,7 @@ export function CheckInDetailContent({
             accessibilityLabel="Check-in als PDF exportieren"
             accessibilityHint="Erstellt eine PDF-Datei und öffnet das Teilen-Menü"
           >
-            <Text
-              style={{
-                fontFamily: typography.families.ui.medium,
-                fontSize: typography.sizes.sm,
-                color: theme.colors.textSecondary,
-                textAlign: 'center',
-              }}
-            >
-              Als PDF exportieren
-            </Text>
+            <AppText variant="label" size="sm" color="secondary" style={{ textAlign: 'center' }}>Als PDF exportieren</AppText>
           </Pressable>
         )}
       </ScrollView>
@@ -262,49 +220,6 @@ export function CheckInDetailContent({
       />
     </View>
   );
-}
-
-function label(
-  typography: ReturnType<typeof useTheme>['typography'],
-  theme: ReturnType<typeof useTheme>['theme']
-) {
-  return {
-    fontFamily: typography.families.body.regular,
-    fontSize: typography.sizes.md,
-    color: theme.colors.textSecondary,
-  };
-}
-function value(
-  typography: ReturnType<typeof useTheme>['typography'],
-  theme: ReturnType<typeof useTheme>['theme']
-) {
-  return {
-    fontFamily: typography.families.ui.semibold,
-    fontSize: typography.sizes.md,
-    color: theme.colors.text,
-  };
-}
-function sectionTitle(
-  typography: ReturnType<typeof useTheme>['typography'],
-  theme: ReturnType<typeof useTheme>['theme'],
-  spacing: ReturnType<typeof useTheme>['spacing']
-) {
-  return {
-    fontFamily: typography.families.ui.medium,
-    fontSize: typography.sizes.sm,
-    color: theme.colors.accent,
-    marginBottom: spacing.sm,
-  };
-}
-function body(
-  typography: ReturnType<typeof useTheme>['typography'],
-  theme: ReturnType<typeof useTheme>['theme']
-) {
-  return {
-    fontFamily: typography.families.body.regular,
-    fontSize: typography.sizes.md,
-    color: theme.colors.text,
-  };
 }
 
 const styles = StyleSheet.create({

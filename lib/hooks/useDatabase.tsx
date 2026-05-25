@@ -54,6 +54,7 @@ export function DatabaseProvider({ children }: DatabaseProviderProps) {
         style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: spacing.lg }}
       >
         <Text
+          maxFontSizeMultiplier={1.3}
           style={{
             fontSize: typography.sizes.lg,
             marginBottom: spacing.sm,
@@ -64,6 +65,7 @@ export function DatabaseProvider({ children }: DatabaseProviderProps) {
           Datenbank konnte nicht geladen werden
         </Text>
         <Text
+          maxFontSizeMultiplier={1.5}
           style={{
             fontSize: typography.sizes.sm,
             color: colors.textSecondary,

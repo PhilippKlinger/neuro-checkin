@@ -1,4 +1,5 @@
-import { Modal, View, Text, Pressable, StyleSheet } from 'react-native';
+import { Modal, View, Pressable, StyleSheet } from 'react-native';
+import { AppText } from './AppText';
 import { useTheme } from '../../lib/hooks/useTheme';
 import { OVERLAY_COLOR } from '../../lib/constants/themes';
 
@@ -25,7 +26,7 @@ export function ConfirmDialog({
   onConfirm,
   onCancel,
 }: ConfirmDialogProps) {
-  const { theme, spacing, typography, radii, touchTarget } = useTheme();
+  const { theme, spacing, radii, touchTarget } = useTheme();
 
   return (
     <Modal
@@ -49,28 +50,12 @@ export function ConfirmDialog({
           onStartShouldSetResponder={() => true}
           accessibilityRole="none"
         >
-          <Text
-            style={{
-              fontFamily: typography.families.heading.semibold,
-              fontSize: typography.sizes.lg,
-              color: theme.colors.text,
-              marginBottom: spacing.sm,
-            }}
-            accessibilityRole="header"
-          >
+          <AppText variant="title" accessibilityRole="header" style={{ marginBottom: spacing.sm }}>
             {title}
-          </Text>
-          <Text
-            style={{
-              fontFamily: typography.families.body.regular,
-              fontSize: typography.sizes.md,
-              color: theme.colors.textSecondary,
-              lineHeight: typography.sizes.md * typography.lineHeights.normal,
-              marginBottom: spacing.lg,
-            }}
-          >
+          </AppText>
+          <AppText variant="body" color="secondary" style={{ marginBottom: spacing.lg }}>
             {message}
-          </Text>
+          </AppText>
 
           <View style={[styles.buttons, { gap: spacing.sm }]}>
             {!hideCancel && (
@@ -92,16 +77,7 @@ export function ConfirmDialog({
                 accessibilityRole="button"
                 accessibilityLabel={cancelLabel}
               >
-                <Text
-                  style={{
-                    fontFamily: typography.families.ui.medium,
-                    fontSize: typography.sizes.md,
-                    color: theme.colors.text,
-                    textAlign: 'center',
-                  }}
-                >
-                  {cancelLabel}
-                </Text>
+                <AppText variant="label" style={{ textAlign: 'center' }}>{cancelLabel}</AppText>
               </Pressable>
             )}
 
@@ -121,16 +97,7 @@ export function ConfirmDialog({
               accessibilityRole="button"
               accessibilityLabel={confirmLabel}
             >
-              <Text
-                style={{
-                  fontFamily: typography.families.ui.semibold,
-                  fontSize: typography.sizes.md,
-                  color: theme.colors.textInverse,
-                  textAlign: 'center',
-                }}
-              >
-                {confirmLabel}
-              </Text>
+              <AppText variant="label" weight="semibold" color="inverse" style={{ textAlign: 'center' }}>{confirmLabel}</AppText>
             </Pressable>
           </View>
         </View>
