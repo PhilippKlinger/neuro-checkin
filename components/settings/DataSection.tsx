@@ -453,8 +453,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   chipGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+    flexDirection: 'column',
   },
   chipRow: {
     flexDirection: 'row',
