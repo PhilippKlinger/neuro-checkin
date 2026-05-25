@@ -211,15 +211,26 @@ export default function SettingsScreen() {
         <View style={[styles.guidedRow, { marginTop: spacing.xl }]}>
           <View style={styles.guidedLabel}>
             <Ionicons name="bulb-outline" size={16} color={theme.colors.textSecondary} />
-            <Text
-              style={{
-                fontFamily: typography.families.body.regular,
-                fontSize: typography.sizes.md,
-                color: theme.colors.text,
-              }}
-            >
-              Hinweise im Check-in
-            </Text>
+            <View>
+              <Text
+                style={{
+                  fontFamily: typography.families.body.regular,
+                  fontSize: typography.sizes.md,
+                  color: theme.colors.text,
+                }}
+              >
+                Hinweise im Check-in
+              </Text>
+              <Text
+                style={{
+                  fontFamily: typography.families.body.regular,
+                  fontSize: typography.sizes.sm,
+                  color: theme.colors.textSecondary,
+                }}
+              >
+                Zeigt kurze Erklärungen in jedem Schritt
+              </Text>
+            </View>
           </View>
           <Switch
             value={guidedMode}
@@ -228,6 +239,7 @@ export default function SettingsScreen() {
             thumbColor={theme.colors.background}
             accessibilityRole="switch"
             accessibilityLabel="Hinweise im Check-in"
+            accessibilityHint="Zeigt kurze Erklärungen in jedem Check-in-Schritt"
             accessibilityState={{ checked: guidedMode }}
           />
         </View>
