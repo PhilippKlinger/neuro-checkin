@@ -8,7 +8,7 @@ interface FeedbackFormContentProps {
   feedbackError: boolean;
   feedbackSubmitting: boolean;
   onSubmit: () => void;
-  onCancel: () => void;
+  onClose: () => void;
 }
 
 interface FeedbackSuccessContentProps {
@@ -75,7 +75,7 @@ export function FeedbackFormContent({
   feedbackError,
   feedbackSubmitting,
   onSubmit,
-  onCancel,
+  onClose,
 }: FeedbackFormContentProps) {
   const { theme, spacing, typography, radii, touchTarget } = useTheme();
   const isSubmitDisabled = feedbackSubmitting || !feedbackText.trim();
@@ -83,6 +83,23 @@ export function FeedbackFormContent({
   const s = useMemo(
     () =>
       StyleSheet.create({
+        header: {
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginBottom: spacing.sm,
+        },
+        closeButton: {
+          minWidth: touchTarget.min,
+          minHeight: touchTarget.min,
+          alignItems: 'center',
+          justifyContent: 'center',
+        },
+        closeText: {
+          fontFamily: typography.families.ui.medium,
+          fontSize: typography.sizes.lg,
+          color: theme.colors.textSecondary,
+        },
         subtitle: {
           fontFamily: typography.families.body.regular,
           fontSize: typography.sizes.sm,
@@ -122,25 +139,7 @@ export function FeedbackFormContent({
           marginBottom: spacing.md,
           fontStyle: 'italic',
         },
-        buttonRow: { flexDirection: 'row', gap: spacing.sm },
-        cancelButton: {
-          flex: 1,
-          backgroundColor: theme.colors.surface,
-          borderRadius: radii.md,
-          borderWidth: 1,
-          borderColor: theme.colors.border,
-          padding: spacing.md,
-          alignItems: 'center',
-          minHeight: touchTarget.min,
-          justifyContent: 'center',
-        },
-        cancelText: {
-          fontFamily: typography.families.ui.medium,
-          fontSize: typography.sizes.md,
-          color: theme.colors.textSecondary,
-        },
         submitButton: {
-          flex: 1,
           borderRadius: radii.md,
           padding: spacing.md,
           alignItems: 'center',
@@ -158,23 +157,33 @@ export function FeedbackFormContent({
 
   return (
     <>
-      <Text
-        style={{
-          fontFamily: typography.families.heading.semibold,
-          fontSize: typography.sizes.lg,
-          color: theme.colors.text,
-          marginBottom: spacing.sm,
-        }}
-      >
-        Feedback
-      </Text>
+      <View style={s.header}>
+        <Text
+          style={{
+            fontFamily: typography.families.heading.semibold,
+            fontSize: typography.sizes.lg,
+            color: theme.colors.text,
+          }}
+        >
+          Feedback
+        </Text>
+        <Pressable
+          onPress={onClose}
+          style={({ pressed }) => [s.closeButton, pressed && { opacity: 0.5 }]}
+          accessibilityRole="button"
+          accessibilityLabel="Dialog schließen"
+          hitSlop={8}
+        >
+          <Text style={s.closeText}>✕</Text>
+        </Pressable>
+      </View>
       <Text style={s.subtitle}>
         Was hat geholfen, was stört, was fehlt? Bitte nur App-Feedback — nicht zu deinem Befinden,
         Gefühlen oder Check-in-Inhalten.
       </Text>
       <Text style={s.privacyHint}>
         Bitte keine persönlichen Inhalte senden. Mit dem Absenden überträgst du deinen Text über
-        Formspree (externer Dienst, EU-Datenschutz). Dabei wird deine IP-Adresse verarbeitet.
+        Formspree (externer Dienst, EU-Datenschutz).
       </Text>
       <TextInput
         value={feedbackText}
@@ -198,32 +207,22 @@ export function FeedbackFormContent({
           Senden hat nicht geklappt. Bitte versuche es später nochmal.
         </Text>
       )}
-      <View style={s.buttonRow}>
-        <Pressable
-          onPress={onCancel}
-          style={({ pressed }) => [s.cancelButton, pressed && { opacity: 0.75 }]}
-          accessibilityRole="button"
-          accessibilityLabel="Abbrechen"
-        >
-          <Text style={s.cancelText}>Abbrechen</Text>
-        </Pressable>
-        <Pressable
-          onPress={onSubmit}
-          disabled={isSubmitDisabled}
-          style={({ pressed }) => [
-            s.submitButton,
-            { backgroundColor: isSubmitDisabled ? theme.colors.border : theme.colors.primary },
-            pressed && !isSubmitDisabled && { opacity: 0.75 },
-          ]}
-          accessibilityRole="button"
-          accessibilityLabel={feedbackSubmitting ? 'Sendet...' : 'App-Feedback senden'}
-          accessibilityState={{ disabled: isSubmitDisabled }}
-        >
-          <Text style={s.submitText}>
-            {feedbackSubmitting ? 'Sendet...' : 'App-Feedback senden'}
-          </Text>
-        </Pressable>
-      </View>
+      <Pressable
+        onPress={onSubmit}
+        disabled={isSubmitDisabled}
+        style={({ pressed }) => [
+          s.submitButton,
+          { backgroundColor: isSubmitDisabled ? theme.colors.border : theme.colors.primary },
+          pressed && !isSubmitDisabled && { opacity: 0.75 },
+        ]}
+        accessibilityRole="button"
+        accessibilityLabel={feedbackSubmitting ? 'Sendet...' : 'Feedback senden'}
+        accessibilityState={{ disabled: isSubmitDisabled }}
+      >
+        <Text style={s.submitText}>
+          {feedbackSubmitting ? 'Sendet...' : 'Feedback senden'}
+        </Text>
+      </Pressable>
     </>
   );
 }

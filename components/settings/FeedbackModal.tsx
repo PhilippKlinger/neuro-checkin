@@ -105,7 +105,7 @@ export function FeedbackModal({ visible, onClose }: FeedbackModalProps) {
               feedbackError={feedbackError}
               feedbackSubmitting={feedbackSubmitting}
               onSubmit={handleSubmit}
-              onCancel={handleClose}
+              onClose={handleClose}
             />
           )}
         </View>
