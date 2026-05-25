@@ -1,6 +1,7 @@
-import { useMemo } from 'react';
-import { View, Text, TextInput, Pressable, StyleSheet } from 'react-native';
+import { View, Pressable, StyleSheet } from 'react-native';
 import { useTheme } from '../../lib/hooks/useTheme';
+import { AppText } from '../ui/AppText';
+import { AppTextInput } from '../ui/AppTextInput';
 
 interface FeedbackFormContentProps {
   feedbackText: string;
@@ -16,29 +17,15 @@ interface FeedbackSuccessContentProps {
 }
 
 export function FeedbackSuccessContent({ onClose }: FeedbackSuccessContentProps) {
-  const { theme, spacing, typography, radii, touchTarget } = useTheme();
+  const { theme, spacing, radii, touchTarget } = useTheme();
   return (
     <>
-      <Text
-        style={{
-          fontFamily: typography.families.heading.semibold,
-          fontSize: typography.sizes.lg,
-          color: theme.colors.text,
-          marginBottom: spacing.sm,
-        }}
-      >
+      <AppText variant="title" size="lg" style={{ marginBottom: spacing.sm }}>
         Danke für dein Feedback!
-      </Text>
-      <Text
-        style={{
-          fontFamily: typography.families.body.regular,
-          fontSize: typography.sizes.md,
-          color: theme.colors.textSecondary,
-          marginBottom: spacing.xl,
-        }}
-      >
+      </AppText>
+      <AppText variant="body" color="secondary" style={{ marginBottom: spacing.xl }}>
         Es ist angekommen und wird gelesen.
-      </Text>
+      </AppText>
       <Pressable
         onPress={onClose}
         style={({ pressed }) => [
@@ -55,15 +42,9 @@ export function FeedbackSuccessContent({ onClose }: FeedbackSuccessContentProps)
         accessibilityRole="button"
         accessibilityLabel="Schließen"
       >
-        <Text
-          style={{
-            fontFamily: typography.families.ui.semibold,
-            fontSize: typography.sizes.md,
-            color: theme.colors.textInverse,
-          }}
-        >
+        <AppText variant="label" weight="semibold" color="inverse">
           Schließen
-        </Text>
+        </AppText>
       </Pressable>
     </>
   );
@@ -77,151 +58,119 @@ export function FeedbackFormContent({
   onSubmit,
   onClose,
 }: FeedbackFormContentProps) {
-  const { theme, spacing, typography, radii, touchTarget } = useTheme();
+  const { theme, spacing, radii, touchTarget } = useTheme();
   const isSubmitDisabled = feedbackSubmitting || !feedbackText.trim();
-
-  const s = useMemo(
-    () =>
-      StyleSheet.create({
-        header: {
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          marginBottom: spacing.sm,
-        },
-        closeButton: {
-          minWidth: touchTarget.min,
-          minHeight: touchTarget.min,
-          alignItems: 'center',
-          justifyContent: 'center',
-        },
-        closeText: {
-          fontFamily: typography.families.ui.medium,
-          fontSize: typography.sizes.lg,
-          color: theme.colors.textSecondary,
-        },
-        subtitle: {
-          fontFamily: typography.families.body.regular,
-          fontSize: typography.sizes.sm,
-          color: theme.colors.textSecondary,
-          marginBottom: spacing.md,
-        },
-        input: {
-          borderWidth: 1,
-          textAlignVertical: 'top',
-          minHeight: 120,
-          backgroundColor: theme.colors.surface,
-          borderColor: theme.colors.border,
-          borderRadius: radii.md,
-          padding: spacing.md,
-          color: theme.colors.text,
-          fontFamily: typography.families.body.regular,
-          fontSize: typography.sizes.md,
-        },
-        charCount: {
-          fontFamily: typography.families.body.regular,
-          fontSize: typography.sizes.xs,
-          color: theme.colors.textSecondary,
-          textAlign: 'right',
-          marginTop: spacing.xs,
-        },
-        errorText: {
-          fontFamily: typography.families.body.regular,
-          fontSize: typography.sizes.sm,
-          color: theme.colors.text,
-          marginTop: spacing.sm,
-        },
-        privacyHint: {
-          fontFamily: typography.families.body.regular,
-          fontSize: typography.sizes.xs,
-          color: theme.colors.textSecondary,
-          marginTop: spacing.sm,
-          marginBottom: spacing.md,
-          fontStyle: 'italic',
-        },
-        submitButton: {
-          borderRadius: radii.md,
-          padding: spacing.md,
-          marginTop: spacing.md,
-          alignItems: 'center',
-          minHeight: touchTarget.min,
-          justifyContent: 'center',
-        },
-        submitText: {
-          fontFamily: typography.families.ui.semibold,
-          fontSize: typography.sizes.md,
-          color: theme.colors.textInverse,
-        },
-      }),
-    [theme, spacing, typography, radii, touchTarget]
-  );
 
   return (
     <>
-      <View style={s.header}>
-        <Text
-          style={{
-            fontFamily: typography.families.heading.semibold,
-            fontSize: typography.sizes.lg,
-            color: theme.colors.text,
-          }}
-        >
+      <View style={styles.header}>
+        <AppText variant="title" size="lg">
           Feedback
-        </Text>
+        </AppText>
         <Pressable
           onPress={onClose}
-          style={({ pressed }) => [s.closeButton, pressed && { opacity: 0.5 }]}
+          style={({ pressed }) => [
+            styles.closeButton,
+            {
+              minWidth: touchTarget.min,
+              minHeight: touchTarget.min,
+            },
+            pressed && { opacity: 0.5 },
+          ]}
           accessibilityRole="button"
           accessibilityLabel="Dialog schließen"
           hitSlop={8}
         >
-          <Text style={s.closeText}>✕</Text>
+          <AppText variant="label" size="lg" color="secondary">
+            ✕
+          </AppText>
         </Pressable>
       </View>
-      <Text style={s.subtitle}>
+      <AppText variant="body" size="sm" color="secondary" style={{ marginBottom: spacing.md }}>
         Was hat geholfen, was stört, was fehlt? Bitte nur App-Feedback — nicht zu deinem Befinden,
         Gefühlen oder Check-in-Inhalten.
-      </Text>
-      <Text style={s.privacyHint}>
+      </AppText>
+      <AppText variant="hint" size="xs" style={{ marginTop: spacing.sm, marginBottom: spacing.md }}>
         Bitte keine persönlichen Inhalte senden. Mit dem Absenden überträgst du deinen Text über
         Formspree (externer Dienst, EU-Datenschutz).
-      </Text>
-      <TextInput
+      </AppText>
+      <AppTextInput
         value={feedbackText}
         onChangeText={onChangeText}
         placeholder="Dein Feedback..."
         placeholderTextColor={theme.colors.textSecondary}
         multiline
         maxLength={500}
-        style={s.input}
+        style={[
+          styles.input,
+          {
+            backgroundColor: theme.colors.surface,
+            borderColor: theme.colors.border,
+            borderRadius: radii.md,
+            padding: spacing.md,
+          },
+        ]}
         accessibilityLabel="Feedback eingeben"
       />
       {feedbackText.length >= 450 && (
-        <Text
-          style={[s.charCount, feedbackText.length >= 500 ? { color: theme.colors.success } : {}]}
+        <AppText
+          variant="body"
+          size="xs"
+          color={feedbackText.length >= 500 ? 'success' : 'secondary'}
+          style={{ textAlign: 'right', marginTop: spacing.xs }}
         >
           {feedbackText.length >= 500 ? '✓' : `${feedbackText.length} / 500`}
-        </Text>
+        </AppText>
       )}
       {feedbackError && (
-        <Text style={s.errorText}>
+        <AppText variant="body" size="sm" style={{ marginTop: spacing.sm }}>
           Senden hat nicht geklappt. Bitte versuche es später nochmal.
-        </Text>
+        </AppText>
       )}
       <Pressable
         onPress={onSubmit}
         disabled={isSubmitDisabled}
         style={({ pressed }) => [
-          s.submitButton,
-          { backgroundColor: isSubmitDisabled ? theme.colors.border : theme.colors.primary },
+          styles.submitButton,
+          {
+            borderRadius: radii.md,
+            padding: spacing.md,
+            marginTop: spacing.md,
+            backgroundColor: isSubmitDisabled ? theme.colors.border : theme.colors.primary,
+          },
           pressed && !isSubmitDisabled && { opacity: 0.75 },
         ]}
         accessibilityRole="button"
         accessibilityLabel={feedbackSubmitting ? 'Sendet...' : 'Feedback senden'}
         accessibilityState={{ disabled: isSubmitDisabled }}
       >
-        <Text style={s.submitText}>{feedbackSubmitting ? 'Sendet...' : 'Feedback senden'}</Text>
+        <AppText variant="label" weight="semibold" color="inverse">
+          {feedbackSubmitting ? 'Sendet...' : 'Feedback senden'}
+        </AppText>
       </Pressable>
     </>
   );
 }
+
+const styles = StyleSheet.create({
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 0,
+  },
+  closeButton: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  input: {
+    borderWidth: 1,
+    textAlignVertical: 'top',
+    minHeight: 120,
+  },
+  submitButton: {
+    alignItems: 'center',
+    minHeight: 44,
+    justifyContent: 'center',
+  },
+});

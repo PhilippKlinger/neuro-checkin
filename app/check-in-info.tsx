@@ -1,4 +1,5 @@
-import { ScrollView, View, Text, StyleSheet } from 'react-native';
+import { ScrollView, View, StyleSheet } from 'react-native';
+import { AppText } from '../components/ui/AppText';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../lib/hooks/useTheme';
 
@@ -26,7 +27,7 @@ const SECTIONS = [
 ];
 
 export default function CheckInInfoScreen() {
-  const { theme, spacing, typography, radii } = useTheme();
+  const { theme, spacing, radii } = useTheme();
   const insets = useSafeAreaInsets();
 
   return (
@@ -52,27 +53,17 @@ export default function CheckInInfoScreen() {
             },
           ]}
         >
-          <Text
-            style={{
-              fontFamily: typography.families.heading.semibold,
-              fontSize: typography.sizes.md,
-              color: theme.colors.text,
-              marginBottom: spacing.sm,
-            }}
+          <AppText
+            variant="title"
+            size="md"
             accessibilityRole="header"
+            style={{ marginBottom: spacing.sm }}
           >
             {section.title}
-          </Text>
-          <Text
-            style={{
-              fontFamily: typography.families.body.regular,
-              fontSize: typography.sizes.md,
-              color: theme.colors.textSecondary,
-              lineHeight: typography.sizes.md * 1.6,
-            }}
-          >
+          </AppText>
+          <AppText variant="body" color="secondary">
             {section.body}
-          </Text>
+          </AppText>
         </View>
       ))}
     </ScrollView>

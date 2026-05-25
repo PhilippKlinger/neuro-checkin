@@ -1,4 +1,5 @@
-import { View, Text, Pressable, StyleSheet } from 'react-native';
+import { View, Pressable, StyleSheet } from 'react-native';
+import { AppText } from '../components/ui/AppText';
 import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../lib/hooks/useTheme';
@@ -12,7 +13,7 @@ interface SelectorOption {
 }
 
 export default function CheckInSelectorScreen() {
-  const { theme, spacing, typography, radii, touchTarget } = useTheme();
+  const { theme, spacing, radii, touchTarget } = useTheme();
   const router = useRouter();
   const insets = useSafeAreaInsets();
 
@@ -46,19 +47,14 @@ export default function CheckInSelectorScreen() {
         },
       ]}
     >
-      <Text
-        style={{
-          fontFamily: typography.families.heading.semibold,
-          fontSize: typography.sizes.xl,
-          color: theme.colors.text,
-          textAlign: 'center',
-          marginTop: spacing.xxl,
-          marginBottom: spacing.xl,
-        }}
+      <AppText
+        variant="title"
+        size="xl"
         accessibilityRole="header"
+        style={{ textAlign: 'center', marginTop: spacing.xxl, marginBottom: spacing.xl }}
       >
         Wie viel Raum hast du gerade?
-      </Text>
+      </AppText>
 
       <View style={[styles.options, { gap: spacing.md }]}>
         {options.map((option) => (
@@ -79,38 +75,15 @@ export default function CheckInSelectorScreen() {
             accessibilityLabel={option.accessibilityLabel}
             accessibilityHint="Tippen zum Starten"
           >
-            <Text
-              style={{
-                fontFamily: typography.families.heading.semibold,
-                fontSize: typography.sizes.lg,
-                color: theme.colors.text,
-                marginBottom: spacing.xs,
-              }}
-            >
+            <AppText variant="title" style={{ marginBottom: spacing.xs }}>
               {option.title}
-            </Text>
-            <Text
-              style={{
-                fontFamily: typography.families.body.regular,
-                fontSize: typography.sizes.sm,
-                color: theme.colors.textSecondary,
-                lineHeight: typography.sizes.sm * 1.5,
-              }}
-            >
+            </AppText>
+            <AppText variant="body" size="sm" color="secondary">
               {option.subtitle}
-            </Text>
-            <Text
-              style={{
-                fontFamily: typography.families.body.regular,
-                fontSize: typography.sizes.sm,
-                color: theme.colors.textSecondary,
-                fontStyle: 'italic',
-                marginTop: spacing.xs,
-                lineHeight: typography.sizes.sm * 1.5,
-              }}
-            >
+            </AppText>
+            <AppText variant="hint" style={{ marginTop: spacing.xs }}>
               {option.context}
-            </Text>
+            </AppText>
           </Pressable>
         ))}
       </View>

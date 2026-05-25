@@ -1,6 +1,7 @@
-import { Alert, Text, Pressable, View, StyleSheet, Linking } from 'react-native';
+import { Alert, Pressable, View, StyleSheet, Linking } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../../lib/hooks/useTheme';
+import { AppText } from '../ui/AppText';
 import { ConfirmDialog } from '../ui/ConfirmDialog';
 import { deleteAllCheckIns } from '../../lib/database/checkins';
 import { deleteUserChips, deleteUserChipByLabel, getUserChips } from '../../lib/database/userChips';
@@ -27,7 +28,7 @@ export function DataSection({
   onDeleteComplete,
   onChipsDeleteComplete,
 }: DataSectionProps) {
-  const { theme, spacing, typography, radii, touchTarget } = useTheme();
+  const { theme, spacing, radii, touchTarget } = useTheme();
   const [showStep1, setShowStep1] = useState(false);
   const [showStep2, setShowStep2] = useState(false);
   const [showDone, setShowDone] = useState(false);
@@ -123,15 +124,7 @@ export function DataSection({
         accessibilityLabel="Datenschutzerklärung öffnen"
         accessibilityHint="Öffnet die Datenschutzerklärung im Browser"
       >
-        <Text
-          style={{
-            fontFamily: typography.families.ui.medium,
-            fontSize: typography.sizes.md,
-            color: theme.colors.text,
-          }}
-        >
-          Datenschutzerklärung
-        </Text>
+        <AppText variant="label">Datenschutzerklärung</AppText>
       </Pressable>
 
       <Pressable
@@ -154,15 +147,7 @@ export function DataSection({
         accessibilityHint="Löscht alle gespeicherten Check-ins dauerhaft"
         accessibilityState={{ disabled: checkInCount === 0 }}
       >
-        <Text
-          style={{
-            fontFamily: typography.families.ui.medium,
-            fontSize: typography.sizes.md,
-            color: theme.colors.text,
-          }}
-        >
-          Alle Check-ins löschen
-        </Text>
+        <AppText variant="label">Alle Check-ins löschen</AppText>
       </Pressable>
 
       <Pressable
@@ -193,15 +178,7 @@ export function DataSection({
         }
         accessibilityState={{ disabled: chipCount === 0, expanded: chipsExpanded }}
       >
-        <Text
-          style={{
-            fontFamily: typography.families.ui.medium,
-            fontSize: typography.sizes.md,
-            color: theme.colors.text,
-          }}
-        >
-          Eigene Chips{chipCount > 0 ? ` (${chipCount})` : ''}
-        </Text>
+        <AppText variant="label">Eigene Chips{chipCount > 0 ? ` (${chipCount})` : ''}</AppText>
         {chipCount > 0 && (
           <Ionicons
             name={chipsExpanded ? 'chevron-up' : 'chevron-down'}
@@ -225,17 +202,15 @@ export function DataSection({
         >
           {feelingsChips.length > 0 && (
             <>
-              <Text
-                style={{
-                  fontFamily: typography.families.ui.medium,
-                  fontSize: typography.sizes.sm,
-                  color: theme.colors.textSecondary,
-                  marginBottom: spacing.xs,
-                }}
+              <AppText
+                variant="label"
+                size="sm"
+                color="secondary"
                 accessibilityRole="header"
+                style={{ marginBottom: spacing.xs }}
               >
                 Gefühle
-              </Text>
+              </AppText>
               <View style={[styles.chipGrid, { gap: spacing.xs }]}>
                 {feelingsChips.map((chip) => (
                   <View
@@ -253,17 +228,9 @@ export function DataSection({
                       },
                     ]}
                   >
-                    <Text
-                      style={{
-                        fontFamily: typography.families.body.regular,
-                        fontSize: typography.sizes.sm,
-                        color: theme.colors.text,
-                        flex: 1,
-                      }}
-                      numberOfLines={1}
-                    >
+                    <AppText variant="body" size="sm" style={{ flex: 1 }} numberOfLines={1}>
                       {chip.label}
-                    </Text>
+                    </AppText>
                     <Pressable
                       onPress={() => setChipToDelete(chip)}
                       hitSlop={8}
@@ -286,18 +253,18 @@ export function DataSection({
 
           {selfCareChips.length > 0 && (
             <>
-              <Text
+              <AppText
+                variant="label"
+                size="sm"
+                color="secondary"
+                accessibilityRole="header"
                 style={{
-                  fontFamily: typography.families.ui.medium,
-                  fontSize: typography.sizes.sm,
-                  color: theme.colors.textSecondary,
                   marginTop: feelingsChips.length > 0 ? spacing.sm : 0,
                   marginBottom: spacing.xs,
                 }}
-                accessibilityRole="header"
               >
                 Selbstfürsorge
-              </Text>
+              </AppText>
               <View style={[styles.chipGrid, { gap: spacing.xs }]}>
                 {selfCareChips.map((chip) => (
                   <View
@@ -315,17 +282,9 @@ export function DataSection({
                       },
                     ]}
                   >
-                    <Text
-                      style={{
-                        fontFamily: typography.families.body.regular,
-                        fontSize: typography.sizes.sm,
-                        color: theme.colors.text,
-                        flex: 1,
-                      }}
-                      numberOfLines={1}
-                    >
+                    <AppText variant="body" size="sm" style={{ flex: 1 }} numberOfLines={1}>
                       {chip.label}
-                    </Text>
+                    </AppText>
                     <Pressable
                       onPress={() => setChipToDelete(chip)}
                       hitSlop={8}
@@ -364,16 +323,9 @@ export function DataSection({
             accessibilityLabel="Alle eigenen Chips löschen"
             accessibilityHint="Löscht alle selbst erstellten Begriffe dauerhaft"
           >
-            <Text
-              style={{
-                fontFamily: typography.families.ui.medium,
-                fontSize: typography.sizes.sm,
-                color: theme.colors.textSecondary,
-                textAlign: 'center',
-              }}
-            >
+            <AppText variant="label" size="sm" color="secondary" style={{ textAlign: 'center' }}>
               Alle löschen
-            </Text>
+            </AppText>
           </Pressable>
         </View>
       )}
@@ -453,8 +405,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   chipGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+    flexDirection: 'column',
   },
   chipRow: {
     flexDirection: 'row',

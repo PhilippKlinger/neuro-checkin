@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
-import { View, Text, Pressable, StyleSheet } from 'react-native';
+import { View, Pressable, StyleSheet } from 'react-native';
+import { AppText } from '../../components/ui/AppText';
 import { useRouter, useFocusEffect } from 'expo-router';
 import { useTheme } from '../../lib/hooks/useTheme';
 import { useDatabase } from '../../lib/hooks/useDatabase';
@@ -22,7 +23,7 @@ function getGreeting(): string {
 }
 
 export default function HomeScreen() {
-  const { theme, spacing, typography, radii, touchTarget } = useTheme();
+  const { theme, spacing, radii, touchTarget } = useTheme();
   const db = useDatabase();
   const router = useRouter();
   const [latestCheckIn, setLatestCheckIn] = useState<CheckIn | null>(null);
@@ -53,21 +54,14 @@ export default function HomeScreen() {
     <View
       style={[styles.container, { backgroundColor: theme.colors.background, padding: spacing.lg }]}
     >
-      <Text
-        style={[
-          styles.greeting,
-          {
-            fontFamily: typography.families.heading.semibold,
-            fontSize: typography.sizes.xl,
-            color: theme.colors.text,
-            marginTop: spacing.lg,
-            marginBottom: spacing.xl,
-          },
-        ]}
+      <AppText
+        variant="title"
+        size="xl"
         accessibilityRole="header"
+        style={[styles.greeting, { marginTop: spacing.lg, marginBottom: spacing.xl }]}
       >
         {getGreeting()}
-      </Text>
+      </AppText>
 
       {isLoaded &&
         (latestCheckIn ? (
@@ -87,42 +81,24 @@ export default function HomeScreen() {
             accessibilityRole="button"
             accessibilityLabel={`Letzter Check-in, ansehen`}
           >
-            <Text
-              style={{
-                fontFamily: typography.families.ui.medium,
-                fontSize: typography.sizes.sm,
-                color: theme.colors.textSecondary,
-                marginBottom: spacing.xs,
-              }}
+            <AppText
+              variant="label"
+              size="sm"
+              color="secondary"
+              style={{ marginBottom: spacing.xs }}
             >
               Letzter Check-in
-            </Text>
-            <Text
-              style={{
-                fontFamily: typography.families.body.regular,
-                fontSize: typography.sizes.md,
-                color: theme.colors.text,
-              }}
-            >
+            </AppText>
+            <AppText variant="body">
               {isWithinSevenDays(latestCheckIn.createdAt)
                 ? `${formatDate(latestCheckIn.createdAt)}, ${formatTime(latestCheckIn.createdAt)}`
                 : `Energie: ${getLevelLabel(latestCheckIn.energyLevel, ENERGY_LABELS)}`}
-            </Text>
+            </AppText>
           </Pressable>
         ) : (
-          <Text
-            style={[
-              styles.emptyText,
-              {
-                fontFamily: typography.families.body.regular,
-                fontSize: typography.sizes.md,
-                color: theme.colors.textSecondary,
-                lineHeight: typography.sizes.md * 1.6,
-              },
-            ]}
-          >
+          <AppText variant="body" color="secondary" style={styles.emptyText}>
             Bereit, wenn du es bist.
-          </Text>
+          </AppText>
         ))}
 
       <View style={styles.spacer} />
@@ -142,30 +118,19 @@ export default function HomeScreen() {
         accessibilityRole="button"
         accessibilityLabel="Beginnen, Tiefe wählen"
       >
-        <Text
-          style={{
-            fontFamily: typography.families.ui.semibold,
-            fontSize: typography.sizes.lg,
-            color: theme.colors.textInverse,
-          }}
-        >
+        <AppText variant="label" weight="semibold" size="lg" color="inverse">
           Beginnen
-        </Text>
+        </AppText>
       </Pressable>
 
-      <Text
-        style={[
-          styles.footer,
-          {
-            fontFamily: typography.families.body.regular,
-            fontSize: typography.sizes.xs,
-            color: theme.colors.textSecondary,
-            marginTop: spacing.lg,
-          },
-        ]}
+      <AppText
+        variant="body"
+        size="xs"
+        color="secondary"
+        style={[styles.footer, { marginTop: spacing.lg }]}
       >
         Lokal gespeichert · kein Therapieersatz
-      </Text>
+      </AppText>
     </View>
   );
 }

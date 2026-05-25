@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { View, Text, Switch, Pressable, Platform, StyleSheet } from 'react-native';
+import { View, Switch, Pressable, Platform, StyleSheet } from 'react-native';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { useTheme } from '../../lib/hooks/useTheme';
+import { AppText } from '../ui/AppText';
 import {
   type NotificationSlot,
   WEEKDAY_LABELS,
@@ -36,7 +37,7 @@ export function SlotCard({
   onTimeChange,
   onWeekdayToggle,
 }: SlotCardProps) {
-  const { theme, spacing, typography, radii, touchTarget } = useTheme();
+  const { theme, spacing, radii, touchTarget } = useTheme();
   const [weekdayExpanded, setWeekdayExpanded] = useState(false);
   const pickerDate = timeStringToDate(slot.time);
 
@@ -56,16 +57,9 @@ export function SlotCard({
     >
       {/* Header row: label + switch */}
       <View style={styles.row}>
-        <Text
-          style={{
-            fontFamily: typography.families.ui.medium,
-            fontSize: typography.sizes.md,
-            color: theme.colors.text,
-            flex: 1,
-          }}
-        >
+        <AppText variant="label" style={{ flex: 1 }}>
           {label}
-        </Text>
+        </AppText>
         <Switch
           value={slot.enabled}
           onValueChange={onToggle}
@@ -83,30 +77,21 @@ export function SlotCard({
       {slot.enabled && (
         <>
           {/* Summary line */}
-          <Text
-            style={{
-              fontFamily: typography.families.body.regular,
-              fontSize: typography.sizes.sm,
-              color: theme.colors.accent,
-              marginTop: spacing.xs,
-            }}
+          <AppText
+            variant="body"
+            size="sm"
+            color="accent"
+            style={{ marginTop: spacing.xs }}
             accessibilityLiveRegion="polite"
           >
             um {slot.time}, {weekdaySummary(slot.weekdays)}
-          </Text>
+          </AppText>
 
           {/* Time row */}
           <View style={[styles.row, { marginTop: spacing.sm }]}>
-            <Text
-              style={{
-                fontFamily: typography.families.body.regular,
-                fontSize: typography.sizes.sm,
-                color: theme.colors.textSecondary,
-                flex: 1,
-              }}
-            >
+            <AppText variant="body" size="sm" color="secondary" style={{ flex: 1 }}>
               Uhrzeit
-            </Text>
+            </AppText>
 
             {Platform.OS === 'ios' ? (
               <DateTimePicker
@@ -136,15 +121,9 @@ export function SlotCard({
                   accessibilityRole="button"
                   accessibilityLabel={`Uhrzeit: ${slot.time}. Tippen zum Ändern`}
                 >
-                  <Text
-                    style={{
-                      fontFamily: typography.families.ui.medium,
-                      fontSize: typography.sizes.md,
-                      color: theme.colors.accent,
-                    }}
-                  >
+                  <AppText variant="label" color="accent">
                     {slot.time}
-                  </Text>
+                  </AppText>
                 </Pressable>
                 {showTimePicker && (
                   <DateTimePicker
@@ -175,16 +154,14 @@ export function SlotCard({
             accessibilityLabel="Wochentage anpassen"
             accessibilityState={{ expanded: weekdayExpanded }}
           >
-            <Text
-              style={{
-                fontFamily: typography.families.ui.medium,
-                fontSize: typography.sizes.sm,
-                color: theme.colors.textSecondary,
-                textDecorationLine: 'underline',
-              }}
+            <AppText
+              variant="label"
+              size="sm"
+              color="secondary"
+              style={{ textDecorationLine: 'underline' }}
             >
               Wochentage anpassen
-            </Text>
+            </AppText>
           </Pressable>
 
           {weekdayExpanded && (
@@ -216,15 +193,9 @@ export function SlotCard({
                     accessibilityLabel={`Wochentag ${dayLabel}`}
                     accessibilityState={{ checked: isActive }}
                   >
-                    <Text
-                      style={{
-                        fontFamily: typography.families.ui.medium,
-                        fontSize: typography.sizes.xs,
-                        color: isActive ? theme.colors.text : theme.colors.textSecondary,
-                      }}
-                    >
+                    <AppText variant="label" size="xs" color={isActive ? 'primary' : 'secondary'}>
                       {dayLabel}
-                    </Text>
+                    </AppText>
                   </Pressable>
                 );
               })}

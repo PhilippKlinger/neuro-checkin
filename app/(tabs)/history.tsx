@@ -1,7 +1,6 @@
 import { useState, useCallback } from 'react';
 import {
   View,
-  Text,
   FlatList,
   Pressable,
   StyleSheet,
@@ -9,6 +8,7 @@ import {
   ToastAndroid,
   ListRenderItem,
 } from 'react-native';
+import { AppText } from '../../components/ui/AppText';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { useTheme } from '../../lib/hooks/useTheme';
 import { useDatabase } from '../../lib/hooks/useDatabase';
@@ -19,7 +19,7 @@ import { exportCheckInsAsPdf } from '../../lib/utils/pdfExport';
 import * as Sentry from '@sentry/react-native';
 
 export default function HistoryScreen() {
-  const { theme, typography, spacing, radii, touchTarget } = useTheme();
+  const { theme, spacing, radii, touchTarget } = useTheme();
   const db = useDatabase();
   const router = useRouter();
   const [checkIns, setCheckIns] = useState<CheckIn[]>([]);
@@ -116,15 +116,9 @@ export default function HistoryScreen() {
   if (isLoading) {
     return (
       <View style={[styles.centered, { backgroundColor: theme.colors.background }]}>
-        <Text
-          style={{
-            fontFamily: typography.families.body.regular,
-            fontSize: typography.sizes.md,
-            color: theme.colors.textSecondary,
-          }}
-        >
+        <AppText variant="body" color="secondary">
           Laden...
-        </Text>
+        </AppText>
       </View>
     );
   }
@@ -134,27 +128,16 @@ export default function HistoryScreen() {
       <View
         style={[styles.centered, { backgroundColor: theme.colors.background, padding: spacing.lg }]}
       >
-        <Text
-          style={{
-            fontFamily: typography.families.heading.semibold,
-            fontSize: typography.sizes.xl,
-            color: theme.colors.text,
-            textAlign: 'center',
-            marginBottom: spacing.md,
-          }}
+        <AppText
+          variant="title"
+          size="xl"
+          style={{ textAlign: 'center', marginBottom: spacing.md }}
         >
           Noch keine Check-ins
-        </Text>
-        <Text
-          style={{
-            fontFamily: typography.families.body.regular,
-            fontSize: typography.sizes.md,
-            color: theme.colors.textSecondary,
-            textAlign: 'center',
-          }}
-        >
+        </AppText>
+        <AppText variant="body" color="secondary" style={{ textAlign: 'center' }}>
           Deine Check-ins erscheinen hier, sobald du deinen ersten abgeschlossen hast.
-        </Text>
+        </AppText>
       </View>
     );
   }
@@ -181,26 +164,14 @@ export default function HistoryScreen() {
             accessibilityRole="button"
             accessibilityLabel="Alle auswählen"
           >
-            <Text
-              style={{
-                fontFamily: typography.families.ui.medium,
-                fontSize: typography.sizes.sm,
-                color: theme.colors.accent,
-              }}
-            >
+            <AppText variant="label" size="sm" color="accent">
               Alle
-            </Text>
+            </AppText>
           </Pressable>
 
-          <Text
-            style={{
-              fontFamily: typography.families.body.regular,
-              fontSize: typography.sizes.sm,
-              color: theme.colors.textSecondary,
-            }}
-          >
+          <AppText variant="body" size="sm" color="secondary">
             {selectedIds.size === 0 ? 'Nichts ausgewählt' : `${selectedIds.size} ausgewählt`}
-          </Text>
+          </AppText>
 
           <Pressable
             onPress={exitSelectionMode}
@@ -208,15 +179,9 @@ export default function HistoryScreen() {
             accessibilityRole="button"
             accessibilityLabel="Auswahl abbrechen"
           >
-            <Text
-              style={{
-                fontFamily: typography.families.ui.medium,
-                fontSize: typography.sizes.sm,
-                color: theme.colors.textSecondary,
-              }}
-            >
+            <AppText variant="label" size="sm" color="secondary">
               Abbrechen
-            </Text>
+            </AppText>
           </Pressable>
         </View>
       ) : (
@@ -236,15 +201,9 @@ export default function HistoryScreen() {
             accessibilityRole="button"
             accessibilityLabel="Check-ins für Export auswählen"
           >
-            <Text
-              style={{
-                fontFamily: typography.families.ui.medium,
-                fontSize: typography.sizes.sm,
-                color: theme.colors.accent,
-              }}
-            >
+            <AppText variant="label" size="sm" color="accent">
               Exportieren
-            </Text>
+            </AppText>
           </Pressable>
         </View>
       )}
@@ -273,16 +232,9 @@ export default function HistoryScreen() {
           ]}
         >
           {selectedIds.size > 100 && (
-            <Text
-              style={{
-                fontFamily: typography.families.body.regular,
-                fontSize: typography.sizes.xs,
-                color: theme.colors.textSecondary,
-                textAlign: 'center',
-              }}
-            >
+            <AppText variant="body" size="xs" color="secondary" style={{ textAlign: 'center' }}>
               {selectedIds.size} Check-ins — das kann einen Moment dauern.
-            </Text>
+            </AppText>
           )}
           <Pressable
             onPress={handleExportSelected}
@@ -300,15 +252,9 @@ export default function HistoryScreen() {
             accessibilityLabel={`${selectedIds.size} Check-ins als PDF exportieren`}
             accessibilityState={{ disabled: isExporting }}
           >
-            <Text
-              style={{
-                fontFamily: typography.families.ui.semibold,
-                fontSize: typography.sizes.md,
-                color: theme.colors.textInverse,
-              }}
-            >
+            <AppText variant="label" weight="semibold" color="inverse">
               {isExporting ? 'Erstelle PDF...' : `${selectedIds.size} als PDF exportieren`}
-            </Text>
+            </AppText>
           </Pressable>
         </View>
       )}

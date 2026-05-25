@@ -1,5 +1,6 @@
-import { View, Text, Pressable, StyleSheet } from 'react-native';
+import { View, Pressable, StyleSheet } from 'react-native';
 import { useTheme } from '../../lib/hooks/useTheme';
+import { AppText } from '../ui/AppText';
 import { BodySignals } from '../../lib/types/checkin';
 import { StepScaffold } from './StepScaffold';
 
@@ -30,7 +31,7 @@ const SIGNALS: SignalItem[] = [
 ];
 
 export function StepBodySignals({ value, onValueChange, hint }: StepBodySignalsProps) {
-  const { theme, spacing, typography, radii, touchTarget } = useTheme();
+  const { theme, spacing, radii, touchTarget } = useTheme();
 
   function handlePress(key: keyof BodySignals, pressed: boolean) {
     const current = value[key];
@@ -62,24 +63,10 @@ export function StepBodySignals({ value, onValueChange, hint }: StepBodySignalsP
               accessibilityLabel={signal.label}
             >
               <View style={[styles.signalTextWrapper, { marginRight: spacing.sm }]}>
-                <Text
-                  style={{
-                    fontFamily: typography.families.ui.medium,
-                    fontSize: typography.sizes.md,
-                    color: theme.colors.text,
-                  }}
-                >
-                  {signal.label}
-                </Text>
-                <Text
-                  style={{
-                    fontFamily: typography.families.body.regular,
-                    fontSize: typography.sizes.sm,
-                    color: theme.colors.textSecondary,
-                  }}
-                >
+                <AppText variant="label">{signal.label}</AppText>
+                <AppText variant="body" size="sm" color="secondary">
                   {signal.description}
-                </Text>
+                </AppText>
               </View>
 
               <View style={[styles.buttonGroup, { gap: spacing.xs }]}>
@@ -101,15 +88,14 @@ export function StepBodySignals({ value, onValueChange, hint }: StepBodySignalsP
                   accessibilityLabel={`${signal.label}: Ja`}
                   accessibilityState={{ selected: state === true }}
                 >
-                  <Text
-                    style={{
-                      fontFamily: typography.families.ui.semibold,
-                      fontSize: typography.sizes.sm,
-                      color: state === true ? theme.colors.textInverse : theme.colors.textSecondary,
-                    }}
+                  <AppText
+                    variant="label"
+                    weight="semibold"
+                    size="sm"
+                    color={state === true ? 'inverse' : 'secondary'}
                   >
                     Ja
-                  </Text>
+                  </AppText>
                 </Pressable>
 
                 <Pressable
@@ -129,15 +115,14 @@ export function StepBodySignals({ value, onValueChange, hint }: StepBodySignalsP
                   accessibilityLabel={`${signal.label}: Nein`}
                   accessibilityState={{ selected: state === false }}
                 >
-                  <Text
-                    style={{
-                      fontFamily: typography.families.ui.semibold,
-                      fontSize: typography.sizes.sm,
-                      color: state === false ? theme.colors.text : theme.colors.textSecondary,
-                    }}
+                  <AppText
+                    variant="label"
+                    weight="semibold"
+                    size="sm"
+                    color={state === false ? 'primary' : 'secondary'}
                   >
                     Nein
-                  </Text>
+                  </AppText>
                 </Pressable>
               </View>
             </View>

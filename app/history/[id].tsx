@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Alert, ToastAndroid } from 'react-native';
+import { View, StyleSheet, Alert, ToastAndroid } from 'react-native';
+import { AppText } from '../../components/ui/AppText';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTheme } from '../../lib/hooks/useTheme';
 import { useDatabase } from '../../lib/hooks/useDatabase';
@@ -12,7 +13,7 @@ import * as Sentry from '@sentry/react-native';
 
 export default function CheckInDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const { theme, spacing, typography } = useTheme();
+  const { theme, spacing } = useTheme();
   const db = useDatabase();
   const router = useRouter();
   const [checkIn, setCheckIn] = useState<CheckIn | null>(null);
@@ -69,15 +70,9 @@ export default function CheckInDetailScreen() {
   if (isLoading || !checkIn) {
     return (
       <View style={[styles.centered, { backgroundColor: theme.colors.background }]}>
-        <Text
-          style={{
-            fontFamily: typography.families.body.regular,
-            fontSize: typography.sizes.md,
-            color: theme.colors.textSecondary,
-          }}
-        >
+        <AppText variant="body" color="secondary">
           {isLoading ? 'Laden...' : 'Check-in nicht gefunden.'}
-        </Text>
+        </AppText>
       </View>
     );
   }
@@ -85,19 +80,16 @@ export default function CheckInDetailScreen() {
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
       {showDetailHint && (
-        <Text
+        <AppText
+          variant="hint"
           style={{
-            fontFamily: typography.families.body.regular,
-            fontSize: typography.sizes.sm,
-            color: theme.colors.textSecondary,
-            fontStyle: 'italic',
             textAlign: 'center',
             paddingHorizontal: spacing.lg,
             paddingVertical: spacing.md,
           }}
         >
           Einzelne Check-ins können über das Papierkorb-Symbol unten gelöscht werden.
-        </Text>
+        </AppText>
       )}
       <CheckInDetailContent
         checkIn={checkIn}

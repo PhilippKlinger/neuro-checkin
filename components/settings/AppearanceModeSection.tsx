@@ -1,6 +1,7 @@
 import { memo } from 'react';
-import { View, Text, Pressable, StyleSheet } from 'react-native';
+import { View, Pressable, StyleSheet } from 'react-native';
 import { useTheme } from '../../lib/hooks/useTheme';
+import { AppText } from '../ui/AppText';
 import { ColorMode } from '../../lib/constants/themes';
 
 interface AppearanceModeSectionProps {
@@ -18,20 +19,13 @@ export const AppearanceModeSection = memo(function AppearanceModeSection({
   currentMode,
   onModeChange,
 }: AppearanceModeSectionProps) {
-  const { theme, spacing, typography, radii } = useTheme();
+  const { theme, spacing, radii } = useTheme();
 
   return (
     <>
-      <Text
-        style={{
-          fontFamily: typography.families.heading.semibold,
-          fontSize: typography.sizes.lg,
-          color: theme.colors.text,
-          marginBottom: spacing.md,
-        }}
-      >
+      <AppText variant="title" size="lg" style={{ marginBottom: spacing.md }}>
         Erscheinungsbild
-      </Text>
+      </AppText>
 
       <View
         style={[styles.row, { gap: spacing.sm, marginBottom: spacing.xl }]}
@@ -60,16 +54,9 @@ export const AppearanceModeSection = memo(function AppearanceModeSection({
               accessibilityLabel={option.label}
               accessibilityState={{ checked: isSelected }}
             >
-              <Text
-                style={{
-                  fontFamily: typography.families.ui.medium,
-                  fontSize: typography.sizes.sm,
-                  color: theme.colors.text,
-                  textAlign: 'center',
-                }}
-              >
+              <AppText variant="label" size="sm" style={{ textAlign: 'center' }}>
                 {option.label}
-              </Text>
+              </AppText>
             </Pressable>
           );
         })}

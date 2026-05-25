@@ -1,13 +1,6 @@
 import { useState } from 'react';
-import {
-  Modal,
-  View,
-  KeyboardAvoidingView,
-  Platform,
-  StyleSheet,
-  Text,
-  Pressable,
-} from 'react-native';
+import { Modal, View, KeyboardAvoidingView, Platform, StyleSheet, Pressable } from 'react-native';
+import { AppText } from '../ui/AppText';
 import Constants from 'expo-constants';
 import { useTheme } from '../../lib/hooks/useTheme';
 import { FORMSPREE_URL } from '../../lib/constants/config';
@@ -22,7 +15,7 @@ interface FeedbackModalProps {
 }
 
 export function FeedbackModal({ visible, onClose }: FeedbackModalProps) {
-  const { theme, spacing, radii, typography } = useTheme();
+  const { theme, spacing, radii } = useTheme();
   const [feedbackText, setFeedbackText] = useState('');
   const [feedbackSubmitting, setFeedbackSubmitting] = useState(false);
   const [feedbackError, setFeedbackError] = useState(false);
@@ -87,15 +80,9 @@ export function FeedbackModal({ visible, onClose }: FeedbackModalProps) {
           }}
         >
           {!feedbackAvailable ? (
-            <Text
-              style={{
-                fontFamily: typography.families.body.regular,
-                fontSize: typography.sizes.md,
-                color: theme.colors.textSecondary,
-              }}
-            >
+            <AppText variant="body" color="secondary">
               Feedback ist derzeit nicht verfügbar.
-            </Text>
+            </AppText>
           ) : feedbackSuccess ? (
             <FeedbackSuccessContent onClose={handleClose} />
           ) : (

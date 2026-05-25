@@ -61,28 +61,47 @@ export function normalizeCheckInInsert(data: CheckInInsert): CheckInInsert {
 
 export async function insertCheckIn(db: SQLiteDatabase, data: CheckInInsert): Promise<number> {
   const normalized = normalizeCheckInInsert(data);
-  const result = await db.runAsync(
-    `INSERT INTO check_ins (
-      energy_level, focus_level, body_signals, feelings,
-      distress_level, distress_note,
-      thoughts_type, thoughts_note, self_care_note, inner_part, note,
-      energy_skipped, focus_skipped, feelings_skipped
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-    normalized.energyLevel,
-    normalized.focusLevel,
-    JSON.stringify(normalized.bodySignals),
-    normalized.feelings,
-    normalized.distressLevel,
-    normalized.distressNote,
-    normalized.thoughtsType,
-    normalized.thoughtsNote,
-    normalized.selfCareNote,
-    normalized.innerPart,
-    normalized.note,
-    normalized.energySkipped ? 1 : 0,
-    normalized.focusSkipped ? 1 : 0,
-    normalized.feelingsSkipped ? 1 : 0
-  );
+
+  // Closure captures normalized once — used for first attempt and retry.
+  const doInsert = () =>
+    db.runAsync(
+      `INSERT INTO check_ins (
+        energy_level, focus_level, body_signals, feelings,
+        distress_level, distress_note,
+        thoughts_type, thoughts_note, self_care_note, inner_part, note,
+        energy_skipped, focus_skipped, feelings_skipped
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      normalized.energyLevel,
+      normalized.focusLevel,
+      JSON.stringify(normalized.bodySignals),
+      normalized.feelings,
+      normalized.distressLevel,
+      normalized.distressNote,
+      normalized.thoughtsType,
+      normalized.thoughtsNote,
+      normalized.selfCareNote,
+      normalized.innerPart,
+      normalized.note,
+      normalized.energySkipped ? 1 : 0,
+      normalized.focusSkipped ? 1 : 0,
+      normalized.feelingsSkipped ? 1 : 0
+    );
+
+  let result;
+  try {
+    result = await doInsert();
+  } catch (error) {
+    // Android: NativeDatabase.prepareAsync can return null after the app is
+    // used for a while. Re-running the warmup query re-initialises the
+    // prepared-statement pipeline, then we retry exactly once.
+    if (error instanceof Error && error.message.includes('prepareAsync')) {
+      await db.getFirstAsync<{ n: number }>('SELECT ? AS n', 1);
+      result = await doInsert();
+    } else {
+      throw error;
+    }
+  }
+
   return result.lastInsertRowId;
 }
 

@@ -1,5 +1,7 @@
 import { useRef, useEffect } from 'react';
-import { View, Text, TextInput, Pressable, ScrollView, StyleSheet } from 'react-native';
+import { View, Pressable, ScrollView, StyleSheet } from 'react-native';
+import { AppText } from '../ui/AppText';
+import { AppTextInput } from '../ui/AppTextInput';
 import { useTheme } from '../../lib/hooks/useTheme';
 import { useReducedMotion } from '../../lib/hooks/useReducedMotion';
 import { StepScaffold } from './StepScaffold';
@@ -26,7 +28,7 @@ const OPTIONS: OptionItem[] = [
 ];
 
 export function StepThoughts({ type, note, onTypeChange, onNoteChange, hint }: StepThoughtsProps) {
-  const { theme, spacing, typography, radii, touchTarget } = useTheme();
+  const { theme, spacing, radii, touchTarget } = useTheme();
   const reducedMotion = useReducedMotion();
   const scrollRef = useRef<ScrollView>(null);
   const scrollTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -44,6 +46,7 @@ export function StepThoughts({ type, note, onTypeChange, onNoteChange, hint }: S
       subtitle="Wie würdest du deine Gedanken gerade beschreiben?"
       hint={hint}
       keyboardPersistTaps
+      avoidKeyboard
     >
       <View style={[styles.optionList, { gap: spacing.sm }]}>
         {OPTIONS.map((option) => {
@@ -68,21 +71,13 @@ export function StepThoughts({ type, note, onTypeChange, onNoteChange, hint }: S
               accessibilityLabel={option.label}
               accessibilityState={{ selected: isSelected }}
             >
-              <Text
-                style={{
-                  fontFamily: typography.families.ui.medium,
-                  fontSize: typography.sizes.md,
-                  color: theme.colors.text,
-                }}
-              >
-                {option.label}
-              </Text>
+              <AppText variant="label">{option.label}</AppText>
             </Pressable>
           );
         })}
       </View>
 
-      <TextInput
+      <AppTextInput
         value={note}
         onChangeText={(text) => onNoteChange(text.slice(0, 200))}
         placeholder="Möchtest du dazu etwas notieren? (optional)"
@@ -100,9 +95,6 @@ export function StepThoughts({ type, note, onTypeChange, onNoteChange, hint }: S
         style={[
           styles.noteInput,
           {
-            fontFamily: typography.families.body.regular,
-            fontSize: typography.sizes.md,
-            color: theme.colors.text,
             backgroundColor: theme.colors.surface,
             borderColor: theme.colors.border,
             borderRadius: radii.md,
@@ -113,17 +105,14 @@ export function StepThoughts({ type, note, onTypeChange, onNoteChange, hint }: S
         accessibilityLabel="Gedanken-Notiz"
       />
       {note.length >= 180 && (
-        <Text
-          style={{
-            fontFamily: typography.families.ui.medium,
-            fontSize: typography.sizes.xs,
-            color: note.length >= 200 ? theme.colors.success : theme.colors.textSecondary,
-            textAlign: 'right',
-            marginTop: spacing.xs,
-          }}
+        <AppText
+          variant="label"
+          size="xs"
+          color={note.length >= 200 ? 'success' : 'secondary'}
+          style={{ textAlign: 'right', marginTop: spacing.xs }}
         >
           {note.length >= 200 ? '✓' : `${note.length} / 200`}
-        </Text>
+        </AppText>
       )}
     </StepScaffold>
   );

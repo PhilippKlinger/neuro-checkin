@@ -1,5 +1,6 @@
-import { View, Text, Pressable, StyleSheet } from 'react-native';
+import { View, Pressable, StyleSheet } from 'react-native';
 import { useTheme } from '../../lib/hooks/useTheme';
+import { AppText } from '../ui/AppText';
 import { StepScaffold } from './StepScaffold';
 
 interface LevelSliderProps {
@@ -49,7 +50,7 @@ interface RadioGroupProps {
 }
 
 function RadioGroup({ title, labels, value, onValueChange }: RadioGroupProps) {
-  const { theme, spacing, typography, radii, touchTarget } = useTheme();
+  const { theme, spacing, radii, touchTarget } = useTheme();
   return (
     <View accessibilityRole="radiogroup" accessibilityLabel={title} style={styles.optionList}>
       {labels.map((label, index) => {
@@ -76,15 +77,7 @@ function RadioGroup({ title, labels, value, onValueChange }: RadioGroupProps) {
             accessibilityHint={`${title} auf "${label}" setzen`}
             accessibilityState={{ checked: isSelected }}
           >
-            <Text
-              style={{
-                fontFamily: typography.families.ui.medium,
-                fontSize: typography.sizes.md,
-                color: theme.colors.text,
-              }}
-            >
-              {label}
-            </Text>
+            <AppText variant="label">{label}</AppText>
           </Pressable>
         );
       })}

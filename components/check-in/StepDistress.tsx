@@ -1,7 +1,9 @@
 import { useState, useRef, useEffect } from 'react';
-import { View, Text, TextInput, Pressable, ScrollView, StyleSheet } from 'react-native';
+import { View, Pressable, ScrollView, StyleSheet } from 'react-native';
 import { useTheme } from '../../lib/hooks/useTheme';
 import { useReducedMotion } from '../../lib/hooks/useReducedMotion';
+import { AppText } from '../ui/AppText';
+import { AppTextInput } from '../ui/AppTextInput';
 import { DISTRESS_LABELS, DISTRESS_NOTE_THRESHOLD } from '../../lib/types/checkin';
 import { StepScaffold } from './StepScaffold';
 
@@ -25,7 +27,7 @@ export function StepDistress({
   onNoteChange,
   hint,
 }: StepDistressProps) {
-  const { theme, spacing, typography, radii, touchTarget } = useTheme();
+  const { theme, spacing, radii, touchTarget } = useTheme();
   const reducedMotion = useReducedMotion();
   const [cannotSay, setCannotSay] = useState(false);
   const [noteOpen, setNoteOpen] = useState(distressNote !== '');
@@ -70,6 +72,7 @@ export function StepDistress({
       subtitle="Wie belastet oder angespannt bist du gerade?"
       hint={hint}
       keyboardPersistTaps
+      avoidKeyboard
     >
       <View
         style={[styles.optionList, { gap: spacing.sm }]}
@@ -98,15 +101,7 @@ export function StepDistress({
               accessibilityLabel={label}
               accessibilityState={{ checked: isSelected }}
             >
-              <Text
-                style={{
-                  fontFamily: typography.families.ui.medium,
-                  fontSize: typography.sizes.md,
-                  color: theme.colors.text,
-                }}
-              >
-                {label}
-              </Text>
+              <AppText variant="label">{label}</AppText>
             </Pressable>
           );
         })}
@@ -137,16 +132,9 @@ export function StepDistress({
         accessibilityLabel="Kann ich gerade nicht sagen"
         accessibilityState={{ selected: cannotSay }}
       >
-        <Text
-          style={{
-            fontFamily: typography.families.body.regular,
-            fontSize: typography.sizes.md,
-            color: theme.colors.textSecondary,
-            fontStyle: 'italic',
-          }}
-        >
+        <AppText variant="hint" color="secondary">
           Kann ich gerade nicht sagen
-        </Text>
+        </AppText>
       </Pressable>
 
       {showNoteToggle && !noteOpen && (
@@ -161,21 +149,12 @@ export function StepDistress({
           accessibilityRole="button"
           accessibilityLabel="Notiz hinzufügen"
         >
-          <Text
-            style={{
-              fontFamily: typography.families.body.regular,
-              fontSize: typography.sizes.sm,
-              color: theme.colors.textSecondary,
-              fontStyle: 'italic',
-            }}
-          >
-            Wenn du magst, schreib kurz dazu.
-          </Text>
+          <AppText variant="hint">Wenn du magst, schreib kurz dazu.</AppText>
         </Pressable>
       )}
 
       {noteOpen && (
-        <TextInput
+        <AppTextInput
           value={distressNote}
           onChangeText={(text) => onNoteChange(text.slice(0, 200))}
           placeholder="(optional)"
@@ -187,9 +166,6 @@ export function StepDistress({
           style={[
             styles.noteInput,
             {
-              fontFamily: typography.families.body.regular,
-              fontSize: typography.sizes.md,
-              color: theme.colors.text,
               backgroundColor: theme.colors.surface,
               borderColor: theme.colors.border,
               borderRadius: radii.md,
@@ -201,17 +177,14 @@ export function StepDistress({
         />
       )}
       {noteOpen && distressNote.length >= 180 && (
-        <Text
-          style={{
-            fontFamily: typography.families.ui.medium,
-            fontSize: typography.sizes.xs,
-            color: distressNote.length >= 200 ? theme.colors.success : theme.colors.textSecondary,
-            textAlign: 'right',
-            marginTop: spacing.xs,
-          }}
+        <AppText
+          variant="label"
+          size="xs"
+          color={distressNote.length >= 200 ? 'success' : 'secondary'}
+          style={{ textAlign: 'right', marginTop: spacing.xs }}
         >
           {distressNote.length >= 200 ? '✓' : `${distressNote.length} / 200`}
-        </Text>
+        </AppText>
       )}
     </StepScaffold>
   );

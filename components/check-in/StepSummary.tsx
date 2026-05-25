@@ -1,5 +1,6 @@
-import { View, Text, StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { useTheme } from '../../lib/hooks/useTheme';
+import { AppText } from '../ui/AppText';
 import { StepScaffold } from './StepScaffold';
 import { CheckInDraft } from '../../lib/types/checkin';
 import { presentCheckIn } from '../../lib/utils/presentCheckIn';
@@ -10,26 +11,17 @@ interface StepSummaryProps {
 }
 
 export function StepSummary({ draft, showPostFirstCheckinHint }: StepSummaryProps) {
-  const { theme, spacing, typography, radii } = useTheme();
+  const { theme, spacing, radii } = useTheme();
   const p = presentCheckIn(draft);
   const activeSignals = p.bodySignals.filter((s) => s.active);
 
   return (
     <StepScaffold title="Zusammenfassung" subtitle="Dein Check-in auf einen Blick">
       {showPostFirstCheckinHint && (
-        <Text
-          style={{
-            fontFamily: typography.families.body.regular,
-            fontSize: typography.sizes.sm,
-            color: theme.colors.textSecondary,
-            textAlign: 'center',
-            marginBottom: spacing.md,
-            fontStyle: 'italic',
-          }}
-        >
+        <AppText variant="hint" style={{ textAlign: 'center', marginBottom: spacing.md }}>
           Check-ins lassen sich jederzeit im Verlauf nachlesen — und Muster werden über Zeit
           sichtbar.
-        </Text>
+        </AppText>
       )}
 
       <View
@@ -44,12 +36,20 @@ export function StepSummary({ draft, showPostFirstCheckinHint }: StepSummaryProp
         ]}
       >
         <View style={[styles.row, { marginBottom: spacing.sm }]}>
-          <Text style={rowLabel(typography, theme)}>Energie</Text>
-          <Text style={rowValue(typography, theme)}>{p.energy ?? 'Nicht angegeben'}</Text>
+          <AppText variant="body" color="secondary">
+            Energie
+          </AppText>
+          <AppText variant="label" weight="semibold">
+            {p.energy ?? 'Nicht angegeben'}
+          </AppText>
         </View>
         <View style={styles.row}>
-          <Text style={rowLabel(typography, theme)}>Fokus</Text>
-          <Text style={rowValue(typography, theme)}>{p.focus ?? 'Nicht angegeben'}</Text>
+          <AppText variant="body" color="secondary">
+            Fokus
+          </AppText>
+          <AppText variant="label" weight="semibold">
+            {p.focus ?? 'Nicht angegeben'}
+          </AppText>
         </View>
       </View>
 
@@ -65,11 +65,17 @@ export function StepSummary({ draft, showPostFirstCheckinHint }: StepSummaryProp
             },
           ]}
         >
-          <Text style={sectionTitle(typography, theme, spacing)}>Körpersignale</Text>
+          <AppText variant="label" color="accent" style={{ marginBottom: spacing.sm }}>
+            Körpersignale
+          </AppText>
           {activeSignals.map((s) => (
             <View key={s.label} style={[styles.row, { marginBottom: spacing.xs }]}>
-              <Text style={rowLabel(typography, theme)}>{s.label}</Text>
-              <Text style={rowValue(typography, theme)}>Ja</Text>
+              <AppText variant="body" color="secondary">
+                {s.label}
+              </AppText>
+              <AppText variant="label" weight="semibold">
+                Ja
+              </AppText>
             </View>
           ))}
         </View>
@@ -87,8 +93,10 @@ export function StepSummary({ draft, showPostFirstCheckinHint }: StepSummaryProp
             },
           ]}
         >
-          <Text style={sectionTitle(typography, theme, spacing)}>Gefühle</Text>
-          <Text style={bodyText(typography, theme)}>{p.feelings}</Text>
+          <AppText variant="label" color="accent" style={{ marginBottom: spacing.sm }}>
+            Gefühle
+          </AppText>
+          <AppText variant="body">{p.feelings}</AppText>
         </View>
       )}
 
@@ -104,14 +112,14 @@ export function StepSummary({ draft, showPostFirstCheckinHint }: StepSummaryProp
             },
           ]}
         >
-          <Text style={sectionTitle(typography, theme, spacing)}>Stress-Level</Text>
-          <Text style={bodyText(typography, theme)}>{p.distress}</Text>
+          <AppText variant="label" color="accent" style={{ marginBottom: spacing.sm }}>
+            Stress-Level
+          </AppText>
+          <AppText variant="body">{p.distress}</AppText>
           {draft.distressNote.trim() !== '' && (
-            <Text
-              style={[bodyText(typography, theme), { marginTop: spacing.xs, fontStyle: 'italic' }]}
-            >
+            <AppText variant="hint" style={{ marginTop: spacing.xs }}>
               {draft.distressNote}
-            </Text>
+            </AppText>
           )}
         </View>
       )}
@@ -128,17 +136,14 @@ export function StepSummary({ draft, showPostFirstCheckinHint }: StepSummaryProp
             },
           ]}
         >
-          <Text style={sectionTitle(typography, theme, spacing)}>Gedanken</Text>
-          {p.thoughtsType && <Text style={bodyText(typography, theme)}>{p.thoughtsType}</Text>}
+          <AppText variant="label" color="accent" style={{ marginBottom: spacing.sm }}>
+            Gedanken
+          </AppText>
+          {p.thoughtsType && <AppText variant="body">{p.thoughtsType}</AppText>}
           {p.thoughtsNote && (
-            <Text
-              style={[
-                bodyText(typography, theme),
-                { marginTop: p.thoughtsType ? spacing.xs : 0, fontStyle: 'italic' },
-              ]}
-            >
+            <AppText variant="hint" style={{ marginTop: p.thoughtsType ? spacing.xs : 0 }}>
               {p.thoughtsNote}
-            </Text>
+            </AppText>
           )}
         </View>
       )}
@@ -155,58 +160,14 @@ export function StepSummary({ draft, showPostFirstCheckinHint }: StepSummaryProp
             },
           ]}
         >
-          <Text style={sectionTitle(typography, theme, spacing)}>Selbstfürsorge</Text>
-          <Text style={bodyText(typography, theme)}>{p.selfCare}</Text>
+          <AppText variant="label" color="accent" style={{ marginBottom: spacing.sm }}>
+            Selbstfürsorge
+          </AppText>
+          <AppText variant="body">{p.selfCare}</AppText>
         </View>
       )}
     </StepScaffold>
   );
-}
-
-function rowLabel(
-  typography: ReturnType<typeof useTheme>['typography'],
-  theme: ReturnType<typeof useTheme>['theme']
-) {
-  return {
-    fontFamily: typography.families.body.regular,
-    fontSize: typography.sizes.md,
-    color: theme.colors.textSecondary,
-  };
-}
-
-function rowValue(
-  typography: ReturnType<typeof useTheme>['typography'],
-  theme: ReturnType<typeof useTheme>['theme']
-) {
-  return {
-    fontFamily: typography.families.ui.semibold,
-    fontSize: typography.sizes.md,
-    color: theme.colors.text,
-  };
-}
-
-function sectionTitle(
-  typography: ReturnType<typeof useTheme>['typography'],
-  theme: ReturnType<typeof useTheme>['theme'],
-  spacing: ReturnType<typeof useTheme>['spacing']
-) {
-  return {
-    fontFamily: typography.families.ui.medium,
-    fontSize: typography.sizes.sm,
-    color: theme.colors.accent,
-    marginBottom: spacing.sm,
-  };
-}
-
-function bodyText(
-  typography: ReturnType<typeof useTheme>['typography'],
-  theme: ReturnType<typeof useTheme>['theme']
-) {
-  return {
-    fontFamily: typography.families.body.regular,
-    fontSize: typography.sizes.md,
-    color: theme.colors.text,
-  };
 }
 
 const styles = StyleSheet.create({
