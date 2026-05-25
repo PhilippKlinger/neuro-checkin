@@ -78,7 +78,7 @@ describe('buildPdfHtml — HTML structure', () => {
 describe('buildPdfHtml — check-in block content', () => {
   it('includes the check-in date', () => {
     const html = buildPdfHtml([BASE]);
-    expect(html).toContain('2026-05-19');
+    expect(html).toContain('19.05.2026');
   });
 
   it('includes energy level when not skipped', () => {
@@ -143,14 +143,14 @@ describe('buildPdfHtml — omits empty fields', () => {
 describe('buildPdfHtml — multiple check-ins', () => {
   it('renders a block for each check-in', () => {
     const html = buildPdfHtml([BASE, MINIMAL]);
-    expect(html).toContain('2026-05-19');
-    expect(html).toContain('2026-05-18');
+    expect(html).toContain('19.05.2026');
+    expect(html).toContain('18.05.2026');
   });
 
   it('renders check-ins in the given order', () => {
     const html = buildPdfHtml([BASE, MINIMAL]);
-    const pos1 = html.indexOf('2026-05-19');
-    const pos2 = html.indexOf('2026-05-18');
+    const pos1 = html.indexOf('19.05.2026');
+    const pos2 = html.indexOf('18.05.2026');
     expect(pos1).toBeLessThan(pos2);
   });
 
