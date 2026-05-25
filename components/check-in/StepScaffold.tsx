@@ -19,7 +19,15 @@ interface StepScaffoldProps {
 }
 
 export const StepScaffold = forwardRef<ScrollView, StepScaffoldProps>(function StepScaffold(
-  { title, subtitle, hint, skipConfig, centerContent = false, keyboardPersistTaps = false, children },
+  {
+    title,
+    subtitle,
+    hint,
+    skipConfig,
+    centerContent = false,
+    keyboardPersistTaps = false,
+    children,
+  },
   ref
 ) {
   const { theme, spacing, typography, radii, touchTarget } = useTheme();

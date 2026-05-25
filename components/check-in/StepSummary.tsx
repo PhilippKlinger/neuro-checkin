@@ -43,10 +43,7 @@ export function StepSummary({ draft, showPostFirstCheckinHint }: StepSummaryProp
   const activeSignals = bodySignalEntries.filter((s) => s.value === true);
 
   return (
-    <StepScaffold
-      title="Zusammenfassung"
-      subtitle="Dein Check-in auf einen Blick"
-    >
+    <StepScaffold title="Zusammenfassung" subtitle="Dein Check-in auf einen Blick">
       {showPostFirstCheckinHint && (
         <Text
           style={{
@@ -85,9 +82,7 @@ export function StepSummary({ draft, showPostFirstCheckinHint }: StepSummaryProp
         <View style={styles.row}>
           <Text style={rowLabel(typography, theme)}>Fokus</Text>
           <Text style={rowValue(typography, theme)}>
-            {draft.focusSkipped
-              ? 'Nicht angegeben'
-              : getLevelLabel(draft.focusLevel, FOCUS_LABELS)}
+            {draft.focusSkipped ? 'Nicht angegeben' : getLevelLabel(draft.focusLevel, FOCUS_LABELS)}
           </Text>
         </View>
       </View>
@@ -149,10 +144,7 @@ export function StepSummary({ draft, showPostFirstCheckinHint }: StepSummaryProp
           </Text>
           {draft.distressNote.trim() !== '' && (
             <Text
-              style={[
-                bodyText(typography, theme),
-                { marginTop: spacing.xs, fontStyle: 'italic' },
-              ]}
+              style={[bodyText(typography, theme), { marginTop: spacing.xs, fontStyle: 'italic' }]}
             >
               {draft.distressNote}
             </Text>
@@ -174,9 +166,7 @@ export function StepSummary({ draft, showPostFirstCheckinHint }: StepSummaryProp
         >
           <Text style={sectionTitle(typography, theme, spacing)}>Gedanken</Text>
           {draft.thoughtsType !== null && (
-            <Text style={bodyText(typography, theme)}>
-              {getThoughtsLabel(draft.thoughtsType)}
-            </Text>
+            <Text style={bodyText(typography, theme)}>{getThoughtsLabel(draft.thoughtsType)}</Text>
           )}
           {draft.thoughtsNote.trim() !== '' && (
             <Text

@@ -219,9 +219,7 @@ export function FeedbackFormContent({
         accessibilityLabel={feedbackSubmitting ? 'Sendet...' : 'Feedback senden'}
         accessibilityState={{ disabled: isSubmitDisabled }}
       >
-        <Text style={s.submitText}>
-          {feedbackSubmitting ? 'Sendet...' : 'Feedback senden'}
-        </Text>
+        <Text style={s.submitText}>{feedbackSubmitting ? 'Sendet...' : 'Feedback senden'}</Text>
       </Pressable>
     </>
   );

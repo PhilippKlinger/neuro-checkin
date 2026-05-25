@@ -14,7 +14,13 @@ interface DataSectionProps {
   onChipsDeleteComplete: () => void;
 }
 
-export function DataSection({ db, checkInCount, chipCount, onDeleteComplete, onChipsDeleteComplete }: DataSectionProps) {
+export function DataSection({
+  db,
+  checkInCount,
+  chipCount,
+  onDeleteComplete,
+  onChipsDeleteComplete,
+}: DataSectionProps) {
   const { theme, spacing, typography, radii, touchTarget } = useTheme();
   const [showStep1, setShowStep1] = useState(false);
   const [showStep2, setShowStep2] = useState(false);

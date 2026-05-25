@@ -39,11 +39,7 @@ export function StepBodySignals({ value, onValueChange, hint }: StepBodySignalsP
   }
 
   return (
-    <StepScaffold
-      title="Körpersignale"
-      subtitle="Was nimmt dein Körper gerade wahr?"
-      hint={hint}
-    >
+    <StepScaffold title="Körpersignale" subtitle="Was nimmt dein Körper gerade wahr?" hint={hint}>
       <View style={[styles.signalList, { gap: spacing.sm }]}>
         {SIGNALS.map((signal) => {
           const state = value[signal.key];
@@ -109,8 +105,7 @@ export function StepBodySignals({ value, onValueChange, hint }: StepBodySignalsP
                     style={{
                       fontFamily: typography.families.ui.semibold,
                       fontSize: typography.sizes.sm,
-                      color:
-                        state === true ? theme.colors.textInverse : theme.colors.textSecondary,
+                      color: state === true ? theme.colors.textInverse : theme.colors.textSecondary,
                     }}
                   >
                     Ja
