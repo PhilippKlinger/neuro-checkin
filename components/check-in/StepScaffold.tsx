@@ -1,7 +1,6 @@
 import { forwardRef } from 'react';
 import { View, Text, ScrollView, Pressable, StyleSheet } from 'react-native';
 import { useTheme } from '../../lib/hooks/useTheme';
-import { NAV_AREA_PADDING } from '../../lib/constants/layout';
 
 interface SkipConfig {
   onSkip: () => void;
@@ -78,6 +77,7 @@ export const StepScaffold = forwardRef<ScrollView, StepScaffoldProps>(function S
         style={styles.scrollArea}
         contentContainerStyle={[
           styles.scrollContent,
+          { paddingBottom: spacing.lg },
           centerContent && styles.scrollContentCentered,
         ]}
         showsVerticalScrollIndicator
@@ -143,7 +143,6 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     flexGrow: 1,
-    paddingBottom: NAV_AREA_PADDING,
   },
   scrollContentCentered: {
     justifyContent: 'center',

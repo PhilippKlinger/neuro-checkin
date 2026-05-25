@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { View, Text, TextInput, Pressable, StyleSheet } from 'react-native';
+import { useRef, useState } from 'react';
+import { View, Text, TextInput, Pressable, ScrollView, StyleSheet } from 'react-native';
 import { useTheme } from '../../lib/hooks/useTheme';
 import { isChipSelected, toggleChip } from '../../lib/utils/chips';
 import { StepScaffold } from './StepScaffold';
@@ -98,6 +98,7 @@ export function ChipOrTextStep({
   chipsOnly = false,
 }: ChipOrTextStepProps) {
   const { theme, spacing, typography, radii, touchTarget } = useTheme();
+  const scrollRef = useRef<ScrollView>(null);
 
   const [mode, setMode] = useState<'chips' | 'text'>(() =>
     !chipsOnly && value.trim() !== '' && !hasChipContent(value, chips) ? 'text' : 'chips'
@@ -109,15 +110,18 @@ export function ChipOrTextStep({
   function switchToText() {
     onValueChange('');
     setMode('text');
+    scrollRef.current?.scrollTo({ y: 0, animated: false });
   }
 
   function switchToChips() {
     onValueChange('');
     setMode('chips');
+    scrollRef.current?.scrollTo({ y: 0, animated: false });
   }
 
   return (
     <StepScaffold
+      ref={scrollRef}
       title={title}
       subtitle={subtitle}
       hint={hint}
