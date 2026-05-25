@@ -40,7 +40,7 @@ export default function CheckInScreen() {
   const {
     step,
     draft,
-    setDraft,
+    actions,
     isSaving,
     isDone,
     wasReset,
@@ -88,9 +88,9 @@ export default function CheckInScreen() {
         return (
           <StepEnergy
             value={draft.energyLevel}
-            onValueChange={(v) => setDraft({ ...draft, energyLevel: v, energySkipped: false })}
+            onValueChange={actions.setEnergy}
             skipped={draft.energySkipped}
-            onSkip={() => setDraft({ ...draft, energyLevel: 0, energySkipped: true })}
+            onSkip={actions.skipEnergy}
             hint={guidedMode ? STEP_HINTS.energy : undefined}
           />
         );
@@ -98,9 +98,9 @@ export default function CheckInScreen() {
         return (
           <StepFocus
             value={draft.focusLevel}
-            onValueChange={(v) => setDraft({ ...draft, focusLevel: v, focusSkipped: false })}
+            onValueChange={actions.setFocus}
             skipped={draft.focusSkipped}
-            onSkip={() => setDraft({ ...draft, focusLevel: 0, focusSkipped: true })}
+            onSkip={actions.skipFocus}
             hint={guidedMode ? STEP_HINTS.focus : undefined}
           />
         );
@@ -108,7 +108,7 @@ export default function CheckInScreen() {
         return (
           <StepBodySignals
             value={draft.bodySignals}
-            onValueChange={(v) => setDraft({ ...draft, bodySignals: v })}
+            onValueChange={actions.setBodySignals}
             hint={guidedMode ? STEP_HINTS.bodySignals : undefined}
           />
         );
@@ -116,11 +116,11 @@ export default function CheckInScreen() {
         return (
           <StepFeelings
             value={draft.feelings}
-            onValueChange={(v) => setDraft({ ...draft, feelings: v, feelingsSkipped: false })}
+            onValueChange={actions.setFeelings}
             hint={guidedMode ? STEP_HINTS.feelings : undefined}
             userChips={feelingUserChips}
             skipped={draft.feelingsSkipped}
-            onSkip={() => setDraft({ ...draft, feelings: '', feelingsSkipped: true })}
+            onSkip={actions.skipFeelings}
           />
         );
       case 5:
@@ -128,8 +128,8 @@ export default function CheckInScreen() {
           <StepDistress
             distressLevel={draft.distressLevel}
             distressNote={draft.distressNote}
-            onLevelChange={(v) => setDraft({ ...draft, distressLevel: v })}
-            onNoteChange={(v) => setDraft({ ...draft, distressNote: v })}
+            onLevelChange={actions.setDistressLevel}
+            onNoteChange={actions.setDistressNote}
             hint={guidedMode ? STEP_HINTS.distress : undefined}
           />
         );
@@ -138,8 +138,8 @@ export default function CheckInScreen() {
           <StepThoughts
             type={draft.thoughtsType}
             note={draft.thoughtsNote}
-            onTypeChange={(v) => setDraft({ ...draft, thoughtsType: v })}
-            onNoteChange={(v) => setDraft({ ...draft, thoughtsNote: v })}
+            onTypeChange={actions.setThoughtsType}
+            onNoteChange={actions.setThoughtsNote}
             hint={guidedMode ? STEP_HINTS.thoughts : undefined}
           />
         );
@@ -147,7 +147,7 @@ export default function CheckInScreen() {
         return (
           <StepSelfCare
             value={draft.selfCareNote}
-            onValueChange={(v) => setDraft({ ...draft, selfCareNote: v })}
+            onValueChange={actions.setSelfCare}
             hint={guidedMode ? STEP_HINTS.selfCare : undefined}
             userChips={selfCareUserChips}
           />
