@@ -340,7 +340,10 @@ export default function SettingsScreen() {
               checkInCount={checkInCount}
               chipCount={chipCount}
               onDeleteComplete={() => setCheckInCount(0)}
-              onChipsDeleteComplete={() => setChipCount(0)}
+              onChipsDeleteComplete={async () => {
+                const count = await countUserChips(db);
+                setChipCount(count);
+              }}
             />
           </View>
         )}
