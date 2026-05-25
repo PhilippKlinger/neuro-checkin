@@ -3,7 +3,7 @@ import { View, Text, TextInput, Pressable, ScrollView, StyleSheet } from 'react-
 import { useTheme } from '../../lib/hooks/useTheme';
 import { useReducedMotion } from '../../lib/hooks/useReducedMotion';
 import { DISTRESS_LABELS, DISTRESS_NOTE_THRESHOLD } from '../../lib/types/checkin';
-import { NAV_AREA_PADDING } from '../../lib/constants/layout';
+import { StepScaffold } from './StepScaffold';
 
 interface StepDistressProps {
   distressLevel: number | null;
@@ -64,48 +64,13 @@ export function StepDistress({
   const showNoteToggle = distressLevel !== null && distressLevel >= DISTRESS_NOTE_THRESHOLD;
 
   return (
-    <ScrollView
+    <StepScaffold
       ref={scrollRef}
-      style={styles.container}
-      contentContainerStyle={styles.contentContainer}
-      showsVerticalScrollIndicator={false}
+      title="Stress-Level"
+      subtitle="Wie belastet oder angespannt bist du gerade?"
+      hint={hint}
+      keyboardPersistTaps
     >
-      <Text
-        style={{
-          fontFamily: typography.families.heading.semibold,
-          fontSize: typography.sizes.xl,
-          color: theme.colors.text,
-          textAlign: 'center',
-          marginBottom: spacing.sm,
-        }}
-      >
-        Stress-Level
-      </Text>
-      <Text
-        style={{
-          fontFamily: typography.families.body.regular,
-          fontSize: typography.sizes.md,
-          color: theme.colors.textSecondary,
-          textAlign: 'center',
-          marginBottom: hint ? spacing.sm : spacing.xl,
-        }}
-      >
-        Wie belastet oder angespannt bist du gerade?
-      </Text>
-      {hint && (
-        <Text
-          style={{
-            fontFamily: typography.families.body.regular,
-            fontSize: typography.sizes.sm,
-            color: theme.colors.textSecondary,
-            textAlign: 'center',
-            fontStyle: 'italic',
-            marginBottom: spacing.xl,
-          }}
-        >
-          {hint}
-        </Text>
-      )}
       <View
         style={[styles.optionList, { gap: spacing.sm }]}
         accessibilityRole="radiogroup"
@@ -248,18 +213,11 @@ export function StepDistress({
           {distressNote.length >= 200 ? '✓' : `${distressNote.length} / 200`}
         </Text>
       )}
-    </ScrollView>
+    </StepScaffold>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  contentContainer: {
-    flexGrow: 1,
-    paddingBottom: NAV_AREA_PADDING,
-  },
   optionList: {},
   optionButton: {
     alignItems: 'center',

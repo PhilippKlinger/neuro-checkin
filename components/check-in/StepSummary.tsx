@@ -1,6 +1,6 @@
-import { View, Text, ScrollView, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { useTheme } from '../../lib/hooks/useTheme';
-import { NAV_AREA_PADDING } from '../../lib/constants/layout';
+import { StepScaffold } from './StepScaffold';
 import {
   CheckInDraft,
   ENERGY_LABELS,
@@ -27,12 +27,6 @@ function getThoughtsLabel(type: 'supportive' | 'burdening' | 'mixed' | null): st
   }
 }
 
-function getSignalLabel(val: boolean | null): string {
-  if (val === true) return 'Ja';
-  if (val === false) return 'Nein';
-  return '—';
-}
-
 export function StepSummary({ draft, showPostFirstCheckinHint }: StepSummaryProps) {
   const { theme, spacing, typography, radii } = useTheme();
 
@@ -48,43 +42,11 @@ export function StepSummary({ draft, showPostFirstCheckinHint }: StepSummaryProp
 
   const activeSignals = bodySignalEntries.filter((s) => s.value === true);
 
-  const content = (
-    <View style={styles.container}>
-      <Text
-        style={{
-          fontFamily: typography.families.heading.semibold,
-          fontSize: typography.sizes.xl,
-          color: theme.colors.text,
-          textAlign: 'center',
-          marginBottom: spacing.sm,
-        }}
-      >
-        Zusammenfassung
-      </Text>
-      <Text
-        style={{
-          fontFamily: typography.families.body.regular,
-          fontSize: typography.sizes.md,
-          color: theme.colors.textSecondary,
-          textAlign: 'center',
-          marginBottom: spacing.xs,
-        }}
-      >
-        Dein Check-in auf einen Blick
-      </Text>
-      <Text
-        style={{
-          fontFamily: typography.families.body.regular,
-          fontSize: typography.sizes.sm,
-          color: theme.colors.textSecondary,
-          textAlign: 'center',
-          marginBottom: spacing.lg,
-          fontStyle: 'italic',
-        }}
-      >
-        Alles davon ist okay.
-      </Text>
-
+  return (
+    <StepScaffold
+      title="Zusammenfassung"
+      subtitle="Dein Check-in auf einen Blick"
+    >
       {showPostFirstCheckinHint && (
         <Text
           style={{
@@ -101,7 +63,36 @@ export function StepSummary({ draft, showPostFirstCheckinHint }: StepSummaryProp
         </Text>
       )}
 
-      <ScrollView style={styles.scrollArea} contentContainerStyle={styles.scrollContent}>
+      <View
+        style={[
+          styles.card,
+          {
+            backgroundColor: theme.colors.surface,
+            borderRadius: radii.md,
+            padding: spacing.md,
+            marginBottom: spacing.md,
+          },
+        ]}
+      >
+        <View style={[styles.row, { marginBottom: spacing.sm }]}>
+          <Text style={rowLabel(typography, theme)}>Energie</Text>
+          <Text style={rowValue(typography, theme)}>
+            {draft.energySkipped
+              ? 'Nicht angegeben'
+              : getLevelLabel(draft.energyLevel, ENERGY_LABELS)}
+          </Text>
+        </View>
+        <View style={styles.row}>
+          <Text style={rowLabel(typography, theme)}>Fokus</Text>
+          <Text style={rowValue(typography, theme)}>
+            {draft.focusSkipped
+              ? 'Nicht angegeben'
+              : getLevelLabel(draft.focusLevel, FOCUS_LABELS)}
+          </Text>
+        </View>
+      </View>
+
+      {activeSignals.length > 0 && (
         <View
           style={[
             styles.card,
@@ -113,144 +104,111 @@ export function StepSummary({ draft, showPostFirstCheckinHint }: StepSummaryProp
             },
           ]}
         >
-          <View style={[styles.row, { marginBottom: spacing.sm }]}>
-            <Text style={rowLabel(typography, theme)}>Energie</Text>
-            <Text style={rowValue(typography, theme)}>
-              {draft.energySkipped
-                ? 'Nicht angegeben'
-                : getLevelLabel(draft.energyLevel, ENERGY_LABELS)}
-            </Text>
-          </View>
-          <View style={styles.row}>
-            <Text style={rowLabel(typography, theme)}>Fokus</Text>
-            <Text style={rowValue(typography, theme)}>
-              {draft.focusSkipped
-                ? 'Nicht angegeben'
-                : getLevelLabel(draft.focusLevel, FOCUS_LABELS)}
-            </Text>
-          </View>
+          <Text style={sectionTitle(typography, theme, spacing)}>Körpersignale</Text>
+          {activeSignals.map((s) => (
+            <View key={s.label} style={[styles.row, { marginBottom: spacing.xs }]}>
+              <Text style={rowLabel(typography, theme)}>{s.label}</Text>
+              <Text style={rowValue(typography, theme)}>Ja</Text>
+            </View>
+          ))}
         </View>
+      )}
 
-        {activeSignals.length > 0 && (
-          <View
-            style={[
-              styles.card,
-              {
-                backgroundColor: theme.colors.surface,
-                borderRadius: radii.md,
-                padding: spacing.md,
-                marginBottom: spacing.md,
-              },
-            ]}
-          >
-            <Text style={sectionTitle(typography, theme, spacing)}>Körpersignale</Text>
-            {activeSignals.map((s) => (
-              <View key={s.label} style={[styles.row, { marginBottom: spacing.xs }]}>
-                <Text style={rowLabel(typography, theme)}>{s.label}</Text>
-                <Text style={rowValue(typography, theme)}>{getSignalLabel(s.value)}</Text>
-              </View>
-            ))}
-          </View>
-        )}
+      {draft.feelings.trim() !== '' && (
+        <View
+          style={[
+            styles.card,
+            {
+              backgroundColor: theme.colors.surface,
+              borderRadius: radii.md,
+              padding: spacing.md,
+              marginBottom: spacing.md,
+            },
+          ]}
+        >
+          <Text style={sectionTitle(typography, theme, spacing)}>Gefühle</Text>
+          <Text style={bodyText(typography, theme)}>{draft.feelings}</Text>
+        </View>
+      )}
 
-        {draft.feelings.trim() !== '' && (
-          <View
-            style={[
-              styles.card,
-              {
-                backgroundColor: theme.colors.surface,
-                borderRadius: radii.md,
-                padding: spacing.md,
-                marginBottom: spacing.md,
-              },
-            ]}
-          >
-            <Text style={sectionTitle(typography, theme, spacing)}>Gefühle</Text>
-            <Text style={bodyText(typography, theme)}>{draft.feelings}</Text>
-          </View>
-        )}
-
-        {draft.distressLevel !== null && (
-          <View
-            style={[
-              styles.card,
-              {
-                backgroundColor: theme.colors.surface,
-                borderRadius: radii.md,
-                padding: spacing.md,
-                marginBottom: spacing.md,
-              },
-            ]}
-          >
-            <Text style={sectionTitle(typography, theme, spacing)}>Stress-Level</Text>
-            <Text style={bodyText(typography, theme)}>
-              {getLevelLabel(draft.distressLevel, DISTRESS_LABELS)}
+      {draft.distressLevel !== null && (
+        <View
+          style={[
+            styles.card,
+            {
+              backgroundColor: theme.colors.surface,
+              borderRadius: radii.md,
+              padding: spacing.md,
+              marginBottom: spacing.md,
+            },
+          ]}
+        >
+          <Text style={sectionTitle(typography, theme, spacing)}>Stress-Level</Text>
+          <Text style={bodyText(typography, theme)}>
+            {getLevelLabel(draft.distressLevel, DISTRESS_LABELS)}
+          </Text>
+          {draft.distressNote.trim() !== '' && (
+            <Text
+              style={[
+                bodyText(typography, theme),
+                { marginTop: spacing.xs, fontStyle: 'italic' },
+              ]}
+            >
+              {draft.distressNote}
             </Text>
-            {draft.distressNote.trim() !== '' && (
-              <Text
-                style={[
-                  bodyText(typography, theme),
-                  { marginTop: spacing.xs, fontStyle: 'italic' },
-                ]}
-              >
-                {draft.distressNote}
-              </Text>
-            )}
-          </View>
-        )}
+          )}
+        </View>
+      )}
 
-        {(draft.thoughtsType !== null || draft.thoughtsNote.trim() !== '') && (
-          <View
-            style={[
-              styles.card,
-              {
-                backgroundColor: theme.colors.surface,
-                borderRadius: radii.md,
-                padding: spacing.md,
-                marginBottom: spacing.md,
-              },
-            ]}
-          >
-            <Text style={sectionTitle(typography, theme, spacing)}>Gedanken</Text>
-            {draft.thoughtsType !== null && (
-              <Text style={bodyText(typography, theme)}>
-                {getThoughtsLabel(draft.thoughtsType)}
-              </Text>
-            )}
-            {draft.thoughtsNote.trim() !== '' && (
-              <Text
-                style={[
-                  bodyText(typography, theme),
-                  { marginTop: draft.thoughtsType !== null ? spacing.xs : 0, fontStyle: 'italic' },
-                ]}
-              >
-                {draft.thoughtsNote}
-              </Text>
-            )}
-          </View>
-        )}
+      {(draft.thoughtsType !== null || draft.thoughtsNote.trim() !== '') && (
+        <View
+          style={[
+            styles.card,
+            {
+              backgroundColor: theme.colors.surface,
+              borderRadius: radii.md,
+              padding: spacing.md,
+              marginBottom: spacing.md,
+            },
+          ]}
+        >
+          <Text style={sectionTitle(typography, theme, spacing)}>Gedanken</Text>
+          {draft.thoughtsType !== null && (
+            <Text style={bodyText(typography, theme)}>
+              {getThoughtsLabel(draft.thoughtsType)}
+            </Text>
+          )}
+          {draft.thoughtsNote.trim() !== '' && (
+            <Text
+              style={[
+                bodyText(typography, theme),
+                { marginTop: draft.thoughtsType !== null ? spacing.xs : 0, fontStyle: 'italic' },
+              ]}
+            >
+              {draft.thoughtsNote}
+            </Text>
+          )}
+        </View>
+      )}
 
-        {draft.selfCareNote.trim() !== '' && (
-          <View
-            style={[
-              styles.card,
-              {
-                backgroundColor: theme.colors.surface,
-                borderRadius: radii.md,
-                padding: spacing.md,
-                marginBottom: spacing.md,
-              },
-            ]}
-          >
-            <Text style={sectionTitle(typography, theme, spacing)}>Selbstfürsorge</Text>
-            <Text style={bodyText(typography, theme)}>{draft.selfCareNote}</Text>
-          </View>
-        )}
-      </ScrollView>
-    </View>
+      {draft.selfCareNote.trim() !== '' && (
+        <View
+          style={[
+            styles.card,
+            {
+              backgroundColor: theme.colors.surface,
+              borderRadius: radii.md,
+              padding: spacing.md,
+              marginBottom: spacing.md,
+            },
+          ]}
+        >
+          <Text style={sectionTitle(typography, theme, spacing)}>Selbstfürsorge</Text>
+          <Text style={bodyText(typography, theme)}>{draft.selfCareNote}</Text>
+        </View>
+      )}
+    </StepScaffold>
   );
-
-  return content;
 }
 
 function rowLabel(
@@ -300,15 +258,6 @@ function bodyText(
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  scrollArea: {
-    flex: 1,
-  },
-  scrollContent: {
-    paddingBottom: NAV_AREA_PADDING,
-  },
   card: {},
   row: {
     flexDirection: 'row',

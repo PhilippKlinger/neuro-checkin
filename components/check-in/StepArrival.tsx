@@ -1,7 +1,7 @@
-import { ScrollView, View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../../lib/hooks/useTheme';
-import { NAV_AREA_PADDING } from '../../lib/constants/layout';
+import { StepScaffold } from './StepScaffold';
 
 interface StepArrivalProps {
   showHintIntro?: boolean;
@@ -11,38 +11,11 @@ export function StepArrival({ showHintIntro }: StepArrivalProps) {
   const { theme, spacing, typography } = useTheme();
 
   return (
-    <ScrollView
-      style={styles.scroll}
-      contentContainerStyle={styles.container}
-      showsVerticalScrollIndicator={false}
+    <StepScaffold
+      title="Ankommen"
+      subtitle="Wenn du magst, halte einen Moment inne — bevor es weitergeht."
+      centerContent
     >
-      <Text
-        style={[
-          styles.title,
-          {
-            fontFamily: typography.families.heading.semibold,
-            fontSize: typography.sizes.xl,
-            color: theme.colors.text,
-            marginBottom: spacing.lg,
-          },
-        ]}
-      >
-        Ankommen
-      </Text>
-      <Text
-        style={[
-          styles.body,
-          {
-            fontFamily: typography.families.body.regular,
-            fontSize: typography.sizes.md,
-            color: theme.colors.textSecondary,
-            lineHeight: typography.sizes.md * typography.lineHeights.relaxed,
-            marginBottom: spacing.md,
-          },
-        ]}
-      >
-        Wenn du magst, halte einen Moment inne — bevor es weitergeht.
-      </Text>
       <Text
         style={[
           styles.body,
@@ -87,23 +60,11 @@ export function StepArrival({ showHintIntro }: StepArrivalProps) {
           </Text>
         </View>
       )}
-    </ScrollView>
+    </StepScaffold>
   );
 }
 
 const styles = StyleSheet.create({
-  scroll: {
-    flex: 1,
-  },
-  container: {
-    flexGrow: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingBottom: NAV_AREA_PADDING,
-  },
-  title: {
-    textAlign: 'center',
-  },
   body: {
     textAlign: 'center',
   },

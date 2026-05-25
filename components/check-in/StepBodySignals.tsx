@@ -1,7 +1,8 @@
-import { View, Text, Pressable, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { useTheme } from '../../lib/hooks/useTheme';
 import { BodySignals } from '../../lib/types/checkin';
-import { NAV_AREA_PADDING } from '../../lib/constants/layout';
+import { StepScaffold } from './StepScaffold';
+
 interface StepBodySignalsProps {
   value: BodySignals;
   onValueChange: (value: BodySignals) => void;
@@ -33,177 +34,126 @@ export function StepBodySignals({ value, onValueChange, hint }: StepBodySignalsP
 
   function handlePress(key: keyof BodySignals, pressed: boolean) {
     const current = value[key];
-    // Nochmal tippen auf aktiven Button → zurück auf null (nicht beantwortet)
     const next = current === pressed ? null : pressed;
     onValueChange({ ...value, [key]: next });
   }
 
   return (
-    <View style={styles.container}>
-      <Text
-        style={{
-          fontFamily: typography.families.heading.semibold,
-          fontSize: typography.sizes.xl,
-          color: theme.colors.text,
-          textAlign: 'center',
-          marginBottom: spacing.sm,
-        }}
-      >
-        Körpersignale
-      </Text>
-      <Text
-        style={{
-          fontFamily: typography.families.body.regular,
-          fontSize: typography.sizes.md,
-          color: theme.colors.textSecondary,
-          textAlign: 'center',
-          marginBottom: hint ? spacing.sm : spacing.lg,
-        }}
-      >
-        Was nimmt dein Körper gerade wahr?
-      </Text>
-      {hint && (
-        <Text
-          style={{
-            fontFamily: typography.families.body.regular,
-            fontSize: typography.sizes.sm,
-            color: theme.colors.textSecondary,
-            textAlign: 'center',
-            fontStyle: 'italic',
-            marginBottom: spacing.lg,
-          }}
-        >
-          {hint}
-        </Text>
-      )}
-
-      <ScrollView
-        style={styles.scrollArea}
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
-      >
-        <View style={[styles.signalList, { gap: spacing.sm }]}>
-          {SIGNALS.map((signal) => {
-            const state = value[signal.key];
-            return (
-              <View
-                key={signal.key}
-                style={[
-                  styles.signalRow,
-                  {
-                    backgroundColor: theme.colors.surface,
-                    borderRadius: radii.md,
-                    paddingLeft: spacing.md,
-                    paddingRight: spacing.sm,
-                    paddingVertical: spacing.sm,
-                    minHeight: touchTarget.min,
-                    borderWidth: 1,
-                    borderColor: state !== null ? theme.colors.accentSoft : theme.colors.border,
-                  },
-                ]}
-                accessibilityLabel={signal.label}
-              >
-                {/* Label + Beschreibung */}
-                <View style={[styles.signalTextWrapper, { marginRight: spacing.sm }]}>
-                  <Text
-                    style={{
-                      fontFamily: typography.families.ui.medium,
-                      fontSize: typography.sizes.md,
-                      color: theme.colors.text,
-                    }}
-                  >
-                    {signal.label}
-                  </Text>
-                  <Text
-                    style={{
-                      fontFamily: typography.families.body.regular,
-                      fontSize: typography.sizes.sm,
-                      color: theme.colors.textSecondary,
-                    }}
-                  >
-                    {signal.description}
-                  </Text>
-                </View>
-
-                {/* Ja / Nein Buttons */}
-                <View style={[styles.buttonGroup, { gap: spacing.xs }]}>
-                  <Pressable
-                    onPress={() => handlePress(signal.key, true)}
-                    style={[
-                      styles.answerButton,
-                      {
-                        minWidth: touchTarget.min,
-                        minHeight: touchTarget.min,
-                        borderRadius: radii.sm,
-                        borderWidth: 2,
-                        backgroundColor:
-                          state === true ? theme.colors.accent : theme.colors.background,
-                        borderColor: state === true ? theme.colors.accent : theme.colors.border,
-                      },
-                    ]}
-                    accessibilityRole="button"
-                    accessibilityLabel={`${signal.label}: Ja`}
-                    accessibilityState={{ selected: state === true }}
-                  >
-                    <Text
-                      style={{
-                        fontFamily: typography.families.ui.semibold,
-                        fontSize: typography.sizes.sm,
-                        color:
-                          state === true ? theme.colors.textInverse : theme.colors.textSecondary,
-                      }}
-                    >
-                      Ja
-                    </Text>
-                  </Pressable>
-
-                  <Pressable
-                    onPress={() => handlePress(signal.key, false)}
-                    style={[
-                      styles.answerButton,
-                      {
-                        minWidth: touchTarget.min,
-                        minHeight: touchTarget.min,
-                        borderRadius: radii.sm,
-                        borderWidth: 2,
-                        backgroundColor: theme.colors.background,
-                        borderColor: state === false ? theme.colors.text : theme.colors.border,
-                      },
-                    ]}
-                    accessibilityRole="button"
-                    accessibilityLabel={`${signal.label}: Nein`}
-                    accessibilityState={{ selected: state === false }}
-                  >
-                    <Text
-                      style={{
-                        fontFamily: typography.families.ui.semibold,
-                        fontSize: typography.sizes.sm,
-                        color: state === false ? theme.colors.text : theme.colors.textSecondary,
-                      }}
-                    >
-                      Nein
-                    </Text>
-                  </Pressable>
-                </View>
+    <StepScaffold
+      title="Körpersignale"
+      subtitle="Was nimmt dein Körper gerade wahr?"
+      hint={hint}
+    >
+      <View style={[styles.signalList, { gap: spacing.sm }]}>
+        {SIGNALS.map((signal) => {
+          const state = value[signal.key];
+          return (
+            <View
+              key={signal.key}
+              style={[
+                styles.signalRow,
+                {
+                  backgroundColor: theme.colors.surface,
+                  borderRadius: radii.md,
+                  paddingLeft: spacing.md,
+                  paddingRight: spacing.sm,
+                  paddingVertical: spacing.sm,
+                  minHeight: touchTarget.min,
+                  borderWidth: 1,
+                  borderColor: state !== null ? theme.colors.accentSoft : theme.colors.border,
+                },
+              ]}
+              accessibilityLabel={signal.label}
+            >
+              <View style={[styles.signalTextWrapper, { marginRight: spacing.sm }]}>
+                <Text
+                  style={{
+                    fontFamily: typography.families.ui.medium,
+                    fontSize: typography.sizes.md,
+                    color: theme.colors.text,
+                  }}
+                >
+                  {signal.label}
+                </Text>
+                <Text
+                  style={{
+                    fontFamily: typography.families.body.regular,
+                    fontSize: typography.sizes.sm,
+                    color: theme.colors.textSecondary,
+                  }}
+                >
+                  {signal.description}
+                </Text>
               </View>
-            );
-          })}
-        </View>
-      </ScrollView>
-    </View>
+
+              <View style={[styles.buttonGroup, { gap: spacing.xs }]}>
+                <Pressable
+                  onPress={() => handlePress(signal.key, true)}
+                  style={[
+                    styles.answerButton,
+                    {
+                      minWidth: touchTarget.min,
+                      minHeight: touchTarget.min,
+                      borderRadius: radii.sm,
+                      borderWidth: 2,
+                      backgroundColor:
+                        state === true ? theme.colors.accent : theme.colors.background,
+                      borderColor: state === true ? theme.colors.accent : theme.colors.border,
+                    },
+                  ]}
+                  accessibilityRole="button"
+                  accessibilityLabel={`${signal.label}: Ja`}
+                  accessibilityState={{ selected: state === true }}
+                >
+                  <Text
+                    style={{
+                      fontFamily: typography.families.ui.semibold,
+                      fontSize: typography.sizes.sm,
+                      color:
+                        state === true ? theme.colors.textInverse : theme.colors.textSecondary,
+                    }}
+                  >
+                    Ja
+                  </Text>
+                </Pressable>
+
+                <Pressable
+                  onPress={() => handlePress(signal.key, false)}
+                  style={[
+                    styles.answerButton,
+                    {
+                      minWidth: touchTarget.min,
+                      minHeight: touchTarget.min,
+                      borderRadius: radii.sm,
+                      borderWidth: 2,
+                      backgroundColor: theme.colors.background,
+                      borderColor: state === false ? theme.colors.text : theme.colors.border,
+                    },
+                  ]}
+                  accessibilityRole="button"
+                  accessibilityLabel={`${signal.label}: Nein`}
+                  accessibilityState={{ selected: state === false }}
+                >
+                  <Text
+                    style={{
+                      fontFamily: typography.families.ui.semibold,
+                      fontSize: typography.sizes.sm,
+                      color: state === false ? theme.colors.text : theme.colors.textSecondary,
+                    }}
+                  >
+                    Nein
+                  </Text>
+                </Pressable>
+              </View>
+            </View>
+          );
+        })}
+      </View>
+    </StepScaffold>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  scrollArea: {
-    flex: 1,
-  },
-  scrollContent: {
-    paddingBottom: NAV_AREA_PADDING,
-  },
   signalList: {},
   signalRow: {
     flexDirection: 'row',

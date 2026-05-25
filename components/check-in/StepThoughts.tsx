@@ -2,7 +2,7 @@ import { useRef, useEffect } from 'react';
 import { View, Text, TextInput, Pressable, ScrollView, StyleSheet } from 'react-native';
 import { useTheme } from '../../lib/hooks/useTheme';
 import { useReducedMotion } from '../../lib/hooks/useReducedMotion';
-import { NAV_AREA_PADDING } from '../../lib/constants/layout';
+import { StepScaffold } from './StepScaffold';
 
 type ThoughtsType = 'supportive' | 'burdening' | 'mixed' | null;
 
@@ -38,49 +38,13 @@ export function StepThoughts({ type, note, onTypeChange, onNoteChange, hint }: S
   }, []);
 
   return (
-    <ScrollView
+    <StepScaffold
       ref={scrollRef}
-      style={styles.container}
-      contentContainerStyle={styles.contentContainer}
-      keyboardShouldPersistTaps="handled"
-      showsVerticalScrollIndicator={false}
+      title="Gedanken"
+      subtitle="Wie würdest du deine Gedanken gerade beschreiben?"
+      hint={hint}
+      keyboardPersistTaps
     >
-      <Text
-        style={{
-          fontFamily: typography.families.heading.semibold,
-          fontSize: typography.sizes.xl,
-          color: theme.colors.text,
-          textAlign: 'center',
-          marginBottom: spacing.sm,
-        }}
-      >
-        Gedanken
-      </Text>
-      <Text
-        style={{
-          fontFamily: typography.families.body.regular,
-          fontSize: typography.sizes.md,
-          color: theme.colors.textSecondary,
-          textAlign: 'center',
-          marginBottom: hint ? spacing.sm : spacing.xl,
-        }}
-      >
-        Wie würdest du deine Gedanken gerade beschreiben?
-      </Text>
-      {hint && (
-        <Text
-          style={{
-            fontFamily: typography.families.body.regular,
-            fontSize: typography.sizes.sm,
-            color: theme.colors.textSecondary,
-            textAlign: 'center',
-            fontStyle: 'italic',
-            marginBottom: spacing.xl,
-          }}
-        >
-          {hint}
-        </Text>
-      )}
       <View style={[styles.optionList, { gap: spacing.sm }]}>
         {OPTIONS.map((option) => {
           const isSelected = type === option.value;
@@ -161,18 +125,11 @@ export function StepThoughts({ type, note, onTypeChange, onNoteChange, hint }: S
           {note.length >= 200 ? '✓' : `${note.length} / 200`}
         </Text>
       )}
-    </ScrollView>
+    </StepScaffold>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  contentContainer: {
-    flexGrow: 1,
-    paddingBottom: NAV_AREA_PADDING,
-  },
   optionList: {},
   optionButton: {
     alignItems: 'center',
