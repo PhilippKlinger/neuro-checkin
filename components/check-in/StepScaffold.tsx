@@ -1,7 +1,6 @@
 import { forwardRef, useState, useCallback, useRef } from 'react';
 import {
   View,
-  Text,
   ScrollView,
   Pressable,
   StyleSheet,
@@ -13,6 +12,7 @@ import {
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useTheme } from '../../lib/hooks/useTheme';
+import { AppText } from '../ui/AppText';
 
 interface SkipConfig {
   onSkip: () => void;
@@ -43,7 +43,7 @@ export const StepScaffold = forwardRef<ScrollView, StepScaffoldProps>(function S
   },
   ref
 ) {
-  const { theme, spacing, typography, radii, touchTarget } = useTheme();
+  const { theme, spacing, radii, touchTarget } = useTheme();
   const [isAtBottom, setIsAtBottom] = useState(false);
   const [hasOverflow, setHasOverflow] = useState(false);
   const layoutHeight = useRef(0);
@@ -66,41 +66,27 @@ export const StepScaffold = forwardRef<ScrollView, StepScaffoldProps>(function S
   return (
     <View style={styles.root}>
       <View style={styles.header}>
-        <Text
-          style={{
-            fontFamily: typography.families.heading.semibold,
-            fontSize: typography.sizes.xl,
-            color: theme.colors.text,
-            textAlign: 'center',
-            marginBottom: spacing.sm,
-          }}
+        <AppText
+          variant="title"
+          size="xl"
+          style={{ textAlign: 'center', marginBottom: spacing.sm }}
         >
           {title}
-        </Text>
-        <Text
-          style={{
-            fontFamily: typography.families.body.regular,
-            fontSize: typography.sizes.md,
-            color: theme.colors.textSecondary,
-            textAlign: 'center',
-            marginBottom: hint ? spacing.sm : spacing.lg,
-          }}
+        </AppText>
+        <AppText
+          variant="body"
+          color="secondary"
+          style={{ textAlign: 'center', marginBottom: hint ? spacing.sm : spacing.lg }}
         >
           {subtitle}
-        </Text>
+        </AppText>
         {hint && (
-          <Text
-            style={{
-              fontFamily: typography.families.body.regular,
-              fontSize: typography.sizes.sm,
-              color: theme.colors.textSecondary,
-              textAlign: 'center',
-              fontStyle: 'italic',
-              marginBottom: spacing.lg,
-            }}
+          <AppText
+            variant="hint"
+            style={{ textAlign: 'center', marginBottom: spacing.lg }}
           >
             {hint}
-          </Text>
+          </AppText>
         )}
       </View>
 
@@ -153,16 +139,9 @@ export const StepScaffold = forwardRef<ScrollView, StepScaffoldProps>(function S
                 accessibilityLabel="Kann ich gerade nicht sagen"
                 accessibilityState={{ selected: skipConfig.skipped }}
               >
-                <Text
-                  style={{
-                    fontFamily: typography.families.body.regular,
-                    fontSize: typography.sizes.md,
-                    color: theme.colors.textSecondary,
-                    fontStyle: 'italic',
-                  }}
-                >
+                <AppText variant="hint" color="secondary">
                   Kann ich gerade nicht sagen
-                </Text>
+                </AppText>
               </Pressable>
             </>
           )}

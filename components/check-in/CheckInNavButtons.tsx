@@ -1,5 +1,6 @@
-import { View, Text, Pressable, StyleSheet } from 'react-native';
+import { View, Pressable, StyleSheet } from 'react-native';
 import { useTheme } from '../../lib/hooks/useTheme';
+import { AppText } from '../ui/AppText';
 
 interface CheckInNavButtonsProps {
   onBack: () => void;
@@ -24,7 +25,7 @@ export function CheckInNavButtons({
   isSaving,
   paddingBottom,
 }: CheckInNavButtonsProps) {
-  const { theme, spacing, typography, radii, touchTarget } = useTheme();
+  const { theme, spacing, radii, touchTarget } = useTheme();
 
   const nextLabel = isLastStep ? (isSaving ? 'Speichern...' : 'Speichern') : 'Weiter';
 
@@ -56,15 +57,7 @@ export function CheckInNavButtons({
           accessibilityRole="button"
           accessibilityLabel={backLabel}
         >
-          <Text
-            style={{
-              fontFamily: typography.families.ui.medium,
-              fontSize: typography.sizes.md,
-              color: theme.colors.text,
-            }}
-          >
-            {backLabel}
-          </Text>
+          <AppText variant="label">{backLabel}</AppText>
         </Pressable>
       ) : (
         <View style={styles.navButton} />
@@ -86,15 +79,7 @@ export function CheckInNavButtons({
         accessibilityLabel={nextLabel}
         accessibilityState={{ disabled: isNextDisabled }}
       >
-        <Text
-          style={{
-            fontFamily: typography.families.ui.semibold,
-            fontSize: typography.sizes.md,
-            color: theme.colors.textInverse,
-          }}
-        >
-          {nextLabel}
-        </Text>
+        <AppText variant="label" weight="semibold" color="inverse">{nextLabel}</AppText>
       </Pressable>
     </View>
   );

@@ -1,6 +1,8 @@
 import { useRef, useState } from 'react';
-import { View, Text, TextInput, Pressable, ScrollView, StyleSheet } from 'react-native';
+import { View, Pressable, ScrollView, StyleSheet } from 'react-native';
 import { useTheme } from '../../lib/hooks/useTheme';
+import { AppText } from '../ui/AppText';
+import { AppTextInput } from '../ui/AppTextInput';
 import { isChipSelected, toggleChip } from '../../lib/utils/chips';
 import { StepScaffold } from './StepScaffold';
 import type { ChipGroup } from '../../lib/constants/chips';
@@ -35,7 +37,7 @@ interface ChipWrapProps {
 }
 
 function ChipWrap({ chips, value, onValueChange, variant = 'default' }: ChipWrapProps) {
-  const { theme, spacing, typography, radii, touchTarget } = useTheme();
+  const { theme, spacing, radii, touchTarget } = useTheme();
   return (
     <View
       style={[styles.chipWrap, { gap: spacing.sm, marginBottom: spacing.md }]}
@@ -65,15 +67,13 @@ function ChipWrap({ chips, value, onValueChange, variant = 'default' }: ChipWrap
             accessibilityLabel={chip}
             accessibilityState={{ selected }}
           >
-            <Text
-              style={{
-                fontFamily: typography.families.ui.medium,
-                fontSize: typography.sizes.sm,
-                color: selected ? theme.colors.text : theme.colors.textSecondary,
-              }}
+            <AppText
+              variant="label"
+              size="sm"
+              color={selected ? 'primary' : 'secondary'}
             >
               {chip}
-            </Text>
+            </AppText>
           </Pressable>
         );
       })}
@@ -97,7 +97,7 @@ export function ChipOrTextStep({
   onSkip,
   chipsOnly = false,
 }: ChipOrTextStepProps) {
-  const { theme, spacing, typography, radii, touchTarget } = useTheme();
+  const { theme, spacing, radii, touchTarget } = useTheme();
   const scrollRef = useRef<ScrollView>(null);
 
   const [mode, setMode] = useState<'chips' | 'text'>(() =>
@@ -134,17 +134,13 @@ export function ChipOrTextStep({
           {chipGroups ? (
             chipGroups.map((group) => (
               <View key={group.label}>
-                <Text
-                  style={{
-                    fontFamily: typography.families.body.regular,
-                    fontSize: typography.sizes.xs,
-                    color: theme.colors.textSecondary,
-                    fontStyle: 'italic',
-                    marginBottom: spacing.sm,
-                  }}
+                <AppText
+                  variant="hint"
+                  size="xs"
+                  style={{ marginBottom: spacing.sm }}
                 >
                   {group.label}
-                </Text>
+                </AppText>
                 <ChipWrap chips={group.chips} value={value} onValueChange={onValueChange} />
               </View>
             ))
@@ -172,22 +168,20 @@ export function ChipOrTextStep({
               accessibilityRole="button"
               accessibilityLabel="Stattdessen frei beschreiben"
             >
-              <Text
-                style={{
-                  fontFamily: typography.families.body.regular,
-                  fontSize: typography.sizes.sm,
-                  color: theme.colors.textSecondary,
-                  textDecorationLine: 'underline',
-                }}
+              <AppText
+                variant="body"
+                size="sm"
+                color="secondary"
+                style={{ textDecorationLine: 'underline' }}
               >
                 Lieber frei beschreiben
-              </Text>
+              </AppText>
             </Pressable>
           )}
         </>
       ) : (
         <>
-          <TextInput
+          <AppTextInput
             value={value}
             onChangeText={(text) => onValueChange(text.slice(0, maxLength))}
             placeholder={textPlaceholder}
@@ -198,42 +192,26 @@ export function ChipOrTextStep({
             style={[
               styles.textInput,
               {
-                fontFamily: typography.families.body.regular,
-                fontSize: typography.sizes.md,
-                color: theme.colors.text,
                 backgroundColor: theme.colors.surface,
                 borderColor: theme.colors.border,
                 borderRadius: radii.md,
                 padding: spacing.md,
-                lineHeight: typography.sizes.md * typography.lineHeights.normal,
               },
             ]}
             accessibilityLabel={textAccessibilityLabel}
           />
-          <Text
-            style={{
-              fontFamily: typography.families.body.regular,
-              fontSize: typography.sizes.xs,
-              color: theme.colors.textSecondary,
-              marginTop: spacing.xs,
-              fontStyle: 'italic',
-            }}
-          >
+          <AppText variant="hint" size="xs" style={{ marginTop: spacing.xs }}>
             Mehrere Begriffe mit Komma trennen — sie werden als eigene Chips gespeichert.
-          </Text>
+          </AppText>
           {value.length >= counterThreshold && (
-            <Text
-              style={{
-                fontFamily: typography.families.ui.medium,
-                fontSize: typography.sizes.xs,
-                color:
-                  value.length >= maxLength ? theme.colors.success : theme.colors.textSecondary,
-                textAlign: 'right',
-                marginTop: spacing.xs,
-              }}
+            <AppText
+              variant="label"
+              size="xs"
+              color={value.length >= maxLength ? 'success' : 'secondary'}
+              style={{ textAlign: 'right', marginTop: spacing.xs }}
             >
               {value.length >= maxLength ? '✓' : `${value.length} / ${maxLength}`}
-            </Text>
+            </AppText>
           )}
 
           <Pressable
@@ -246,16 +224,14 @@ export function ChipOrTextStep({
             accessibilityRole="button"
             accessibilityLabel="Stattdessen aus Vorschlägen wählen"
           >
-            <Text
-              style={{
-                fontFamily: typography.families.body.regular,
-                fontSize: typography.sizes.sm,
-                color: theme.colors.textSecondary,
-                textDecorationLine: 'underline',
-              }}
+            <AppText
+              variant="body"
+              size="sm"
+              color="secondary"
+              style={{ textDecorationLine: 'underline' }}
             >
               Zurück zu den Vorschlägen
-            </Text>
+            </AppText>
           </Pressable>
         </>
       )}

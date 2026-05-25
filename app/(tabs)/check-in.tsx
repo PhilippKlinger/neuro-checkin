@@ -1,9 +1,10 @@
 import { useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, AccessibilityInfo, findNodeHandle } from 'react-native';
+import { View, StyleSheet, AccessibilityInfo, findNodeHandle } from 'react-native';
 import { useTheme } from '../../lib/hooks/useTheme';
 import { useDatabase } from '../../lib/hooks/useDatabase';
 import { useCheckInFlow, TOTAL_STEPS } from '../../lib/hooks/useCheckInFlow';
 import { FadeView } from '../../components/ui/FadeView';
+import { AppText } from '../../components/ui/AppText';
 import { CheckInNavButtons } from '../../components/check-in/CheckInNavButtons';
 import { StepIndicator } from '../../components/check-in/StepIndicator';
 import { GuidedToggle } from '../../components/check-in/GuidedToggle';
@@ -32,7 +33,7 @@ const STEP_NAMES = [
 ];
 
 export default function CheckInScreen() {
-  const { theme, spacing, typography, radii } = useTheme();
+  const { theme, spacing, radii } = useTheme();
   const db = useDatabase();
   const flow = useCheckInFlow(db);
   const stepContentRef = useRef<View>(null);
@@ -186,16 +187,9 @@ export default function CheckInScreen() {
             },
           ]}
         >
-          <Text
-            style={{
-              fontFamily: typography.families.body.regular,
-              fontSize: typography.sizes.sm,
-              color: theme.colors.textSecondary,
-              textAlign: 'center',
-            }}
-          >
+          <AppText variant="body" size="sm" color="secondary" style={{ textAlign: 'center' }}>
             Kein Problem. Wann immer du bereit bist.
-          </Text>
+          </AppText>
         </View>
       )}
 

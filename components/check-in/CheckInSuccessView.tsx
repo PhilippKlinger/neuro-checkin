@@ -1,8 +1,9 @@
-import { View, Text, Pressable, StyleSheet } from 'react-native';
+import { View, Pressable, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../../lib/hooks/useTheme';
+import { AppText } from '../ui/AppText';
 import { ENERGY_LABELS, FOCUS_LABELS, getLevelLabel } from '../../lib/types/checkin';
 
 interface CheckInSuccessViewProps {
@@ -12,7 +13,7 @@ interface CheckInSuccessViewProps {
 }
 
 export function CheckInSuccessView({ onReset, energyLevel, focusLevel }: CheckInSuccessViewProps) {
-  const { theme, spacing, typography, radii, touchTarget } = useTheme();
+  const { theme, spacing, radii, touchTarget } = useTheme();
   const router = useRouter();
   const insets = useSafeAreaInsets();
 
@@ -48,18 +49,14 @@ export function CheckInSuccessView({ onReset, energyLevel, focusLevel }: CheckIn
           style={{ marginBottom: spacing.md }}
           accessibilityElementsHidden
         />
-        <Text
-          style={{
-            fontFamily: typography.families.heading.semibold,
-            fontSize: typography.sizes.xl,
-            color: theme.colors.text,
-            textAlign: 'center',
-            marginBottom: showSummary ? spacing.lg : spacing.xl,
-          }}
+        <AppText
+          variant="title"
+          size="xl"
+          style={{ textAlign: 'center', marginBottom: showSummary ? spacing.lg : spacing.xl }}
           accessibilityRole="header"
         >
           Gespeichert.
-        </Text>
+        </AppText>
 
         {showSummary && (
           <View
@@ -75,52 +72,33 @@ export function CheckInSuccessView({ onReset, energyLevel, focusLevel }: CheckIn
             ]}
           >
             <View style={styles.summaryItem}>
-              <Text
-                style={{
-                  fontFamily: typography.families.ui.medium,
-                  fontSize: typography.sizes.xs,
-                  color: theme.colors.textSecondary,
-                  textTransform: 'uppercase',
-                  marginBottom: spacing.xs,
-                }}
+              <AppText
+                variant="label"
+                color="secondary"
+                size="xs"
+                style={{ textTransform: 'uppercase', marginBottom: spacing.xs }}
               >
                 Energie
-              </Text>
-              <Text
-                style={{
-                  fontFamily: typography.families.heading.bold,
-                  fontSize: typography.sizes.lg,
-                  color: theme.colors.accent,
-                }}
-              >
+              </AppText>
+              <AppText variant="display" size="lg" color="accent">
                 {getLevelLabel(energyLevel!, ENERGY_LABELS)}
-              </Text>
+              </AppText>
             </View>
             {showFocus && (
               <>
                 <View style={[styles.summaryDivider, { backgroundColor: theme.colors.border }]} />
                 <View style={styles.summaryItem}>
-                  <Text
-                    style={{
-                      fontFamily: typography.families.ui.medium,
-                      fontSize: typography.sizes.xs,
-                      color: theme.colors.textSecondary,
-                      textTransform: 'uppercase',
-                      letterSpacing: 0.5,
-                      marginBottom: 2,
-                    }}
+                  <AppText
+                    variant="label"
+                    color="secondary"
+                    size="xs"
+                    style={{ textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 2 }}
                   >
                     Fokus
-                  </Text>
-                  <Text
-                    style={{
-                      fontFamily: typography.families.heading.bold,
-                      fontSize: typography.sizes.lg,
-                      color: theme.colors.accent,
-                    }}
-                  >
+                  </AppText>
+                  <AppText variant="display" size="lg" color="accent">
                     {getLevelLabel(focusLevel!, FOCUS_LABELS)}
-                  </Text>
+                  </AppText>
                 </View>
               </>
             )}
@@ -148,15 +126,7 @@ export function CheckInSuccessView({ onReset, energyLevel, focusLevel }: CheckIn
           accessibilityRole="button"
           accessibilityLabel="Zurück zu Home"
         >
-          <Text
-            style={{
-              fontFamily: typography.families.ui.semibold,
-              fontSize: typography.sizes.md,
-              color: theme.colors.textInverse,
-            }}
-          >
-            Zurück zu Home
-          </Text>
+          <AppText variant="label" weight="semibold" color="inverse">Zurück zu Home</AppText>
         </Pressable>
 
         <Pressable
@@ -175,15 +145,7 @@ export function CheckInSuccessView({ onReset, energyLevel, focusLevel }: CheckIn
           accessibilityRole="button"
           accessibilityLabel="Im Verlauf ansehen"
         >
-          <Text
-            style={{
-              fontFamily: typography.families.ui.medium,
-              fontSize: typography.sizes.md,
-              color: theme.colors.text,
-            }}
-          >
-            Im Verlauf ansehen
-          </Text>
+          <AppText variant="label">Im Verlauf ansehen</AppText>
         </Pressable>
       </View>
     </View>
