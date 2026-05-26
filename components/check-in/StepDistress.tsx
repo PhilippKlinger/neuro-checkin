@@ -132,7 +132,7 @@ export function StepDistress({
         accessibilityLabel="Kann ich gerade nicht sagen"
         accessibilityState={{ selected: cannotSay }}
       >
-        <AppText variant="hint" color="secondary">
+        <AppText variant="label" color="secondary">
           Kann ich gerade nicht sagen
         </AppText>
       </Pressable>
