@@ -51,7 +51,11 @@ export default function CheckInDetailScreen() {
       await exportCheckInsAsPdf([checkIn]);
       ToastAndroid.show('PDF erstellt', ToastAndroid.SHORT);
     } catch (error) {
-      Sentry.captureException(error);
+      Sentry.withScope((scope) => {
+        scope.setTag('screen', 'checkInDetail');
+        scope.setTag('action', 'pdfExport');
+        Sentry.captureException(error);
+      });
       Alert.alert(
         'Export fehlgeschlagen',
         'PDF konnte nicht erstellt werden. Bitte versuche es erneut.'
@@ -65,7 +69,8 @@ export default function CheckInDetailScreen() {
     try {
       await deleteCheckIn(db, checkIn.id);
       router.back();
-    } catch {
+    } catch (error) {
+      console.error('deleteCheckIn failed:', error);
       Alert.alert('Fehler', 'Check-in konnte nicht gelöscht werden. Bitte versuche es erneut.');
     }
   }

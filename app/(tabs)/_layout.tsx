@@ -85,6 +85,7 @@ export default function TabLayout() {
             <TabLabel label="Heute" color={color} fontFamily={typography.families.ui.medium} />
           ),
           tabBarAccessibilityLabel: 'Heute',
+          tabBarTestID: 'tab-home',
           headerRight: () => <CheckInInfoButton color={theme.colors.textSecondary} />,
         }}
       />
@@ -96,6 +97,7 @@ export default function TabLayout() {
             <TabLabel label="Check-in" color={color} fontFamily={typography.families.ui.medium} />
           ),
           tabBarAccessibilityLabel: 'Check-in starten',
+          tabBarTestID: 'tab-checkin',
         }}
       />
       <Tabs.Screen
@@ -106,6 +108,7 @@ export default function TabLayout() {
             <TabLabel label="Verlauf" color={color} fontFamily={typography.families.ui.medium} />
           ),
           tabBarAccessibilityLabel: 'Check-in Verlauf',
+          tabBarTestID: 'tab-history',
         }}
       />
       <Tabs.Screen
@@ -120,6 +123,7 @@ export default function TabLayout() {
             />
           ),
           tabBarAccessibilityLabel: 'Einstellungen',
+          tabBarTestID: 'tab-settings',
         }}
       />
     </Tabs>

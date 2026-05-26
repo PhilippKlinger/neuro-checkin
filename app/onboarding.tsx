@@ -76,7 +76,8 @@ export default function OnboardingScreen() {
         colorMode: 'light',
       });
       router.replace('/(tabs)');
-    } catch {
+    } catch (error) {
+      console.error('onboarding save failed:', error);
       Alert.alert(
         'Fehler',
         'Einstellungen konnten nicht gespeichert werden. Bitte versuche es erneut.'

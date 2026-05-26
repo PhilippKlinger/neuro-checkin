@@ -35,7 +35,8 @@ export default function HistoryScreen() {
         try {
           const data = await getCheckIns(db, 10000);
           setCheckIns(data);
-        } catch {
+        } catch (error) {
+          console.error('getCheckIns failed:', error);
           setCheckIns([]);
         } finally {
           setIsLoading(false);
@@ -88,7 +89,11 @@ export default function HistoryScreen() {
       await exportCheckInsAsPdf(toExport);
       ToastAndroid.show('PDF erstellt', ToastAndroid.SHORT);
     } catch (error) {
-      Sentry.captureException(error);
+      Sentry.withScope((scope) => {
+        scope.setTag('screen', 'history');
+        scope.setTag('action', 'pdfExport');
+        Sentry.captureException(error);
+      });
       Alert.alert(
         'Export fehlgeschlagen',
         'PDF konnte nicht erstellt werden. Bitte versuche es erneut.'

@@ -47,7 +47,11 @@ function AppStack() {
           router.replace('/onboarding');
         }
       } catch (e) {
-        Sentry.captureException(e);
+        Sentry.withScope((scope) => {
+          scope.setTag('screen', 'layout');
+          scope.setTag('action', 'checkOnboarding');
+          Sentry.captureException(e);
+        });
       } finally {
         setOnboardingChecked(true);
       }

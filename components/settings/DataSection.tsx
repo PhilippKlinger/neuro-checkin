@@ -49,7 +49,8 @@ export function DataSection({
         ...selfCare.map((label) => ({ category: 'self_care' as const, label })),
       ];
       setChipList(items);
-    } catch {
+    } catch (error) {
+      console.error('loadChipList failed:', error);
       setChipList([]);
     }
   }, [db]);
@@ -68,7 +69,8 @@ export function DataSection({
       setChipList([]);
       setChipsExpanded(false);
       setShowChipsDone(true);
-    } catch {
+    } catch (error) {
+      console.error('deleteUserChips failed:', error);
       Alert.alert(
         'Fehler',
         'Eigene Chips konnten nicht gelöscht werden. Bitte versuche es erneut.'
@@ -84,7 +86,8 @@ export function DataSection({
       await deleteUserChipByLabel(db, category, label);
       setChipList((prev) => prev.filter((c) => !(c.category === category && c.label === label)));
       onChipsDeleteComplete();
-    } catch {
+    } catch (error) {
+      console.error('deleteUserChipByLabel failed:', error);
       Alert.alert('Fehler', 'Chip konnte nicht gelöscht werden. Bitte versuche es erneut.');
     }
   }
@@ -95,7 +98,8 @@ export function DataSection({
       await deleteAllCheckIns(db);
       onDeleteComplete();
       setShowDone(true);
-    } catch {
+    } catch (error) {
+      console.error('deleteAllCheckIns failed:', error);
       Alert.alert('Fehler', 'Daten konnten nicht gelöscht werden. Bitte versuche es erneut.');
     }
   }

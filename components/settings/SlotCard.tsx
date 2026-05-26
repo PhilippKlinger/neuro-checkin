@@ -63,6 +63,7 @@ export function SlotCard({
         <Switch
           value={slot.enabled}
           onValueChange={onToggle}
+          testID={`notification-slot-${slot.id}-toggle`}
           trackColor={{
             false: theme.colors.border,
             true: theme.colors.accentSoft,

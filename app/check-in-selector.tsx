@@ -9,6 +9,7 @@ interface SelectorOption {
   subtitle: string;
   context: string;
   accessibilityLabel: string;
+  testID: string;
   onPress: () => void;
 }
 
@@ -24,6 +25,7 @@ export default function CheckInSelectorScreen() {
       context: 'Wenn du gerade wenig Kapazität hast oder es schnell gehen muss.',
       accessibilityLabel:
         'Ich nehme mir kurz Zeit, 3 Schritte, etwa 2 Minuten, Energie, Fokus, Gefühle',
+      testID: 'selector-quick-checkin',
       onPress: () => router.replace('/quick-check-in'),
     },
     {
@@ -32,6 +34,7 @@ export default function CheckInSelectorScreen() {
       context: 'Wenn du dir bewusst Zeit nimmst und tiefer hinschauen möchtest.',
       accessibilityLabel:
         'Ich nehme mir Zeit, alle 9 Schritte, etwa 5 Minuten, Körper, Gefühle, Stress, Gedanken',
+      testID: 'selector-full-checkin',
       onPress: () => router.replace('/(tabs)/check-in'),
     },
   ];
@@ -71,6 +74,7 @@ export default function CheckInSelectorScreen() {
               },
               pressed && { opacity: 0.75 },
             ]}
+            testID={option.testID}
             accessibilityRole="button"
             accessibilityLabel={option.accessibilityLabel}
             accessibilityHint="Tippen zum Starten"

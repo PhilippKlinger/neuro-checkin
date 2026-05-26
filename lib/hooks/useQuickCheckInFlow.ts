@@ -77,8 +77,8 @@ export function useQuickCheckInFlow(
           if (cancelled) return;
           setGuidedMode(settings.guidedModeEnabled);
           setShowToggleIntroHint(!settings.guidedToggleIntroduced);
-        } catch {
-          // Non-critical — defaults are safe fallbacks
+        } catch (error) {
+          console.error('quickCheckIn loadSettings failed:', error);
         }
       }
       loadSettings();
@@ -97,7 +97,8 @@ export function useQuickCheckInFlow(
       } else {
         await updateSettings(db, { guidedModeEnabled: value });
       }
-    } catch {
+    } catch (error) {
+      console.error('quickCheckIn handleGuidedToggle failed:', error);
       setGuidedMode(!value);
     }
   }
@@ -141,7 +142,11 @@ export function useQuickCheckInFlow(
       });
       setIsDone(true);
     } catch (error) {
-      Sentry.captureException(error);
+      Sentry.withScope((scope) => {
+        scope.setTag('screen', 'quickCheckIn');
+        scope.setTag('action', 'save');
+        Sentry.captureException(error);
+      });
       Alert.alert('Fehler beim Speichern', 'Check-in konnte nicht gespeichert werden.');
     } finally {
       setIsSaving(false);

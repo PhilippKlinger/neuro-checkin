@@ -211,7 +211,8 @@ function parseBodySignals(raw: string): BodySignals {
       externalStimuli:
         parsed.externalStimuli === true ? true : parsed.externalStimuli === false ? false : null,
     };
-  } catch {
+  } catch (error) {
+    console.error('parseBodySignals: invalid JSON, using defaults', error);
     return { ...EMPTY_BODY_SIGNALS };
   }
 }

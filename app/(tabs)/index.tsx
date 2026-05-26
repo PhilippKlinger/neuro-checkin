@@ -39,7 +39,8 @@ export default function HomeScreen() {
             setLatestCheckIn(results[0] ?? null);
             setIsLoaded(true);
           }
-        } catch {
+        } catch (error) {
+          console.error('home getCheckIns failed:', error);
           if (!cancelled) setIsLoaded(true);
         }
       }
@@ -115,6 +116,7 @@ export default function HomeScreen() {
           },
           pressed && { opacity: 0.75 },
         ]}
+        testID="home-start-button"
         accessibilityRole="button"
         accessibilityLabel="Beginnen, Tiefe wählen"
       >

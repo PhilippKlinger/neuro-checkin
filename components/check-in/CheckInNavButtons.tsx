@@ -54,6 +54,7 @@ export function CheckInNavButtons({
             },
             pressed && { opacity: 0.75 },
           ]}
+          testID="nav-back"
           accessibilityRole="button"
           accessibilityLabel={backLabel}
         >
@@ -75,6 +76,7 @@ export function CheckInNavButtons({
           },
           pressed && !isNextDisabled && { opacity: 0.75 },
         ]}
+        testID="nav-next"
         accessibilityRole="button"
         accessibilityLabel={nextLabel}
         accessibilityState={{ disabled: isNextDisabled }}

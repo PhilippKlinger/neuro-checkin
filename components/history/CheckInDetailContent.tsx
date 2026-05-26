@@ -226,6 +226,7 @@ export function CheckInDetailContent({
               },
               pressed && { opacity: 0.75 },
             ]}
+            testID="detail-export-button"
             accessibilityRole="button"
             accessibilityLabel="Check-in als PDF exportieren"
             accessibilityHint="Erstellt eine PDF-Datei und öffnet das Teilen-Menü"

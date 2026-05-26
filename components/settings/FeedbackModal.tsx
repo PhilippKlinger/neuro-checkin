@@ -59,7 +59,8 @@ export function FeedbackModal({ visible, onClose }: FeedbackModalProps) {
       } else {
         setFeedbackError(true);
       }
-    } catch {
+    } catch (error) {
+      console.error('feedback submit failed:', error);
       setFeedbackError(true);
     } finally {
       setFeedbackSubmitting(false);

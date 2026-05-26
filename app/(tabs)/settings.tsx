@@ -94,7 +94,11 @@ export default function SettingsScreen() {
           if (cancelled) return;
           setChipCount(chips);
         } catch (e) {
-          Sentry.captureException(e);
+          Sentry.withScope((scope) => {
+            scope.setTag('screen', 'settings');
+            scope.setTag('action', 'loadSettings');
+            Sentry.captureException(e);
+          });
         }
       }
       load();
@@ -163,7 +167,8 @@ export default function SettingsScreen() {
       setColorMode(mode);
       try {
         await updateSettings(db, { colorMode: mode });
-      } catch {
+      } catch (error) {
+        console.error('updateSettings colorMode failed:', error);
         setColorMode(previous);
       }
     },
@@ -176,7 +181,8 @@ export default function SettingsScreen() {
       setThemeName(name);
       try {
         await updateSettings(db, { themeName: name });
-      } catch {
+      } catch (error) {
+        console.error('updateSettings themeName failed:', error);
         setThemeName(previous);
       }
     },
@@ -190,7 +196,11 @@ export default function SettingsScreen() {
       try {
         await updateSettings(db, { guidedModeEnabled: value });
       } catch (e) {
-        Sentry.captureException(e);
+        Sentry.withScope((scope) => {
+          scope.setTag('screen', 'settings');
+          scope.setTag('action', 'guidedModeToggle');
+          Sentry.captureException(e);
+        });
         setGuidedMode(previous);
       }
     },
@@ -279,6 +289,7 @@ export default function SettingsScreen() {
               },
               pressed && { opacity: 0.75 },
             ]}
+            testID="settings-feedback-open"
             accessibilityRole="button"
             accessibilityLabel="Feedback senden"
             accessibilityHint="Öffnet ein Feedback-Formular"
