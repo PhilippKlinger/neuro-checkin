@@ -5,9 +5,6 @@ import { AppText } from '../ui/AppText';
 import { AppTextInput } from '../ui/AppTextInput';
 import { isChipSelected, toggleChip } from '../../lib/utils/chips';
 import { StepScaffold } from './StepScaffold';
-import type { ChipGroup } from '../../lib/constants/chips';
-export type { ChipGroup } from '../../lib/constants/chips';
-
 interface ChipOrTextStepProps {
   title: string;
   subtitle: string;
@@ -19,7 +16,6 @@ interface ChipOrTextStepProps {
   maxLength?: number;
   hint?: string;
   userChips?: string[];
-  chipGroups?: ChipGroup[];
   skipped?: boolean;
   onSkip?: () => void;
   chipsOnly?: boolean;
@@ -88,7 +84,6 @@ export function ChipOrTextStep({
   maxLength = 150,
   hint,
   userChips,
-  chipGroups,
   skipped,
   onSkip,
   chipsOnly = false,
@@ -127,18 +122,7 @@ export function ChipOrTextStep({
     >
       {effectiveMode === 'chips' ? (
         <>
-          {chipGroups ? (
-            chipGroups.map((group) => (
-              <View key={group.label}>
-                <AppText variant="hint" size="xs" style={{ marginBottom: spacing.sm }}>
-                  {group.label}
-                </AppText>
-                <ChipWrap chips={group.chips} value={value} onValueChange={onValueChange} />
-              </View>
-            ))
-          ) : (
-            <ChipWrap chips={chips} value={value} onValueChange={onValueChange} />
-          )}
+          <ChipWrap chips={chips} value={value} onValueChange={onValueChange} />
 
           {userChips && userChips.length > 0 && (
             <ChipWrap

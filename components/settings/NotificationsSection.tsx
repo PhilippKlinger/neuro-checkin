@@ -84,8 +84,7 @@ export const NotificationsSection = memo(function NotificationsSection({
             color="secondary"
             style={{ flex: 1, marginLeft: spacing.xs }}
           >
-            Benachrichtigungen sind in den Systemeinstellungen deaktiviert. Tippe hier um sie zu
-            erlauben.
+            Erinnerungen sind deaktiviert — tippe hier für die Einstellungen.
           </AppText>
         </Pressable>
       )}
