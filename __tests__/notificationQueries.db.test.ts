@@ -66,6 +66,22 @@ describe('getNotificationSlots', () => {
     const sql: string = db.getAllAsync.mock.calls[0][0];
     expect(sql).toMatch(/ORDER BY id/i);
   });
+
+  it('filters by valid slot IDs (0, 1) with LIMIT 2', async () => {
+    const db = makeDb();
+    await getNotificationSlots(db as any);
+    const sql: string = db.getAllAsync.mock.calls[0][0];
+    expect(sql).toMatch(/WHERE\s+id\s+IN\s*\(\s*0\s*,\s*1\s*\)/i);
+    expect(sql).toMatch(/LIMIT\s+2/i);
+  });
+
+  it('ignores rows with unexpected id values', async () => {
+    const rowsWithExtra = [...SLOT_ROWS, { id: 99, enabled: 1, time: '12:00', weekdays: 127 }];
+    const db = makeDb({ getAllAsync: jest.fn().mockResolvedValue(rowsWithExtra) });
+    const slots = await getNotificationSlots(db as any);
+    const ids = slots.map((s) => s.id);
+    expect(ids).not.toContain(99);
+  });
 });
 
 // ---------------------------------------------------------------------------

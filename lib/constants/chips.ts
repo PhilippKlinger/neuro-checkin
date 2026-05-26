@@ -1,8 +1,3 @@
-export interface ChipGroup {
-  label: string;
-  chips: readonly string[];
-}
-
 export const FEELING_CHIPS = [
   'neutral',
   'leer',
@@ -23,19 +18,17 @@ export const FEELING_CHIPS = [
   'aufgedreht',
 ] as const;
 
-export const SELF_CARE_GROUPS: ChipGroup[] = [
-  {
-    label: '0 Energie',
-    chips: ['Augen schließen', 'Licht dimmen', 'Nichts entscheiden', 'Einfach bleiben'],
-  },
-  {
-    label: 'Klein',
-    chips: ['Wasser trinken', 'Kurz raus', 'Tief atmen', 'Dehnen'],
-  },
-  {
-    label: 'Mehr Aufwand',
-    chips: ['Spazieren', 'Essen', 'Dusche', 'Musik hören'],
-  },
-];
-
-export const SELF_CARE_CHIPS: readonly string[] = SELF_CARE_GROUPS.flatMap((g) => [...g.chips]);
+export const SELF_CARE_CHIPS = [
+  'Augen schließen',
+  'Licht dimmen',
+  'Nichts entscheiden',
+  'Einfach bleiben',
+  'Wasser trinken',
+  'Kurz raus',
+  'Tief atmen',
+  'Dehnen',
+  'Spazieren',
+  'Essen',
+  'Dusche',
+  'Musik hören',
+] as const;

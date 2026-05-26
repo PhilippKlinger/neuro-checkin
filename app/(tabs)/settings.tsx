@@ -56,19 +56,23 @@ export default function SettingsScreen() {
 
   useFocusEffect(
     useCallback(() => {
+      let cancelled = false;
       async function load() {
         try {
           const settings = await getSettings(db);
+          if (cancelled) return;
           setThemeName(settings.themeName as ThemeName);
           setColorMode(settings.colorMode);
           setIsEmulator(!Device.isDevice);
 
           if (Device.isDevice) {
             const { status } = await Notifications.getPermissionsAsync();
+            if (cancelled) return;
             setNotificationPermission(status === 'granted');
           }
 
           const dbSlots = await getNotificationSlots(db);
+          if (cancelled) return;
           if (dbSlots.length >= 2) {
             setSlots(dbSlots as NotificationSlot[]);
             if (Device.isDevice) {
@@ -80,17 +84,27 @@ export default function SettingsScreen() {
             }
           }
 
+          if (cancelled) return;
           setGuidedMode(settings.guidedModeEnabled);
 
           const count = await countCheckIns(db);
+          if (cancelled) return;
           setCheckInCount(count);
           const chips = await countUserChips(db);
+          if (cancelled) return;
           setChipCount(chips);
         } catch (e) {
-          Sentry.captureException(e);
+          Sentry.withScope((scope) => {
+            scope.setTag('screen', 'settings');
+            scope.setTag('action', 'loadSettings');
+            Sentry.captureException(e);
+          });
         }
       }
       load();
+      return () => {
+        cancelled = true;
+      };
     }, [db, setThemeName, setColorMode])
   );
 
@@ -155,7 +169,8 @@ export default function SettingsScreen() {
       setColorMode(mode);
       try {
         await updateSettings(db, { colorMode: mode });
-      } catch {
+      } catch (error) {
+        console.error('updateSettings colorMode failed:', error);
         setColorMode(previous);
       }
     },
@@ -168,7 +183,8 @@ export default function SettingsScreen() {
       setThemeName(name);
       try {
         await updateSettings(db, { themeName: name });
-      } catch {
+      } catch (error) {
+        console.error('updateSettings themeName failed:', error);
         setThemeName(previous);
       }
     },
@@ -182,7 +198,11 @@ export default function SettingsScreen() {
       try {
         await updateSettings(db, { guidedModeEnabled: value });
       } catch (e) {
-        Sentry.captureException(e);
+        Sentry.withScope((scope) => {
+          scope.setTag('screen', 'settings');
+          scope.setTag('action', 'guidedModeToggle');
+          Sentry.captureException(e);
+        });
         setGuidedMode(previous);
       }
     },
@@ -271,6 +291,7 @@ export default function SettingsScreen() {
               },
               pressed && { opacity: 0.75 },
             ]}
+            testID="settings-feedback-open"
             accessibilityRole="button"
             accessibilityLabel="Feedback senden"
             accessibilityHint="Öffnet ein Feedback-Formular"

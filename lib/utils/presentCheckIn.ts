@@ -28,25 +28,10 @@ export interface PresentedCheckIn {
   note: string | null;
 }
 
-interface CheckInLike {
-  energyLevel: number;
-  energySkipped?: boolean;
-  focusLevel: number;
-  focusSkipped?: boolean;
-  bodySignals: BodySignals;
-  feelings: string;
-  feelingsSkipped?: boolean;
-  distressLevel: number | null;
-  distressNote?: string | null;
-  thoughtsType: 'supportive' | 'burdening' | 'mixed' | null;
-  thoughtsNote?: string | null;
-  selfCareNote?: string | null;
-  innerPart?: string | null;
-  note?: string | null;
-}
+type CheckInSource = CheckIn | CheckInDraft;
 
-export function presentCheckIn(source: CheckIn | CheckInDraft): PresentedCheckIn {
-  const c = source as CheckInLike;
+export function presentCheckIn(source: CheckInSource): PresentedCheckIn {
+  const c = source;
 
   const energy =
     !c.energySkipped && c.energyLevel > 0

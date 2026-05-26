@@ -1,4 +1,5 @@
 import { normalizeCheckInInsert } from '../lib/database/checkins';
+import { TEXT_LIMITS } from '../lib/constants/limits';
 import type { CheckInInsert } from '../lib/types/checkin';
 import { EMPTY_BODY_SIGNALS } from '../lib/types/checkin';
 
@@ -222,5 +223,65 @@ describe('normalizeCheckInInsert — pass-through', () => {
     expect(result.energySkipped).toBe(true);
     expect(result.focusSkipped).toBe(true);
     expect(result.feelingsSkipped).toBe(true);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Text length limits (M-02)
+// ---------------------------------------------------------------------------
+
+describe('normalizeCheckInInsert — text truncation', () => {
+  it('exports TEXT_LIMITS constants', () => {
+    expect(TEXT_LIMITS.MAX_FEELINGS_LENGTH).toBe(500);
+    expect(TEXT_LIMITS.MAX_NOTE_LENGTH).toBe(200);
+    expect(TEXT_LIMITS.MAX_INNER_PART_LENGTH).toBe(150);
+    expect(TEXT_LIMITS.MAX_FEEDBACK_LENGTH).toBe(500);
+  });
+
+  it('leaves short feelings unchanged', () => {
+    const result = normalizeCheckInInsert({ ...VALID_INSERT, feelings: 'ruhig, gelassen' });
+    expect(result.feelings).toBe('ruhig, gelassen');
+  });
+
+  it('truncates feelings exceeding MAX_FEELINGS_LENGTH', () => {
+    const long = 'x'.repeat(TEXT_LIMITS.MAX_FEELINGS_LENGTH + 50);
+    const result = normalizeCheckInInsert({ ...VALID_INSERT, feelings: long });
+    expect(result.feelings.length).toBe(TEXT_LIMITS.MAX_FEELINGS_LENGTH);
+  });
+
+  it('truncates distressNote exceeding MAX_NOTE_LENGTH', () => {
+    const long = 'a'.repeat(TEXT_LIMITS.MAX_NOTE_LENGTH + 10);
+    const result = normalizeCheckInInsert({ ...VALID_INSERT, distressNote: long });
+    expect(result.distressNote!.length).toBe(TEXT_LIMITS.MAX_NOTE_LENGTH);
+  });
+
+  it('truncates thoughtsNote exceeding MAX_NOTE_LENGTH', () => {
+    const long = 'b'.repeat(TEXT_LIMITS.MAX_NOTE_LENGTH + 10);
+    const result = normalizeCheckInInsert({ ...VALID_INSERT, thoughtsNote: long });
+    expect(result.thoughtsNote!.length).toBe(TEXT_LIMITS.MAX_NOTE_LENGTH);
+  });
+
+  it('truncates selfCareNote exceeding MAX_NOTE_LENGTH', () => {
+    const long = 'c'.repeat(TEXT_LIMITS.MAX_NOTE_LENGTH + 10);
+    const result = normalizeCheckInInsert({ ...VALID_INSERT, selfCareNote: long });
+    expect(result.selfCareNote!.length).toBe(TEXT_LIMITS.MAX_NOTE_LENGTH);
+  });
+
+  it('truncates note exceeding MAX_NOTE_LENGTH', () => {
+    const long = 'd'.repeat(TEXT_LIMITS.MAX_NOTE_LENGTH + 10);
+    const result = normalizeCheckInInsert({ ...VALID_INSERT, note: long });
+    expect(result.note!.length).toBe(TEXT_LIMITS.MAX_NOTE_LENGTH);
+  });
+
+  it('truncates innerPart exceeding MAX_INNER_PART_LENGTH', () => {
+    const long = 'e'.repeat(TEXT_LIMITS.MAX_INNER_PART_LENGTH + 10);
+    const result = normalizeCheckInInsert({ ...VALID_INSERT, innerPart: long });
+    expect(result.innerPart!.length).toBe(TEXT_LIMITS.MAX_INNER_PART_LENGTH);
+  });
+
+  it('still returns null for null/empty fields after truncation logic', () => {
+    const result = normalizeCheckInInsert({ ...VALID_INSERT, distressNote: null, note: '   ' });
+    expect(result.distressNote).toBeNull();
+    expect(result.note).toBeNull();
   });
 });

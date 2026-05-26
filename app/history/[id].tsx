@@ -8,7 +8,7 @@ import { getCheckInById, deleteCheckIn } from '../../lib/database/checkins';
 import { getSettings, updateSettings } from '../../lib/database/settings';
 import { CheckIn } from '../../lib/types/checkin';
 import { CheckInDetailContent } from '../../components/history/CheckInDetailContent';
-import { exportCheckInsAsPdf } from '../../lib/utils/pdfExport';
+import { exportCheckInsAsPdf, saveCheckInsPdfToDevice } from '../../lib/utils/pdfExport';
 import * as Sentry from '@sentry/react-native';
 
 export default function CheckInDetailScreen() {
@@ -22,24 +22,29 @@ export default function CheckInDetailScreen() {
   const [showDetailHint, setShowDetailHint] = useState(false);
 
   useEffect(() => {
+    let cancelled = false;
     async function load() {
       const parsedId = Number(id);
       if (!id || !Number.isInteger(parsedId) || parsedId <= 0) {
-        setIsLoading(false);
+        if (!cancelled) setIsLoading(false);
         return;
       }
       try {
         const [data, settings] = await Promise.all([getCheckInById(db, parsedId), getSettings(db)]);
+        if (cancelled) return;
         setCheckIn(data);
         if (!settings.detailViewIntroduced) {
           setShowDetailHint(true);
           await updateSettings(db, { detailViewIntroduced: true });
         }
       } finally {
-        setIsLoading(false);
+        if (!cancelled) setIsLoading(false);
       }
     }
     load();
+    return () => {
+      cancelled = true;
+    };
   }, [db, id]);
 
   async function handleExport() {
@@ -48,11 +53,34 @@ export default function CheckInDetailScreen() {
       await exportCheckInsAsPdf([checkIn]);
       ToastAndroid.show('PDF erstellt', ToastAndroid.SHORT);
     } catch (error) {
-      Sentry.captureException(error);
+      Sentry.withScope((scope) => {
+        scope.setTag('screen', 'checkInDetail');
+        scope.setTag('action', 'pdfExport');
+        Sentry.captureException(error);
+      });
       Alert.alert(
         'Export fehlgeschlagen',
         'PDF konnte nicht erstellt werden. Bitte versuche es erneut.'
       );
+    }
+  }
+
+  async function handleSaveToDevice() {
+    if (!checkIn) return;
+    try {
+      await saveCheckInsPdfToDevice([checkIn]);
+      ToastAndroid.show('PDF gespeichert', ToastAndroid.SHORT);
+    } catch (error) {
+      Sentry.withScope((scope) => {
+        scope.setTag('screen', 'checkInDetail');
+        scope.setTag('action', 'pdfSaveToDevice');
+        Sentry.captureException(error);
+      });
+      const message =
+        error instanceof Error && error.message === 'Permission denied'
+          ? 'Berechtigung verweigert. Bitte wähle einen Ordner aus.'
+          : 'PDF konnte nicht gespeichert werden. Bitte versuche es erneut.';
+      Alert.alert('Speichern fehlgeschlagen', message);
     }
   }
 
@@ -62,7 +90,8 @@ export default function CheckInDetailScreen() {
     try {
       await deleteCheckIn(db, checkIn.id);
       router.back();
-    } catch {
+    } catch (error) {
+      console.error('deleteCheckIn failed:', error);
       Alert.alert('Fehler', 'Check-in konnte nicht gelöscht werden. Bitte versuche es erneut.');
     }
   }
@@ -98,6 +127,7 @@ export default function CheckInDetailScreen() {
         onDeleteConfirm={confirmDelete}
         onDeleteCancel={() => setShowDeleteDialog(false)}
         onExport={handleExport}
+        onSaveToDevice={handleSaveToDevice}
       />
     </View>
   );

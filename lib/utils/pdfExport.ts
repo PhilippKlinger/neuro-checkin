@@ -1,8 +1,15 @@
 import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
 import { File } from 'expo-file-system';
+import { StorageAccessFramework, readAsStringAsync, EncodingType } from 'expo-file-system/legacy';
 import type { CheckIn } from '../types/checkin';
 import { buildPdfHtml } from './pdfTemplate';
+
+export const MAX_EXPORT_COUNT = 30;
+
+export function sanitizeFileName(name: string): string {
+  return name.replace(/[/\\:*?"<>|]/g, '_');
+}
 
 export function buildFileName(checkIns: CheckIn[]): string {
   if (checkIns.length === 0) return 'Check-in Export';
@@ -23,10 +30,14 @@ export function buildFileName(checkIns: CheckIn[]): string {
 }
 
 export async function exportCheckInsAsPdf(checkIns: CheckIn[]): Promise<void> {
+  if (checkIns.length > MAX_EXPORT_COUNT) {
+    throw new Error(`Maximum ${MAX_EXPORT_COUNT} check-ins per export`);
+  }
+
   const html = buildPdfHtml(checkIns);
   const { uri } = await Print.printToFileAsync({ html });
 
-  const fileName = buildFileName(checkIns);
+  const fileName = sanitizeFileName(buildFileName(checkIns));
   const file = new File(uri);
 
   // Prevent FileAlreadyExistsException if same filename was exported earlier today
@@ -42,4 +53,36 @@ export async function exportCheckInsAsPdf(checkIns: CheckIn[]): Promise<void> {
     mimeType: 'application/pdf',
     UTI: 'com.adobe.pdf',
   });
+}
+
+export async function saveCheckInsPdfToDevice(checkIns: CheckIn[]): Promise<string> {
+  if (checkIns.length > MAX_EXPORT_COUNT) {
+    throw new Error(`Maximum ${MAX_EXPORT_COUNT} check-ins per export`);
+  }
+
+  // Request directory permission via SAF
+  const permissions = await StorageAccessFramework.requestDirectoryPermissionsAsync();
+  if (!permissions.granted) {
+    throw new Error('Permission denied');
+  }
+
+  const html = buildPdfHtml(checkIns);
+  const { uri: tempUri } = await Print.printToFileAsync({ html });
+
+  const fileName = sanitizeFileName(buildFileName(checkIns));
+
+  // Create file in selected directory
+  const fileUri = await StorageAccessFramework.createFileAsync(
+    permissions.directoryUri,
+    fileName,
+    'application/pdf'
+  );
+
+  // Read temp PDF as base64 and write to SAF location
+  const base64Content = await readAsStringAsync(tempUri, { encoding: EncodingType.Base64 });
+  await StorageAccessFramework.writeAsStringAsync(fileUri, base64Content, {
+    encoding: EncodingType.Base64,
+  });
+
+  return fileUri;
 }

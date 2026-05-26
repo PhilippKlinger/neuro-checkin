@@ -2,20 +2,26 @@ import type { SQLiteDatabase } from 'expo-sqlite';
 import type { NotificationSlot } from '../types/checkin';
 import { ALL_WEEKDAYS } from '../types/checkin';
 
+const VALID_SLOT_IDS = [0, 1] as const;
+
 export async function getNotificationSlots(db: SQLiteDatabase): Promise<NotificationSlot[]> {
   const rows = await db.getAllAsync<{
     id: number;
     enabled: number;
     time: string;
     weekdays: number;
-  }>('SELECT id, enabled, time, weekdays FROM notification_slots ORDER BY id');
+  }>(
+    'SELECT id, enabled, time, weekdays FROM notification_slots WHERE id IN (0, 1) ORDER BY id LIMIT 2'
+  );
 
-  return rows.map((row) => ({
-    id: row.id as 0 | 1,
-    enabled: row.enabled === 1,
-    time: row.time,
-    weekdays: row.weekdays,
-  }));
+  return rows
+    .filter((row) => VALID_SLOT_IDS.includes(row.id as 0 | 1))
+    .map((row) => ({
+      id: row.id as 0 | 1,
+      enabled: row.enabled === 1,
+      time: row.time,
+      weekdays: row.weekdays,
+    }));
 }
 
 export async function saveNotificationSlot(

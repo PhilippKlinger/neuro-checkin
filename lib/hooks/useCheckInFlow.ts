@@ -101,8 +101,8 @@ export function useCheckInFlow(db: SQLiteDatabase): UseCheckInFlowResult {
           setShowToggleIntroHint(!settings.guidedToggleIntroduced);
           setFeelingUserChips(feelingChips);
           setSelfCareUserChips(selfCareChips);
-        } catch {
-          // Non-critical — defaults are safe fallbacks
+        } catch (error) {
+          console.error('useCheckInFlow loadState failed:', error);
         }
       }
       loadState();
@@ -157,7 +157,8 @@ export function useCheckInFlow(db: SQLiteDatabase): UseCheckInFlowResult {
       } else {
         await updateSettings(db, { guidedModeEnabled: value });
       }
-    } catch {
+    } catch (error) {
+      console.error('handleGuidedToggle failed:', error);
       setGuidedMode(!value);
     }
   }
@@ -204,7 +205,11 @@ export function useCheckInFlow(db: SQLiteDatabase): UseCheckInFlowResult {
       ]);
       setIsDone(true);
     } catch (error) {
-      Sentry.captureException(error);
+      Sentry.withScope((scope) => {
+        scope.setTag('screen', 'checkIn');
+        scope.setTag('action', 'save');
+        Sentry.captureException(error);
+      });
       Alert.alert(
         'Fehler beim Speichern',
         'Check-in konnte nicht gespeichert werden. Bitte versuche es erneut.'

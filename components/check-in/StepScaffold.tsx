@@ -1,4 +1,4 @@
-import { forwardRef, useState, useCallback, useRef } from 'react';
+import { forwardRef } from 'react';
 import {
   View,
   ScrollView,
@@ -6,11 +6,7 @@ import {
   StyleSheet,
   KeyboardAvoidingView,
   Platform,
-  NativeScrollEvent,
-  NativeSyntheticEvent,
-  LayoutChangeEvent,
 } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
 import { useTheme } from '../../lib/hooks/useTheme';
 import { AppText } from '../ui/AppText';
 
@@ -44,24 +40,6 @@ export const StepScaffold = forwardRef<ScrollView, StepScaffoldProps>(function S
   ref
 ) {
   const { theme, spacing, radii, touchTarget } = useTheme();
-  const [isAtBottom, setIsAtBottom] = useState(false);
-  const [hasOverflow, setHasOverflow] = useState(false);
-  const layoutHeight = useRef(0);
-
-  const handleContentSizeChange = useCallback((_w: number, h: number) => {
-    setHasOverflow(h > layoutHeight.current + 1);
-  }, []);
-
-  const handleLayout = useCallback((e: LayoutChangeEvent) => {
-    layoutHeight.current = e.nativeEvent.layout.height;
-  }, []);
-
-  const handleScroll = useCallback((e: NativeSyntheticEvent<NativeScrollEvent>) => {
-    const { contentOffset, contentSize, layoutMeasurement } = e.nativeEvent;
-    const distanceFromBottom = contentSize.height - layoutMeasurement.height - contentOffset.y;
-    setIsAtBottom(distanceFromBottom <= 8);
-    setHasOverflow(contentSize.height > layoutMeasurement.height + 1);
-  }, []);
 
   return (
     <View style={styles.root}>
@@ -101,10 +79,6 @@ export const StepScaffold = forwardRef<ScrollView, StepScaffoldProps>(function S
           ]}
           showsVerticalScrollIndicator
           keyboardShouldPersistTaps={keyboardPersistTaps ? 'handled' : 'never'}
-          onContentSizeChange={handleContentSizeChange}
-          onLayout={handleLayout}
-          onScroll={handleScroll}
-          scrollEventThrottle={16}
         >
           {children}
 
@@ -143,19 +117,10 @@ export const StepScaffold = forwardRef<ScrollView, StepScaffoldProps>(function S
             </>
           )}
         </ScrollView>
-        {hasOverflow && !isAtBottom && (
-          <LinearGradient
-            colors={[`${theme.colors.background}00`, theme.colors.background] as const}
-            style={styles.fadeOverlay}
-            pointerEvents="none"
-          />
-        )}
       </KeyboardAvoidingView>
     </View>
   );
 });
-
-const FADE_HEIGHT = 32;
 
 const styles = StyleSheet.create({
   root: {
@@ -175,13 +140,6 @@ const styles = StyleSheet.create({
   },
   scrollContentCentered: {
     justifyContent: 'center',
-  },
-  fadeOverlay: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    height: FADE_HEIGHT,
   },
   divider: {
     height: 1,

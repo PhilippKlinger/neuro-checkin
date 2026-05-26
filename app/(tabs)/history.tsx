@@ -15,7 +15,7 @@ import { useDatabase } from '../../lib/hooks/useDatabase';
 import { getCheckIns } from '../../lib/database/checkins';
 import { CheckIn } from '../../lib/types/checkin';
 import { CheckInCard } from '../../components/history/CheckInCard';
-import { exportCheckInsAsPdf } from '../../lib/utils/pdfExport';
+import { exportCheckInsAsPdf, MAX_EXPORT_COUNT } from '../../lib/utils/pdfExport';
 import * as Sentry from '@sentry/react-native';
 
 export default function HistoryScreen() {
@@ -35,7 +35,8 @@ export default function HistoryScreen() {
         try {
           const data = await getCheckIns(db, 10000);
           setCheckIns(data);
-        } catch {
+        } catch (error) {
+          console.error('getCheckIns failed:', error);
           setCheckIns([]);
         } finally {
           setIsLoading(false);
@@ -75,13 +76,24 @@ export default function HistoryScreen() {
 
   async function handleExportSelected() {
     if (selectedIds.size === 0 || isExporting) return;
+    if (selectedIds.size > MAX_EXPORT_COUNT) {
+      Alert.alert(
+        'Zu viele ausgewählt',
+        `Maximal ${MAX_EXPORT_COUNT} Check-ins pro Export. Bitte wähle weniger aus.`
+      );
+      return;
+    }
     const toExport = checkIns.filter((c) => selectedIds.has(c.id));
     setIsExporting(true);
     try {
       await exportCheckInsAsPdf(toExport);
       ToastAndroid.show('PDF erstellt', ToastAndroid.SHORT);
     } catch (error) {
-      Sentry.captureException(error);
+      Sentry.withScope((scope) => {
+        scope.setTag('screen', 'history');
+        scope.setTag('action', 'pdfExport');
+        Sentry.captureException(error);
+      });
       Alert.alert(
         'Export fehlgeschlagen',
         'PDF konnte nicht erstellt werden. Bitte versuche es erneut.'
@@ -160,7 +172,10 @@ export default function HistoryScreen() {
         >
           <Pressable
             onPress={selectAll}
-            style={({ pressed }) => [pressed && { opacity: 0.7 }]}
+            style={({ pressed }) => [
+              { minHeight: touchTarget.min, justifyContent: 'center' as const },
+              pressed && { opacity: 0.7 },
+            ]}
             accessibilityRole="button"
             accessibilityLabel="Alle auswählen"
           >
@@ -175,7 +190,10 @@ export default function HistoryScreen() {
 
           <Pressable
             onPress={exitSelectionMode}
-            style={({ pressed }) => [pressed && { opacity: 0.7 }]}
+            style={({ pressed }) => [
+              { minHeight: touchTarget.min, justifyContent: 'center' as const },
+              pressed && { opacity: 0.7 },
+            ]}
             accessibilityRole="button"
             accessibilityLabel="Auswahl abbrechen"
           >
@@ -197,7 +215,10 @@ export default function HistoryScreen() {
         >
           <Pressable
             onPress={enterSelectionMode}
-            style={({ pressed }) => [pressed && { opacity: 0.7 }]}
+            style={({ pressed }) => [
+              { minHeight: touchTarget.min, justifyContent: 'center' as const },
+              pressed && { opacity: 0.7 },
+            ]}
             accessibilityRole="button"
             accessibilityLabel="Check-ins für Export auswählen"
           >
