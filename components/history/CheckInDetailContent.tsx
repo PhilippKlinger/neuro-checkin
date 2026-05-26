@@ -260,7 +260,12 @@ export function CheckInDetailContent({
                 accessibilityLabel="Check-in als PDF auf Gerät speichern"
                 accessibilityHint="Öffnet Dateiauswahl zum Speichern der PDF"
               >
-                <AppText variant="label" size="sm" color="secondary" style={{ textAlign: 'center' }}>
+                <AppText
+                  variant="label"
+                  size="sm"
+                  color="secondary"
+                  style={{ textAlign: 'center' }}
+                >
                   Auf Gerät speichern
                 </AppText>
               </Pressable>

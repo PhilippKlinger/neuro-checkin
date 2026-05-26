@@ -102,7 +102,9 @@ export default function SettingsScreen() {
         }
       }
       load();
-      return () => { cancelled = true; };
+      return () => {
+        cancelled = true;
+      };
     }, [db, setThemeName, setColorMode])
   );
 

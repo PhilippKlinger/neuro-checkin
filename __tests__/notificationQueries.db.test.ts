@@ -76,10 +76,7 @@ describe('getNotificationSlots', () => {
   });
 
   it('ignores rows with unexpected id values', async () => {
-    const rowsWithExtra = [
-      ...SLOT_ROWS,
-      { id: 99, enabled: 1, time: '12:00', weekdays: 127 },
-    ];
+    const rowsWithExtra = [...SLOT_ROWS, { id: 99, enabled: 1, time: '12:00', weekdays: 127 }];
     const db = makeDb({ getAllAsync: jest.fn().mockResolvedValue(rowsWithExtra) });
     const slots = await getNotificationSlots(db as any);
     const ids = slots.map((s) => s.id);

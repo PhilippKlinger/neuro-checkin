@@ -10,7 +10,9 @@ export async function getNotificationSlots(db: SQLiteDatabase): Promise<Notifica
     enabled: number;
     time: string;
     weekdays: number;
-  }>('SELECT id, enabled, time, weekdays FROM notification_slots WHERE id IN (0, 1) ORDER BY id LIMIT 2');
+  }>(
+    'SELECT id, enabled, time, weekdays FROM notification_slots WHERE id IN (0, 1) ORDER BY id LIMIT 2'
+  );
 
   return rows
     .filter((row) => VALID_SLOT_IDS.includes(row.id as 0 | 1))

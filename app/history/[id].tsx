@@ -42,7 +42,9 @@ export default function CheckInDetailScreen() {
       }
     }
     load();
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [db, id]);
 
   async function handleExport() {
