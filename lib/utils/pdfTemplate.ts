@@ -2,8 +2,25 @@ import type { CheckIn } from '../types/checkin';
 import { presentCheckIn } from './presentCheckIn';
 import { formatDate, formatTime } from './format';
 
+export const PDF_MAX_FIELD_LENGTH = 1000;
+
+export function escapeHtml(text: string): string {
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function safeValue(text: string): string {
+  const truncated =
+    text.length > PDF_MAX_FIELD_LENGTH ? text.slice(0, PDF_MAX_FIELD_LENGTH) + '[gekürzt]' : text;
+  return escapeHtml(truncated);
+}
+
 function row(label: string, value: string): string {
-  return `<tr><td class="label">${label}</td><td class="value">${value}</td></tr>`;
+  return `<tr><td class="label">${label}</td><td class="value">${safeValue(value)}</td></tr>`;
 }
 
 function buildCheckInBlock(c: CheckIn): string {
