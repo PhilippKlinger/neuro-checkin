@@ -1,4 +1,4 @@
-import { Pressable, StyleSheet } from 'react-native';
+import { Pressable, StyleSheet, Text } from 'react-native';
 import { Tabs, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -16,6 +16,18 @@ function CheckInInfoButton({ color }: { color: string }) {
     >
       <Ionicons name="help-circle-outline" size={26} color={color} />
     </Pressable>
+  );
+}
+
+function TabLabel({ label, color, fontFamily }: { label: string; color: string; fontFamily: string }) {
+  return (
+    <Text
+      numberOfLines={1}
+      maxFontSizeMultiplier={1.3}
+      style={{ fontFamily, fontSize: 12, color }}
+    >
+      {label}
+    </Text>
   );
 }
 
@@ -54,10 +66,6 @@ export default function TabLayout() {
         },
         tabBarActiveTintColor: theme.colors.accent,
         tabBarInactiveTintColor: theme.colors.textSecondary,
-        tabBarLabelStyle: {
-          fontFamily: typography.families.ui.medium,
-          fontSize: typography.sizes.xs,
-        },
         tabBarIcon: ({ focused, color, size }) => {
           const icons = TAB_ICONS[route.name];
           const iconName = icons ? (focused ? icons.active : icons.inactive) : 'ellipse-outline';
@@ -69,7 +77,9 @@ export default function TabLayout() {
         name="index"
         options={{
           title: 'Heute',
-          tabBarLabel: 'Heute',
+          tabBarLabel: ({ color }) => (
+            <TabLabel label="Heute" color={color} fontFamily={typography.families.ui.medium} />
+          ),
           tabBarAccessibilityLabel: 'Heute',
           headerRight: () => <CheckInInfoButton color={theme.colors.textSecondary} />,
         }}
@@ -78,7 +88,9 @@ export default function TabLayout() {
         name="check-in"
         options={{
           title: 'Check-in',
-          tabBarLabel: 'Check-in',
+          tabBarLabel: ({ color }) => (
+            <TabLabel label="Check-in" color={color} fontFamily={typography.families.ui.medium} />
+          ),
           tabBarAccessibilityLabel: 'Check-in starten',
         }}
       />
@@ -86,7 +98,9 @@ export default function TabLayout() {
         name="history"
         options={{
           title: 'Verlauf',
-          tabBarLabel: 'Verlauf',
+          tabBarLabel: ({ color }) => (
+            <TabLabel label="Verlauf" color={color} fontFamily={typography.families.ui.medium} />
+          ),
           tabBarAccessibilityLabel: 'Check-in Verlauf',
         }}
       />
@@ -94,7 +108,13 @@ export default function TabLayout() {
         name="settings"
         options={{
           title: 'Einstellungen',
-          tabBarLabel: 'Einstellungen',
+          tabBarLabel: ({ color }) => (
+            <TabLabel
+              label="Einstellungen"
+              color={color}
+              fontFamily={typography.families.ui.medium}
+            />
+          ),
           tabBarAccessibilityLabel: 'Einstellungen',
         }}
       />
