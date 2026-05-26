@@ -34,7 +34,10 @@ export function FeedbackModal({ visible, onClose }: FeedbackModalProps) {
   async function handleSubmit() {
     const trimmed = feedbackText.trim().slice(0, 500);
     if (!trimmed) return;
-    if (Date.now() - lastSubmitRef.current < SUBMIT_COOLDOWN_MS) return;
+    if (Date.now() - lastSubmitRef.current < SUBMIT_COOLDOWN_MS) {
+      setFeedbackSuccess(true);
+      return;
+    }
     setFeedbackSubmitting(true);
     setFeedbackError(false);
     try {

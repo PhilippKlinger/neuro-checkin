@@ -66,7 +66,7 @@ export default function CheckInDetailScreen() {
   async function handleSaveToDevice() {
     if (!checkIn) return;
     try {
-      const fileUri = await saveCheckInsPdfToDevice([checkIn]);
+      await saveCheckInsPdfToDevice([checkIn]);
       ToastAndroid.show('PDF gespeichert', ToastAndroid.SHORT);
     } catch (error) {
       Sentry.withScope((scope) => {

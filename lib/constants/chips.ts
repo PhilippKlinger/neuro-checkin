@@ -20,15 +20,15 @@ export const FEELING_CHIPS = [
 
 export const SELF_CARE_CHIPS = [
   'Augen schließen',
-  'Einfach bleiben',
-  'Nichts entscheiden',
-  'Tief atmen',
   'Licht dimmen',
+  'Nichts entscheiden',
+  'Einfach bleiben',
   'Wasser trinken',
-  'Dehnen',
   'Kurz raus',
-  'Musik hören',
+  'Tief atmen',
+  'Dehnen',
+  'Spazieren',
   'Essen',
   'Dusche',
-  'Spazieren',
+  'Musik hören',
 ] as const;
