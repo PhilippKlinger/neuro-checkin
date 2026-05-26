@@ -27,6 +27,7 @@
       "predictiveBackGestureEnabled": false,
       "package": "com.philippklinger.neurocheckin",
       "permissions": [
+        "android.permission.USE_EXACT_ALARM",
         "android.permission.SCHEDULE_EXACT_ALARM",
         "android.permission.RECEIVE_BOOT_COMPLETED"
       ],
@@ -60,8 +61,7 @@
         "expo-notifications",
         {
           "icon": "./assets/icon.png",
-          "color": "#ffffff",
-          "defaultChannel": "daily-reminder"
+          "color": "#ffffff"
         }
       ],
       "@sentry/react-native"
