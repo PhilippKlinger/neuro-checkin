@@ -136,7 +136,7 @@ export const StepScaffold = forwardRef<ScrollView, StepScaffoldProps>(function S
                 accessibilityLabel="Kann ich gerade nicht sagen"
                 accessibilityState={{ selected: skipConfig.skipped }}
               >
-                <AppText variant="body" color="secondary" style={{ fontStyle: 'italic' }}>
+                <AppText variant="label" color="secondary">
                   Kann ich gerade nicht sagen
                 </AppText>
               </Pressable>
