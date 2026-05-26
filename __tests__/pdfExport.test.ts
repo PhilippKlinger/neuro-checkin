@@ -3,7 +3,7 @@ import { EMPTY_BODY_SIGNALS } from '../lib/types/checkin';
 
 // ---------------------------------------------------------------------------
 // Mocks — expo-print and expo-sharing (stable external APIs, not the SUT)
-// expo-file-system: minimal File class mock (native runtime unavailable in Jest)
+// expo-file-system: minimal File class mock + SAF mocks (native runtime unavailable in Jest)
 // ---------------------------------------------------------------------------
 
 const mockPrintToFileAsync = jest.fn();
@@ -11,6 +11,10 @@ const mockShareAsync = jest.fn();
 const mockRename = jest.fn();
 const mockDelete = jest.fn();
 const mockExists = jest.fn<boolean, [string]>().mockReturnValue(false);
+const mockRequestDirectoryPermissionsAsync = jest.fn();
+const mockCreateFileAsync = jest.fn();
+const mockReadAsStringAsync = jest.fn();
+const mockSAFWriteAsStringAsync = jest.fn();
 
 jest.mock('expo-print', () => ({
   printToFileAsync: (...args: unknown[]) => mockPrintToFileAsync(...args),
@@ -35,11 +39,23 @@ jest.mock('expo-file-system', () => ({
       this.uri = uri.substring(0, uri.lastIndexOf('/') + 1) + newName;
     },
   })),
+  StorageAccessFramework: {
+    requestDirectoryPermissionsAsync: (...args: unknown[]) =>
+      mockRequestDirectoryPermissionsAsync(...args),
+    createFileAsync: (...args: unknown[]) => mockCreateFileAsync(...args),
+    writeAsStringAsync: (...args: unknown[]) => mockSAFWriteAsStringAsync(...args),
+  },
+  readAsStringAsync: (...args: unknown[]) => mockReadAsStringAsync(...args),
+  EncodingType: {
+    Base64: 'base64',
+    UTF8: 'utf8',
+  },
 }));
 
 // Import AFTER mocks are registered
 import {
   exportCheckInsAsPdf,
+  saveCheckInsPdfToDevice,
   buildFileName,
   MAX_EXPORT_COUNT,
   sanitizeFileName,
@@ -228,5 +244,106 @@ describe('exportCheckInsAsPdf', () => {
     }));
     await exportCheckInsAsPdf(exactly);
     expect(mockPrintToFileAsync).toHaveBeenCalledTimes(1);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// saveCheckInsPdfToDevice (SAF integration)
+// ---------------------------------------------------------------------------
+
+describe('saveCheckInsPdfToDevice', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockPrintToFileAsync.mockResolvedValue({ uri: 'file:///tmp/export.pdf' });
+    mockRequestDirectoryPermissionsAsync.mockResolvedValue({
+      granted: true,
+      directoryUri: 'content://com.android.externalstorage.documents/tree/primary%3ADownload',
+    });
+    mockCreateFileAsync.mockResolvedValue(
+      'content://com.android.externalstorage.documents/document/primary%3ADownload%2FCheck-in%202026-05-19.pdf'
+    );
+    mockReadAsStringAsync.mockResolvedValue('base64PdfContent==');
+    mockSAFWriteAsStringAsync.mockResolvedValue(undefined);
+  });
+
+  it('requests directory permissions via SAF', async () => {
+    await saveCheckInsPdfToDevice([SAMPLE]);
+    expect(mockRequestDirectoryPermissionsAsync).toHaveBeenCalledTimes(1);
+  });
+
+  it('throws when permission is denied', async () => {
+    mockRequestDirectoryPermissionsAsync.mockResolvedValue({ granted: false });
+    await expect(saveCheckInsPdfToDevice([SAMPLE])).rejects.toThrow('Permission denied');
+    expect(mockCreateFileAsync).not.toHaveBeenCalled();
+  });
+
+  it('generates PDF via printToFileAsync', async () => {
+    await saveCheckInsPdfToDevice([SAMPLE]);
+    expect(mockPrintToFileAsync).toHaveBeenCalledTimes(1);
+    const arg = mockPrintToFileAsync.mock.calls[0][0];
+    expect(typeof arg.html).toBe('string');
+    expect(arg.html).toContain('<!DOCTYPE html>');
+  });
+
+  it('creates file via SAF with sanitized filename', async () => {
+    await saveCheckInsPdfToDevice([SAMPLE]);
+    expect(mockCreateFileAsync).toHaveBeenCalledWith(
+      'content://com.android.externalstorage.documents/tree/primary%3ADownload',
+      'Check-in 2026-05-19',
+      'application/pdf'
+    );
+  });
+
+  it('reads temp PDF as base64', async () => {
+    await saveCheckInsPdfToDevice([SAMPLE]);
+    expect(mockReadAsStringAsync).toHaveBeenCalledWith('file:///tmp/export.pdf', {
+      encoding: 'base64',
+    });
+  });
+
+  it('writes base64 content to SAF location', async () => {
+    await saveCheckInsPdfToDevice([SAMPLE]);
+    expect(mockSAFWriteAsStringAsync).toHaveBeenCalledWith(
+      'content://com.android.externalstorage.documents/document/primary%3ADownload%2FCheck-in%202026-05-19.pdf',
+      'base64PdfContent==',
+      { encoding: 'base64' }
+    );
+  });
+
+  it('returns SAF file URI on success', async () => {
+    const result = await saveCheckInsPdfToDevice([SAMPLE]);
+    expect(result).toBe(
+      'content://com.android.externalstorage.documents/document/primary%3ADownload%2FCheck-in%202026-05-19.pdf'
+    );
+  });
+
+  it('throws when more than MAX_EXPORT_COUNT check-ins are passed', async () => {
+    const tooMany = Array.from({ length: MAX_EXPORT_COUNT + 1 }, (_, i) => ({
+      ...SAMPLE,
+      id: i + 1,
+    }));
+    await expect(saveCheckInsPdfToDevice(tooMany)).rejects.toThrow(/maximum/i);
+    expect(mockRequestDirectoryPermissionsAsync).not.toHaveBeenCalled();
+  });
+
+  it('handles date range filename for multiple check-ins', async () => {
+    await saveCheckInsPdfToDevice([SAMPLE, SAMPLE_2]);
+    expect(mockCreateFileAsync).toHaveBeenCalledWith(
+      expect.any(String),
+      'Check-ins 2026-05-19 bis 2026-05-21',
+      'application/pdf'
+    );
+  });
+
+  it('throws when printToFileAsync fails', async () => {
+    mockPrintToFileAsync.mockRejectedValue(new Error('print failed'));
+    await expect(saveCheckInsPdfToDevice([SAMPLE])).rejects.toThrow('print failed');
+    expect(mockCreateFileAsync).not.toHaveBeenCalled();
+  });
+
+  it('throws when createFileAsync fails', async () => {
+    mockCreateFileAsync.mockRejectedValue(new Error('SAF createFile failed'));
+    await expect(saveCheckInsPdfToDevice([SAMPLE])).rejects.toThrow('SAF createFile failed');
+    expect(mockSAFWriteAsStringAsync).not.toHaveBeenCalled();
   });
 });

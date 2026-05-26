@@ -15,6 +15,7 @@ interface CheckInDetailContentProps {
   onDeleteConfirm: () => void;
   onDeleteCancel: () => void;
   onExport?: () => void;
+  onSaveToDevice?: () => void;
 }
 
 export function CheckInDetailContent({
@@ -24,6 +25,7 @@ export function CheckInDetailContent({
   onDeleteConfirm,
   onDeleteCancel,
   onExport,
+  onSaveToDevice,
 }: CheckInDetailContentProps) {
   const { theme, spacing, radii, touchTarget } = useTheme();
   const insets = useSafeAreaInsets();
@@ -211,30 +213,59 @@ export function CheckInDetailContent({
         </Pressable>
 
         {onExport && (
-          <Pressable
-            onPress={onExport}
-            style={({ pressed }) => [
-              styles.actionButton,
-              {
-                marginTop: spacing.md,
-                paddingVertical: spacing.md,
-                borderRadius: radii.md,
-                borderWidth: 1,
-                borderColor: theme.colors.border,
-                backgroundColor: theme.colors.surface,
-                minHeight: touchTarget.min,
-              },
-              pressed && { opacity: 0.75 },
-            ]}
-            testID="detail-export-button"
-            accessibilityRole="button"
-            accessibilityLabel="Check-in als PDF exportieren"
-            accessibilityHint="Erstellt eine PDF-Datei und öffnet das Teilen-Menü"
-          >
-            <AppText variant="label" size="sm" color="secondary" style={{ textAlign: 'center' }}>
-              Als PDF exportieren
-            </AppText>
-          </Pressable>
+          <>
+            <Pressable
+              onPress={onExport}
+              style={({ pressed }) => [
+                styles.actionButton,
+                {
+                  marginTop: spacing.md,
+                  paddingVertical: spacing.md,
+                  borderRadius: radii.md,
+                  borderWidth: 1,
+                  borderColor: theme.colors.border,
+                  backgroundColor: theme.colors.surface,
+                  minHeight: touchTarget.min,
+                },
+                pressed && { opacity: 0.75 },
+              ]}
+              testID="detail-export-button"
+              accessibilityRole="button"
+              accessibilityLabel="Check-in als PDF teilen"
+              accessibilityHint="Erstellt eine PDF-Datei und öffnet das Teilen-Menü"
+            >
+              <AppText variant="label" size="sm" color="secondary" style={{ textAlign: 'center' }}>
+                Als PDF teilen
+              </AppText>
+            </Pressable>
+
+            {onSaveToDevice && (
+              <Pressable
+                onPress={onSaveToDevice}
+                style={({ pressed }) => [
+                  styles.actionButton,
+                  {
+                    marginTop: spacing.sm,
+                    paddingVertical: spacing.md,
+                    borderRadius: radii.md,
+                    borderWidth: 1,
+                    borderColor: theme.colors.border,
+                    backgroundColor: theme.colors.surface,
+                    minHeight: touchTarget.min,
+                  },
+                  pressed && { opacity: 0.75 },
+                ]}
+                testID="detail-save-button"
+                accessibilityRole="button"
+                accessibilityLabel="Check-in als PDF auf Gerät speichern"
+                accessibilityHint="Öffnet Dateiauswahl zum Speichern der PDF"
+              >
+                <AppText variant="label" size="sm" color="secondary" style={{ textAlign: 'center' }}>
+                  Auf Gerät speichern
+                </AppText>
+              </Pressable>
+            )}
+          </>
         )}
       </ScrollView>
 

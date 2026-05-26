@@ -8,7 +8,7 @@ import { getCheckInById, deleteCheckIn } from '../../lib/database/checkins';
 import { getSettings, updateSettings } from '../../lib/database/settings';
 import { CheckIn } from '../../lib/types/checkin';
 import { CheckInDetailContent } from '../../components/history/CheckInDetailContent';
-import { exportCheckInsAsPdf } from '../../lib/utils/pdfExport';
+import { exportCheckInsAsPdf, saveCheckInsPdfToDevice } from '../../lib/utils/pdfExport';
 import * as Sentry from '@sentry/react-native';
 
 export default function CheckInDetailScreen() {
@@ -63,6 +63,25 @@ export default function CheckInDetailScreen() {
     }
   }
 
+  async function handleSaveToDevice() {
+    if (!checkIn) return;
+    try {
+      const fileUri = await saveCheckInsPdfToDevice([checkIn]);
+      ToastAndroid.show('PDF gespeichert', ToastAndroid.SHORT);
+    } catch (error) {
+      Sentry.withScope((scope) => {
+        scope.setTag('screen', 'checkInDetail');
+        scope.setTag('action', 'pdfSaveToDevice');
+        Sentry.captureException(error);
+      });
+      const message =
+        error instanceof Error && error.message === 'Permission denied'
+          ? 'Berechtigung verweigert. Bitte wähle einen Ordner aus.'
+          : 'PDF konnte nicht gespeichert werden. Bitte versuche es erneut.';
+      Alert.alert('Speichern fehlgeschlagen', message);
+    }
+  }
+
   async function confirmDelete() {
     if (!checkIn) return;
     setShowDeleteDialog(false);
@@ -106,6 +125,7 @@ export default function CheckInDetailScreen() {
         onDeleteConfirm={confirmDelete}
         onDeleteCancel={() => setShowDeleteDialog(false)}
         onExport={handleExport}
+        onSaveToDevice={handleSaveToDevice}
       />
     </View>
   );

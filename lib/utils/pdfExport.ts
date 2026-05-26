@@ -1,6 +1,6 @@
 import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
-import { File } from 'expo-file-system';
+import { File, StorageAccessFramework, readAsStringAsync, EncodingType } from 'expo-file-system';
 import type { CheckIn } from '../types/checkin';
 import { buildPdfHtml } from './pdfTemplate';
 
@@ -52,4 +52,36 @@ export async function exportCheckInsAsPdf(checkIns: CheckIn[]): Promise<void> {
     mimeType: 'application/pdf',
     UTI: 'com.adobe.pdf',
   });
+}
+
+export async function saveCheckInsPdfToDevice(checkIns: CheckIn[]): Promise<string> {
+  if (checkIns.length > MAX_EXPORT_COUNT) {
+    throw new Error(`Maximum ${MAX_EXPORT_COUNT} check-ins per export`);
+  }
+
+  // Request directory permission via SAF
+  const permissions = await StorageAccessFramework.requestDirectoryPermissionsAsync();
+  if (!permissions.granted) {
+    throw new Error('Permission denied');
+  }
+
+  const html = buildPdfHtml(checkIns);
+  const { uri: tempUri } = await Print.printToFileAsync({ html });
+
+  const fileName = sanitizeFileName(buildFileName(checkIns));
+
+  // Create file in selected directory
+  const fileUri = await StorageAccessFramework.createFileAsync(
+    permissions.directoryUri,
+    fileName,
+    'application/pdf'
+  );
+
+  // Read temp PDF as base64 and write to SAF location
+  const base64Content = await readAsStringAsync(tempUri, { encoding: EncodingType.Base64 });
+  await StorageAccessFramework.writeAsStringAsync(fileUri, base64Content, {
+    encoding: EncodingType.Base64,
+  });
+
+  return fileUri;
 }
