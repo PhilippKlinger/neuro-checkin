@@ -19,13 +19,17 @@ function CheckInInfoButton({ color }: { color: string }) {
   );
 }
 
-function TabLabel({ label, color, fontFamily }: { label: string; color: string; fontFamily: string }) {
+function TabLabel({
+  label,
+  color,
+  fontFamily,
+}: {
+  label: string;
+  color: string;
+  fontFamily: string;
+}) {
   return (
-    <Text
-      numberOfLines={1}
-      maxFontSizeMultiplier={1.3}
-      style={{ fontFamily, fontSize: 12, color }}
-    >
+    <Text numberOfLines={1} maxFontSizeMultiplier={1.3} style={{ fontFamily, fontSize: 12, color }}>
       {label}
     </Text>
   );
