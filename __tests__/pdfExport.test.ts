@@ -38,7 +38,12 @@ jest.mock('expo-file-system', () => ({
 }));
 
 // Import AFTER mocks are registered
-import { exportCheckInsAsPdf, buildFileName } from '../lib/utils/pdfExport';
+import {
+  exportCheckInsAsPdf,
+  buildFileName,
+  MAX_EXPORT_COUNT,
+  sanitizeFileName,
+} from '../lib/utils/pdfExport';
 
 // ---------------------------------------------------------------------------
 // Fixture
@@ -95,6 +100,50 @@ describe('buildFileName', () => {
     const result = buildFileName([SAMPLE]);
     expect(result).not.toContain('/');
     expect(result).not.toContain('\\');
+  });
+});
+
+// ---------------------------------------------------------------------------
+// MAX_EXPORT_COUNT constant
+// ---------------------------------------------------------------------------
+
+describe('MAX_EXPORT_COUNT', () => {
+  it('is 30', () => {
+    expect(MAX_EXPORT_COUNT).toBe(30);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// sanitizeFileName (S-01: prevent directory traversal)
+// ---------------------------------------------------------------------------
+
+describe('sanitizeFileName', () => {
+  it('returns name unchanged when no special characters', () => {
+    expect(sanitizeFileName('Check-in 2026-05-19')).toBe('Check-in 2026-05-19');
+  });
+
+  it('replaces forward slashes', () => {
+    expect(sanitizeFileName('a/b/c')).toBe('a_b_c');
+  });
+
+  it('replaces backslashes', () => {
+    expect(sanitizeFileName('a\\b\\c')).toBe('a_b_c');
+  });
+
+  it('replaces colons', () => {
+    expect(sanitizeFileName('10:30:00')).toBe('10_30_00');
+  });
+
+  it('replaces all dangerous characters', () => {
+    expect(sanitizeFileName('a*b?c"d<e>f|g')).toBe('a_b_c_d_e_f_g');
+  });
+
+  it('handles empty string', () => {
+    expect(sanitizeFileName('')).toBe('');
+  });
+
+  it('handles string with only special characters', () => {
+    expect(sanitizeFileName('/*?\\')).toBe('____');
   });
 });
 
@@ -161,5 +210,23 @@ describe('exportCheckInsAsPdf', () => {
   it('skips delete when target file does not already exist', async () => {
     await exportCheckInsAsPdf([SAMPLE]);
     expect(mockDelete).not.toHaveBeenCalled();
+  });
+
+  it('throws when more than MAX_EXPORT_COUNT check-ins are passed', async () => {
+    const tooMany = Array.from({ length: MAX_EXPORT_COUNT + 1 }, (_, i) => ({
+      ...SAMPLE,
+      id: i + 1,
+    }));
+    await expect(exportCheckInsAsPdf(tooMany)).rejects.toThrow(/maximum/i);
+    expect(mockPrintToFileAsync).not.toHaveBeenCalled();
+  });
+
+  it('accepts exactly MAX_EXPORT_COUNT check-ins', async () => {
+    const exactly = Array.from({ length: MAX_EXPORT_COUNT }, (_, i) => ({
+      ...SAMPLE,
+      id: i + 1,
+    }));
+    await exportCheckInsAsPdf(exactly);
+    expect(mockPrintToFileAsync).toHaveBeenCalledTimes(1);
   });
 });

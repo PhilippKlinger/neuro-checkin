@@ -35,6 +35,8 @@ export function FeedbackModal({ visible, onClose }: FeedbackModalProps) {
     setFeedbackError(false);
     try {
       const appVersion = Constants.expoConfig?.version ?? '—';
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 10_000);
       const res = await fetch(FORMSPREE_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
@@ -43,7 +45,9 @@ export function FeedbackModal({ visible, onClose }: FeedbackModalProps) {
           _subject: `Neuro Check-in Feedback v${appVersion}`,
           app_version: appVersion,
         }),
+        signal: controller.signal,
       });
+      clearTimeout(timeout);
       if (res.ok) {
         setFeedbackSuccess(true);
         setFeedbackText('');

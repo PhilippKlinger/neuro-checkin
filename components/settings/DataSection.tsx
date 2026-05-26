@@ -316,6 +316,7 @@ export function DataSection({
                 borderColor: theme.colors.border,
                 padding: spacing.sm,
                 marginTop: spacing.sm,
+                minHeight: touchTarget.min,
                 opacity: pressed ? 0.75 : 1,
               },
             ]}
