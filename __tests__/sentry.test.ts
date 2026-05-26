@@ -145,3 +145,45 @@ describe('scrubEvent', () => {
     }
   });
 });
+
+// ---------------------------------------------------------------------------
+// scrubObject — depth and size limits (M-04)
+// ---------------------------------------------------------------------------
+
+describe('scrubObject — depth/size limits', () => {
+  it('truncates objects deeper than MAX_SCRUB_DEPTH', () => {
+    let deep: Record<string, unknown> = { value: 'leaf' };
+    for (let i = 0; i < 10; i++) {
+      deep = { nested: deep };
+    }
+    const result = scrubObject(deep) as Record<string, unknown>;
+    // Walk down — at some point we should hit the marker
+    let current: unknown = result;
+    let depth = 0;
+    while (current && typeof current === 'object' && !Array.isArray(current)) {
+      const obj = current as Record<string, unknown>;
+      if (obj['nested'] === '[max depth]') break;
+      current = obj['nested'];
+      depth++;
+    }
+    expect(depth).toBeLessThanOrEqual(7);
+  });
+
+  it('truncates arrays longer than MAX_ARRAY_ITEMS', () => {
+    const bigArray = Array.from({ length: 100 }, (_, i) => ({ idx: i }));
+    const result = scrubObject(bigArray) as unknown[];
+    expect(result.length).toBeLessThanOrEqual(51);
+    expect(result[result.length - 1]).toBe('[truncated]');
+  });
+
+  it('truncates objects with more than MAX_OBJECT_KEYS keys', () => {
+    const bigObj: Record<string, unknown> = {};
+    for (let i = 0; i < 100; i++) {
+      bigObj[`key${i}`] = `value${i}`;
+    }
+    const result = scrubObject(bigObj) as Record<string, unknown>;
+    const keys = Object.keys(result);
+    expect(keys.length).toBeLessThanOrEqual(51);
+    expect(result['[truncated]']).toBe(true);
+  });
+});

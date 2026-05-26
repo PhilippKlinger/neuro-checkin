@@ -1,6 +1,7 @@
 import type { SQLiteDatabase } from 'expo-sqlite';
 import type { CheckIn, CheckInInsert, BodySignals } from '../types/checkin';
 import { EMPTY_BODY_SIGNALS } from '../types/checkin';
+import { TEXT_LIMITS } from '../constants/limits';
 
 const VALID_THOUGHTS_TYPES = ['supportive', 'burdening', 'mixed'] as const;
 
@@ -8,10 +9,14 @@ function clampLevel(value: number, min: number, max: number): number {
   return Math.max(min, Math.min(max, Math.round(value)));
 }
 
-function trimOrNull(value: string | null | undefined): string | null {
+function trimOrNull(value: string | null | undefined, maxLength?: number): string | null {
   if (value == null) return null;
-  const trimmed = value.trim();
-  return trimmed === '' ? null : trimmed;
+  let trimmed = value.trim();
+  if (trimmed === '') return null;
+  if (maxLength && trimmed.length > maxLength) {
+    trimmed = trimmed.slice(0, maxLength);
+  }
+  return trimmed;
 }
 
 function normalizeSignal(value: unknown): boolean | null {
@@ -24,7 +29,10 @@ export function normalizeCheckInInsert(data: CheckInInsert): CheckInInsert {
   const focusLevel = clampLevel(data.focusLevel, 0, 5);
   const distressLevel = data.distressLevel == null ? null : clampLevel(data.distressLevel, 1, 5);
 
-  const feelings = (data.feelings ?? '').trim();
+  let feelings = (data.feelings ?? '').trim();
+  if (feelings.length > TEXT_LIMITS.MAX_FEELINGS_LENGTH) {
+    feelings = feelings.slice(0, TEXT_LIMITS.MAX_FEELINGS_LENGTH);
+  }
 
   const thoughtsType =
     data.thoughtsType && VALID_THOUGHTS_TYPES.includes(data.thoughtsType as any)
@@ -50,12 +58,12 @@ export function normalizeCheckInInsert(data: CheckInInsert): CheckInInsert {
     feelings,
     feelingsSkipped: data.feelingsSkipped,
     distressLevel,
-    distressNote: trimOrNull(data.distressNote),
+    distressNote: trimOrNull(data.distressNote, TEXT_LIMITS.MAX_NOTE_LENGTH),
     thoughtsType,
-    thoughtsNote: trimOrNull(data.thoughtsNote),
-    selfCareNote: trimOrNull(data.selfCareNote),
-    innerPart: trimOrNull(data.innerPart),
-    note: trimOrNull(data.note),
+    thoughtsNote: trimOrNull(data.thoughtsNote, TEXT_LIMITS.MAX_NOTE_LENGTH),
+    selfCareNote: trimOrNull(data.selfCareNote, TEXT_LIMITS.MAX_NOTE_LENGTH),
+    innerPart: trimOrNull(data.innerPart, TEXT_LIMITS.MAX_INNER_PART_LENGTH),
+    note: trimOrNull(data.note, TEXT_LIMITS.MAX_NOTE_LENGTH),
   };
 }
 

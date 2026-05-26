@@ -16,9 +16,21 @@ export const SENSITIVE_KEYS: readonly string[] = [
   'focusLevel',
 ];
 
-export function scrubObject(value: unknown, visited: WeakSet<object> = new WeakSet()): unknown {
+const MAX_SCRUB_DEPTH = 6;
+const MAX_ARRAY_ITEMS = 50;
+const MAX_OBJECT_KEYS = 50;
+
+export function scrubObject(
+  value: unknown,
+  visited: WeakSet<object> = new WeakSet(),
+  depth: number = 0
+): unknown {
   if (value === null || value === undefined || typeof value !== 'object') {
     return value;
+  }
+
+  if (depth > MAX_SCRUB_DEPTH) {
+    return '[max depth]';
   }
 
   if (visited.has(value)) {
@@ -27,18 +39,32 @@ export function scrubObject(value: unknown, visited: WeakSet<object> = new WeakS
   visited.add(value);
 
   if (Array.isArray(value)) {
+    if (value.length > MAX_ARRAY_ITEMS) {
+      value.length = MAX_ARRAY_ITEMS;
+      value.push('[truncated]' as unknown);
+    }
     for (let i = 0; i < value.length; i++) {
-      value[i] = scrubObject(value[i], visited);
+      value[i] = scrubObject(value[i], visited, depth + 1);
     }
     return value;
   }
 
   const obj = value as Record<string, unknown>;
+  const keys = Object.keys(obj);
+  if (keys.length > MAX_OBJECT_KEYS) {
+    const keep = keys.slice(0, MAX_OBJECT_KEYS);
+    for (const key of keys) {
+      if (!keep.includes(key)) {
+        delete obj[key];
+      }
+    }
+    obj['[truncated]'] = true;
+  }
   for (const key of Object.keys(obj)) {
     if ((SENSITIVE_KEYS as string[]).includes(key)) {
       obj[key] = '[scrubbed]';
     } else {
-      obj[key] = scrubObject(obj[key], visited);
+      obj[key] = scrubObject(obj[key], visited, depth + 1);
     }
   }
   return obj;

@@ -101,8 +101,8 @@ export function useCheckInFlow(db: SQLiteDatabase): UseCheckInFlowResult {
           setShowToggleIntroHint(!settings.guidedToggleIntroduced);
           setFeelingUserChips(feelingChips);
           setSelfCareUserChips(selfCareChips);
-        } catch {
-          // Non-critical — defaults are safe fallbacks
+        } catch (error) {
+          console.error('useCheckInFlow loadState failed:', error);
         }
       }
       loadState();
