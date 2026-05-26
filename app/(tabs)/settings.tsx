@@ -56,19 +56,23 @@ export default function SettingsScreen() {
 
   useFocusEffect(
     useCallback(() => {
+      let cancelled = false;
       async function load() {
         try {
           const settings = await getSettings(db);
+          if (cancelled) return;
           setThemeName(settings.themeName as ThemeName);
           setColorMode(settings.colorMode);
           setIsEmulator(!Device.isDevice);
 
           if (Device.isDevice) {
             const { status } = await Notifications.getPermissionsAsync();
+            if (cancelled) return;
             setNotificationPermission(status === 'granted');
           }
 
           const dbSlots = await getNotificationSlots(db);
+          if (cancelled) return;
           if (dbSlots.length >= 2) {
             setSlots(dbSlots as NotificationSlot[]);
             if (Device.isDevice) {
@@ -80,17 +84,21 @@ export default function SettingsScreen() {
             }
           }
 
+          if (cancelled) return;
           setGuidedMode(settings.guidedModeEnabled);
 
           const count = await countCheckIns(db);
+          if (cancelled) return;
           setCheckInCount(count);
           const chips = await countUserChips(db);
+          if (cancelled) return;
           setChipCount(chips);
         } catch (e) {
           Sentry.captureException(e);
         }
       }
       load();
+      return () => { cancelled = true; };
     }, [db, setThemeName, setColorMode])
   );
 

@@ -22,24 +22,27 @@ export default function CheckInDetailScreen() {
   const [showDetailHint, setShowDetailHint] = useState(false);
 
   useEffect(() => {
+    let cancelled = false;
     async function load() {
       const parsedId = Number(id);
       if (!id || !Number.isInteger(parsedId) || parsedId <= 0) {
-        setIsLoading(false);
+        if (!cancelled) setIsLoading(false);
         return;
       }
       try {
         const [data, settings] = await Promise.all([getCheckInById(db, parsedId), getSettings(db)]);
+        if (cancelled) return;
         setCheckIn(data);
         if (!settings.detailViewIntroduced) {
           setShowDetailHint(true);
           await updateSettings(db, { detailViewIntroduced: true });
         }
       } finally {
-        setIsLoading(false);
+        if (!cancelled) setIsLoading(false);
       }
     }
     load();
+    return () => { cancelled = true; };
   }, [db, id]);
 
   async function handleExport() {

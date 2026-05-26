@@ -1,6 +1,6 @@
 import { presentCheckIn } from '../lib/utils/presentCheckIn';
 import type { CheckIn, CheckInDraft } from '../lib/types/checkin';
-import { EMPTY_BODY_SIGNALS, EMPTY_DRAFT } from '../lib/types/checkin';
+import { EMPTY_BODY_SIGNALS, EMPTY_DRAFT, DISTRESS_NOTE_THRESHOLD } from '../lib/types/checkin';
 
 // ---------------------------------------------------------------------------
 // Fixtures
@@ -241,6 +241,29 @@ describe('presentCheckIn — selfCare, innerPart, note', () => {
   it('returns null note when null', () => {
     const p = presentCheckIn(SKIPPED_CHECKIN);
     expect(p.note).toBeNull();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Distress threshold constant
+// ---------------------------------------------------------------------------
+
+describe('DISTRESS_NOTE_THRESHOLD', () => {
+  it('is 4 (note field appears at level 4+)', () => {
+    expect(DISTRESS_NOTE_THRESHOLD).toBe(4);
+  });
+
+  it('distressWithNote includes note only when distressNote is non-empty', () => {
+    const atThreshold = { ...FULL_CHECKIN, distressLevel: DISTRESS_NOTE_THRESHOLD, distressNote: 'viel los' };
+    const p = presentCheckIn(atThreshold);
+    expect(p.distressWithNote).toContain('viel los');
+  });
+
+  it('below threshold: distress still formats but note field would be hidden', () => {
+    const belowThreshold = { ...FULL_CHECKIN, distressLevel: DISTRESS_NOTE_THRESHOLD - 1, distressNote: '' };
+    const p = presentCheckIn(belowThreshold);
+    expect(p.distress).toMatch(new RegExp(`^${DISTRESS_NOTE_THRESHOLD - 1}/5`));
+    expect(p.distressWithNote).not.toContain('—  —');
   });
 });
 
