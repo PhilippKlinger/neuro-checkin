@@ -39,6 +39,10 @@ jest.mock('expo-file-system', () => ({
       this.uri = uri.substring(0, uri.lastIndexOf('/') + 1) + newName;
     },
   })),
+}));
+
+// SAF APIs were moved to expo-file-system/legacy in SDK 53+
+jest.mock('expo-file-system/legacy', () => ({
   StorageAccessFramework: {
     requestDirectoryPermissionsAsync: (...args: unknown[]) =>
       mockRequestDirectoryPermissionsAsync(...args),
