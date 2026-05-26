@@ -1,6 +1,7 @@
 import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
-import { File, StorageAccessFramework, readAsStringAsync, EncodingType } from 'expo-file-system';
+import { File } from 'expo-file-system';
+import { StorageAccessFramework, readAsStringAsync, EncodingType } from 'expo-file-system/legacy';
 import type { CheckIn } from '../types/checkin';
 import { buildPdfHtml } from './pdfTemplate';
 
