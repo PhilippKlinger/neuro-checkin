@@ -11,6 +11,7 @@ function makeDb(currentVersion = 0, opts?: { chipColumns?: string[] }) {
   const defaultChipCols = currentVersion >= 13
     ? ['id', 'category', 'label', 'normalized_label', 'use_count', 'last_used_at']
     : ['id', 'category', 'label', 'use_count'];
+  // v14 doesn't touch user_chips — same columns as v13
   const chipColumns = opts?.chipColumns ?? defaultChipCols;
 
   return {
@@ -79,7 +80,7 @@ describe('migrateDatabase — fresh install (v0)', () => {
   it('sets user_version to 13 at the end', async () => {
     const db = makeDb(0);
     await migrateDatabase(db as any);
-    expect(db._execCalls.some((s) => s.includes('user_version = 13'))).toBe(true);
+    expect(db._execCalls.some((s) => s.includes('user_version = 14'))).toBe(true);
   });
 
   it('adds distress columns (v7)', async () => {
@@ -107,14 +108,14 @@ describe('migrateDatabase — fresh install (v0)', () => {
 // Already at latest version — idempotent
 // ---------------------------------------------------------------------------
 
-describe('migrateDatabase — already at v13 (idempotent)', () => {
+describe('migrateDatabase — already at v14 (idempotent)', () => {
   it('runs without throwing', async () => {
-    const db = makeDb(13);
+    const db = makeDb(14);
     await expect(migrateDatabase(db as any)).resolves.toBeUndefined();
   });
 
   it('does not execute any CREATE TABLE or ALTER TABLE statements', async () => {
-    const db = makeDb(13);
+    const db = makeDb(14);
     await migrateDatabase(db as any);
     const ddl = db._execCalls.filter(
       (s) => s.includes('CREATE TABLE') || s.includes('ALTER TABLE')
@@ -123,9 +124,9 @@ describe('migrateDatabase — already at v13 (idempotent)', () => {
   });
 
   it('still sets the user_version pragma', async () => {
-    const db = makeDb(13);
+    const db = makeDb(14);
     await migrateDatabase(db as any);
-    expect(db._execCalls.some((s) => s.includes('user_version = 13'))).toBe(true);
+    expect(db._execCalls.some((s) => s.includes('user_version = 14'))).toBe(true);
   });
 });
 

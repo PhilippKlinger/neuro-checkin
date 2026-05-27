@@ -69,7 +69,11 @@ export default function CheckInDetailScreen() {
   async function handleSaveToDevice() {
     if (!checkIn) return;
     try {
-      await saveCheckInsPdfToDevice([checkIn]);
+      const settings = await getSettings(db);
+      await saveCheckInsPdfToDevice([checkIn], {
+        savedDirectoryUri: settings.exportDirectoryUri,
+        onDirectoryChosen: (uri) => updateSettings(db, { exportDirectoryUri: uri }),
+      });
       showToast('PDF gespeichert');
     } catch (error) {
       if (error instanceof Error && error.message === 'Permission denied') {

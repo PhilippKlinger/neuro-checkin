@@ -5,6 +5,7 @@ import { useFocusEffect, useRouter } from 'expo-router';
 import { useTheme } from '../../lib/hooks/useTheme';
 import { useDatabase } from '../../lib/hooks/useDatabase';
 import { getCheckIns } from '../../lib/database/checkins';
+import { getSettings, updateSettings } from '../../lib/database/settings';
 import { CheckIn } from '../../lib/types/checkin';
 import { CheckInCard } from '../../components/history/CheckInCard';
 import { exportCheckInsAsPdf, saveCheckInsPdfToDevice, MAX_EXPORT_COUNT } from '../../lib/utils/pdfExport';
@@ -109,7 +110,11 @@ export default function HistoryScreen() {
     const toExport = checkIns.filter((c) => selectedIds.has(c.id));
     setIsExporting(true);
     try {
-      await saveCheckInsPdfToDevice(toExport);
+      const settings = await getSettings(db);
+      await saveCheckInsPdfToDevice(toExport, {
+        savedDirectoryUri: settings.exportDirectoryUri,
+        onDirectoryChosen: (uri) => updateSettings(db, { exportDirectoryUri: uri }),
+      });
       showToast('PDF gespeichert');
     } catch (error) {
       if (error instanceof Error && error.message === 'Permission denied') {

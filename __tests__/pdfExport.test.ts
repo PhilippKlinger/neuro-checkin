@@ -358,4 +358,61 @@ describe('saveCheckInsPdfToDevice', () => {
     await expect(saveCheckInsPdfToDevice([SAMPLE])).rejects.toThrow('SAF createFile failed');
     expect(mockSAFWriteAsStringAsync).not.toHaveBeenCalled();
   });
+
+  // GT-06: persistent directory URI
+  describe('with savedDirectoryUri (GT-06)', () => {
+    const SAVED_URI = 'content://com.android.externalstorage.documents/tree/primary%3ADocuments';
+
+    it('skips picker when savedDirectoryUri is valid', async () => {
+      mockCreateFileAsync.mockResolvedValue(
+        'content://com.android.externalstorage.documents/document/primary%3ADocuments%2FCheck-in.pdf'
+      );
+      await saveCheckInsPdfToDevice([SAMPLE], { savedDirectoryUri: SAVED_URI });
+      expect(mockRequestDirectoryPermissionsAsync).not.toHaveBeenCalled();
+      expect(mockCreateFileAsync).toHaveBeenCalledWith(
+        SAVED_URI,
+        'Check-in 2026-05-19 10-00',
+        'application/pdf'
+      );
+    });
+
+    it('falls back to picker when savedDirectoryUri throws (permission revoked)', async () => {
+      mockCreateFileAsync
+        .mockRejectedValueOnce(new Error('SecurityException'))
+        .mockResolvedValueOnce(
+          'content://com.android.externalstorage.documents/document/primary%3ADownload%2FCheck-in.pdf'
+        );
+
+      const onDirectoryChosen = jest.fn();
+      await saveCheckInsPdfToDevice([SAMPLE], {
+        savedDirectoryUri: SAVED_URI,
+        onDirectoryChosen,
+      });
+
+      expect(mockRequestDirectoryPermissionsAsync).toHaveBeenCalledTimes(1);
+      expect(onDirectoryChosen).toHaveBeenCalledWith(
+        'content://com.android.externalstorage.documents/tree/primary%3ADownload'
+      );
+    });
+
+    it('calls onDirectoryChosen when user picks new directory (first time)', async () => {
+      const onDirectoryChosen = jest.fn();
+      await saveCheckInsPdfToDevice([SAMPLE], { onDirectoryChosen });
+      expect(onDirectoryChosen).toHaveBeenCalledWith(
+        'content://com.android.externalstorage.documents/tree/primary%3ADownload'
+      );
+    });
+
+    it('does not call onDirectoryChosen when reusing saved URI', async () => {
+      mockCreateFileAsync.mockResolvedValue(
+        'content://com.android.externalstorage.documents/document/primary%3ADocuments%2FCheck-in.pdf'
+      );
+      const onDirectoryChosen = jest.fn();
+      await saveCheckInsPdfToDevice([SAMPLE], {
+        savedDirectoryUri: SAVED_URI,
+        onDirectoryChosen,
+      });
+      expect(onDirectoryChosen).not.toHaveBeenCalled();
+    });
+  });
 });

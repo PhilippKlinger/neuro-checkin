@@ -16,6 +16,7 @@ export async function getSettings(db: SQLiteDatabase): Promise<UserSettings> {
     guided_toggle_introduced: number;
     last_active_date: string | null;
     detail_view_introduced: number;
+    export_directory_uri: string | null;
   }>('SELECT * FROM user_settings WHERE id = 1');
 
   if (!row) {
@@ -33,6 +34,7 @@ export async function getSettings(db: SQLiteDatabase): Promise<UserSettings> {
       guidedToggleIntroduced: false,
       lastActiveDate: null,
       detailViewIntroduced: false,
+      exportDirectoryUri: null,
     };
   }
 
@@ -50,6 +52,7 @@ export async function getSettings(db: SQLiteDatabase): Promise<UserSettings> {
     guidedToggleIntroduced: row.guided_toggle_introduced === 1,
     lastActiveDate: row.last_active_date ?? null,
     detailViewIntroduced: row.detail_view_introduced === 1,
+    exportDirectoryUri: row.export_directory_uri ?? null,
   };
 }
 
@@ -107,6 +110,10 @@ export async function updateSettings(
   if (settings.detailViewIntroduced !== undefined) {
     updates.push('detail_view_introduced = ?');
     values.push(settings.detailViewIntroduced ? 1 : 0);
+  }
+  if (settings.exportDirectoryUri !== undefined) {
+    updates.push('export_directory_uri = ?');
+    values.push(settings.exportDirectoryUri ?? null);
   }
 
   if (updates.length > 0) {
