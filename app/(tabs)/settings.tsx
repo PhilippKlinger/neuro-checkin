@@ -48,7 +48,7 @@ export default function SettingsScreen() {
   const [checkInCount, setCheckInCount] = useState(0);
   const [chipCount, setChipCount] = useState(0);
   const [guidedMode, setGuidedMode] = useState(false);
-  const [notificationPermission, setNotificationPermission] = useState<boolean | null>(null);
+  const [, setNotificationPermission] = useState<boolean | null>(null);
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
   const [dataOpen, setDataOpen] = useState(false);
   const [aboutOpen, setAboutOpen] = useState(false);
