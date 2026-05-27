@@ -1,6 +1,5 @@
 import { memo } from 'react';
-import { View, Pressable, StyleSheet, Linking, Platform } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { View, StyleSheet } from 'react-native';
 import { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { useTheme } from '../../lib/hooks/useTheme';
 import { AppText } from '../ui/AppText';
@@ -11,7 +10,6 @@ interface NotificationsSectionProps {
   slots: NotificationSlot[];
   showTimePicker: 0 | 1 | null;
   isEmulator: boolean;
-  permissionDenied: boolean;
   onToggle: (slotId: 0 | 1, value: boolean) => void;
   onTimePress: (slotId: 0 | 1) => void;
   onTimeChange: (slotId: 0 | 1, event: DateTimePickerEvent, date?: Date) => void;
@@ -27,20 +25,13 @@ export const NotificationsSection = memo(function NotificationsSection({
   slots,
   showTimePicker,
   isEmulator,
-  permissionDenied,
   onToggle,
   onTimePress,
   onTimeChange,
   onWeekdayToggle,
 }: NotificationsSectionProps) {
-  const { theme, spacing, radii } = useTheme();
+  const { spacing } = useTheme();
   const anySlotEnabled = slots.some((s) => s.enabled);
-
-  function openAppSettings() {
-    if (Platform.OS === 'android') {
-      Linking.openSettings();
-    }
-  }
 
   return (
     <>
@@ -56,37 +47,6 @@ export const NotificationsSection = memo(function NotificationsSection({
         <AppText variant="hint" size="xs" style={{ marginBottom: spacing.sm }}>
           Hinweis: Benachrichtigungen funktionieren nur auf einem echten Gerät, nicht im Emulator.
         </AppText>
-      )}
-
-      {permissionDenied && !isEmulator && (
-        <Pressable
-          onPress={openAppSettings}
-          style={({ pressed }) => [
-            styles.permissionHint,
-            {
-              backgroundColor: theme.colors.surface,
-              borderRadius: radii.md,
-              borderWidth: 1,
-              borderColor: theme.colors.border,
-              padding: spacing.sm,
-              marginBottom: spacing.md,
-              opacity: pressed ? 0.75 : 1,
-            },
-          ]}
-          accessibilityRole="button"
-          accessibilityLabel="Benachrichtigungen sind deaktiviert"
-          accessibilityHint="Öffnet die Systemeinstellungen um Benachrichtigungen zu erlauben"
-        >
-          <Ionicons name="notifications-off-outline" size={16} color={theme.colors.textSecondary} />
-          <AppText
-            variant="body"
-            size="sm"
-            color="secondary"
-            style={{ flex: 1, marginLeft: spacing.xs }}
-          >
-            Erinnerungen sind deaktiviert — tippe hier für die Einstellungen.
-          </AppText>
-        </Pressable>
       )}
 
       <View style={styles.slots}>
@@ -109,8 +69,4 @@ export const NotificationsSection = memo(function NotificationsSection({
 
 const styles = StyleSheet.create({
   slots: {},
-  permissionHint: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
 });

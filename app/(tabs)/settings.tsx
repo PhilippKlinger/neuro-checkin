@@ -225,7 +225,6 @@ export default function SettingsScreen() {
           slots={slots}
           showTimePicker={showTimePicker}
           isEmulator={isEmulator}
-          permissionDenied={notificationPermission === false}
           onToggle={handleSlotToggle}
           onTimePress={handleTimePress}
           onTimeChange={handleTimeChange}
