@@ -214,7 +214,7 @@ export default function HistoryScreen() {
             accessibilityLabel="Alle auswählen"
           >
             <AppText variant="label" size="sm" color="accent">
-              Alle
+              Alle auswählen
             </AppText>
           </Pressable>
 
