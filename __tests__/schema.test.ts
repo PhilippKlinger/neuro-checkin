@@ -4,9 +4,14 @@ import { migrateDatabase } from '../lib/database/schema';
 // DB mock that tracks execAsync and runAsync calls and simulates PRAGMA reads
 // ---------------------------------------------------------------------------
 
-function makeDb(currentVersion = 0) {
+function makeDb(currentVersion = 0, opts?: { chipColumns?: string[] }) {
   const execCalls: string[] = [];
   const runCalls: string[] = [];
+
+  const defaultChipCols = currentVersion >= 13
+    ? ['id', 'category', 'label', 'normalized_label', 'use_count', 'last_used_at']
+    : ['id', 'category', 'label', 'use_count'];
+  const chipColumns = opts?.chipColumns ?? defaultChipCols;
 
   return {
     execAsync: jest.fn((sql: string) => {
@@ -21,11 +26,16 @@ function makeDb(currentVersion = 0) {
       if (sql === 'PRAGMA user_version;') {
         return Promise.resolve({ user_version: currentVersion });
       }
-      // Migration v4: legacy reminder check — no legacy reminder
       if (sql.includes('SELECT reminder_enabled')) {
         return Promise.resolve({ reminder_enabled: 0, reminder_time: null });
       }
       return Promise.resolve(null);
+    }),
+    getAllAsync: jest.fn((sql: string): Promise<unknown[]> => {
+      if (sql.includes('table_info(user_chips)')) {
+        return Promise.resolve(chipColumns.map((name) => ({ name })));
+      }
+      return Promise.resolve([]);
     }),
     _execCalls: execCalls,
     _runCalls: runCalls,

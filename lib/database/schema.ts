@@ -145,14 +145,18 @@ export async function migrateDatabase(db: SQLiteDatabase): Promise<void> {
     );
   }
 
-  if (currentVersion < 13) {
-    // UCL-01 + GT-10: Add normalized_label + last_used_at to user_chips.
+  // v13: UCL-01 + GT-10: Add normalized_label + last_used_at to user_chips.
+  // Resilience: Also runs if PRAGMA says v13 but the table rebuild was interrupted
+  // (e.g. hot-reload set PRAGMA without completing the DDL, or mid-migration crash).
+  const chipCols = await db.getAllAsync<{ name: string }>('PRAGMA table_info(user_chips);');
+  const hasLastUsedAt = chipCols.some((c) => c.name === 'last_used_at');
+
+  if (currentVersion < 13 || !hasLastUsedAt) {
     // SQLite cannot ADD UNIQUE constraints to existing tables → table rebuild pattern.
-    //
     // Duplicate handling: ORDER BY use_count DESC on INSERT OR IGNORE ensures the
     // row with the highest use_count wins for case-duplicate pairs (e.g. "Ruhe"+"ruhe").
     await db.execAsync(`
-      CREATE TABLE user_chips_new (
+      CREATE TABLE IF NOT EXISTS user_chips_new (
         id               INTEGER PRIMARY KEY AUTOINCREMENT,
         category         TEXT    NOT NULL,
         label            TEXT    NOT NULL,
@@ -167,12 +171,11 @@ export async function migrateDatabase(db: SQLiteDatabase): Promise<void> {
       SELECT category, label, LOWER(TRIM(label)), use_count, datetime('now')
       FROM user_chips ORDER BY use_count DESC;
 
-      DROP TABLE user_chips;
+      DROP TABLE IF EXISTS user_chips;
       ALTER TABLE user_chips_new RENAME TO user_chips;
     `);
 
     // Trim each category to top MAX_USER_CHIPS_PER_CATEGORY (10) by use_count.
-    // Cleans up overcrowded data from before limits were enforced (GT-10 root cause).
     await db.execAsync(`
       DELETE FROM user_chips WHERE id IN (
         SELECT uc1.id FROM user_chips uc1
