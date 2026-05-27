@@ -51,7 +51,6 @@ export default function CheckInDetailScreen() {
     if (!checkIn) return;
     try {
       await exportCheckInsAsPdf([checkIn]);
-      ToastAndroid.show('PDF erstellt', ToastAndroid.SHORT);
     } catch (error) {
       Sentry.withScope((scope) => {
         scope.setTag('screen', 'checkInDetail');
@@ -71,16 +70,18 @@ export default function CheckInDetailScreen() {
       await saveCheckInsPdfToDevice([checkIn]);
       ToastAndroid.show('PDF gespeichert', ToastAndroid.SHORT);
     } catch (error) {
+      if (error instanceof Error && error.message === 'Permission denied') {
+        return;
+      }
       Sentry.withScope((scope) => {
         scope.setTag('screen', 'checkInDetail');
         scope.setTag('action', 'pdfSaveToDevice');
         Sentry.captureException(error);
       });
-      const message =
-        error instanceof Error && error.message === 'Permission denied'
-          ? 'Berechtigung verweigert. Bitte wähle einen Ordner aus.'
-          : 'PDF konnte nicht gespeichert werden. Bitte versuche es erneut.';
-      Alert.alert('Speichern fehlgeschlagen', message);
+      Alert.alert(
+        'Speichern fehlgeschlagen',
+        'PDF konnte nicht gespeichert werden. Bitte versuche es erneut.'
+      );
     }
   }
 

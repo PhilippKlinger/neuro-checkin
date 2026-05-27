@@ -15,7 +15,7 @@ import { useDatabase } from '../../lib/hooks/useDatabase';
 import { getCheckIns } from '../../lib/database/checkins';
 import { CheckIn } from '../../lib/types/checkin';
 import { CheckInCard } from '../../components/history/CheckInCard';
-import { exportCheckInsAsPdf, MAX_EXPORT_COUNT } from '../../lib/utils/pdfExport';
+import { exportCheckInsAsPdf, saveCheckInsPdfToDevice, MAX_EXPORT_COUNT } from '../../lib/utils/pdfExport';
 import * as Sentry from '@sentry/react-native';
 
 export default function HistoryScreen() {
@@ -87,7 +87,6 @@ export default function HistoryScreen() {
     setIsExporting(true);
     try {
       await exportCheckInsAsPdf(toExport);
-      ToastAndroid.show('PDF erstellt', ToastAndroid.SHORT);
     } catch (error) {
       Sentry.withScope((scope) => {
         scope.setTag('screen', 'history');
@@ -98,9 +97,43 @@ export default function HistoryScreen() {
         'Export fehlgeschlagen',
         'PDF konnte nicht erstellt werden. Bitte versuche es erneut.'
       );
+    } finally {
+      setIsExporting(false);
+      exitSelectionMode();
     }
-    setIsExporting(false);
-    exitSelectionMode();
+  }
+
+  async function handleSaveToDevice() {
+    if (selectedIds.size === 0 || isExporting) return;
+    if (selectedIds.size > MAX_EXPORT_COUNT) {
+      Alert.alert(
+        'Zu viele ausgewählt',
+        `Maximal ${MAX_EXPORT_COUNT} Check-ins pro Export. Bitte wähle weniger aus.`
+      );
+      return;
+    }
+    const toExport = checkIns.filter((c) => selectedIds.has(c.id));
+    setIsExporting(true);
+    try {
+      await saveCheckInsPdfToDevice(toExport);
+      ToastAndroid.show('PDF gespeichert', ToastAndroid.SHORT);
+    } catch (error) {
+      if (error instanceof Error && error.message === 'Permission denied') {
+        return;
+      }
+      Sentry.withScope((scope) => {
+        scope.setTag('screen', 'history');
+        scope.setTag('action', 'pdfSaveToDevice');
+        Sentry.captureException(error);
+      });
+      Alert.alert(
+        'Speichern fehlgeschlagen',
+        'PDF konnte nicht gespeichert werden. Bitte versuche es erneut.'
+      );
+    } finally {
+      setIsExporting(false);
+      exitSelectionMode();
+    }
   }
 
   const handlePress = useCallback(
@@ -270,11 +303,33 @@ export default function HistoryScreen() {
               pressed && !isExporting && { opacity: 0.75 },
             ]}
             accessibilityRole="button"
-            accessibilityLabel={`${selectedIds.size} Check-ins als PDF exportieren`}
+            accessibilityLabel={`${selectedIds.size} Check-ins als PDF teilen`}
             accessibilityState={{ disabled: isExporting }}
           >
             <AppText variant="label" weight="semibold" color="inverse">
-              {isExporting ? 'Erstelle PDF...' : `${selectedIds.size} als PDF exportieren`}
+              {isExporting ? 'Erstelle PDF...' : `${selectedIds.size} als PDF teilen`}
+            </AppText>
+          </Pressable>
+          <Pressable
+            onPress={handleSaveToDevice}
+            disabled={isExporting}
+            style={({ pressed }) => [
+              styles.exportButton,
+              {
+                minHeight: touchTarget.min,
+                borderRadius: radii.md,
+                borderWidth: 1,
+                borderColor: theme.colors.border,
+                backgroundColor: theme.colors.surface,
+              },
+              pressed && !isExporting && { opacity: 0.75 },
+            ]}
+            accessibilityRole="button"
+            accessibilityLabel={`${selectedIds.size} Check-ins als PDF auf Gerät speichern`}
+            accessibilityState={{ disabled: isExporting }}
+          >
+            <AppText variant="label" size="sm" color="secondary">
+              Auf Gerät speichern
             </AppText>
           </Pressable>
         </View>
