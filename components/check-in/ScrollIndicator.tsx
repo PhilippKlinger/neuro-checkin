@@ -2,8 +2,7 @@ import { useRef, useState, useCallback } from 'react';
 import { View, Animated, StyleSheet, NativeScrollEvent, NativeSyntheticEvent } from 'react-native';
 import { useTheme } from '../../lib/hooks/useTheme';
 
-const TRACK_HEIGHT_RATIO = 0.5;
-const THUMB_MIN_HEIGHT = 24;
+const THUMB_MIN_HEIGHT = 18;
 const FADE_DURATION = 300;
 
 interface ScrollIndicatorProps {
@@ -25,7 +24,7 @@ export function ScrollIndicator({ visible, thumbRatio, scrollRatio }: ScrollIndi
     Animated.timing(opacity, { toValue: 0, duration: FADE_DURATION, useNativeDriver: true }).start();
   }
 
-  const thumbHeight = Math.max(thumbRatio * 100, THUMB_MIN_HEIGHT);
+  const thumbHeight = Math.max(thumbRatio * 100 * 0.75, THUMB_MIN_HEIGHT);
   const trackAvailable = 100 - thumbHeight;
   const thumbTop = scrollRatio * trackAvailable;
 
@@ -104,7 +103,7 @@ const styles = StyleSheet.create({
   },
   track: {
     width: 4,
-    height: '50%',
+    height: '100%',
   },
   thumb: {
     position: 'absolute',
