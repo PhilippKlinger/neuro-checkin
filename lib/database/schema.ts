@@ -1,6 +1,6 @@
 import type { SQLiteDatabase } from 'expo-sqlite';
 
-const SCHEMA_VERSION = 12;
+const SCHEMA_VERSION = 13;
 
 export async function migrateDatabase(db: SQLiteDatabase): Promise<void> {
   await db.execAsync(`PRAGMA journal_mode = WAL;`);
@@ -143,6 +143,47 @@ export async function migrateDatabase(db: SQLiteDatabase): Promise<void> {
     await db.execAsync(
       `ALTER TABLE check_ins ADD COLUMN feelings_skipped INTEGER NOT NULL DEFAULT 0;`
     );
+  }
+
+  if (currentVersion < 13) {
+    // UCL-01 + GT-10: Add normalized_label + last_used_at to user_chips.
+    // SQLite cannot ADD UNIQUE constraints to existing tables → table rebuild pattern.
+    //
+    // Duplicate handling: ORDER BY use_count DESC on INSERT OR IGNORE ensures the
+    // row with the highest use_count wins for case-duplicate pairs (e.g. "Ruhe"+"ruhe").
+    await db.execAsync(`
+      CREATE TABLE user_chips_new (
+        id               INTEGER PRIMARY KEY AUTOINCREMENT,
+        category         TEXT    NOT NULL,
+        label            TEXT    NOT NULL,
+        normalized_label TEXT    NOT NULL,
+        use_count        INTEGER NOT NULL DEFAULT 1,
+        last_used_at     TEXT,
+        UNIQUE(category, normalized_label)
+      );
+
+      INSERT OR IGNORE INTO user_chips_new
+        (category, label, normalized_label, use_count, last_used_at)
+      SELECT category, label, LOWER(TRIM(label)), use_count, datetime('now')
+      FROM user_chips ORDER BY use_count DESC;
+
+      DROP TABLE user_chips;
+      ALTER TABLE user_chips_new RENAME TO user_chips;
+    `);
+
+    // Trim each category to top MAX_USER_CHIPS_PER_CATEGORY (10) by use_count.
+    // Cleans up overcrowded data from before limits were enforced (GT-10 root cause).
+    await db.execAsync(`
+      DELETE FROM user_chips WHERE id IN (
+        SELECT uc1.id FROM user_chips uc1
+        WHERE (
+          SELECT COUNT(*) FROM user_chips uc2
+          WHERE uc2.category = uc1.category
+          AND (uc2.use_count > uc1.use_count
+               OR (uc2.use_count = uc1.use_count AND uc2.id < uc1.id))
+        ) >= 10
+      );
+    `);
   }
 
   // String interpolation intentional: PRAGMA does not support parameterized
