@@ -12,7 +12,7 @@ interface ScrollIndicatorProps {
 }
 
 export function ScrollIndicator({ visible, thumbRatio, scrollRatio }: ScrollIndicatorProps) {
-  const { theme, radii } = useTheme();
+  const { theme, spacing, radii } = useTheme();
   const opacity = useRef(new Animated.Value(0)).current;
   const wasVisible = useRef(false);
 
@@ -33,6 +33,7 @@ export function ScrollIndicator({ visible, thumbRatio, scrollRatio }: ScrollIndi
       style={[
         styles.track,
         {
+          right: -(spacing.lg - 4),
           opacity,
           backgroundColor: theme.colors.border,
           borderRadius: radii.sm,
@@ -93,7 +94,6 @@ export function useScrollIndicator() {
 const styles = StyleSheet.create({
   track: {
     position: 'absolute',
-    right: 2,
     top: 0,
     bottom: 0,
     width: 4,
