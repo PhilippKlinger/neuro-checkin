@@ -9,6 +9,7 @@ import { getSettings, updateSettings } from '../lib/database/settings';
 import { ThemeName } from '../lib/constants/themes';
 import { REENTRY_THRESHOLD_DAYS } from '../lib/constants/timing';
 import { initSentry } from '../lib/observability/sentry';
+import { ToastProvider } from '../components/ui/Toast';
 
 initSentry();
 
@@ -135,6 +136,7 @@ function AppContent() {
     <>
       <StatusBar style={resolvedMode === 'dark' ? 'light' : 'dark'} />
       <AppStack />
+      <ToastProvider />
     </>
   );
 }

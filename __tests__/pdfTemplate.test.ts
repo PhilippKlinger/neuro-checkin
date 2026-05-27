@@ -108,31 +108,140 @@ describe('buildPdfHtml — check-in block content', () => {
 });
 
 // ---------------------------------------------------------------------------
-// Skipped / null fields are omitted
+// GT-07: PDF vollständig & konsistent mit Detail-View
 // ---------------------------------------------------------------------------
 
-describe('buildPdfHtml — omits empty fields', () => {
-  it('does not show energy label when energy is skipped', () => {
+describe('buildPdfHtml — GT-07: energy/focus always shown', () => {
+  it('shows energy with level when not skipped', () => {
+    const html = buildPdfHtml([BASE]);
+    expect(html).toContain('Energie');
+    expect(html).toContain('3/5');
+  });
+
+  it('shows "Nicht angegeben" for energy when skipped', () => {
     const check = { ...BASE, energyLevel: 0, energySkipped: true };
     const html = buildPdfHtml([check]);
-    // Energy label should not appear for this check-in — test by checking
-    // the text "Übersprungen" or just that the level "0" is not rendered as a score
-    expect(html).not.toMatch(/Energie.*0\/5/);
+    expect(html).toContain('Energie');
+    expect(html).toContain('Nicht angegeben');
   });
 
-  it('does not render empty feelings section', () => {
+  it('shows focus with level when not skipped', () => {
+    const html = buildPdfHtml([BASE]);
+    expect(html).toContain('Fokus');
+    expect(html).toContain('4/5');
+  });
+
+  it('shows "Nicht angegeben" for focus when skipped', () => {
+    const check = { ...BASE, focusLevel: 0, focusSkipped: true };
+    const html = buildPdfHtml([check]);
+    expect(html).toContain('Fokus');
+    // Should contain "Nicht angegeben" somewhere after "Fokus"
+    const fokusIdx = html.indexOf('Fokus');
+    const nichtIdx = html.indexOf('Nicht angegeben', fokusIdx);
+    expect(nichtIdx).toBeGreaterThan(fokusIdx);
+  });
+});
+
+describe('buildPdfHtml — GT-07: body signals Ja/Nein like Detail-View', () => {
+  it('shows both active (Ja) and inactive (Nein) signals', () => {
+    const check: CheckIn = {
+      ...BASE,
+      bodySignals: {
+        hunger: true,
+        thirst: true,
+        temperature: false,
+        pain: false,
+        restroom: null,
+        seating: null,
+        externalStimuli: null,
+      },
+    };
+    const html = buildPdfHtml([check]);
+    expect(html).toContain('Körpersignale');
+    expect(html).toMatch(/Ja.*Hunger/);
+    expect(html).toMatch(/Nein.*Temperatur/);
+  });
+
+  it('shows only Nein section when no signals are active', () => {
+    const check: CheckIn = {
+      ...BASE,
+      bodySignals: {
+        hunger: false,
+        thirst: false,
+        temperature: false,
+        pain: false,
+        restroom: false,
+        seating: false,
+        externalStimuli: false,
+      },
+    };
+    const html = buildPdfHtml([check]);
+    expect(html).toContain('Körpersignale');
+    expect(html).toContain('Nein');
+  });
+
+  it('shows only Ja section when all signals are active', () => {
+    const check: CheckIn = {
+      ...BASE,
+      bodySignals: {
+        hunger: true,
+        thirst: true,
+        temperature: true,
+        pain: true,
+        restroom: true,
+        seating: true,
+        externalStimuli: true,
+      },
+    };
+    const html = buildPdfHtml([check]);
+    expect(html).toContain('Körpersignale');
+    expect(html).toContain('Ja');
+  });
+
+  it('omits body signals section when all are null (not answered)', () => {
+    // All null means user never toggled body signals → nothing to show
+    // Unlike Detail-View which shows all as "Nein", PDF omits unengaged sections
+    // because PresentedSignal maps null→active:false but we filter for explicit false
     const html = buildPdfHtml([MINIMAL]);
-    expect(html).not.toMatch(/Gefühle.*<\/[a-z]+>/i);
+    expect(html).not.toContain('Körpersignale');
+  });
+});
+
+describe('buildPdfHtml — GT-07: feelings with skip indicator', () => {
+  it('shows feelings text when present', () => {
+    const html = buildPdfHtml([BASE]);
+    expect(html).toContain('Gefühle');
+    expect(html).toContain('ruhig, zufrieden');
   });
 
+  it('shows "Übersprungen" when feelings are skipped', () => {
+    const check = { ...BASE, feelings: '', feelingsSkipped: true };
+    const html = buildPdfHtml([check]);
+    expect(html).toContain('Gefühle');
+    expect(html).toContain('Übersprungen');
+  });
+
+  it('omits feelings row when empty and not skipped', () => {
+    const check = { ...BASE, feelings: '', feelingsSkipped: false };
+    const html = buildPdfHtml([check]);
+    expect(html).not.toContain('Gefühle');
+  });
+});
+
+describe('buildPdfHtml — GT-07: optional fields still omitted when null', () => {
   it('does not render null distress level', () => {
     const html = buildPdfHtml([MINIMAL]);
-    expect(html).not.toMatch(/Stress.*null/i);
+    expect(html).not.toContain('Stress');
   });
 
   it('does not render null selfCareNote', () => {
     const html = buildPdfHtml([MINIMAL]);
-    expect(html).not.toMatch(/Selbstfürsorge.*null/i);
+    expect(html).not.toContain('Selbstfürsorge');
+  });
+
+  it('does not render null thoughts', () => {
+    const html = buildPdfHtml([MINIMAL]);
+    expect(html).not.toContain('Gedanken');
   });
 });
 

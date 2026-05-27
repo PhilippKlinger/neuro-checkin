@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { Modal, View, KeyboardAvoidingView, Platform, StyleSheet, Pressable } from 'react-native';
 import { AppText } from '../ui/AppText';
 import Constants from 'expo-constants';
@@ -14,15 +14,12 @@ interface FeedbackModalProps {
   onClose: () => void;
 }
 
-const SUBMIT_COOLDOWN_MS = 60_000;
-
 export function FeedbackModal({ visible, onClose }: FeedbackModalProps) {
   const { theme, spacing, radii } = useTheme();
   const [feedbackText, setFeedbackText] = useState('');
   const [feedbackSubmitting, setFeedbackSubmitting] = useState(false);
   const [feedbackError, setFeedbackError] = useState(false);
   const [feedbackSuccess, setFeedbackSuccess] = useState(false);
-  const lastSubmitRef = useRef(0);
 
   function handleClose() {
     onClose();
@@ -34,10 +31,6 @@ export function FeedbackModal({ visible, onClose }: FeedbackModalProps) {
   async function handleSubmit() {
     const trimmed = feedbackText.trim().slice(0, 500);
     if (!trimmed) return;
-    if (Date.now() - lastSubmitRef.current < SUBMIT_COOLDOWN_MS) {
-      setFeedbackSuccess(true);
-      return;
-    }
     setFeedbackSubmitting(true);
     setFeedbackError(false);
     try {
@@ -56,7 +49,6 @@ export function FeedbackModal({ visible, onClose }: FeedbackModalProps) {
       });
       clearTimeout(timeout);
       if (res.ok) {
-        lastSubmitRef.current = Date.now();
         setFeedbackSuccess(true);
         setFeedbackText('');
       } else {

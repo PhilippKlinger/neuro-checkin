@@ -4,9 +4,16 @@ import { migrateDatabase } from '../lib/database/schema';
 // DB mock that tracks execAsync and runAsync calls and simulates PRAGMA reads
 // ---------------------------------------------------------------------------
 
-function makeDb(currentVersion = 0) {
+function makeDb(currentVersion = 0, opts?: { chipColumns?: string[] }) {
   const execCalls: string[] = [];
   const runCalls: string[] = [];
+
+  const defaultChipCols =
+    currentVersion >= 13
+      ? ['id', 'category', 'label', 'normalized_label', 'use_count', 'last_used_at']
+      : ['id', 'category', 'label', 'use_count'];
+  // v14 doesn't touch user_chips — same columns as v13
+  const chipColumns = opts?.chipColumns ?? defaultChipCols;
 
   return {
     execAsync: jest.fn((sql: string) => {
@@ -21,11 +28,16 @@ function makeDb(currentVersion = 0) {
       if (sql === 'PRAGMA user_version;') {
         return Promise.resolve({ user_version: currentVersion });
       }
-      // Migration v4: legacy reminder check — no legacy reminder
       if (sql.includes('SELECT reminder_enabled')) {
         return Promise.resolve({ reminder_enabled: 0, reminder_time: null });
       }
       return Promise.resolve(null);
+    }),
+    getAllAsync: jest.fn((sql: string): Promise<unknown[]> => {
+      if (sql.includes('table_info(user_chips)')) {
+        return Promise.resolve(chipColumns.map((name) => ({ name })));
+      }
+      return Promise.resolve([]);
     }),
     _execCalls: execCalls,
     _runCalls: runCalls,
@@ -66,10 +78,10 @@ describe('migrateDatabase — fresh install (v0)', () => {
     expect(db._execCalls.some((s) => s.includes('notification_slots'))).toBe(true);
   });
 
-  it('sets user_version to 12 at the end', async () => {
+  it('sets user_version to 13 at the end', async () => {
     const db = makeDb(0);
     await migrateDatabase(db as any);
-    expect(db._execCalls.some((s) => s.includes('user_version = 12'))).toBe(true);
+    expect(db._execCalls.some((s) => s.includes('user_version = 14'))).toBe(true);
   });
 
   it('adds distress columns (v7)', async () => {
@@ -97,14 +109,14 @@ describe('migrateDatabase — fresh install (v0)', () => {
 // Already at latest version — idempotent
 // ---------------------------------------------------------------------------
 
-describe('migrateDatabase — already at v12 (idempotent)', () => {
+describe('migrateDatabase — already at v14 (idempotent)', () => {
   it('runs without throwing', async () => {
-    const db = makeDb(12);
+    const db = makeDb(14);
     await expect(migrateDatabase(db as any)).resolves.toBeUndefined();
   });
 
   it('does not execute any CREATE TABLE or ALTER TABLE statements', async () => {
-    const db = makeDb(12);
+    const db = makeDb(14);
     await migrateDatabase(db as any);
     const ddl = db._execCalls.filter(
       (s) => s.includes('CREATE TABLE') || s.includes('ALTER TABLE')
@@ -113,9 +125,30 @@ describe('migrateDatabase — already at v12 (idempotent)', () => {
   });
 
   it('still sets the user_version pragma', async () => {
+    const db = makeDb(14);
+    await migrateDatabase(db as any);
+    expect(db._execCalls.some((s) => s.includes('user_version = 14'))).toBe(true);
+  });
+});
+
+describe('migrateDatabase — v13 adds normalized_label to user_chips', () => {
+  it('creates user_chips_new with normalized_label when upgrading from v12', async () => {
     const db = makeDb(12);
     await migrateDatabase(db as any);
-    expect(db._execCalls.some((s) => s.includes('user_version = 12'))).toBe(true);
+    expect(db._execCalls.some((s) => s.includes('normalized_label'))).toBe(true);
+  });
+
+  it('renames user_chips_new to user_chips', async () => {
+    const db = makeDb(12);
+    await migrateDatabase(db as any);
+    expect(db._execCalls.some((s) => s.includes('RENAME TO user_chips'))).toBe(true);
+  });
+
+  it('trims overflow chips with DELETE after migration', async () => {
+    const db = makeDb(12);
+    await migrateDatabase(db as any);
+    const deleteCalls = db._execCalls.filter((s) => s.includes('DELETE FROM user_chips'));
+    expect(deleteCalls.length).toBeGreaterThan(0);
   });
 });
 

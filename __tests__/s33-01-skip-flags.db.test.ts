@@ -39,6 +39,10 @@ function makeDb(overrides: Partial<MockDb> = {}): MockDb {
 function makeSchemaMockDb(currentVersion = 0) {
   const execCalls: string[] = [];
   const runCalls: string[] = [];
+  const chipColumns =
+    currentVersion >= 13
+      ? ['id', 'category', 'label', 'normalized_label', 'use_count', 'last_used_at']
+      : ['id', 'category', 'label', 'use_count'];
   return {
     execAsync: jest.fn((sql: string) => {
       execCalls.push(sql);
@@ -53,6 +57,12 @@ function makeSchemaMockDb(currentVersion = 0) {
       if (sql.includes('SELECT reminder_enabled'))
         return Promise.resolve({ reminder_enabled: 0, reminder_time: null });
       return Promise.resolve(null);
+    }),
+    getAllAsync: jest.fn((sql: string): Promise<unknown[]> => {
+      if (sql.includes('table_info(user_chips)')) {
+        return Promise.resolve(chipColumns.map((name) => ({ name })));
+      }
+      return Promise.resolve([]);
     }),
     _execCalls: execCalls,
     _runCalls: runCalls,
@@ -72,10 +82,10 @@ describe('migrateDatabase — v10 adds energy_skipped and focus_skipped', () => 
     expect(db._execCalls.some((s) => s.includes('focus_skipped'))).toBe(true);
   });
 
-  it('sets user_version to 12 at the end', async () => {
+  it('sets user_version to 14 at the end', async () => {
     const db = makeSchemaMockDb(0);
     await migrateDatabase(db as any);
-    expect(db._execCalls.some((s) => s.includes('user_version = 12'))).toBe(true);
+    expect(db._execCalls.some((s) => s.includes('user_version = 14'))).toBe(true);
   });
 
   it('partial upgrade from v9 only runs v10 statements', async () => {
@@ -86,8 +96,8 @@ describe('migrateDatabase — v10 adds energy_skipped and focus_skipped', () => 
     expect(db._execCalls.some((s) => s.includes('guided_mode_enabled'))).toBe(false);
   });
 
-  it('already at v12 — no DDL executed', async () => {
-    const db = makeSchemaMockDb(12);
+  it('already at v14 — no DDL executed', async () => {
+    const db = makeSchemaMockDb(14);
     await migrateDatabase(db as any);
     const ddl = db._execCalls.filter(
       (s) => s.includes('CREATE TABLE') || s.includes('ALTER TABLE')

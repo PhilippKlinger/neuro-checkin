@@ -1,5 +1,5 @@
 import { useState, useCallback, useRef } from 'react';
-import { Pressable, ScrollView, Switch, StyleSheet, Platform, View } from 'react-native';
+import { Pressable, ScrollView, Switch, StyleSheet, Platform, View, Linking } from 'react-native';
 import { AppText } from '../../components/ui/AppText';
 import { Ionicons } from '@expo/vector-icons';
 import * as Device from 'expo-device';
@@ -48,11 +48,11 @@ export default function SettingsScreen() {
   const [checkInCount, setCheckInCount] = useState(0);
   const [chipCount, setChipCount] = useState(0);
   const [guidedMode, setGuidedMode] = useState(false);
-  const [notificationPermission, setNotificationPermission] = useState<boolean | null>(null);
+  const [, setNotificationPermission] = useState<boolean | null>(null);
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
-  const [feedbackOpen, setFeedbackOpen] = useState(false);
   const [dataOpen, setDataOpen] = useState(false);
   const [aboutOpen, setAboutOpen] = useState(false);
+  const [exportDirectoryUri, setExportDirectoryUri] = useState<string | null>(null);
 
   useFocusEffect(
     useCallback(() => {
@@ -86,6 +86,7 @@ export default function SettingsScreen() {
 
           if (cancelled) return;
           setGuidedMode(settings.guidedModeEnabled);
+          setExportDirectoryUri(settings.exportDirectoryUri);
 
           const count = await countCheckIns(db);
           if (cancelled) return;
@@ -225,7 +226,6 @@ export default function SettingsScreen() {
           slots={slots}
           showTimePicker={showTimePicker}
           isEmulator={isEmulator}
-          permissionDenied={notificationPermission === false}
           onToggle={handleSlotToggle}
           onTimePress={handleTimePress}
           onTimeChange={handleTimeChange}
@@ -254,67 +254,20 @@ export default function SettingsScreen() {
           />
         </View>
 
+        {/* --- Meine Daten --- */}
         <Pressable
-          onPress={() => setFeedbackOpen((o) => !o)}
+          onPress={() => setDataOpen((o) => !o)}
           style={({ pressed }) => [
             styles.sectionHeader,
             { marginTop: spacing.xl, minHeight: touchTarget.min },
             pressed && { opacity: 0.75 },
           ]}
           accessibilityRole="button"
-          accessibilityLabel="Feedback"
-          accessibilityHint={feedbackOpen ? 'Zuklappen' : 'Aufklappen'}
-          accessibilityState={{ expanded: feedbackOpen }}
-        >
-          <AppText variant="title">Feedback</AppText>
-          <Ionicons
-            name={feedbackOpen ? 'chevron-up' : 'chevron-down'}
-            size={18}
-            color={theme.colors.textSecondary}
-            accessibilityElementsHidden
-          />
-        </Pressable>
-        {feedbackOpen && (
-          <Pressable
-            onPress={() => setShowFeedbackModal(true)}
-            style={({ pressed }) => [
-              styles.listItem,
-              {
-                backgroundColor: theme.colors.surface,
-                borderRadius: radii.md,
-                padding: spacing.md,
-                minHeight: touchTarget.min,
-                borderWidth: 1,
-                borderColor: theme.colors.border,
-                marginTop: spacing.sm,
-                marginBottom: spacing.xl,
-              },
-              pressed && { opacity: 0.75 },
-            ]}
-            testID="settings-feedback-open"
-            accessibilityRole="button"
-            accessibilityLabel="Feedback senden"
-            accessibilityHint="Öffnet ein Feedback-Formular"
-          >
-            <AppText variant="label" color="secondary">
-              Feedback senden
-            </AppText>
-          </Pressable>
-        )}
-
-        <Pressable
-          onPress={() => setDataOpen((o) => !o)}
-          style={({ pressed }) => [
-            styles.sectionHeader,
-            { marginTop: feedbackOpen ? 0 : spacing.xl, minHeight: touchTarget.min },
-            pressed && { opacity: 0.75 },
-          ]}
-          accessibilityRole="button"
-          accessibilityLabel="Daten & Datenschutz"
+          accessibilityLabel="Meine Daten"
           accessibilityHint={dataOpen ? 'Zuklappen' : 'Aufklappen'}
           accessibilityState={{ expanded: dataOpen }}
         >
-          <AppText variant="title">Daten & Datenschutz</AppText>
+          <AppText variant="title">Meine Daten</AppText>
           <Ionicons
             name={dataOpen ? 'chevron-up' : 'chevron-down'}
             size={18}
@@ -328,15 +281,18 @@ export default function SettingsScreen() {
               db={db}
               checkInCount={checkInCount}
               chipCount={chipCount}
+              exportDirectoryUri={exportDirectoryUri}
               onDeleteComplete={() => setCheckInCount(0)}
               onChipsDeleteComplete={async () => {
                 const count = await countUserChips(db);
                 setChipCount(count);
               }}
+              onExportDirectoryChanged={setExportDirectoryUri}
             />
           </View>
         )}
 
+        {/* --- Über die App --- */}
         <Pressable
           onPress={() => setAboutOpen((o) => !o)}
           style={({ pressed }) => [
@@ -358,27 +314,70 @@ export default function SettingsScreen() {
           />
         </Pressable>
         {aboutOpen && (
-          <Pressable
-            onPress={() => router.push('/check-in-info')}
-            style={({ pressed }) => [
-              styles.infoRow,
-              {
-                backgroundColor: theme.colors.surface,
-                borderRadius: radii.md,
-                padding: spacing.md,
-                minHeight: touchTarget.min,
-                marginTop: spacing.sm,
-              },
-              pressed && { opacity: 0.75 },
-            ]}
-            accessibilityRole="button"
-            accessibilityLabel="Was ist ein Check-in? Mehr erfahren"
-          >
-            <AppText variant="body">Was ist ein Check-in?</AppText>
-            <AppText variant="body" color="secondary">
-              ›
-            </AppText>
-          </Pressable>
+          <View style={{ marginTop: spacing.sm, gap: spacing.sm }}>
+            <Pressable
+              onPress={() => router.push('/check-in-info')}
+              style={({ pressed }) => [
+                styles.listItem,
+                {
+                  backgroundColor: theme.colors.surface,
+                  borderRadius: radii.md,
+                  padding: spacing.md,
+                  minHeight: touchTarget.min,
+                  borderWidth: 1,
+                  borderColor: theme.colors.border,
+                },
+                pressed && { opacity: 0.75 },
+              ]}
+              accessibilityRole="button"
+              accessibilityLabel="Was ist ein Check-in? Mehr erfahren"
+            >
+              <AppText variant="label">Was ist ein Check-in?</AppText>
+            </Pressable>
+
+            <Pressable
+              onPress={() => setShowFeedbackModal(true)}
+              style={({ pressed }) => [
+                styles.listItem,
+                {
+                  backgroundColor: theme.colors.surface,
+                  borderRadius: radii.md,
+                  padding: spacing.md,
+                  minHeight: touchTarget.min,
+                  borderWidth: 1,
+                  borderColor: theme.colors.border,
+                },
+                pressed && { opacity: 0.75 },
+              ]}
+              testID="settings-feedback-open"
+              accessibilityRole="button"
+              accessibilityLabel="Feedback senden"
+              accessibilityHint="Öffnet ein Feedback-Formular"
+            >
+              <AppText variant="label">Feedback senden</AppText>
+            </Pressable>
+
+            <Pressable
+              onPress={() => Linking.openURL('https://neurocheckin.de/datenschutz')}
+              style={({ pressed }) => [
+                styles.listItem,
+                {
+                  backgroundColor: theme.colors.surface,
+                  borderRadius: radii.md,
+                  padding: spacing.md,
+                  minHeight: touchTarget.min,
+                  borderWidth: 1,
+                  borderColor: theme.colors.border,
+                },
+                pressed && { opacity: 0.75 },
+              ]}
+              accessibilityRole="link"
+              accessibilityLabel="Datenschutzerklärung öffnen"
+              accessibilityHint="Öffnet die Datenschutzerklärung im Browser"
+            >
+              <AppText variant="label">Datenschutzerklärung</AppText>
+            </Pressable>
+          </View>
         )}
       </ScrollView>
 

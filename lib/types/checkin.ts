@@ -43,6 +43,7 @@ export interface UserSettings {
   guidedToggleIntroduced: boolean;
   lastActiveDate: string | null; // YYYY-MM-DD
   detailViewIntroduced: boolean;
+  exportDirectoryUri: string | null;
 }
 
 /** A single configurable notification time slot (e.g. morning or evening). */

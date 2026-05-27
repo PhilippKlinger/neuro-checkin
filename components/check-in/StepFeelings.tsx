@@ -1,5 +1,6 @@
 import { ChipOrTextStep } from './ChipOrTextStep';
 import { FEELING_CHIPS } from '../../lib/constants/chips';
+import { MAX_LABEL_LENGTH } from '../../lib/constants/userChips';
 export { FEELING_CHIPS } from '../../lib/constants/chips';
 
 interface StepFeelingsProps {
@@ -28,7 +29,7 @@ export function StepFeelings({
       onValueChange={onValueChange}
       textPlaceholder="Was nimmst du gerade wahr?"
       textAccessibilityLabel="Gefühle beschreiben"
-      maxLength={150}
+      maxLength={MAX_LABEL_LENGTH}
       hint={hint}
       userChips={userChips}
       skipped={skipped}

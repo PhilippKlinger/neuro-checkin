@@ -15,16 +15,20 @@ export function buildFileName(checkIns: CheckIn[]): string {
   if (checkIns.length === 0) return 'Check-in Export';
 
   const formatDate = (iso: string) => iso.split(' ')[0] ?? iso;
+  const formatTime = (iso: string) =>
+    (iso.split(' ')[1] ?? '00:00:00').slice(0, 5).replace(':', '-');
 
   if (checkIns.length === 1) {
-    return `Check-in ${formatDate(checkIns[0].createdAt)}`;
+    return `Check-in ${formatDate(checkIns[0].createdAt)} ${formatTime(checkIns[0].createdAt)}`;
   }
 
   const sorted = [...checkIns].sort((a, b) => a.createdAt.localeCompare(b.createdAt));
   const from = formatDate(sorted[0].createdAt);
   const to = formatDate(sorted[sorted.length - 1].createdAt);
   if (from === to) {
-    return `Check-ins ${from}`;
+    const timeFrom = formatTime(sorted[0].createdAt);
+    const timeTo = formatTime(sorted[sorted.length - 1].createdAt);
+    return `Check-ins ${from} ${timeFrom} bis ${timeTo}`;
   }
   return `Check-ins ${from} bis ${to}`;
 }
@@ -55,34 +59,59 @@ export async function exportCheckInsAsPdf(checkIns: CheckIn[]): Promise<void> {
   });
 }
 
-export async function saveCheckInsPdfToDevice(checkIns: CheckIn[]): Promise<string> {
+interface SaveToDiskOptions {
+  savedDirectoryUri?: string | null;
+  onDirectoryChosen?: (uri: string) => void;
+}
+
+export async function saveCheckInsPdfToDevice(
+  checkIns: CheckIn[],
+  options: SaveToDiskOptions = {}
+): Promise<string> {
   if (checkIns.length > MAX_EXPORT_COUNT) {
     throw new Error(`Maximum ${MAX_EXPORT_COUNT} check-ins per export`);
   }
 
-  // Request directory permission via SAF
+  const html = buildPdfHtml(checkIns);
+  const { uri: tempUri } = await Print.printToFileAsync({ html });
+  const fileName = sanitizeFileName(buildFileName(checkIns));
+
+  // Try saved directory first (permission already persisted by Android)
+  if (options.savedDirectoryUri) {
+    try {
+      return await writePdfToDirectory(options.savedDirectoryUri, tempUri, fileName);
+    } catch {
+      // Permission revoked or directory gone — fall through to picker
+    }
+  }
+
+  // First-time use or saved URI invalid → show picker
+  const directoryUri = await requestNewDirectory(options);
+  return await writePdfToDirectory(directoryUri, tempUri, fileName);
+}
+
+async function requestNewDirectory(options: SaveToDiskOptions): Promise<string> {
   const permissions = await StorageAccessFramework.requestDirectoryPermissionsAsync();
   if (!permissions.granted) {
     throw new Error('Permission denied');
   }
+  options.onDirectoryChosen?.(permissions.directoryUri);
+  return permissions.directoryUri;
+}
 
-  const html = buildPdfHtml(checkIns);
-  const { uri: tempUri } = await Print.printToFileAsync({ html });
-
-  const fileName = sanitizeFileName(buildFileName(checkIns));
-
-  // Create file in selected directory
+async function writePdfToDirectory(
+  directoryUri: string,
+  tempUri: string,
+  fileName: string
+): Promise<string> {
   const fileUri = await StorageAccessFramework.createFileAsync(
-    permissions.directoryUri,
+    directoryUri,
     fileName,
     'application/pdf'
   );
-
-  // Read temp PDF as base64 and write to SAF location
   const base64Content = await readAsStringAsync(tempUri, { encoding: EncodingType.Base64 });
   await StorageAccessFramework.writeAsStringAsync(fileUri, base64Content, {
     encoding: EncodingType.Base64,
   });
-
   return fileUri;
 }

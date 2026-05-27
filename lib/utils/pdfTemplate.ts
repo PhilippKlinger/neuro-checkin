@@ -1,4 +1,5 @@
-import type { CheckIn } from '../types/checkin';
+import type { CheckIn, BodySignals } from '../types/checkin';
+import { SIGNAL_LABELS } from '../types/checkin';
 import { presentCheckIn } from './presentCheckIn';
 import { formatDate, formatTime } from './format';
 
@@ -27,10 +28,29 @@ function buildCheckInBlock(c: CheckIn): string {
   const p = presentCheckIn(c);
   const rows: string[] = [];
 
-  if (p.energy) rows.push(row('Energie', p.energy));
-  if (p.focus) rows.push(row('Fokus', p.focus));
-  if (p.activeSignals.length > 0) rows.push(row('Körpersignale', p.activeSignals.join(', ')));
-  if (p.feelings) rows.push(row('Gefühle', p.feelings));
+  rows.push(row('Energie', p.energy ?? 'Nicht angegeben'));
+  rows.push(row('Fokus', p.focus ?? 'Nicht angegeben'));
+
+  const signalKeys = Object.keys(SIGNAL_LABELS) as (keyof BodySignals)[];
+  const activeSignals = signalKeys
+    .filter((k) => c.bodySignals[k] === true)
+    .map((k) => SIGNAL_LABELS[k]);
+  const inactiveSignals = signalKeys
+    .filter((k) => c.bodySignals[k] === false)
+    .map((k) => SIGNAL_LABELS[k]);
+  if (activeSignals.length > 0 || inactiveSignals.length > 0) {
+    const parts: string[] = [];
+    if (activeSignals.length > 0) parts.push(`Ja: ${activeSignals.join(', ')}`);
+    if (inactiveSignals.length > 0) parts.push(`Nein: ${inactiveSignals.join(', ')}`);
+    rows.push(row('Körpersignale', parts.join(' · ')));
+  }
+
+  if (c.feelingsSkipped) {
+    rows.push(row('Gefühle', 'Übersprungen'));
+  } else if (p.feelings) {
+    rows.push(row('Gefühle', p.feelings));
+  }
+
   if (p.distressWithNote) rows.push(row('Stress', p.distressWithNote));
   if (p.thoughtsType) {
     const note = p.thoughtsNote ? ` — ${p.thoughtsNote}` : '';

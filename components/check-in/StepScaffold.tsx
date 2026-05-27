@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import { useTheme } from '../../lib/hooks/useTheme';
 import { AppText } from '../ui/AppText';
+import { ScrollIndicator, useScrollIndicator } from './ScrollIndicator';
 
 interface SkipConfig {
   onSkip: () => void;
@@ -40,6 +41,7 @@ export const StepScaffold = forwardRef<ScrollView, StepScaffoldProps>(function S
   ref
 ) {
   const { theme, spacing, radii, touchTarget } = useTheme();
+  const { isScrollable, thumbRatio, scrollRatio, scrollViewProps } = useScrollIndicator();
 
   return (
     <View style={styles.root}>
@@ -77,8 +79,9 @@ export const StepScaffold = forwardRef<ScrollView, StepScaffoldProps>(function S
             { paddingBottom: spacing.lg },
             centerContent && styles.scrollContentCentered,
           ]}
-          showsVerticalScrollIndicator
+          showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps={keyboardPersistTaps ? 'handled' : 'never'}
+          {...scrollViewProps}
         >
           {children}
 
@@ -117,6 +120,7 @@ export const StepScaffold = forwardRef<ScrollView, StepScaffoldProps>(function S
             </>
           )}
         </ScrollView>
+        <ScrollIndicator visible={isScrollable} thumbRatio={thumbRatio} scrollRatio={scrollRatio} />
       </KeyboardAvoidingView>
     </View>
   );

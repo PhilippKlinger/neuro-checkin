@@ -98,28 +98,36 @@ const SAMPLE_2: CheckIn = {
 // buildFileName (pure logic — no mocks needed)
 // ---------------------------------------------------------------------------
 
-describe('buildFileName', () => {
+describe('buildFileName — GT-08: unique filenames with time', () => {
   it('returns fallback for empty array', () => {
     expect(buildFileName([])).toBe('Check-in Export');
   });
 
-  it('returns single date for one check-in', () => {
-    expect(buildFileName([SAMPLE])).toBe('Check-in 2026-05-19');
+  it('includes time (HH-MM) for single check-in', () => {
+    expect(buildFileName([SAMPLE])).toBe('Check-in 2026-05-19 10-00');
   });
 
-  it('returns date range for multiple check-ins', () => {
+  it('returns date range for multiple check-ins on different days', () => {
     expect(buildFileName([SAMPLE_2, SAMPLE])).toBe('Check-ins 2026-05-19 bis 2026-05-21');
   });
 
-  it('returns single date when all check-ins are same day', () => {
+  it('includes time range when all check-ins are same day', () => {
     const sameDay = { ...SAMPLE, id: 3, createdAt: '2026-05-19 18:00:00' };
-    expect(buildFileName([SAMPLE, sameDay])).toBe('Check-ins 2026-05-19');
+    const result = buildFileName([SAMPLE, sameDay]);
+    expect(result).toContain('2026-05-19');
+    expect(result).toContain('10-00');
+    expect(result).toContain('18-00');
   });
 
-  it('handles dates with special characters gracefully', () => {
+  it('produces different names for two single exports on same day', () => {
+    const morning = { ...SAMPLE, createdAt: '2026-05-19 09:15:00' };
+    const afternoon = { ...SAMPLE, id: 2, createdAt: '2026-05-19 14:30:00' };
+    expect(buildFileName([morning])).not.toBe(buildFileName([afternoon]));
+  });
+
+  it('uses dashes instead of colons in time (filesystem-safe)', () => {
     const result = buildFileName([SAMPLE]);
-    expect(result).not.toContain('/');
-    expect(result).not.toContain('\\');
+    expect(result).not.toContain(':');
   });
 });
 
@@ -189,13 +197,13 @@ describe('exportCheckInsAsPdf', () => {
 
   it('renames file via File.rename with descriptive filename', async () => {
     await exportCheckInsAsPdf([SAMPLE]);
-    expect(mockRename).toHaveBeenCalledWith('Check-in 2026-05-19.pdf');
+    expect(mockRename).toHaveBeenCalledWith('Check-in 2026-05-19 10-00.pdf');
   });
 
   it('shares renamed file with correct mime type', async () => {
     await exportCheckInsAsPdf([SAMPLE]);
     expect(mockShareAsync).toHaveBeenCalledWith(
-      'file:///tmp/Check-in 2026-05-19.pdf',
+      'file:///tmp/Check-in 2026-05-19 10-00.pdf',
       expect.objectContaining({ mimeType: 'application/pdf' })
     );
   });
@@ -218,12 +226,12 @@ describe('exportCheckInsAsPdf', () => {
 
   // H2-01 regression: same-day duplicate export must not crash with FileAlreadyExistsException
   it('deletes existing target file before rename on same-day duplicate export', async () => {
-    mockExists.mockImplementation((uri: string) => uri.endsWith('Check-in 2026-05-19.pdf'));
+    mockExists.mockImplementation((uri: string) => uri.endsWith('Check-in 2026-05-19 10-00.pdf'));
 
     await exportCheckInsAsPdf([SAMPLE]);
 
-    expect(mockDelete).toHaveBeenCalledWith('file:///tmp/Check-in 2026-05-19.pdf');
-    expect(mockRename).toHaveBeenCalledWith('Check-in 2026-05-19.pdf');
+    expect(mockDelete).toHaveBeenCalledWith('file:///tmp/Check-in 2026-05-19 10-00.pdf');
+    expect(mockRename).toHaveBeenCalledWith('Check-in 2026-05-19 10-00.pdf');
     expect(mockShareAsync).toHaveBeenCalled();
   });
 
@@ -293,7 +301,7 @@ describe('saveCheckInsPdfToDevice', () => {
     await saveCheckInsPdfToDevice([SAMPLE]);
     expect(mockCreateFileAsync).toHaveBeenCalledWith(
       'content://com.android.externalstorage.documents/tree/primary%3ADownload',
-      'Check-in 2026-05-19',
+      'Check-in 2026-05-19 10-00',
       'application/pdf'
     );
   });
@@ -349,5 +357,62 @@ describe('saveCheckInsPdfToDevice', () => {
     mockCreateFileAsync.mockRejectedValue(new Error('SAF createFile failed'));
     await expect(saveCheckInsPdfToDevice([SAMPLE])).rejects.toThrow('SAF createFile failed');
     expect(mockSAFWriteAsStringAsync).not.toHaveBeenCalled();
+  });
+
+  // GT-06: persistent directory URI
+  describe('with savedDirectoryUri (GT-06)', () => {
+    const SAVED_URI = 'content://com.android.externalstorage.documents/tree/primary%3ADocuments';
+
+    it('skips picker when savedDirectoryUri is valid', async () => {
+      mockCreateFileAsync.mockResolvedValue(
+        'content://com.android.externalstorage.documents/document/primary%3ADocuments%2FCheck-in.pdf'
+      );
+      await saveCheckInsPdfToDevice([SAMPLE], { savedDirectoryUri: SAVED_URI });
+      expect(mockRequestDirectoryPermissionsAsync).not.toHaveBeenCalled();
+      expect(mockCreateFileAsync).toHaveBeenCalledWith(
+        SAVED_URI,
+        'Check-in 2026-05-19 10-00',
+        'application/pdf'
+      );
+    });
+
+    it('falls back to picker when savedDirectoryUri throws (permission revoked)', async () => {
+      mockCreateFileAsync
+        .mockRejectedValueOnce(new Error('SecurityException'))
+        .mockResolvedValueOnce(
+          'content://com.android.externalstorage.documents/document/primary%3ADownload%2FCheck-in.pdf'
+        );
+
+      const onDirectoryChosen = jest.fn();
+      await saveCheckInsPdfToDevice([SAMPLE], {
+        savedDirectoryUri: SAVED_URI,
+        onDirectoryChosen,
+      });
+
+      expect(mockRequestDirectoryPermissionsAsync).toHaveBeenCalledTimes(1);
+      expect(onDirectoryChosen).toHaveBeenCalledWith(
+        'content://com.android.externalstorage.documents/tree/primary%3ADownload'
+      );
+    });
+
+    it('calls onDirectoryChosen when user picks new directory (first time)', async () => {
+      const onDirectoryChosen = jest.fn();
+      await saveCheckInsPdfToDevice([SAMPLE], { onDirectoryChosen });
+      expect(onDirectoryChosen).toHaveBeenCalledWith(
+        'content://com.android.externalstorage.documents/tree/primary%3ADownload'
+      );
+    });
+
+    it('does not call onDirectoryChosen when reusing saved URI', async () => {
+      mockCreateFileAsync.mockResolvedValue(
+        'content://com.android.externalstorage.documents/document/primary%3ADocuments%2FCheck-in.pdf'
+      );
+      const onDirectoryChosen = jest.fn();
+      await saveCheckInsPdfToDevice([SAMPLE], {
+        savedDirectoryUri: SAVED_URI,
+        onDirectoryChosen,
+      });
+      expect(onDirectoryChosen).not.toHaveBeenCalled();
+    });
   });
 });

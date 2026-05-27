@@ -1,10 +1,12 @@
-import { Alert, Pressable, View, StyleSheet, Linking } from 'react-native';
+import { Alert, Pressable, View, StyleSheet, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { StorageAccessFramework } from 'expo-file-system/legacy';
 import { useTheme } from '../../lib/hooks/useTheme';
 import { AppText } from '../ui/AppText';
 import { ConfirmDialog } from '../ui/ConfirmDialog';
 import { deleteAllCheckIns } from '../../lib/database/checkins';
 import { deleteUserChips, deleteUserChipByLabel, getUserChips } from '../../lib/database/userChips';
+import { updateSettings } from '../../lib/database/settings';
 import { SQLiteDatabase } from 'expo-sqlite';
 import { useState, useCallback, useEffect } from 'react';
 
@@ -17,16 +19,20 @@ interface DataSectionProps {
   db: SQLiteDatabase;
   checkInCount: number;
   chipCount: number;
+  exportDirectoryUri: string | null;
   onDeleteComplete: () => void;
   onChipsDeleteComplete: () => void;
+  onExportDirectoryChanged: (uri: string | null) => void;
 }
 
 export function DataSection({
   db,
   checkInCount,
   chipCount,
+  exportDirectoryUri,
   onDeleteComplete,
   onChipsDeleteComplete,
+  onExportDirectoryChanged,
 }: DataSectionProps) {
   const { theme, spacing, radii, touchTarget } = useTheme();
   const [showStep1, setShowStep1] = useState(false);
@@ -37,6 +43,8 @@ export function DataSection({
   const [chipsExpanded, setChipsExpanded] = useState(false);
   const [chipList, setChipList] = useState<ChipItem[]>([]);
   const [chipToDelete, setChipToDelete] = useState<ChipItem | null>(null);
+  const [exportDirExpanded, setExportDirExpanded] = useState(false);
+  const [showResetDirConfirm, setShowResetDirConfirm] = useState(false);
 
   const loadChipList = useCallback(async () => {
     try {
@@ -104,32 +112,142 @@ export function DataSection({
     }
   }
 
+  async function handleChangeExportDir() {
+    try {
+      const permissions = await StorageAccessFramework.requestDirectoryPermissionsAsync();
+      if (!permissions.granted) return;
+      await updateSettings(db, { exportDirectoryUri: permissions.directoryUri });
+      onExportDirectoryChanged(permissions.directoryUri);
+      setExportDirExpanded(false);
+    } catch (error) {
+      console.error('changeExportDirectory failed:', error);
+      Alert.alert('Fehler', 'Speicherort konnte nicht geändert werden. Bitte versuche es erneut.');
+    }
+  }
+
+  async function handleResetExportDir() {
+    await updateSettings(db, { exportDirectoryUri: null });
+    onExportDirectoryChanged(null);
+    setExportDirExpanded(false);
+  }
+
   const feelingsChips = chipList.filter((c) => c.category === 'feelings');
   const selfCareChips = chipList.filter((c) => c.category === 'self_care');
 
   return (
     <>
-      <Pressable
-        onPress={() => Linking.openURL('https://neurocheckin.de/datenschutz')}
-        style={({ pressed }) => [
-          styles.button,
-          {
+      {Platform.OS === 'android' && (
+        <View
+          style={{
             backgroundColor: theme.colors.surface,
             borderRadius: radii.md,
-            padding: spacing.md,
-            minHeight: touchTarget.min,
             borderWidth: 1,
             borderColor: theme.colors.border,
             marginBottom: spacing.sm,
-            opacity: pressed ? 0.75 : 1,
-          },
-        ]}
-        accessibilityRole="link"
-        accessibilityLabel="Datenschutzerklärung öffnen"
-        accessibilityHint="Öffnet die Datenschutzerklärung im Browser"
-      >
-        <AppText variant="label">Datenschutzerklärung</AppText>
-      </Pressable>
+            overflow: 'hidden',
+          }}
+        >
+          <Pressable
+            onPress={() => setExportDirExpanded((o) => !o)}
+            style={({ pressed }) => [
+              {
+                padding: spacing.md,
+                minHeight: touchTarget.min,
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                opacity: pressed ? 0.75 : 1,
+              },
+            ]}
+            accessibilityRole="button"
+            accessibilityLabel="PDF-Speicherort"
+            accessibilityHint={exportDirExpanded ? 'Zuklappen' : 'Aufklappen'}
+            accessibilityState={{ expanded: exportDirExpanded }}
+          >
+            <AppText variant="label">PDF-Speicherort</AppText>
+            <Ionicons
+              name={exportDirExpanded ? 'chevron-up' : 'chevron-down'}
+              size={18}
+              color={theme.colors.textSecondary}
+              accessibilityElementsHidden
+            />
+          </Pressable>
+
+          {exportDirExpanded && (
+            <View style={{ paddingHorizontal: spacing.sm, paddingBottom: spacing.sm }}>
+              <Pressable
+                onPress={handleChangeExportDir}
+                style={({ pressed }) => [
+                  styles.button,
+                  {
+                    backgroundColor: theme.colors.background,
+                    borderRadius: radii.sm,
+                    borderWidth: 1,
+                    borderColor: theme.colors.border,
+                    padding: spacing.sm,
+                    minHeight: touchTarget.min,
+                    opacity: pressed ? 0.75 : 1,
+                  },
+                ]}
+                accessibilityRole="button"
+                accessibilityLabel="Neuen Speicherort wählen"
+                accessibilityHint="Öffnet die Ordnerauswahl für den PDF-Export"
+              >
+                <AppText variant="label" size="sm">
+                  Neuen Speicherort wählen
+                </AppText>
+                <AppText
+                  variant="body"
+                  size="xs"
+                  color="secondary"
+                  numberOfLines={1}
+                  style={{ marginTop: 2 }}
+                  accessibilityLabel={
+                    exportDirectoryUri
+                      ? `Aktueller Speicherort: ${decodeURIComponent(exportDirectoryUri.split('%3A').pop() ?? '').replace(/\//g, ', ')}`
+                      : 'Noch nicht festgelegt'
+                  }
+                >
+                  {exportDirectoryUri
+                    ? decodeURIComponent(exportDirectoryUri.split('%3A').pop() ?? '').replace(
+                        /\//g,
+                        ' › '
+                      ) || 'Ordner gewählt'
+                    : 'Noch nicht festgelegt'}
+                </AppText>
+              </Pressable>
+
+              {exportDirectoryUri && (
+                <Pressable
+                  onPress={() => setShowResetDirConfirm(true)}
+                  style={({ pressed }) => [
+                    styles.button,
+                    {
+                      backgroundColor: theme.colors.background,
+                      borderRadius: radii.sm,
+                      borderWidth: 1,
+                      borderColor: theme.colors.border,
+                      padding: spacing.sm,
+                      marginTop: spacing.xs,
+                      minHeight: touchTarget.min,
+                      opacity: pressed ? 0.75 : 1,
+                    },
+                  ]}
+                  accessibilityRole="button"
+                  accessibilityLabel="Speicherort zurücksetzen"
+                >
+                  <AppText variant="label" size="sm" color="secondary">
+                    Speicherort zurücksetzen
+                  </AppText>
+                  <AppText variant="body" size="xs" color="secondary" style={{ marginTop: 2 }}>
+                    Wird beim nächsten Speichern im Verlauf neu festgelegt
+                  </AppText>
+                </Pressable>
+              )}
+            </View>
+          )}
+        </View>
+      )}
 
       <Pressable
         onPress={() => setShowStep1(true)}
@@ -154,186 +272,183 @@ export function DataSection({
         <AppText variant="label">Alle Check-ins löschen</AppText>
       </Pressable>
 
-      <Pressable
-        onPress={() => {
-          if (chipCount > 0) setChipsExpanded((o) => !o);
+      <View
+        style={{
+          backgroundColor: theme.colors.surface,
+          borderRadius: radii.md,
+          borderWidth: 1,
+          borderColor: theme.colors.border,
+          marginTop: spacing.sm,
+          overflow: 'hidden',
+          opacity: chipCount === 0 ? 0.4 : 1,
         }}
-        disabled={chipCount === 0}
-        style={({ pressed }) => [
-          styles.button,
-          {
-            backgroundColor: theme.colors.surface,
-            borderRadius: radii.md,
-            padding: spacing.md,
-            minHeight: touchTarget.min,
-            borderWidth: 1,
-            borderColor: theme.colors.border,
-            marginTop: spacing.sm,
-            opacity: chipCount === 0 ? 0.4 : pressed ? 0.75 : 1,
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-          },
-        ]}
-        accessibilityRole="button"
-        accessibilityLabel={`Eigene Chips verwalten${chipCount > 0 ? ` (${chipCount})` : ''}`}
-        accessibilityHint={
-          chipsExpanded ? 'Chip-Liste einklappen' : 'Chip-Liste aufklappen zum einzelnen Löschen'
-        }
-        accessibilityState={{ disabled: chipCount === 0, expanded: chipsExpanded }}
       >
-        <AppText variant="label">Eigene Chips{chipCount > 0 ? ` (${chipCount})` : ''}</AppText>
-        {chipCount > 0 && (
-          <Ionicons
-            name={chipsExpanded ? 'chevron-up' : 'chevron-down'}
-            size={18}
-            color={theme.colors.textSecondary}
-            accessibilityElementsHidden
-          />
-        )}
-      </Pressable>
-
-      {chipsExpanded && chipList.length > 0 && (
-        <View
-          style={{
-            marginTop: spacing.xs,
-            backgroundColor: theme.colors.surface,
-            borderRadius: radii.md,
-            borderWidth: 1,
-            borderColor: theme.colors.border,
-            padding: spacing.sm,
+        <Pressable
+          onPress={() => {
+            if (chipCount > 0) setChipsExpanded((o) => !o);
           }}
+          disabled={chipCount === 0}
+          style={({ pressed }) => [
+            {
+              padding: spacing.md,
+              minHeight: touchTarget.min,
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              opacity: pressed ? 0.75 : 1,
+            },
+          ]}
+          accessibilityRole="button"
+          accessibilityLabel={`Eigene Chips verwalten${chipCount > 0 ? ` (${chipCount})` : ''}`}
+          accessibilityHint={
+            chipsExpanded ? 'Chip-Liste einklappen' : 'Chip-Liste aufklappen zum einzelnen Löschen'
+          }
+          accessibilityState={{ disabled: chipCount === 0, expanded: chipsExpanded }}
         >
-          {feelingsChips.length > 0 && (
-            <>
-              <AppText
-                variant="label"
-                size="sm"
-                color="secondary"
-                accessibilityRole="header"
-                style={{ marginBottom: spacing.xs }}
-              >
-                Gefühle
-              </AppText>
-              <View style={[styles.chipGrid, { gap: spacing.xs }]}>
-                {feelingsChips.map((chip) => (
-                  <View
-                    key={chip.label}
-                    style={[
-                      styles.chipRow,
-                      {
-                        backgroundColor: theme.colors.background,
-                        borderRadius: radii.sm,
-                        borderWidth: 1,
-                        borderStyle: 'dashed',
-                        borderColor: theme.colors.border,
-                        paddingLeft: spacing.sm,
-                        paddingVertical: spacing.xs,
-                      },
-                    ]}
-                  >
-                    <AppText variant="body" size="sm" style={{ flex: 1 }} numberOfLines={1}>
-                      {chip.label}
-                    </AppText>
-                    <Pressable
-                      onPress={() => setChipToDelete(chip)}
-                      hitSlop={8}
-                      style={({ pressed }) => [
-                        styles.deleteIcon,
-                        { minWidth: touchTarget.min, minHeight: touchTarget.min },
-                        pressed && { opacity: 0.5 },
-                      ]}
-                      accessibilityRole="button"
-                      accessibilityLabel={`${chip.label} löschen`}
-                      accessibilityHint="Löscht diesen Chip dauerhaft"
-                    >
-                      <Ionicons name="close" size={16} color={theme.colors.textSecondary} />
-                    </Pressable>
-                  </View>
-                ))}
-              </View>
-            </>
+          <AppText variant="label">Eigene Chips{chipCount > 0 ? ` (${chipCount})` : ''}</AppText>
+          {chipCount > 0 && (
+            <Ionicons
+              name={chipsExpanded ? 'chevron-up' : 'chevron-down'}
+              size={18}
+              color={theme.colors.textSecondary}
+              accessibilityElementsHidden
+            />
           )}
+        </Pressable>
 
-          {selfCareChips.length > 0 && (
-            <>
-              <AppText
-                variant="label"
-                size="sm"
-                color="secondary"
-                accessibilityRole="header"
-                style={{
-                  marginTop: feelingsChips.length > 0 ? spacing.sm : 0,
-                  marginBottom: spacing.xs,
-                }}
-              >
-                Selbstfürsorge
-              </AppText>
-              <View style={[styles.chipGrid, { gap: spacing.xs }]}>
-                {selfCareChips.map((chip) => (
-                  <View
-                    key={chip.label}
-                    style={[
-                      styles.chipRow,
-                      {
-                        backgroundColor: theme.colors.background,
-                        borderRadius: radii.sm,
-                        borderWidth: 1,
-                        borderStyle: 'dashed',
-                        borderColor: theme.colors.border,
-                        paddingLeft: spacing.sm,
-                        paddingVertical: spacing.xs,
-                      },
-                    ]}
-                  >
-                    <AppText variant="body" size="sm" style={{ flex: 1 }} numberOfLines={1}>
-                      {chip.label}
-                    </AppText>
-                    <Pressable
-                      onPress={() => setChipToDelete(chip)}
-                      hitSlop={8}
-                      style={({ pressed }) => [
-                        styles.deleteIcon,
-                        { minWidth: touchTarget.min, minHeight: touchTarget.min },
-                        pressed && { opacity: 0.5 },
+        {chipsExpanded && chipList.length > 0 && (
+          <View style={{ paddingHorizontal: spacing.sm, paddingBottom: spacing.sm }}>
+            {feelingsChips.length > 0 && (
+              <>
+                <AppText
+                  variant="label"
+                  size="sm"
+                  color="secondary"
+                  accessibilityRole="header"
+                  style={{ marginBottom: spacing.xs }}
+                >
+                  Gefühle
+                </AppText>
+                <View style={[styles.chipGrid, { gap: spacing.xs }]}>
+                  {feelingsChips.map((chip) => (
+                    <View
+                      key={chip.label}
+                      style={[
+                        styles.chipRow,
+                        {
+                          backgroundColor: theme.colors.background,
+                          borderRadius: radii.sm,
+                          borderWidth: 1,
+                          borderStyle: 'dashed',
+                          borderColor: theme.colors.border,
+                          paddingLeft: spacing.sm,
+                          paddingVertical: spacing.xs,
+                        },
                       ]}
-                      accessibilityRole="button"
-                      accessibilityLabel={`${chip.label} löschen`}
-                      accessibilityHint="Löscht diesen Chip dauerhaft"
                     >
-                      <Ionicons name="close" size={16} color={theme.colors.textSecondary} />
-                    </Pressable>
-                  </View>
-                ))}
-              </View>
-            </>
-          )}
+                      <AppText variant="body" size="sm" style={{ flex: 1 }} numberOfLines={1}>
+                        {chip.label}
+                      </AppText>
+                      <Pressable
+                        onPress={() => setChipToDelete(chip)}
+                        hitSlop={8}
+                        style={({ pressed }) => [
+                          styles.deleteIcon,
+                          { minWidth: touchTarget.min, minHeight: touchTarget.min },
+                          pressed && { opacity: 0.5 },
+                        ]}
+                        accessibilityRole="button"
+                        accessibilityLabel={`${chip.label} löschen`}
+                        accessibilityHint="Löscht diesen Chip dauerhaft"
+                      >
+                        <Ionicons name="close" size={16} color={theme.colors.textSecondary} />
+                      </Pressable>
+                    </View>
+                  ))}
+                </View>
+              </>
+            )}
 
-          <Pressable
-            onPress={() => setShowChipsConfirm(true)}
-            style={({ pressed }) => [
-              styles.button,
-              {
-                backgroundColor: theme.colors.surface,
-                borderRadius: radii.sm,
-                borderWidth: 1,
-                borderColor: theme.colors.border,
-                padding: spacing.sm,
-                marginTop: spacing.sm,
-                minHeight: touchTarget.min,
-                opacity: pressed ? 0.75 : 1,
-              },
-            ]}
-            accessibilityRole="button"
-            accessibilityLabel="Alle eigenen Chips löschen"
-            accessibilityHint="Löscht alle selbst erstellten Begriffe dauerhaft"
-          >
-            <AppText variant="label" size="sm" color="secondary" style={{ textAlign: 'center' }}>
-              Alle löschen
-            </AppText>
-          </Pressable>
-        </View>
-      )}
+            {selfCareChips.length > 0 && (
+              <>
+                <AppText
+                  variant="label"
+                  size="sm"
+                  color="secondary"
+                  accessibilityRole="header"
+                  style={{
+                    marginTop: feelingsChips.length > 0 ? spacing.sm : 0,
+                    marginBottom: spacing.xs,
+                  }}
+                >
+                  Selbstfürsorge
+                </AppText>
+                <View style={[styles.chipGrid, { gap: spacing.xs }]}>
+                  {selfCareChips.map((chip) => (
+                    <View
+                      key={chip.label}
+                      style={[
+                        styles.chipRow,
+                        {
+                          backgroundColor: theme.colors.background,
+                          borderRadius: radii.sm,
+                          borderWidth: 1,
+                          borderStyle: 'dashed',
+                          borderColor: theme.colors.border,
+                          paddingLeft: spacing.sm,
+                          paddingVertical: spacing.xs,
+                        },
+                      ]}
+                    >
+                      <AppText variant="body" size="sm" style={{ flex: 1 }} numberOfLines={1}>
+                        {chip.label}
+                      </AppText>
+                      <Pressable
+                        onPress={() => setChipToDelete(chip)}
+                        hitSlop={8}
+                        style={({ pressed }) => [
+                          styles.deleteIcon,
+                          { minWidth: touchTarget.min, minHeight: touchTarget.min },
+                          pressed && { opacity: 0.5 },
+                        ]}
+                        accessibilityRole="button"
+                        accessibilityLabel={`${chip.label} löschen`}
+                        accessibilityHint="Löscht diesen Chip dauerhaft"
+                      >
+                        <Ionicons name="close" size={16} color={theme.colors.textSecondary} />
+                      </Pressable>
+                    </View>
+                  ))}
+                </View>
+              </>
+            )}
+
+            <Pressable
+              onPress={() => setShowChipsConfirm(true)}
+              style={({ pressed }) => [
+                styles.button,
+                {
+                  backgroundColor: theme.colors.surface,
+                  borderRadius: radii.sm,
+                  borderWidth: 1,
+                  borderColor: theme.colors.border,
+                  padding: spacing.sm,
+                  marginTop: spacing.sm,
+                  minHeight: touchTarget.min,
+                  opacity: pressed ? 0.75 : 1,
+                },
+              ]}
+              accessibilityRole="button"
+              accessibilityLabel="Alle eigenen Chips löschen"
+              accessibilityHint="Löscht alle selbst erstellten Begriffe dauerhaft"
+            >
+              <AppText variant="label" size="sm" color="secondary" style={{ textAlign: 'center' }}>
+                Alle löschen
+              </AppText>
+            </Pressable>
+          </View>
+        )}
+      </View>
 
       <ConfirmDialog
         visible={showStep1}
@@ -400,6 +515,19 @@ export function DataSection({
         destructive
         onConfirm={handleDeleteSingleChip}
         onCancel={() => setChipToDelete(null)}
+      />
+
+      <ConfirmDialog
+        visible={showResetDirConfirm}
+        title="Speicherort zurücksetzen"
+        message="Der gespeicherte Ordner wird vergessen. Beim nächsten Speichern im Verlauf wirst du erneut nach einem Ordner gefragt."
+        confirmLabel="Zurücksetzen"
+        cancelLabel="Abbrechen"
+        onConfirm={() => {
+          setShowResetDirConfirm(false);
+          handleResetExportDir();
+        }}
+        onCancel={() => setShowResetDirConfirm(false)}
       />
     </>
   );
