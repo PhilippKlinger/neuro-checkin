@@ -192,7 +192,7 @@ export function ChipOrTextStep({
             accessibilityLabel={textAccessibilityLabel}
           />
           <AppText variant="hint" size="xs" style={{ marginTop: spacing.xs }}>
-            Mehrere Begriffe mit Komma trennen — sie werden als eigene Chips gespeichert.
+            Wird als eigener Chip gespeichert — max. ein kurzer Begriff.
           </AppText>
           {value.length >= counterThreshold && (
             <AppText
