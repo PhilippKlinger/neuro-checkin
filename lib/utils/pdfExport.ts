@@ -15,16 +15,19 @@ export function buildFileName(checkIns: CheckIn[]): string {
   if (checkIns.length === 0) return 'Check-in Export';
 
   const formatDate = (iso: string) => iso.split(' ')[0] ?? iso;
+  const formatTime = (iso: string) => (iso.split(' ')[1] ?? '00:00:00').slice(0, 5).replace(':', '-');
 
   if (checkIns.length === 1) {
-    return `Check-in ${formatDate(checkIns[0].createdAt)}`;
+    return `Check-in ${formatDate(checkIns[0].createdAt)} ${formatTime(checkIns[0].createdAt)}`;
   }
 
   const sorted = [...checkIns].sort((a, b) => a.createdAt.localeCompare(b.createdAt));
   const from = formatDate(sorted[0].createdAt);
   const to = formatDate(sorted[sorted.length - 1].createdAt);
   if (from === to) {
-    return `Check-ins ${from}`;
+    const timeFrom = formatTime(sorted[0].createdAt);
+    const timeTo = formatTime(sorted[sorted.length - 1].createdAt);
+    return `Check-ins ${from} ${timeFrom} bis ${timeTo}`;
   }
   return `Check-ins ${from} bis ${to}`;
 }
