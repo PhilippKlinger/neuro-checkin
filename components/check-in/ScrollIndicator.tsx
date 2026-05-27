@@ -1,5 +1,5 @@
 import { useRef, useState, useCallback } from 'react';
-import { Animated, StyleSheet, NativeScrollEvent, NativeSyntheticEvent } from 'react-native';
+import { View, Animated, StyleSheet, NativeScrollEvent, NativeSyntheticEvent } from 'react-native';
 import { useTheme } from '../../lib/hooks/useTheme';
 
 const TRACK_HEIGHT_RATIO = 0.5;
@@ -13,7 +13,7 @@ interface ScrollIndicatorProps {
 }
 
 export function ScrollIndicator({ visible, thumbRatio, scrollRatio }: ScrollIndicatorProps) {
-  const { theme, radii } = useTheme();
+  const { theme, spacing, radii } = useTheme();
   const opacity = useRef(new Animated.Value(0)).current;
   const wasVisible = useRef(false);
 
@@ -32,26 +32,32 @@ export function ScrollIndicator({ visible, thumbRatio, scrollRatio }: ScrollIndi
   return (
     <Animated.View
       style={[
-        styles.track,
-        {
-          opacity,
-          backgroundColor: theme.colors.border,
-          borderRadius: radii.sm,
-        },
+        styles.column,
+        { width: spacing.sm + 4, opacity },
       ]}
       pointerEvents="none"
     >
-      <Animated.View
+      <View
         style={[
-          styles.thumb,
+          styles.track,
           {
-            backgroundColor: theme.colors.textSecondary,
+            backgroundColor: theme.colors.border,
             borderRadius: radii.sm,
-            height: `${thumbHeight}%`,
-            top: `${thumbTop}%`,
           },
         ]}
-      />
+      >
+        <View
+          style={[
+            styles.thumb,
+            {
+              backgroundColor: theme.colors.textSecondary,
+              borderRadius: radii.sm,
+              height: `${thumbHeight}%`,
+              top: `${thumbTop}%`,
+            },
+          ]}
+        />
+      </View>
     </Animated.View>
   );
 }
@@ -92,13 +98,13 @@ export function useScrollIndicator() {
 }
 
 const styles = StyleSheet.create({
+  column: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   track: {
-    position: 'absolute',
-    right: 4,
-    top: '25%',
-    bottom: '25%',
     width: 4,
-    opacity: 0.6,
+    height: '50%',
   },
   thumb: {
     position: 'absolute',

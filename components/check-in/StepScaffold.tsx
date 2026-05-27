@@ -71,60 +71,62 @@ export const StepScaffold = forwardRef<ScrollView, StepScaffoldProps>(function S
         behavior={avoidKeyboard ? (Platform.OS === 'ios' ? 'padding' : 'height') : undefined}
         style={styles.scrollWrapper}
       >
-        <ScrollView
-          ref={ref}
-          style={styles.scrollArea}
-          contentContainerStyle={[
-            styles.scrollContent,
-            { paddingBottom: spacing.lg },
-            centerContent && styles.scrollContentCentered,
-          ]}
-          showsVerticalScrollIndicator={false}
-          keyboardShouldPersistTaps={keyboardPersistTaps ? 'handled' : 'never'}
-          {...scrollViewProps}
-        >
-          {children}
+        <View style={styles.scrollRow}>
+          <ScrollView
+            ref={ref}
+            style={styles.scrollArea}
+            contentContainerStyle={[
+              styles.scrollContent,
+              { paddingBottom: spacing.lg },
+              centerContent && styles.scrollContentCentered,
+            ]}
+            showsVerticalScrollIndicator={false}
+            keyboardShouldPersistTaps={keyboardPersistTaps ? 'handled' : 'never'}
+            {...scrollViewProps}
+          >
+            {children}
 
-          {skipConfig && (
-            <>
-              <View
-                style={[
-                  styles.divider,
-                  { backgroundColor: theme.colors.border, marginVertical: spacing.md },
-                ]}
-              />
-              <Pressable
-                onPress={skipConfig.onSkip}
-                style={({ pressed }) => [
-                  styles.skipButton,
-                  {
-                    minHeight: touchTarget.min,
-                    borderRadius: radii.md,
-                    paddingHorizontal: spacing.md,
-                    backgroundColor: skipConfig.skipped
-                      ? theme.colors.accentSoft
-                      : theme.colors.surface,
-                    borderWidth: 1,
-                    borderColor: skipConfig.skipped ? theme.colors.accent : theme.colors.border,
-                  },
-                  pressed && { opacity: 0.75 },
-                ]}
-                accessibilityRole="button"
-                accessibilityLabel="Kann ich gerade nicht sagen"
-                accessibilityState={{ selected: skipConfig.skipped }}
-              >
-                <AppText variant="label" color="secondary">
-                  Kann ich gerade nicht sagen
-                </AppText>
-              </Pressable>
-            </>
-          )}
-        </ScrollView>
-        <ScrollIndicator
-          visible={isScrollable}
-          thumbRatio={thumbRatio}
-          scrollRatio={scrollRatio}
-        />
+            {skipConfig && (
+              <>
+                <View
+                  style={[
+                    styles.divider,
+                    { backgroundColor: theme.colors.border, marginVertical: spacing.md },
+                  ]}
+                />
+                <Pressable
+                  onPress={skipConfig.onSkip}
+                  style={({ pressed }) => [
+                    styles.skipButton,
+                    {
+                      minHeight: touchTarget.min,
+                      borderRadius: radii.md,
+                      paddingHorizontal: spacing.md,
+                      backgroundColor: skipConfig.skipped
+                        ? theme.colors.accentSoft
+                        : theme.colors.surface,
+                      borderWidth: 1,
+                      borderColor: skipConfig.skipped ? theme.colors.accent : theme.colors.border,
+                    },
+                    pressed && { opacity: 0.75 },
+                  ]}
+                  accessibilityRole="button"
+                  accessibilityLabel="Kann ich gerade nicht sagen"
+                  accessibilityState={{ selected: skipConfig.skipped }}
+                >
+                  <AppText variant="label" color="secondary">
+                    Kann ich gerade nicht sagen
+                  </AppText>
+                </Pressable>
+              </>
+            )}
+          </ScrollView>
+          <ScrollIndicator
+            visible={isScrollable}
+            thumbRatio={thumbRatio}
+            scrollRatio={scrollRatio}
+          />
+        </View>
       </KeyboardAvoidingView>
     </View>
   );
@@ -139,6 +141,10 @@ const styles = StyleSheet.create({
   },
   scrollWrapper: {
     flex: 1,
+  },
+  scrollRow: {
+    flex: 1,
+    flexDirection: 'row',
   },
   scrollArea: {
     flex: 1,
