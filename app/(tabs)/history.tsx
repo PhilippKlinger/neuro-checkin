@@ -87,6 +87,7 @@ export default function HistoryScreen() {
     setIsExporting(true);
     try {
       await exportCheckInsAsPdf(toExport);
+      ToastAndroid.show('PDF erstellt', ToastAndroid.SHORT);
     } catch (error) {
       Sentry.withScope((scope) => {
         scope.setTag('screen', 'history');
@@ -249,14 +250,24 @@ export default function HistoryScreen() {
           <Pressable
             onPress={enterSelectionMode}
             style={({ pressed }) => [
-              { minHeight: touchTarget.min, justifyContent: 'center' as const },
+              {
+                minHeight: touchTarget.min,
+                paddingHorizontal: spacing.md,
+                paddingVertical: spacing.sm,
+                borderRadius: radii.md,
+                borderWidth: 1,
+                borderColor: theme.colors.border,
+                backgroundColor: theme.colors.surface,
+                justifyContent: 'center' as const,
+                alignItems: 'center' as const,
+              },
               pressed && { opacity: 0.7 },
             ]}
             accessibilityRole="button"
-            accessibilityLabel="Check-ins für Export auswählen"
+            accessibilityLabel="Check-ins zum Teilen auswählen"
           >
-            <AppText variant="label" size="sm" color="accent">
-              Exportieren
+            <AppText variant="label" size="sm" color="secondary">
+              Auswählen & Teilen
             </AppText>
           </Pressable>
         </View>

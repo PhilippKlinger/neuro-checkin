@@ -51,6 +51,7 @@ export default function CheckInDetailScreen() {
     if (!checkIn) return;
     try {
       await exportCheckInsAsPdf([checkIn]);
+      ToastAndroid.show('PDF erstellt', ToastAndroid.SHORT);
     } catch (error) {
       Sentry.withScope((scope) => {
         scope.setTag('screen', 'checkInDetail');
