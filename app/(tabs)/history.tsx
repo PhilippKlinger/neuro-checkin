@@ -238,35 +238,26 @@ export default function HistoryScreen() {
         </View>
       ) : (
         <View
-          style={[
-            styles.selectionHeader,
-            {
-              paddingHorizontal: spacing.md,
-              paddingVertical: spacing.sm,
-              justifyContent: 'flex-end',
-            },
-          ]}
+          style={{
+            paddingHorizontal: spacing.md,
+            paddingVertical: spacing.sm,
+          }}
         >
           <Pressable
             onPress={enterSelectionMode}
             style={({ pressed }) => [
+              styles.exportButton,
               {
                 minHeight: touchTarget.min,
-                paddingHorizontal: spacing.md,
-                paddingVertical: spacing.sm,
                 borderRadius: radii.md,
-                borderWidth: 1,
-                borderColor: theme.colors.border,
-                backgroundColor: theme.colors.surface,
-                justifyContent: 'center' as const,
-                alignItems: 'center' as const,
+                backgroundColor: theme.colors.primary,
               },
-              pressed && { opacity: 0.7 },
+              pressed && { opacity: 0.75 },
             ]}
             accessibilityRole="button"
             accessibilityLabel="Check-ins zum Teilen auswählen"
           >
-            <AppText variant="label" size="sm" color="secondary">
+            <AppText variant="label" weight="semibold" color="inverse">
               Auswählen & Teilen
             </AppText>
           </Pressable>
