@@ -33,6 +33,8 @@ export default function QuickCheckInScreen() {
     guidedMode,
     isLastStep,
     isNextDisabled,
+    userFeelingChips,
+    feelingChipsAtLimit,
     handleNext,
     handleBack,
     handleReset,
@@ -88,6 +90,8 @@ export default function QuickCheckInScreen() {
             value={draft.feelings}
             onValueChange={actions.setFeelings}
             hint={guidedMode ? STEP_HINTS.feelings : undefined}
+            userChips={userFeelingChips}
+            userChipsAtLimit={feelingChipsAtLimit}
             skipped={draft.feelingsSkipped}
             onSkip={actions.skipFeelings}
           />

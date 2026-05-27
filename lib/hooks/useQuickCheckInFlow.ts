@@ -4,6 +4,9 @@ import { useFocusEffect } from 'expo-router';
 import type { SQLiteDatabase } from 'expo-sqlite';
 import { insertCheckIn } from '../database/checkins';
 import { getSettings, updateSettings } from '../database/settings';
+import { getUserChips, countUserChipsByCategory } from '../database/userChips';
+import { MAX_USER_CHIPS_PER_CATEGORY } from '../constants/userChips';
+import { FEELING_CHIPS } from '../constants/chips';
 import { EMPTY_BODY_SIGNALS } from '../types/checkin';
 import * as Sentry from '@sentry/react-native';
 
@@ -47,6 +50,10 @@ export interface UseQuickCheckInFlowResult {
   isLastStep: boolean;
   isStepBlocked: boolean;
   isNextDisabled: boolean;
+  /** User-defined feeling chips, loaded on focus. */
+  userFeelingChips: string[];
+  /** True when feeling category is at MAX_USER_CHIPS_PER_CATEGORY. */
+  feelingChipsAtLimit: boolean;
   /** @deprecated Use actions instead */
   setDraft: Dispatch<SetStateAction<QuickCheckInDraft>>;
   handleGuidedToggle: (value: boolean) => Promise<void>;
@@ -65,23 +72,33 @@ export function useQuickCheckInFlow(
   const [isDone, setIsDone] = useState(false);
   const [guidedMode, setGuidedMode] = useState(true);
   const [showToggleIntroHint, setShowToggleIntroHint] = useState(false);
+  const [userFeelingChips, setUserFeelingChips] = useState<string[]>([]);
+  const [feelingChipsAtLimit, setFeelingChipsAtLimit] = useState(false);
 
   const savingRef = useRef(false);
 
   useFocusEffect(
     useCallback(() => {
       let cancelled = false;
-      async function loadSettings() {
+      async function loadState() {
         try {
-          const settings = await getSettings(db);
+          const [settings, chips, chipCount] = await Promise.all([
+            getSettings(db),
+            getUserChips(db, 'feelings'),
+            countUserChipsByCategory(db, 'feelings'),
+          ]);
           if (cancelled) return;
           setGuidedMode(settings.guidedModeEnabled);
           setShowToggleIntroHint(!settings.guidedToggleIntroduced);
+          // Filter out standard chips so only user-created chips are shown
+          const userOnly = chips.filter((c) => !FEELING_CHIPS.includes(c as never));
+          setUserFeelingChips(userOnly);
+          setFeelingChipsAtLimit(chipCount >= MAX_USER_CHIPS_PER_CATEGORY);
         } catch (error) {
-          console.error('quickCheckIn loadSettings failed:', error);
+          console.error('quickCheckIn loadState failed:', error);
         }
       }
-      loadSettings();
+      loadState();
       return () => {
         cancelled = true;
       };
@@ -184,6 +201,8 @@ export function useQuickCheckInFlow(
     isLastStep: step === TOTAL_STEPS - 1,
     isStepBlocked: blocked,
     isNextDisabled: isSaving || blocked,
+    userFeelingChips,
+    feelingChipsAtLimit,
     setDraft,
     handleGuidedToggle,
     handleNext,

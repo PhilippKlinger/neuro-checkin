@@ -5,6 +5,8 @@ interface QuickStepFeelingsProps {
   value: string;
   onValueChange: (value: string) => void;
   hint?: string;
+  userChips?: string[];
+  userChipsAtLimit?: boolean;
   skipped?: boolean;
   onSkip?: () => void;
 }
@@ -12,10 +14,13 @@ interface QuickStepFeelingsProps {
 // Chips-only variant for the quick check-in flow.
 // No free-text toggle — keeps cognitive load low in difficult moments.
 // Selection is optional: "Weiter" is never blocked here.
+// User chips are shown (read-only use) but free-text creation is disabled (chipsOnly).
 export function QuickStepFeelings({
   value,
   onValueChange,
   hint,
+  userChips,
+  userChipsAtLimit,
   skipped,
   onSkip,
 }: QuickStepFeelingsProps) {
@@ -28,6 +33,8 @@ export function QuickStepFeelings({
       onValueChange={onValueChange}
       chipsOnly
       hint={hint}
+      userChips={userChips}
+      userChipsAtLimit={userChipsAtLimit}
       skipped={skipped}
       onSkip={onSkip}
     />

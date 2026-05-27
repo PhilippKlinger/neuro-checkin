@@ -71,12 +71,12 @@ const checkins = [
   { created_at: dt(28,20,0), energy_level:3, focus_level:3, energy_skipped:0, focus_skipped:0, feelings_skipped:0, body_signals:bs({hunger:true}), feelings:'zufrieden', distress_level:null, distress_note:null, thoughts_type:'supportive', thoughts_note:'War ein guter Tag.', self_care_note:'Abendspaziergang.', inner_part:null, note:null },
 
   // ─── Day 27 ───
-  { created_at: dt(27, 9,00), energy_level:3, focus_level:0, energy_skipped:0, focus_skipped:1, feelings_skipped:0, body_signals:bs({}), feelings:'verwirrt', distress_level:null, distress_note:null, thoughts_type:'mixed', thoughts_note:null, self_care_note:null, inner_part:null, note:'Kann mich nicht einschätzen.' },
+  { created_at: dt(27, 9,0), energy_level:3, focus_level:0, energy_skipped:0, focus_skipped:1, feelings_skipped:0, body_signals:bs({}), feelings:'verwirrt', distress_level:null, distress_note:null, thoughts_type:'mixed', thoughts_note:null, self_care_note:null, inner_part:null, note:'Kann mich nicht einschätzen.' },
   { created_at: dt(27,19,45), energy_level:2, focus_level:2, energy_skipped:0, focus_skipped:0, feelings_skipped:0, body_signals:bs({thirst:true,temperature:true}), feelings:'gereizt', distress_level:2, distress_note:null, thoughts_type:'burdening', thoughts_note:'Zu viele Reize heute.', self_care_note:'Noise-Cancelling.', inner_part:null, note:null },
 
   // ─── Day 26 ───
-  { created_at: dt(26,10,00), energy_level:1, focus_level:1, energy_skipped:0, focus_skipped:0, feelings_skipped:0, body_signals:bs({hunger:true,thirst:true,pain:true,externalStimuli:true}), feelings:'überwältigt', distress_level:5, distress_note:'Ich bin am Limit.', thoughts_type:'burdening', thoughts_note:'Kann das nicht in Worte fassen.', self_care_note:null, inner_part:null, note:'Harter Tag. Einfach nur da sein.' },
-  { created_at: dt(26,22,00), energy_level:1, focus_level:0, energy_skipped:0, focus_skipped:1, feelings_skipped:1, body_signals:bs({}), feelings:'', distress_level:4, distress_note:null, thoughts_type:null, thoughts_note:null, self_care_note:null, inner_part:null, note:null },
+  { created_at: dt(26,10,0), energy_level:1, focus_level:1, energy_skipped:0, focus_skipped:0, feelings_skipped:0, body_signals:bs({hunger:true,thirst:true,pain:true,externalStimuli:true}), feelings:'überwältigt', distress_level:5, distress_note:'Ich bin am Limit.', thoughts_type:'burdening', thoughts_note:'Kann das nicht in Worte fassen.', self_care_note:null, inner_part:null, note:'Harter Tag. Einfach nur da sein.' },
+  { created_at: dt(26,22,0), energy_level:1, focus_level:0, energy_skipped:0, focus_skipped:1, feelings_skipped:1, body_signals:bs({}), feelings:'', distress_level:4, distress_note:null, thoughts_type:null, thoughts_note:null, self_care_note:null, inner_part:null, note:null },
 
   // ─── Day 25 ───
   { created_at: dt(25, 9,15), energy_level:2, focus_level:2, energy_skipped:0, focus_skipped:0, feelings_skipped:0, body_signals:bs({hunger:true}), feelings:'erschöpft', distress_level:3, distress_note:null, thoughts_type:'burdening', thoughts_note:'Gestern nachwirkend.', self_care_note:'Langsam anfangen.', inner_part:null, note:null },
@@ -84,14 +84,14 @@ const checkins = [
 
   // ─── Day 24 ───
   { created_at: dt(24, 8,30), energy_level:3, focus_level:3, energy_skipped:0, focus_skipped:0, feelings_skipped:0, body_signals:bs({hunger:true,thirst:true,temperature:false}), feelings:'neutral', distress_level:null, distress_note:null, thoughts_type:null, thoughts_note:null, self_care_note:'Gegessen. Getrunken.', inner_part:null, note:null },
-  { created_at: dt(24,21,00), energy_level:3, focus_level:4, energy_skipped:0, focus_skipped:0, feelings_skipped:0, body_signals:bs({}), feelings:'zufrieden', distress_level:null, distress_note:null, thoughts_type:'supportive', thoughts_note:'Produktiver Nachmittag.', self_care_note:null, inner_part:null, note:null },
+  { created_at: dt(24,21,0), energy_level:3, focus_level:4, energy_skipped:0, focus_skipped:0, feelings_skipped:0, body_signals:bs({}), feelings:'zufrieden', distress_level:null, distress_note:null, thoughts_type:'supportive', thoughts_note:'Produktiver Nachmittag.', self_care_note:null, inner_part:null, note:null },
 
   // ─── Day 23 ───
   { created_at: dt(23, 9,45), energy_level:4, focus_level:5, energy_skipped:0, focus_skipped:0, feelings_skipped:0, body_signals:bs({hunger:false,thirst:false,pain:false}), feelings:'motiviert, leicht', distress_level:null, distress_note:null, thoughts_type:'supportive', thoughts_note:'Klarer Kopf heute. Selten so.', self_care_note:null, inner_part:null, note:null },
   { created_at: dt(23,19,30), energy_level:3, focus_level:3, energy_skipped:0, focus_skipped:0, feelings_skipped:0, body_signals:bs({hunger:true}), feelings:'zufrieden, dankbar', distress_level:null, distress_note:null, thoughts_type:'supportive', thoughts_note:null, self_care_note:'Gekocht, Podcast gehört.', inner_part:null, note:null },
 
   // ─── Day 22 ───
-  { created_at: dt(22, 8,00), energy_level:2, focus_level:2, energy_skipped:0, focus_skipped:0, feelings_skipped:0, body_signals:bs({thirst:true,seating:true}), feelings:'leer, abgestumpft', distress_level:2, distress_note:null, thoughts_type:null, thoughts_note:null, self_care_note:null, inner_part:null, note:null },
+  { created_at: dt(22, 8,0), energy_level:2, focus_level:2, energy_skipped:0, focus_skipped:0, feelings_skipped:0, body_signals:bs({thirst:true,seating:true}), feelings:'leer, abgestumpft', distress_level:2, distress_note:null, thoughts_type:null, thoughts_note:null, self_care_note:null, inner_part:null, note:null },
   { created_at: dt(22,20,45), energy_level:2, focus_level:1, energy_skipped:0, focus_skipped:0, feelings_skipped:0, body_signals:bs({externalStimuli:true}), feelings:'gereizt', distress_level:3, distress_note:null, thoughts_type:'burdening', thoughts_note:'Zu laut überall.', self_care_note:'Stöpsel rein, Licht aus.', inner_part:null, note:null },
 
   // ─── Day 21 ───
@@ -100,27 +100,27 @@ const checkins = [
 
   // ─── Day 20 ───
   { created_at: dt(20,10,15), energy_level:0, focus_level:0, energy_skipped:1, focus_skipped:1, feelings_skipped:0, body_signals:bs({}), feelings:'Kann ich gerade nicht sagen', distress_level:null, distress_note:null, thoughts_type:null, thoughts_note:null, self_care_note:null, inner_part:null, note:'Alexithymie-Tag.' },
-  { created_at: dt(20,20,00), energy_level:2, focus_level:2, energy_skipped:0, focus_skipped:0, feelings_skipped:0, body_signals:bs({hunger:true,thirst:true}), feelings:'erschöpft', distress_level:2, distress_note:null, thoughts_type:null, thoughts_note:null, self_care_note:'Essen bestellt.', inner_part:null, note:null },
+  { created_at: dt(20,20,0), energy_level:2, focus_level:2, energy_skipped:0, focus_skipped:0, feelings_skipped:0, body_signals:bs({hunger:true,thirst:true}), feelings:'erschöpft', distress_level:2, distress_note:null, thoughts_type:null, thoughts_note:null, self_care_note:'Essen bestellt.', inner_part:null, note:null },
 
   // ─── Day 19 ───
   { created_at: dt(19, 8,45), energy_level:3, focus_level:4, energy_skipped:0, focus_skipped:0, feelings_skipped:0, body_signals:bs({hunger:false,thirst:false}), feelings:'leicht', distress_level:null, distress_note:null, thoughts_type:'supportive', thoughts_note:null, self_care_note:'Morgenroutine eingehalten.', inner_part:null, note:null },
   { created_at: dt(19,19,50), energy_level:3, focus_level:3, energy_skipped:0, focus_skipped:0, feelings_skipped:0, body_signals:bs({temperature:true}), feelings:'neutral, frustriert', distress_level:2, distress_note:null, thoughts_type:'mixed', thoughts_note:'Einiges hat heute nicht geklappt.', self_care_note:null, inner_part:null, note:null },
 
   // ─── Day 18 ───
-  { created_at: dt(18, 9,00), energy_level:4, focus_level:4, energy_skipped:0, focus_skipped:0, feelings_skipped:0, body_signals:bs({hunger:true,thirst:false}), feelings:'motiviert', distress_level:null, distress_note:null, thoughts_type:'supportive', thoughts_note:'Klar und ruhig.', self_care_note:'Yoga gemacht.', inner_part:null, note:null },
+  { created_at: dt(18, 9,0), energy_level:4, focus_level:4, energy_skipped:0, focus_skipped:0, feelings_skipped:0, body_signals:bs({hunger:true,thirst:false}), feelings:'motiviert', distress_level:null, distress_note:null, thoughts_type:'supportive', thoughts_note:'Klar und ruhig.', self_care_note:'Yoga gemacht.', inner_part:null, note:null },
   { created_at: dt(18,21,30), energy_level:3, focus_level:2, energy_skipped:0, focus_skipped:0, feelings_skipped:0, body_signals:bs({seating:true}), feelings:'neutral', distress_level:null, distress_note:null, thoughts_type:null, thoughts_note:null, self_care_note:null, inner_part:null, note:null },
 
   // ─── Day 17 ───
   { created_at: dt(17, 9,15), energy_level:2, focus_level:1, energy_skipped:0, focus_skipped:0, feelings_skipped:0, body_signals:bs({hunger:true,thirst:true,pain:true}), feelings:'angespannt, erschöpft', distress_level:4, distress_note:'Kopfschmerzen seit gestern.', thoughts_type:'burdening', thoughts_note:null, self_care_note:'Ibuprofen, Wasser.', inner_part:null, note:null },
-  { created_at: dt(17,20,00), energy_level:2, focus_level:2, energy_skipped:0, focus_skipped:0, feelings_skipped:0, body_signals:bs({pain:true}), feelings:'erschöpft', distress_level:3, distress_note:null, thoughts_type:'burdening', thoughts_note:'Wird das je besser?', self_care_note:'Früh schlafen.', inner_part:null, note:null },
+  { created_at: dt(17,20,0), energy_level:2, focus_level:2, energy_skipped:0, focus_skipped:0, feelings_skipped:0, body_signals:bs({pain:true}), feelings:'erschöpft', distress_level:3, distress_note:null, thoughts_type:'burdening', thoughts_note:'Wird das je besser?', self_care_note:'Früh schlafen.', inner_part:null, note:null },
 
   // ─── Day 16 ───
   { created_at: dt(16, 8,30), energy_level:3, focus_level:3, energy_skipped:0, focus_skipped:0, feelings_skipped:0, body_signals:bs({hunger:true}), feelings:'neutral', distress_level:2, distress_note:null, thoughts_type:'mixed', thoughts_note:null, self_care_note:'Gefrühstückt.', inner_part:null, note:'Kopf besser.' },
   { created_at: dt(16,19,45), energy_level:3, focus_level:4, energy_skipped:0, focus_skipped:0, feelings_skipped:0, body_signals:bs({hunger:false,thirst:false}), feelings:'zufrieden', distress_level:null, distress_note:null, thoughts_type:'supportive', thoughts_note:'Heute geschafft was ich wollte.', self_care_note:null, inner_part:null, note:null },
 
   // ─── Day 15 ───
-  { created_at: dt(15,10,00), energy_level:5, focus_level:5, energy_skipped:0, focus_skipped:0, feelings_skipped:0, body_signals:bs({hunger:false,thirst:false,pain:false,externalStimuli:false}), feelings:'freudig, motiviert', distress_level:null, distress_note:null, thoughts_type:'supportive', thoughts_note:'Heute fühlt sich alles richtig an.', self_care_note:null, inner_part:null, note:'Seltener guter Tag.' },
-  { created_at: dt(15,21,00), energy_level:4, focus_level:4, energy_skipped:0, focus_skipped:0, feelings_skipped:0, body_signals:bs({}), feelings:'dankbar, zufrieden', distress_level:null, distress_note:null, thoughts_type:'supportive', thoughts_note:null, self_care_note:'Langer Spaziergang.', inner_part:null, note:null },
+  { created_at: dt(15,10,0), energy_level:5, focus_level:5, energy_skipped:0, focus_skipped:0, feelings_skipped:0, body_signals:bs({hunger:false,thirst:false,pain:false,externalStimuli:false}), feelings:'freudig, motiviert', distress_level:null, distress_note:null, thoughts_type:'supportive', thoughts_note:'Heute fühlt sich alles richtig an.', self_care_note:null, inner_part:null, note:'Seltener guter Tag.' },
+  { created_at: dt(15,21,0), energy_level:4, focus_level:4, energy_skipped:0, focus_skipped:0, feelings_skipped:0, body_signals:bs({}), feelings:'dankbar, zufrieden', distress_level:null, distress_note:null, thoughts_type:'supportive', thoughts_note:null, self_care_note:'Langer Spaziergang.', inner_part:null, note:null },
 
   // ─── Day 14 ───
   { created_at: dt(14, 9,30), energy_level:3, focus_level:3, energy_skipped:0, focus_skipped:0, feelings_skipped:0, body_signals:bs({hunger:true,thirst:true}), feelings:'neutral', distress_level:null, distress_note:null, thoughts_type:null, thoughts_note:null, self_care_note:'Wasser, Snack.', inner_part:null, note:null },
@@ -128,10 +128,10 @@ const checkins = [
 
   // ─── Day 13 ───
   { created_at: dt(13, 8,15), energy_level:3, focus_level:4, energy_skipped:0, focus_skipped:0, feelings_skipped:0, body_signals:bs({hunger:false,thirst:false}), feelings:'leicht', distress_level:null, distress_note:null, thoughts_type:'supportive', thoughts_note:null, self_care_note:'Morgenroutine.', inner_part:null, note:null },
-  { created_at: dt(13,20,00), energy_level:3, focus_level:3, energy_skipped:0, focus_skipped:0, feelings_skipped:0, body_signals:bs({}), feelings:'neutral, zufrieden', distress_level:null, distress_note:null, thoughts_type:'supportive', thoughts_note:'Ruhiger Tag.', self_care_note:null, inner_part:null, note:null },
+  { created_at: dt(13,20,0), energy_level:3, focus_level:3, energy_skipped:0, focus_skipped:0, feelings_skipped:0, body_signals:bs({}), feelings:'neutral, zufrieden', distress_level:null, distress_note:null, thoughts_type:'supportive', thoughts_note:'Ruhiger Tag.', self_care_note:null, inner_part:null, note:null },
 
   // ─── Day 12 ───
-  { created_at: dt(12, 9,00), energy_level:2, focus_level:0, energy_skipped:0, focus_skipped:1, feelings_skipped:0, body_signals:bs({hunger:true}), feelings:'Irgendwo zwischen müde und okay. Schwer zu sagen.', distress_level:null, distress_note:null, thoughts_type:'mixed', thoughts_note:null, self_care_note:null, inner_part:null, note:null },
+  { created_at: dt(12, 9,0), energy_level:2, focus_level:0, energy_skipped:0, focus_skipped:1, feelings_skipped:0, body_signals:bs({hunger:true}), feelings:'Irgendwo zwischen müde und okay. Schwer zu sagen.', distress_level:null, distress_note:null, thoughts_type:'mixed', thoughts_note:null, self_care_note:null, inner_part:null, note:null },
   { created_at: dt(12,21,45), energy_level:2, focus_level:2, energy_skipped:0, focus_skipped:0, feelings_skipped:0, body_signals:bs({thirst:true}), feelings:'erschöpft', distress_level:2, distress_note:null, thoughts_type:null, thoughts_note:null, self_care_note:'Tee.', inner_part:null, note:null },
 
   // ─── Day 11 ───
@@ -144,19 +144,19 @@ const checkins = [
 
   // ─── Day 9 ───
   { created_at: dt(9, 9,15), energy_level:2, focus_level:2, energy_skipped:0, focus_skipped:0, feelings_skipped:0, body_signals:bs({hunger:true,pain:true}), feelings:'erschöpft', distress_level:3, distress_note:null, thoughts_type:'burdening', thoughts_note:'Gestern war zu viel.', self_care_note:'Langsam. Kein Druck.', inner_part:null, note:null },
-  { created_at: dt(9, 20,00), energy_level:3, focus_level:3, energy_skipped:0, focus_skipped:0, feelings_skipped:0, body_signals:bs({hunger:false}), feelings:'neutral', distress_level:2, distress_note:null, thoughts_type:'mixed', thoughts_note:null, self_care_note:'Abend-Spaziergang.', inner_part:null, note:null },
+  { created_at: dt(9, 20,0), energy_level:3, focus_level:3, energy_skipped:0, focus_skipped:0, feelings_skipped:0, body_signals:bs({hunger:false}), feelings:'neutral', distress_level:2, distress_note:null, thoughts_type:'mixed', thoughts_note:null, self_care_note:'Abend-Spaziergang.', inner_part:null, note:null },
 
   // ─── Day 8 ───
   { created_at: dt(8, 8,30), energy_level:3, focus_level:4, energy_skipped:0, focus_skipped:0, feelings_skipped:0, body_signals:bs({hunger:false,thirst:false}), feelings:'leicht', distress_level:null, distress_note:null, thoughts_type:'supportive', thoughts_note:null, self_care_note:'Morgenroutine.', inner_part:null, note:null },
   { created_at: dt(8, 20,30), energy_level:4, focus_level:4, energy_skipped:0, focus_skipped:0, feelings_skipped:0, body_signals:bs({}), feelings:'zufrieden, dankbar', distress_level:null, distress_note:null, thoughts_type:'supportive', thoughts_note:'Produktiv und trotzdem entspannt.', self_care_note:null, inner_part:null, note:null },
 
   // ─── Day 7 ───
-  { created_at: dt(7, 9,00), energy_level:3, focus_level:3, energy_skipped:0, focus_skipped:0, feelings_skipped:0, body_signals:bs({hunger:true,thirst:true}), feelings:'neutral', distress_level:null, distress_note:null, thoughts_type:null, thoughts_note:null, self_care_note:'Gegessen.', inner_part:null, note:null },
+  { created_at: dt(7, 9,0), energy_level:3, focus_level:3, energy_skipped:0, focus_skipped:0, feelings_skipped:0, body_signals:bs({hunger:true,thirst:true}), feelings:'neutral', distress_level:null, distress_note:null, thoughts_type:null, thoughts_note:null, self_care_note:'Gegessen.', inner_part:null, note:null },
   { created_at: dt(7, 19,15), energy_level:2, focus_level:2, energy_skipped:0, focus_skipped:0, feelings_skipped:0, body_signals:bs({seating:true,temperature:true}), feelings:'frustriert', distress_level:2, distress_note:null, thoughts_type:'mixed', thoughts_note:'Nicht alles geschafft.', self_care_note:null, inner_part:null, note:null },
 
   // ─── Day 6 ───
   { created_at: dt(6, 8,45), energy_level:4, focus_level:5, energy_skipped:0, focus_skipped:0, feelings_skipped:0, body_signals:bs({hunger:false,thirst:false,pain:false}), feelings:'motiviert, leicht', distress_level:null, distress_note:null, thoughts_type:'supportive', thoughts_note:'Fokus-Tag.', self_care_note:null, inner_part:null, note:null },
-  { created_at: dt(6, 21,00), energy_level:3, focus_level:3, energy_skipped:0, focus_skipped:0, feelings_skipped:0, body_signals:bs({hunger:true}), feelings:'zufrieden', distress_level:null, distress_note:null, thoughts_type:'supportive', thoughts_note:null, self_care_note:'Essen, Musik.', inner_part:null, note:null },
+  { created_at: dt(6, 21,0), energy_level:3, focus_level:3, energy_skipped:0, focus_skipped:0, feelings_skipped:0, body_signals:bs({hunger:true}), feelings:'zufrieden', distress_level:null, distress_note:null, thoughts_type:'supportive', thoughts_note:null, self_care_note:'Essen, Musik.', inner_part:null, note:null },
 
   // ─── Day 5 ───
   { created_at: dt(5, 9,30), energy_level:2, focus_level:2, energy_skipped:0, focus_skipped:0, feelings_skipped:0, body_signals:bs({hunger:true,externalStimuli:true}), feelings:'angespannt', distress_level:3, distress_note:null, thoughts_type:'burdening', thoughts_note:'Zu wenig Schlaf.', self_care_note:'Kaffee, ruhiger Ort.', inner_part:null, note:null },
@@ -164,10 +164,10 @@ const checkins = [
 
   // ─── Day 4 ───
   { created_at: dt(4, 8,15), energy_level:3, focus_level:3, energy_skipped:0, focus_skipped:0, feelings_skipped:0, body_signals:bs({hunger:true,thirst:false}), feelings:'neutral', distress_level:null, distress_note:null, thoughts_type:'mixed', thoughts_note:null, self_care_note:'Gefrühstückt.', inner_part:null, note:'Besser geschlafen.' },
-  { created_at: dt(4, 20,00), energy_level:4, focus_level:4, energy_skipped:0, focus_skipped:0, feelings_skipped:0, body_signals:bs({hunger:false,thirst:false}), feelings:'zufrieden, leicht', distress_level:null, distress_note:null, thoughts_type:'supportive', thoughts_note:'War ein guter Tag.', self_care_note:'Spaziergang.', inner_part:null, note:null },
+  { created_at: dt(4, 20,0), energy_level:4, focus_level:4, energy_skipped:0, focus_skipped:0, feelings_skipped:0, body_signals:bs({hunger:false,thirst:false}), feelings:'zufrieden, leicht', distress_level:null, distress_note:null, thoughts_type:'supportive', thoughts_note:'War ein guter Tag.', self_care_note:'Spaziergang.', inner_part:null, note:null },
 
   // ─── Day 3 ───
-  { created_at: dt(3, 9,00), energy_level:3, focus_level:0, energy_skipped:0, focus_skipped:1, feelings_skipped:0, body_signals:bs({}), feelings:'verwirrt', distress_level:null, distress_note:null, thoughts_type:null, thoughts_note:null, self_care_note:null, inner_part:null, note:'Kann Fokus nicht einschätzen.' },
+  { created_at: dt(3, 9,0), energy_level:3, focus_level:0, energy_skipped:0, focus_skipped:1, feelings_skipped:0, body_signals:bs({}), feelings:'verwirrt', distress_level:null, distress_note:null, thoughts_type:null, thoughts_note:null, self_care_note:null, inner_part:null, note:'Kann Fokus nicht einschätzen.' },
   { created_at: dt(3, 21,30), energy_level:3, focus_level:3, energy_skipped:0, focus_skipped:0, feelings_skipped:0, body_signals:bs({hunger:false}), feelings:'neutral, zufrieden', distress_level:null, distress_note:null, thoughts_type:'supportive', thoughts_note:null, self_care_note:null, inner_part:null, note:null },
 
   // ─── Day 2 ───
@@ -175,7 +175,7 @@ const checkins = [
   { created_at: dt(2, 19,45), energy_level:3, focus_level:3, energy_skipped:0, focus_skipped:0, feelings_skipped:0, body_signals:bs({hunger:true}), feelings:'zufrieden', distress_level:null, distress_note:null, thoughts_type:'supportive', thoughts_note:null, self_care_note:'Gekocht, Netflix.', inner_part:null, note:null },
 
   // ─── Day 1 (yesterday) ───
-  { created_at: dt(1, 9,00), energy_level:3, focus_level:4, energy_skipped:0, focus_skipped:0, feelings_skipped:0, body_signals:bs({hunger:false,thirst:false,externalStimuli:false}), feelings:'leicht, zufrieden', distress_level:null, distress_note:null, thoughts_type:'supportive', thoughts_note:null, self_care_note:'Morgenroutine eingehalten.', inner_part:null, note:null },
+  { created_at: dt(1, 9,0), energy_level:3, focus_level:4, energy_skipped:0, focus_skipped:0, feelings_skipped:0, body_signals:bs({hunger:false,thirst:false,externalStimuli:false}), feelings:'leicht, zufrieden', distress_level:null, distress_note:null, thoughts_type:'supportive', thoughts_note:null, self_care_note:'Morgenroutine eingehalten.', inner_part:null, note:null },
   { created_at: dt(1, 20,30), energy_level:3, focus_level:3, energy_skipped:0, focus_skipped:0, feelings_skipped:0, body_signals:bs({hunger:false}), feelings:'neutral, dankbar', distress_level:null, distress_note:null, thoughts_type:'supportive', thoughts_note:'Ruhiger Abend.', self_care_note:null, inner_part:null, note:null },
 ];
 

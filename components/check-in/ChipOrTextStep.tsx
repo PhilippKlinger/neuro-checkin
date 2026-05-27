@@ -16,6 +16,8 @@ interface ChipOrTextStepProps {
   maxLength?: number;
   hint?: string;
   userChips?: string[];
+  /** When true, shows a ruhiger Hinweis under user chips: limit reached. */
+  userChipsAtLimit?: boolean;
   skipped?: boolean;
   onSkip?: () => void;
   chipsOnly?: boolean;
@@ -84,6 +86,7 @@ export function ChipOrTextStep({
   maxLength = 150,
   hint,
   userChips,
+  userChipsAtLimit = false,
   skipped,
   onSkip,
   chipsOnly = false,
@@ -131,6 +134,18 @@ export function ChipOrTextStep({
               onValueChange={onValueChange}
               variant="user"
             />
+          )}
+
+          {userChipsAtLimit && (
+            <AppText
+              variant="hint"
+              size="xs"
+              color="secondary"
+              style={{ marginBottom: spacing.sm }}
+              accessibilityRole="text"
+            >
+              Volle Liste — entferne ein Wort in den Einstellungen, um neue zu speichern.
+            </AppText>
           )}
 
           {!chipsOnly && (

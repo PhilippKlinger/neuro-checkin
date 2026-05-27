@@ -232,7 +232,7 @@ describe('normalizeCheckInInsert — pass-through', () => {
 
 describe('normalizeCheckInInsert — text truncation', () => {
   it('exports TEXT_LIMITS constants', () => {
-    expect(TEXT_LIMITS.MAX_FEELINGS_LENGTH).toBe(500);
+    expect(TEXT_LIMITS.MAX_FEELINGS_LENGTH).toBe(320);
     expect(TEXT_LIMITS.MAX_NOTE_LENGTH).toBe(200);
     expect(TEXT_LIMITS.MAX_INNER_PART_LENGTH).toBe(150);
     expect(TEXT_LIMITS.MAX_FEEDBACK_LENGTH).toBe(500);
