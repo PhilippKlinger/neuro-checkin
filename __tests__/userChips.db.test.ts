@@ -42,8 +42,8 @@ describe('saveUserChips', () => {
   it('inserts a new non-standard chip via INSERT OR IGNORE', async () => {
     const db = makeDb();
     await saveUserChips(db as never, 'feelings', 'neblig', STANDARD_FEELINGS);
-    const insertCall = db.runAsync.mock.calls.find((c: unknown[]) =>
-      typeof c[0] === 'string' && (c[0] as string).includes('INSERT OR IGNORE')
+    const insertCall = db.runAsync.mock.calls.find(
+      (c: unknown[]) => typeof c[0] === 'string' && (c[0] as string).includes('INSERT OR IGNORE')
     );
     expect(insertCall).toBeDefined();
   });
@@ -51,8 +51,9 @@ describe('saveUserChips', () => {
   it('increments use_count after inserting', async () => {
     const db = makeDb();
     await saveUserChips(db as never, 'feelings', 'neblig', STANDARD_FEELINGS);
-    const updateCall = db.runAsync.mock.calls.find((c: unknown[]) =>
-      typeof c[0] === 'string' && (c[0] as string).includes('use_count = use_count + 1')
+    const updateCall = db.runAsync.mock.calls.find(
+      (c: unknown[]) =>
+        typeof c[0] === 'string' && (c[0] as string).includes('use_count = use_count + 1')
     );
     expect(updateCall).toBeDefined();
   });
@@ -60,8 +61,8 @@ describe('saveUserChips', () => {
   it('uses normalized_label in INSERT (lowercase)', async () => {
     const db = makeDb();
     await saveUserChips(db as never, 'feelings', 'Neblig', STANDARD_FEELINGS);
-    const insertCall = db.runAsync.mock.calls.find((c: unknown[]) =>
-      typeof c[0] === 'string' && (c[0] as string).includes('INSERT OR IGNORE')
+    const insertCall = db.runAsync.mock.calls.find(
+      (c: unknown[]) => typeof c[0] === 'string' && (c[0] as string).includes('INSERT OR IGNORE')
     );
     expect(insertCall).toBeDefined();
     // normalized_label should be 'neblig' (lowercase of 'Neblig')
@@ -85,8 +86,8 @@ describe('saveUserChips', () => {
     const db = makeDb();
     await saveUserChips(db as never, 'feelings', 'neblig, wattig', STANDARD_FEELINGS);
     // should have INSERT calls for both terms
-    const insertCalls = db.runAsync.mock.calls.filter((c: unknown[]) =>
-      typeof c[0] === 'string' && (c[0] as string).includes('INSERT OR IGNORE')
+    const insertCalls = db.runAsync.mock.calls.filter(
+      (c: unknown[]) => typeof c[0] === 'string' && (c[0] as string).includes('INSERT OR IGNORE')
     );
     expect(insertCalls.length).toBe(2);
   });
@@ -100,8 +101,8 @@ describe('saveUserChips', () => {
   it('ignores standard chips in a mixed list but saves user terms', async () => {
     const db = makeDb();
     await saveUserChips(db as never, 'feelings', 'ruhig, neblig', STANDARD_FEELINGS);
-    const insertCalls = db.runAsync.mock.calls.filter((c: unknown[]) =>
-      typeof c[0] === 'string' && (c[0] as string).includes('INSERT OR IGNORE')
+    const insertCalls = db.runAsync.mock.calls.filter(
+      (c: unknown[]) => typeof c[0] === 'string' && (c[0] as string).includes('INSERT OR IGNORE')
     );
     // Only one INSERT — for 'neblig', not for 'ruhig'
     expect(insertCalls.length).toBe(1);
@@ -132,8 +133,9 @@ describe('saveUserChips', () => {
       // No count check needed when chip already exists
     });
     await saveUserChips(db as never, 'feelings', 'neblig', STANDARD_FEELINGS);
-    const updateCall = db.runAsync.mock.calls.find((c: unknown[]) =>
-      typeof c[0] === 'string' && (c[0] as string).includes('use_count = use_count + 1')
+    const updateCall = db.runAsync.mock.calls.find(
+      (c: unknown[]) =>
+        typeof c[0] === 'string' && (c[0] as string).includes('use_count = use_count + 1')
     );
     expect(updateCall).toBeDefined();
   });

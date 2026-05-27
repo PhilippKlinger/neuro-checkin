@@ -25,24 +25,27 @@ export function ToastProvider() {
   const opacity = useRef(new Animated.Value(0)).current;
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const show = useCallback((message: string) => {
-    if (timerRef.current) clearTimeout(timerRef.current);
-    setToast({ message, key: Date.now() });
-    opacity.setValue(0);
-    Animated.timing(opacity, {
-      toValue: 1,
-      duration: FADE_MS,
-      useNativeDriver: true,
-    }).start();
-    AccessibilityInfo.announceForAccessibility(message);
-    timerRef.current = setTimeout(() => {
+  const show = useCallback(
+    (message: string) => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+      setToast({ message, key: Date.now() });
+      opacity.setValue(0);
       Animated.timing(opacity, {
-        toValue: 0,
+        toValue: 1,
         duration: FADE_MS,
         useNativeDriver: true,
-      }).start(() => setToast(null));
-    }, DURATION);
-  }, [opacity]);
+      }).start();
+      AccessibilityInfo.announceForAccessibility(message);
+      timerRef.current = setTimeout(() => {
+        Animated.timing(opacity, {
+          toValue: 0,
+          duration: FADE_MS,
+          useNativeDriver: true,
+        }).start(() => setToast(null));
+      }, DURATION);
+    },
+    [opacity]
+  );
 
   useEffect(() => {
     showToastGlobal = show;

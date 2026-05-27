@@ -32,8 +32,12 @@ function buildCheckInBlock(c: CheckIn): string {
   rows.push(row('Fokus', p.focus ?? 'Nicht angegeben'));
 
   const signalKeys = Object.keys(SIGNAL_LABELS) as (keyof BodySignals)[];
-  const activeSignals = signalKeys.filter((k) => c.bodySignals[k] === true).map((k) => SIGNAL_LABELS[k]);
-  const inactiveSignals = signalKeys.filter((k) => c.bodySignals[k] === false).map((k) => SIGNAL_LABELS[k]);
+  const activeSignals = signalKeys
+    .filter((k) => c.bodySignals[k] === true)
+    .map((k) => SIGNAL_LABELS[k]);
+  const inactiveSignals = signalKeys
+    .filter((k) => c.bodySignals[k] === false)
+    .map((k) => SIGNAL_LABELS[k]);
   if (activeSignals.length > 0 || inactiveSignals.length > 0) {
     const parts: string[] = [];
     if (activeSignals.length > 0) parts.push(`Ja: ${activeSignals.join(', ')}`);

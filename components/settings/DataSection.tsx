@@ -318,135 +318,135 @@ export function DataSection({
 
         {chipsExpanded && chipList.length > 0 && (
           <View style={{ paddingHorizontal: spacing.sm, paddingBottom: spacing.sm }}>
-          {feelingsChips.length > 0 && (
-            <>
-              <AppText
-                variant="label"
-                size="sm"
-                color="secondary"
-                accessibilityRole="header"
-                style={{ marginBottom: spacing.xs }}
-              >
-                Gefühle
-              </AppText>
-              <View style={[styles.chipGrid, { gap: spacing.xs }]}>
-                {feelingsChips.map((chip) => (
-                  <View
-                    key={chip.label}
-                    style={[
-                      styles.chipRow,
-                      {
-                        backgroundColor: theme.colors.background,
-                        borderRadius: radii.sm,
-                        borderWidth: 1,
-                        borderStyle: 'dashed',
-                        borderColor: theme.colors.border,
-                        paddingLeft: spacing.sm,
-                        paddingVertical: spacing.xs,
-                      },
-                    ]}
-                  >
-                    <AppText variant="body" size="sm" style={{ flex: 1 }} numberOfLines={1}>
-                      {chip.label}
-                    </AppText>
-                    <Pressable
-                      onPress={() => setChipToDelete(chip)}
-                      hitSlop={8}
-                      style={({ pressed }) => [
-                        styles.deleteIcon,
-                        { minWidth: touchTarget.min, minHeight: touchTarget.min },
-                        pressed && { opacity: 0.5 },
+            {feelingsChips.length > 0 && (
+              <>
+                <AppText
+                  variant="label"
+                  size="sm"
+                  color="secondary"
+                  accessibilityRole="header"
+                  style={{ marginBottom: spacing.xs }}
+                >
+                  Gefühle
+                </AppText>
+                <View style={[styles.chipGrid, { gap: spacing.xs }]}>
+                  {feelingsChips.map((chip) => (
+                    <View
+                      key={chip.label}
+                      style={[
+                        styles.chipRow,
+                        {
+                          backgroundColor: theme.colors.background,
+                          borderRadius: radii.sm,
+                          borderWidth: 1,
+                          borderStyle: 'dashed',
+                          borderColor: theme.colors.border,
+                          paddingLeft: spacing.sm,
+                          paddingVertical: spacing.xs,
+                        },
                       ]}
-                      accessibilityRole="button"
-                      accessibilityLabel={`${chip.label} löschen`}
-                      accessibilityHint="Löscht diesen Chip dauerhaft"
                     >
-                      <Ionicons name="close" size={16} color={theme.colors.textSecondary} />
-                    </Pressable>
-                  </View>
-                ))}
-              </View>
-            </>
-          )}
+                      <AppText variant="body" size="sm" style={{ flex: 1 }} numberOfLines={1}>
+                        {chip.label}
+                      </AppText>
+                      <Pressable
+                        onPress={() => setChipToDelete(chip)}
+                        hitSlop={8}
+                        style={({ pressed }) => [
+                          styles.deleteIcon,
+                          { minWidth: touchTarget.min, minHeight: touchTarget.min },
+                          pressed && { opacity: 0.5 },
+                        ]}
+                        accessibilityRole="button"
+                        accessibilityLabel={`${chip.label} löschen`}
+                        accessibilityHint="Löscht diesen Chip dauerhaft"
+                      >
+                        <Ionicons name="close" size={16} color={theme.colors.textSecondary} />
+                      </Pressable>
+                    </View>
+                  ))}
+                </View>
+              </>
+            )}
 
-          {selfCareChips.length > 0 && (
-            <>
-              <AppText
-                variant="label"
-                size="sm"
-                color="secondary"
-                accessibilityRole="header"
-                style={{
-                  marginTop: feelingsChips.length > 0 ? spacing.sm : 0,
-                  marginBottom: spacing.xs,
-                }}
-              >
-                Selbstfürsorge
-              </AppText>
-              <View style={[styles.chipGrid, { gap: spacing.xs }]}>
-                {selfCareChips.map((chip) => (
-                  <View
-                    key={chip.label}
-                    style={[
-                      styles.chipRow,
-                      {
-                        backgroundColor: theme.colors.background,
-                        borderRadius: radii.sm,
-                        borderWidth: 1,
-                        borderStyle: 'dashed',
-                        borderColor: theme.colors.border,
-                        paddingLeft: spacing.sm,
-                        paddingVertical: spacing.xs,
-                      },
-                    ]}
-                  >
-                    <AppText variant="body" size="sm" style={{ flex: 1 }} numberOfLines={1}>
-                      {chip.label}
-                    </AppText>
-                    <Pressable
-                      onPress={() => setChipToDelete(chip)}
-                      hitSlop={8}
-                      style={({ pressed }) => [
-                        styles.deleteIcon,
-                        { minWidth: touchTarget.min, minHeight: touchTarget.min },
-                        pressed && { opacity: 0.5 },
+            {selfCareChips.length > 0 && (
+              <>
+                <AppText
+                  variant="label"
+                  size="sm"
+                  color="secondary"
+                  accessibilityRole="header"
+                  style={{
+                    marginTop: feelingsChips.length > 0 ? spacing.sm : 0,
+                    marginBottom: spacing.xs,
+                  }}
+                >
+                  Selbstfürsorge
+                </AppText>
+                <View style={[styles.chipGrid, { gap: spacing.xs }]}>
+                  {selfCareChips.map((chip) => (
+                    <View
+                      key={chip.label}
+                      style={[
+                        styles.chipRow,
+                        {
+                          backgroundColor: theme.colors.background,
+                          borderRadius: radii.sm,
+                          borderWidth: 1,
+                          borderStyle: 'dashed',
+                          borderColor: theme.colors.border,
+                          paddingLeft: spacing.sm,
+                          paddingVertical: spacing.xs,
+                        },
                       ]}
-                      accessibilityRole="button"
-                      accessibilityLabel={`${chip.label} löschen`}
-                      accessibilityHint="Löscht diesen Chip dauerhaft"
                     >
-                      <Ionicons name="close" size={16} color={theme.colors.textSecondary} />
-                    </Pressable>
-                  </View>
-                ))}
-              </View>
-            </>
-          )}
+                      <AppText variant="body" size="sm" style={{ flex: 1 }} numberOfLines={1}>
+                        {chip.label}
+                      </AppText>
+                      <Pressable
+                        onPress={() => setChipToDelete(chip)}
+                        hitSlop={8}
+                        style={({ pressed }) => [
+                          styles.deleteIcon,
+                          { minWidth: touchTarget.min, minHeight: touchTarget.min },
+                          pressed && { opacity: 0.5 },
+                        ]}
+                        accessibilityRole="button"
+                        accessibilityLabel={`${chip.label} löschen`}
+                        accessibilityHint="Löscht diesen Chip dauerhaft"
+                      >
+                        <Ionicons name="close" size={16} color={theme.colors.textSecondary} />
+                      </Pressable>
+                    </View>
+                  ))}
+                </View>
+              </>
+            )}
 
-          <Pressable
-            onPress={() => setShowChipsConfirm(true)}
-            style={({ pressed }) => [
-              styles.button,
-              {
-                backgroundColor: theme.colors.surface,
-                borderRadius: radii.sm,
-                borderWidth: 1,
-                borderColor: theme.colors.border,
-                padding: spacing.sm,
-                marginTop: spacing.sm,
-                minHeight: touchTarget.min,
-                opacity: pressed ? 0.75 : 1,
-              },
-            ]}
-            accessibilityRole="button"
-            accessibilityLabel="Alle eigenen Chips löschen"
-            accessibilityHint="Löscht alle selbst erstellten Begriffe dauerhaft"
-          >
-            <AppText variant="label" size="sm" color="secondary" style={{ textAlign: 'center' }}>
-              Alle löschen
-            </AppText>
-          </Pressable>
-        </View>
+            <Pressable
+              onPress={() => setShowChipsConfirm(true)}
+              style={({ pressed }) => [
+                styles.button,
+                {
+                  backgroundColor: theme.colors.surface,
+                  borderRadius: radii.sm,
+                  borderWidth: 1,
+                  borderColor: theme.colors.border,
+                  padding: spacing.sm,
+                  marginTop: spacing.sm,
+                  minHeight: touchTarget.min,
+                  opacity: pressed ? 0.75 : 1,
+                },
+              ]}
+              accessibilityRole="button"
+              accessibilityLabel="Alle eigenen Chips löschen"
+              accessibilityHint="Löscht alle selbst erstellten Begriffe dauerhaft"
+            >
+              <AppText variant="label" size="sm" color="secondary" style={{ textAlign: 'center' }}>
+                Alle löschen
+              </AppText>
+            </Pressable>
+          </View>
         )}
       </View>
 

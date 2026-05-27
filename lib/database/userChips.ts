@@ -161,12 +161,8 @@ export async function deleteUserChipByLabel(
 
 export async function deleteUserChips(db: SQLiteDatabase, category?: ChipCategory): Promise<void> {
   if (category) {
-    await withRetry(db, () =>
-      db.runAsync(`DELETE FROM user_chips WHERE category = ?`, [category])
-    );
+    await withRetry(db, () => db.runAsync(`DELETE FROM user_chips WHERE category = ?`, [category]));
   } else {
-    await withRetry(db, () =>
-      db.runAsync(`DELETE FROM user_chips`, [])
-    );
+    await withRetry(db, () => db.runAsync(`DELETE FROM user_chips`, []));
   }
 }

@@ -8,7 +8,11 @@ import { getCheckIns } from '../../lib/database/checkins';
 import { getSettings, updateSettings } from '../../lib/database/settings';
 import { CheckIn } from '../../lib/types/checkin';
 import { CheckInCard } from '../../components/history/CheckInCard';
-import { exportCheckInsAsPdf, saveCheckInsPdfToDevice, MAX_EXPORT_COUNT } from '../../lib/utils/pdfExport';
+import {
+  exportCheckInsAsPdf,
+  saveCheckInsPdfToDevice,
+  MAX_EXPORT_COUNT,
+} from '../../lib/utils/pdfExport';
 import { showToast } from '../../components/ui/Toast';
 import * as Sentry from '@sentry/react-native';
 

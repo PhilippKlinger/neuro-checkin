@@ -15,7 +15,8 @@ export function buildFileName(checkIns: CheckIn[]): string {
   if (checkIns.length === 0) return 'Check-in Export';
 
   const formatDate = (iso: string) => iso.split(' ')[0] ?? iso;
-  const formatTime = (iso: string) => (iso.split(' ')[1] ?? '00:00:00').slice(0, 5).replace(':', '-');
+  const formatTime = (iso: string) =>
+    (iso.split(' ')[1] ?? '00:00:00').slice(0, 5).replace(':', '-');
 
   if (checkIns.length === 1) {
     return `Check-in ${formatDate(checkIns[0].createdAt)} ${formatTime(checkIns[0].createdAt)}`;

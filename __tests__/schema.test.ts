@@ -8,9 +8,10 @@ function makeDb(currentVersion = 0, opts?: { chipColumns?: string[] }) {
   const execCalls: string[] = [];
   const runCalls: string[] = [];
 
-  const defaultChipCols = currentVersion >= 13
-    ? ['id', 'category', 'label', 'normalized_label', 'use_count', 'last_used_at']
-    : ['id', 'category', 'label', 'use_count'];
+  const defaultChipCols =
+    currentVersion >= 13
+      ? ['id', 'category', 'label', 'normalized_label', 'use_count', 'last_used_at']
+      : ['id', 'category', 'label', 'use_count'];
   // v14 doesn't touch user_chips — same columns as v13
   const chipColumns = opts?.chipColumns ?? defaultChipCols;
 

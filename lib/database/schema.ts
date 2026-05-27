@@ -190,9 +190,7 @@ export async function migrateDatabase(db: SQLiteDatabase): Promise<void> {
   }
 
   if (currentVersion < 14) {
-    await db.execAsync(
-      `ALTER TABLE user_settings ADD COLUMN export_directory_uri TEXT;`
-    );
+    await db.execAsync(`ALTER TABLE user_settings ADD COLUMN export_directory_uri TEXT;`);
   }
 
   // String interpolation intentional: PRAGMA does not support parameterized

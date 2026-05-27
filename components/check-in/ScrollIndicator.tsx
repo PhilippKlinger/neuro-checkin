@@ -1,5 +1,11 @@
 import { useRef, useState, useCallback } from 'react';
-import { View, Animated, StyleSheet, type NativeScrollEvent, type NativeSyntheticEvent } from 'react-native';
+import {
+  View,
+  Animated,
+  StyleSheet,
+  type NativeScrollEvent,
+  type NativeSyntheticEvent,
+} from 'react-native';
 import { useTheme } from '../../lib/hooks/useTheme';
 
 const THUMB_MIN_HEIGHT = 18;
@@ -18,10 +24,18 @@ export function ScrollIndicator({ visible, thumbRatio, scrollRatio }: ScrollIndi
 
   if (visible && !wasVisible.current) {
     wasVisible.current = true;
-    Animated.timing(opacity, { toValue: 1, duration: FADE_DURATION, useNativeDriver: true }).start();
+    Animated.timing(opacity, {
+      toValue: 1,
+      duration: FADE_DURATION,
+      useNativeDriver: true,
+    }).start();
   } else if (!visible && wasVisible.current) {
     wasVisible.current = false;
-    Animated.timing(opacity, { toValue: 0, duration: FADE_DURATION, useNativeDriver: true }).start();
+    Animated.timing(opacity, {
+      toValue: 0,
+      duration: FADE_DURATION,
+      useNativeDriver: true,
+    }).start();
   }
 
   const thumbHeight = Math.max(thumbRatio * 100 * 0.75, THUMB_MIN_HEIGHT);

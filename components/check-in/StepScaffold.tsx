@@ -120,11 +120,7 @@ export const StepScaffold = forwardRef<ScrollView, StepScaffoldProps>(function S
             </>
           )}
         </ScrollView>
-        <ScrollIndicator
-          visible={isScrollable}
-          thumbRatio={thumbRatio}
-          scrollRatio={scrollRatio}
-        />
+        <ScrollIndicator visible={isScrollable} thumbRatio={thumbRatio} scrollRatio={scrollRatio} />
       </KeyboardAvoidingView>
     </View>
   );

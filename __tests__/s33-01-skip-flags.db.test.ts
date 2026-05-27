@@ -39,9 +39,10 @@ function makeDb(overrides: Partial<MockDb> = {}): MockDb {
 function makeSchemaMockDb(currentVersion = 0) {
   const execCalls: string[] = [];
   const runCalls: string[] = [];
-  const chipColumns = currentVersion >= 13
-    ? ['id', 'category', 'label', 'normalized_label', 'use_count', 'last_used_at']
-    : ['id', 'category', 'label', 'use_count'];
+  const chipColumns =
+    currentVersion >= 13
+      ? ['id', 'category', 'label', 'normalized_label', 'use_count', 'last_used_at']
+      : ['id', 'category', 'label', 'use_count'];
   return {
     execAsync: jest.fn((sql: string) => {
       execCalls.push(sql);
