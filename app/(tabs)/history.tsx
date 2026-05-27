@@ -1,13 +1,5 @@
 import { useState, useCallback } from 'react';
-import {
-  View,
-  FlatList,
-  Pressable,
-  StyleSheet,
-  Alert,
-  ToastAndroid,
-  ListRenderItem,
-} from 'react-native';
+import { View, FlatList, Pressable, StyleSheet, Alert, ListRenderItem } from 'react-native';
 import { AppText } from '../../components/ui/AppText';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { useTheme } from '../../lib/hooks/useTheme';
@@ -16,6 +8,7 @@ import { getCheckIns } from '../../lib/database/checkins';
 import { CheckIn } from '../../lib/types/checkin';
 import { CheckInCard } from '../../components/history/CheckInCard';
 import { exportCheckInsAsPdf, saveCheckInsPdfToDevice, MAX_EXPORT_COUNT } from '../../lib/utils/pdfExport';
+import { showToast } from '../../components/ui/Toast';
 import * as Sentry from '@sentry/react-native';
 
 export default function HistoryScreen() {
@@ -87,7 +80,7 @@ export default function HistoryScreen() {
     setIsExporting(true);
     try {
       await exportCheckInsAsPdf(toExport);
-      ToastAndroid.show('PDF erstellt', ToastAndroid.SHORT);
+      showToast('PDF erstellt');
     } catch (error) {
       Sentry.withScope((scope) => {
         scope.setTag('screen', 'history');
@@ -117,7 +110,7 @@ export default function HistoryScreen() {
     setIsExporting(true);
     try {
       await saveCheckInsPdfToDevice(toExport);
-      ToastAndroid.show('PDF gespeichert', ToastAndroid.SHORT);
+      showToast('PDF gespeichert');
     } catch (error) {
       if (error instanceof Error && error.message === 'Permission denied') {
         return;

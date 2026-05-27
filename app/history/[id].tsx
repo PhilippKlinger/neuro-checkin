@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { View, StyleSheet, Alert, ToastAndroid } from 'react-native';
+import { View, StyleSheet, Alert } from 'react-native';
 import { AppText } from '../../components/ui/AppText';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTheme } from '../../lib/hooks/useTheme';
@@ -9,6 +9,7 @@ import { getSettings, updateSettings } from '../../lib/database/settings';
 import { CheckIn } from '../../lib/types/checkin';
 import { CheckInDetailContent } from '../../components/history/CheckInDetailContent';
 import { exportCheckInsAsPdf, saveCheckInsPdfToDevice } from '../../lib/utils/pdfExport';
+import { showToast } from '../../components/ui/Toast';
 import * as Sentry from '@sentry/react-native';
 
 export default function CheckInDetailScreen() {
@@ -51,7 +52,7 @@ export default function CheckInDetailScreen() {
     if (!checkIn) return;
     try {
       await exportCheckInsAsPdf([checkIn]);
-      ToastAndroid.show('PDF erstellt', ToastAndroid.SHORT);
+      showToast('PDF erstellt');
     } catch (error) {
       Sentry.withScope((scope) => {
         scope.setTag('screen', 'checkInDetail');
@@ -69,7 +70,7 @@ export default function CheckInDetailScreen() {
     if (!checkIn) return;
     try {
       await saveCheckInsPdfToDevice([checkIn]);
-      ToastAndroid.show('PDF gespeichert', ToastAndroid.SHORT);
+      showToast('PDF gespeichert');
     } catch (error) {
       if (error instanceof Error && error.message === 'Permission denied') {
         return;
