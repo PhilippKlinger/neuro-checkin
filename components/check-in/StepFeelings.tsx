@@ -23,11 +23,11 @@ export function StepFeelings({
   return (
     <ChipOrTextStep
       title="Gefühle"
-      subtitle="Welche Gefühle nimmst du gerade wahr?"
+      subtitle="Welche Gefühle sind gerade da?"
       chips={FEELING_CHIPS}
       value={value}
       onValueChange={onValueChange}
-      textPlaceholder="Was nimmst du gerade wahr?"
+      textPlaceholder="Eigenes Wort eintragen"
       textAccessibilityLabel="Gefühle beschreiben"
       maxLength={MAX_LABEL_LENGTH}
       hint={hint}

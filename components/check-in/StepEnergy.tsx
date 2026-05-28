@@ -12,7 +12,7 @@ interface StepEnergyProps {
 export function StepEnergy({ value, onValueChange, skipped, onSkip, hint }: StepEnergyProps) {
   return (
     <LevelSlider
-      title="Energie-Level"
+      title="Energie"
       subtitle="Wie viel Energie hast du gerade?"
       value={value}
       onValueChange={onValueChange}
