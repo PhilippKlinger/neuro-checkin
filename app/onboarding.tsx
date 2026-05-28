@@ -387,7 +387,7 @@ export default function OnboardingScreen() {
           Alle Check-ins auf einen Blick. Antippen für Details.
         </AppText>
 
-        {/* Card 1 — matches CheckInCard.tsx exactly */}
+        {/* Card 1 — 1:1 CheckInCard.tsx: header (formatDate + formatTime + chevron), metricsRow */}
         <View
           style={{
             backgroundColor: theme.colors.card,
@@ -401,7 +401,7 @@ export default function OnboardingScreen() {
           }}
         >
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-            <AppText variant="label" size="sm">Heute</AppText>
+            <AppText variant="label" size="sm">Mi., 28.05.2026</AppText>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
               <AppText variant="body" size="xs" color="secondary">09:15</AppText>
               <AppText
@@ -442,7 +442,7 @@ export default function OnboardingScreen() {
           }}
         >
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-            <AppText variant="label" size="sm">Gestern</AppText>
+            <AppText variant="label" size="sm">Di., 27.05.2026</AppText>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
               <AppText variant="body" size="xs" color="secondary">21:40</AppText>
               <AppText
@@ -503,82 +503,14 @@ export default function OnboardingScreen() {
           Alles anpassbar. Jederzeit.
         </AppText>
 
-        {/* Group: Aussehen — matches real SettingsGroup "Aussehen" */}
+        {/* Erinnerungen — 1:1 SlotCard from settings/SlotCard.tsx */}
         <View style={{ marginBottom: spacing.lg }}>
           <AppText
             variant="label"
             size="sm"
             color="secondary"
             style={styles.groupTitle}
-          >
-            Aussehen
-          </AppText>
-          <View
-            style={{
-              backgroundColor: theme.colors.card,
-              borderRadius: radii.md,
-              overflow: 'hidden',
-              ...shadows.sm,
-            }}
-          >
-            <View style={{ padding: spacing.sm }}>
-              <AppText variant="label" style={{ paddingHorizontal: spacing.xs, marginBottom: spacing.xs }}>
-                Modus
-              </AppText>
-              <View style={{ flexDirection: 'row', gap: spacing.sm }}>
-                {(['Hell', 'Dunkel', 'System'] as const).map((label, i) => (
-                  <View
-                    key={label}
-                    style={{
-                      flex: 1,
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      backgroundColor: i === 0 ? theme.colors.accentSoft : theme.colors.surface,
-                      borderRadius: radii.md,
-                      padding: spacing.md,
-                      borderWidth: 2,
-                      borderColor: i === 0 ? theme.colors.accent : theme.colors.border,
-                    }}
-                  >
-                    <AppText variant="label" size="sm" style={{ textAlign: 'center' }}>{label}</AppText>
-                  </View>
-                ))}
-              </View>
-            </View>
-            <View style={{ borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: theme.colors.border }} />
-            <View style={{ padding: spacing.sm }}>
-              <AppText variant="label" style={{ paddingHorizontal: spacing.xs, marginBottom: spacing.xs }}>
-                Farbpalette
-              </AppText>
-              <View style={{ flexDirection: 'row', gap: spacing.sm }}>
-                {(['Warm\nEarth', 'Cool\nMist', 'Soft\nSage'] as const).map((label, i) => (
-                  <View
-                    key={label}
-                    style={{
-                      flex: 1,
-                      alignItems: 'center',
-                      borderRadius: radii.md,
-                      padding: spacing.md,
-                      backgroundColor: theme.colors.surface,
-                      borderWidth: 2,
-                      borderColor: i === 0 ? theme.colors.primary : theme.colors.border,
-                    }}
-                  >
-                    <AppText variant="label" size="sm" style={{ textAlign: 'center' }}>{label}</AppText>
-                  </View>
-                ))}
-              </View>
-            </View>
-          </View>
-        </View>
-
-        {/* Group: Erinnerungen — matches real SlotCard layout */}
-        <View style={{ marginBottom: spacing.lg }}>
-          <AppText
-            variant="label"
-            size="sm"
-            color="secondary"
-            style={styles.groupTitle}
+            accessibilityRole="header"
           >
             Erinnerungen
           </AppText>
@@ -620,13 +552,14 @@ export default function OnboardingScreen() {
           </View>
         </View>
 
-        {/* Group: Check-in — matches real SettingsGroup "Check-in" */}
+        {/* Check-in — 1:1 SettingsGroup "Check-in" with SettingsRow */}
         <View style={{ marginBottom: spacing.lg }}>
           <AppText
             variant="label"
             size="sm"
             color="secondary"
             style={styles.groupTitle}
+            accessibilityRole="header"
           >
             Check-in
           </AppText>
@@ -638,95 +571,89 @@ export default function OnboardingScreen() {
               ...shadows.sm,
             }}
           >
-            <SettingsRowMock
-              label="Hilfe im Check-in"
-              right={<ToggleMock active />}
-            />
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                paddingHorizontal: spacing.md,
+                paddingVertical: spacing.sm,
+                minHeight: touchTarget.min,
+              }}
+            >
+              <View style={{ flex: 1, gap: 2 }}>
+                <AppText variant="label">Hilfe im Check-in</AppText>
+                <AppText variant="body" size="sm" color="secondary">
+                  Erklärungen wenn du sie brauchst
+                </AppText>
+              </View>
+              <ToggleMock active />
+            </View>
           </View>
         </View>
 
-        {/* Group: Info — matches real SettingsGroup "Info" */}
+        {/* Daten — 1:1 DataSection layout */}
         <View style={{ marginBottom: spacing.lg }}>
           <AppText
             variant="label"
             size="sm"
             color="secondary"
             style={styles.groupTitle}
+            accessibilityRole="header"
           >
-            Info
+            Daten
           </AppText>
+          {/* PDF-Speicherort — expandable card like DataSection */}
           <View
             style={{
               backgroundColor: theme.colors.card,
               borderRadius: radii.md,
+              borderWidth: 1,
+              borderColor: theme.colors.border,
+              marginBottom: spacing.sm,
               overflow: 'hidden',
               ...shadows.sm,
             }}
           >
-            <SettingsRowMock
-              label="Was ist ein Check-in?"
-              right={
-                <AppText variant="label" style={{ color: theme.colors.textSecondary }}>›</AppText>
-              }
-              showDivider
-            />
-            <SettingsRowMock
-              label="Feedback senden"
-              right={
-                <AppText variant="label" style={{ color: theme.colors.textSecondary }}>›</AppText>
-              }
-              showDivider
-            />
-            <SettingsRowMock
-              label="Datenschutzerklärung"
-              right={
-                <AppText variant="label" style={{ color: theme.colors.textSecondary }}>›</AppText>
-              }
-            />
+            <View
+              style={{
+                padding: spacing.md,
+                minHeight: touchTarget.min,
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+              }}
+            >
+              <AppText variant="label">PDF-Speicherort</AppText>
+              <AppText variant="body" size="sm" color="secondary">›</AppText>
+            </View>
+          </View>
+          {/* Eigene Chips — expandable card like DataSection */}
+          <View
+            style={{
+              backgroundColor: theme.colors.card,
+              borderRadius: radii.md,
+              borderWidth: 1,
+              borderColor: theme.colors.border,
+              overflow: 'hidden',
+              ...shadows.sm,
+            }}
+          >
+            <View
+              style={{
+                padding: spacing.md,
+                minHeight: touchTarget.min,
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+              }}
+            >
+              <AppText variant="label">Eigene Chips</AppText>
+              <AppText variant="body" size="sm" color="secondary">›</AppText>
+            </View>
           </View>
         </View>
       </View>
-    );
-  }
-
-  function SettingsRowMock({
-    label,
-    right,
-    showDivider = false,
-  }: {
-    label: string;
-    right: React.ReactNode;
-    showDivider?: boolean;
-  }) {
-    return (
-      <>
-        <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            paddingHorizontal: spacing.md,
-            paddingVertical: spacing.sm,
-            minHeight: touchTarget.min,
-          }}
-        >
-          <View style={{ flex: 1 }}>
-            <AppText variant="label">{label}</AppText>
-          </View>
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
-            {right}
-          </View>
-        </View>
-        {showDivider && (
-          <View
-            style={{
-              borderBottomWidth: StyleSheet.hairlineWidth,
-              borderBottomColor: theme.colors.border,
-              marginLeft: 16,
-            }}
-          />
-        )}
-      </>
     );
   }
 
