@@ -11,11 +11,7 @@ export function StepArrival({ showHintIntro }: StepArrivalProps) {
   const { spacing } = useTheme();
 
   return (
-    <StepScaffold
-      title="Ankommen"
-      subtitle="Einen Moment, bevor es losgeht."
-      centerContent
-    >
+    <StepScaffold title="Ankommen" subtitle="Einen Moment, bevor es losgeht." centerContent>
       <AppText variant="body" color="secondary" style={[styles.body, { marginBottom: spacing.md }]}>
         Atme einmal langsam aus.
       </AppText>
