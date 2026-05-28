@@ -144,7 +144,7 @@ export function ChipOrTextStep({
               style={{ marginBottom: spacing.sm }}
               accessibilityRole="text"
             >
-              Volle Liste — entferne ein Wort in den Einstellungen, um neue zu speichern.
+              Liste voll. In den Einstellungen ein Wort entfernen, um neue zu speichern.
             </AppText>
           )}
 
@@ -157,7 +157,7 @@ export function ChipOrTextStep({
                 pressed && { opacity: 0.75 },
               ]}
               accessibilityRole="button"
-              accessibilityLabel="Stattdessen frei beschreiben"
+              accessibilityLabel="Frei beschreiben"
             >
               <AppText
                 variant="body"
@@ -165,7 +165,7 @@ export function ChipOrTextStep({
                 color="secondary"
                 style={{ textDecorationLine: 'underline' }}
               >
-                Lieber frei beschreiben
+                Frei beschreiben
               </AppText>
             </Pressable>
           )}
@@ -192,7 +192,7 @@ export function ChipOrTextStep({
             accessibilityLabel={textAccessibilityLabel}
           />
           <AppText variant="hint" size="xs" style={{ marginTop: spacing.xs }}>
-            Wird als eigener Chip gespeichert — max. ein kurzer Begriff.
+            Wird als eigener Chip gespeichert. Kurzer Begriff.
           </AppText>
           {value.length >= counterThreshold && (
             <AppText
@@ -213,7 +213,7 @@ export function ChipOrTextStep({
               pressed && { opacity: 0.75 },
             ]}
             accessibilityRole="button"
-            accessibilityLabel="Stattdessen aus Vorschlägen wählen"
+            accessibilityLabel="Vorschläge anzeigen"
           >
             <AppText
               variant="body"
@@ -221,7 +221,7 @@ export function ChipOrTextStep({
               color="secondary"
               style={{ textDecorationLine: 'underline' }}
             >
-              Zurück zu den Vorschlägen
+              Vorschläge anzeigen
             </AppText>
           </Pressable>
         </>

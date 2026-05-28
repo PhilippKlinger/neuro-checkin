@@ -43,7 +43,7 @@ export function StepThoughts({ type, note, onTypeChange, onNoteChange, hint }: S
     <StepScaffold
       ref={scrollRef}
       title="Gedanken"
-      subtitle="Wie würdest du deine Gedanken gerade beschreiben?"
+      subtitle="Wie sind deine Gedanken gerade?"
       hint={hint}
       keyboardPersistTaps
       avoidKeyboard
@@ -80,7 +80,7 @@ export function StepThoughts({ type, note, onTypeChange, onNoteChange, hint }: S
       <AppTextInput
         value={note}
         onChangeText={(text) => onNoteChange(text.slice(0, 200))}
-        placeholder="Möchtest du dazu etwas notieren? (optional)"
+        placeholder="Notiz (optional)"
         placeholderTextColor={theme.colors.textSecondary}
         multiline
         maxLength={200}

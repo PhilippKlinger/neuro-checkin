@@ -12,8 +12,8 @@ interface StepFocusProps {
 export function StepFocus({ value, onValueChange, skipped, onSkip, hint }: StepFocusProps) {
   return (
     <LevelSlider
-      title="Fokus-Level"
-      subtitle="Wie klar fühlt sich dein Kopf gerade an?"
+      title="Fokus"
+      subtitle="Wie klar ist dein Kopf gerade?"
       value={value}
       onValueChange={onValueChange}
       labels={FOCUS_LABELS}
