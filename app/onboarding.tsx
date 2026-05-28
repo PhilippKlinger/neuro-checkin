@@ -25,12 +25,12 @@ import type { FontFamily } from '../lib/types/checkin';
 const TOTAL_SLIDES = 6;
 
 const SLIDE_TITLES = [
-  'Ein Moment für dich.',
+  'Neuro Check-in',
   'Die Schritte eines Check-ins',
   'So sieht ein Schritt aus',
   'Dein Verlauf',
   'Deine Einstellungen',
-  'Gestalte deine App.',
+  'Aussehen wählen',
 ];
 
 const STEP_LIST = [
@@ -54,7 +54,6 @@ export default function OnboardingScreen() {
     fontFamily,
     setFontFamily,
     spacing,
-    typography,
     radii,
     shadows,
     touchTarget,
@@ -159,31 +158,37 @@ export default function OnboardingScreen() {
             style={{ textAlign: 'center', marginTop: spacing.xl }}
             accessibilityRole="header"
           >
-            Ein Moment für dich.
+            Ein Check-in für Körper, Gefühle und Gedanken.
           </AppText>
           <AppText
             variant="body"
             color="secondary"
-            style={{
-              textAlign: 'center',
-              marginTop: spacing.md,
-              lineHeight: typography.sizes.md * 1.6,
-            }}
+            style={{ textAlign: 'center', marginTop: spacing.md }}
           >
-            Ein Check-in führt dich durch Körper, Gefühle und Gedanken. Für Menschen, die nicht
-            immer leichten Zugang dazu haben.
+            Für Menschen, die nicht immer leichten Zugang dazu haben.
           </AppText>
         </View>
         <View
           style={{
             padding: spacing.md,
-            backgroundColor: theme.colors.surface,
+            backgroundColor: theme.colors.card,
             borderRadius: radii.md,
+            borderWidth: 1,
+            borderColor: theme.colors.border,
             marginTop: spacing.lg,
+            ...shadows.sm,
           }}
         >
           <AppText variant="body" size="sm" color="secondary" style={{ textAlign: 'center' }}>
-            Alles bleibt lokal auf deinem Gerät. Kein Konto, keine Cloud, keine Analyse.
+            Keine Streaks, keine Punkte, kein Druck.
+          </AppText>
+          <AppText
+            variant="body"
+            size="sm"
+            color="secondary"
+            style={{ textAlign: 'center', marginTop: spacing.xs }}
+          >
+            Lokal gespeichert · kein Therapieersatz
           </AppText>
         </View>
       </View>
@@ -209,30 +214,44 @@ export default function OnboardingScreen() {
           9 Schritte beim vollen Check-in. 3 beim Schnell-Check.
         </AppText>
 
-        <View style={{ gap: spacing.xs }}>
+        <View
+          style={{
+            backgroundColor: theme.colors.card,
+            borderRadius: radii.md,
+            overflow: 'hidden',
+            ...shadows.sm,
+          }}
+        >
           {STEP_LIST.map((label, index) => (
-            <View
-              key={label}
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                gap: spacing.sm,
-                padding: spacing.sm,
-                paddingHorizontal: spacing.md,
-                backgroundColor: theme.colors.surface,
-                borderRadius: 10,
-              }}
-            >
-              <AppText
-                variant="label"
-                size="sm"
-                style={{ color: theme.colors.accent, minWidth: 16 }}
+            <View key={label}>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  gap: spacing.sm,
+                  paddingVertical: spacing.sm,
+                  paddingHorizontal: spacing.md,
+                  minHeight: touchTarget.min,
+                }}
               >
-                {index + 1}
-              </AppText>
-              <AppText variant="body" size="sm">
-                {label}
-              </AppText>
+                <AppText
+                  variant="label"
+                  size="sm"
+                  style={{ color: theme.colors.accent, minWidth: 16 }}
+                >
+                  {index + 1}
+                </AppText>
+                <AppText variant="label">{label}</AppText>
+              </View>
+              {index < STEP_LIST.length - 1 && (
+                <View
+                  style={{
+                    borderBottomWidth: StyleSheet.hairlineWidth,
+                    borderBottomColor: theme.colors.border,
+                    marginLeft: 16,
+                  }}
+                />
+              )}
             </View>
           ))}
         </View>
@@ -340,7 +359,7 @@ export default function OnboardingScreen() {
           color="secondary"
           style={{ textAlign: 'center', marginTop: spacing.md }}
         >
-          Eine Auswahl antippen — fertig. Kein Schritt muss exakt sein.
+          Eine Auswahl antippen — fertig.
         </AppText>
       </View>
     );
@@ -366,6 +385,7 @@ export default function OnboardingScreen() {
         </AppText>
 
         <View style={{ gap: spacing.xs }}>
+          {/* Card 1 */}
           <View
             style={{
               backgroundColor: theme.colors.card,
@@ -377,20 +397,31 @@ export default function OnboardingScreen() {
               ...shadows.md,
             }}
           >
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: spacing.xs }}>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
               <AppText variant="label" size="sm">Heute</AppText>
-              <AppText variant="body" size="sm" color="secondary">09:15</AppText>
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <AppText variant="body" size="xs" color="secondary">09:15</AppText>
+                <AppText
+                  variant="label"
+                  style={{ color: theme.colors.border, marginLeft: spacing.xs }}
+                >
+                  ›
+                </AppText>
+              </View>
             </View>
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.xs }}>
-              <View style={{ width: 8, height: 8, borderRadius: radii.full, backgroundColor: theme.colors.accent }} />
-              <AppText variant="body" size="sm" color="secondary">Energie: Wenig</AppText>
-            </View>
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.xs, marginTop: 2 }}>
-              <View style={{ width: 8, height: 8, borderRadius: radii.full, backgroundColor: theme.colors.accent }} />
-              <AppText variant="body" size="sm" color="secondary">Fokus: Mittel</AppText>
+            <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: spacing.xs, gap: spacing.md }}>
+              <View style={{ alignItems: 'center' }}>
+                <AppText variant="body" size="xs" color="secondary">Energie</AppText>
+                <AppText variant="label" weight="semibold" size="sm" color="accent">Wenig</AppText>
+              </View>
+              <View style={{ alignItems: 'center' }}>
+                <AppText variant="body" size="xs" color="secondary">Fokus</AppText>
+                <AppText variant="label" weight="semibold" size="sm" color="accent">Mittel</AppText>
+              </View>
             </View>
           </View>
 
+          {/* Card 2 */}
           <View
             style={{
               backgroundColor: theme.colors.card,
@@ -402,33 +433,44 @@ export default function OnboardingScreen() {
               ...shadows.md,
             }}
           >
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: spacing.xs }}>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
               <AppText variant="label" size="sm">Gestern</AppText>
-              <AppText variant="body" size="sm" color="secondary">21:40</AppText>
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <AppText variant="body" size="xs" color="secondary">21:40</AppText>
+                <AppText
+                  variant="label"
+                  style={{ color: theme.colors.border, marginLeft: spacing.xs }}
+                >
+                  ›
+                </AppText>
+              </View>
             </View>
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.xs }}>
-              <View style={{ width: 8, height: 8, borderRadius: radii.full, backgroundColor: theme.colors.accent }} />
-              <AppText variant="body" size="sm" color="secondary">Energie: Mittel</AppText>
-            </View>
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.xs, marginTop: 2 }}>
-              <View style={{ width: 8, height: 8, borderRadius: radii.full, backgroundColor: theme.colors.accent }} />
-              <AppText variant="body" size="sm" color="secondary">Fokus: Viel</AppText>
+            <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: spacing.xs, gap: spacing.md }}>
+              <View style={{ alignItems: 'center' }}>
+                <AppText variant="body" size="xs" color="secondary">Energie</AppText>
+                <AppText variant="label" weight="semibold" size="sm" color="accent">Mittel</AppText>
+              </View>
+              <View style={{ alignItems: 'center' }}>
+                <AppText variant="body" size="xs" color="secondary">Fokus</AppText>
+                <AppText variant="label" weight="semibold" size="sm" color="accent">Viel</AppText>
+              </View>
             </View>
           </View>
         </View>
 
         <View
           style={{
-            padding: spacing.sm + 2,
-            paddingHorizontal: spacing.md,
-            backgroundColor: theme.colors.surface,
-            borderRadius: 10,
+            padding: spacing.md,
+            backgroundColor: theme.colors.card,
+            borderRadius: radii.md,
+            borderWidth: 1,
+            borderColor: theme.colors.border,
             marginTop: spacing.md,
+            ...shadows.sm,
           }}
         >
           <AppText variant="body" size="sm" color="secondary" style={{ textAlign: 'center' }}>
-            Exportiere einzelne oder mehrere Check-ins als PDF — zum Teilen mit Therapeut:innen
-            oder für dich selbst.
+            Exportiere Check-ins als PDF — zum Teilen oder für dich.
           </AppText>
         </View>
       </View>
@@ -451,124 +493,122 @@ export default function OnboardingScreen() {
           color="secondary"
           style={{ textAlign: 'center', marginBottom: spacing.lg }}
         >
-          Du hast die volle Kontrolle.
+          Alles anpassbar. Jederzeit.
         </AppText>
 
         {/* Group: Erinnerungen */}
-        <AppText
-          variant="label"
-          size="sm"
-          color="secondary"
-          style={{
-            textTransform: 'uppercase',
-            letterSpacing: 0.5,
-            marginBottom: spacing.sm,
-            paddingLeft: spacing.xs,
-          }}
-        >
-          Erinnerungen
-        </AppText>
-        <View
-          style={{
-            backgroundColor: theme.colors.card,
-            borderRadius: radii.md,
-            overflow: 'hidden',
-            ...shadows.sm,
-            marginBottom: spacing.md,
-          }}
-        >
-          <SettingsRowMock
-            label="Morgens"
-            right={
-              <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm }}>
-                <AppText variant="body" size="sm" color="secondary">09:00</AppText>
-                <ToggleMock active />
-              </View>
-            }
-            showBorder
-          />
-          <SettingsRowMock
-            label="Abends"
-            right={
-              <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm }}>
-                <AppText variant="body" size="sm" color="secondary">21:00</AppText>
-                <ToggleMock active={false} />
-              </View>
-            }
-          />
+        <View style={{ marginBottom: spacing.lg }}>
+          <AppText
+            variant="label"
+            size="sm"
+            color="secondary"
+            style={{
+              textTransform: 'uppercase',
+              letterSpacing: 0.5,
+              marginBottom: spacing.sm,
+              paddingLeft: spacing.xs,
+            }}
+          >
+            Erinnerungen
+          </AppText>
+          <View
+            style={{
+              backgroundColor: theme.colors.card,
+              borderRadius: radii.md,
+              overflow: 'hidden',
+              ...shadows.sm,
+            }}
+          >
+            <SettingsRowMock
+              label="Morgens"
+              right={
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+                  <AppText variant="body" size="sm" color="secondary">09:00</AppText>
+                  <ToggleMock active />
+                </View>
+              }
+              showDivider
+            />
+            <SettingsRowMock
+              label="Abends"
+              right={
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+                  <AppText variant="body" size="sm" color="secondary">21:00</AppText>
+                  <ToggleMock active={false} />
+                </View>
+              }
+            />
+          </View>
         </View>
 
         {/* Group: Check-in */}
-        <AppText
-          variant="label"
-          size="sm"
-          color="secondary"
-          style={{
-            textTransform: 'uppercase',
-            letterSpacing: 0.5,
-            marginBottom: spacing.sm,
-            paddingLeft: spacing.xs,
-          }}
-        >
-          Check-in
-        </AppText>
-        <View
-          style={{
-            backgroundColor: theme.colors.card,
-            borderRadius: radii.md,
-            overflow: 'hidden',
-            ...shadows.sm,
-            marginBottom: spacing.md,
-          }}
-        >
-          <SettingsRowMock
-            label="Hilfe im Check-in"
-            right={<ToggleMock active />}
-          />
+        <View style={{ marginBottom: spacing.lg }}>
+          <AppText
+            variant="label"
+            size="sm"
+            color="secondary"
+            style={{
+              textTransform: 'uppercase',
+              letterSpacing: 0.5,
+              marginBottom: spacing.sm,
+              paddingLeft: spacing.xs,
+            }}
+          >
+            Check-in
+          </AppText>
+          <View
+            style={{
+              backgroundColor: theme.colors.card,
+              borderRadius: radii.md,
+              overflow: 'hidden',
+              ...shadows.sm,
+            }}
+          >
+            <SettingsRowMock
+              label="Hilfe im Check-in"
+              right={<ToggleMock active />}
+            />
+          </View>
         </View>
 
         {/* Group: Daten */}
-        <AppText
-          variant="label"
-          size="sm"
-          color="secondary"
-          style={{
-            textTransform: 'uppercase',
-            letterSpacing: 0.5,
-            marginBottom: spacing.sm,
-            paddingLeft: spacing.xs,
-          }}
-        >
-          Daten
-        </AppText>
-        <View
-          style={{
-            backgroundColor: theme.colors.card,
-            borderRadius: radii.md,
-            overflow: 'hidden',
-            ...shadows.sm,
-            marginBottom: spacing.md,
-          }}
-        >
-          <SettingsRowMock
-            label="PDF-Speicherort"
-            right={<AppText variant="body" color="secondary">›</AppText>}
-            showBorder
-          />
-          <SettingsRowMock
-            label="Eigene Chips verwalten"
-            right={<AppText variant="body" color="secondary">›</AppText>}
-          />
+        <View style={{ marginBottom: spacing.lg }}>
+          <AppText
+            variant="label"
+            size="sm"
+            color="secondary"
+            style={{
+              textTransform: 'uppercase',
+              letterSpacing: 0.5,
+              marginBottom: spacing.sm,
+              paddingLeft: spacing.xs,
+            }}
+          >
+            Daten
+          </AppText>
+          <View
+            style={{
+              backgroundColor: theme.colors.card,
+              borderRadius: radii.md,
+              overflow: 'hidden',
+              ...shadows.sm,
+            }}
+          >
+            <SettingsRowMock
+              label="PDF-Speicherort"
+              right={
+                <AppText variant="label" style={{ color: theme.colors.textSecondary }}>›</AppText>
+              }
+              showDivider
+            />
+            <SettingsRowMock
+              label="Eigene Chips verwalten"
+              right={
+                <AppText variant="label" style={{ color: theme.colors.textSecondary }}>›</AppText>
+              }
+            />
+          </View>
         </View>
-
-        <AppText
-          variant="body"
-          size="sm"
-          color="secondary"
-          style={{ textAlign: 'center', marginTop: spacing.sm }}
-        >
-          Erinnerungen, Hilfe-Texte und Daten — alles anpassbar.
-        </AppText>
       </View>
     );
   }
@@ -576,28 +616,41 @@ export default function OnboardingScreen() {
   function SettingsRowMock({
     label,
     right,
-    showBorder = false,
+    showDivider = false,
   }: {
     label: string;
     right: React.ReactNode;
-    showBorder?: boolean;
+    showDivider?: boolean;
   }) {
     return (
-      <View
-        style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          paddingHorizontal: spacing.md,
-          paddingVertical: spacing.sm,
-          minHeight: touchTarget.min,
-          borderBottomWidth: showBorder ? StyleSheet.hairlineWidth : 0,
-          borderBottomColor: theme.colors.border,
-        }}
-      >
-        <AppText variant="body" size="sm">{label}</AppText>
-        {right}
-      </View>
+      <>
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            paddingHorizontal: spacing.md,
+            paddingVertical: spacing.sm,
+            minHeight: touchTarget.min,
+          }}
+        >
+          <View style={{ flex: 1 }}>
+            <AppText variant="label">{label}</AppText>
+          </View>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+            {right}
+          </View>
+        </View>
+        {showDivider && (
+          <View
+            style={{
+              borderBottomWidth: StyleSheet.hairlineWidth,
+              borderBottomColor: theme.colors.border,
+              marginLeft: 16,
+            }}
+          />
+        )}
+      </>
     );
   }
 
@@ -635,7 +688,7 @@ export default function OnboardingScreen() {
           style={{ textAlign: 'center', marginBottom: spacing.lg }}
           accessibilityRole="header"
         >
-          Gestalte deine App.
+          Aussehen wählen
         </AppText>
 
         <AppText
