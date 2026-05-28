@@ -21,6 +21,10 @@ const SECTIONS = [
     body: 'Du entscheidest, wie oft. Du entscheidest, wie tief. Jeder Schritt ist freiwillig.\n\nWenn der volle Check-in zu viel ist: nimm den Schnell-Check-in. Drei Schritte.',
   },
   {
+    title: 'Was bedeuten die Hilfe-Texte?',
+    body: 'Während eines Check-ins kannst du dir kurze Hilfe-Texte einblenden lassen — kleine kursive Zeilen unter der Frage. Sie helfen, wenn du nicht weißt, wie du antworten sollst, oder wenn du gerade nicht alles spürst.\n\nDu schaltest sie über das 💡-Symbol oben rechts ein und aus. Nach langer Pause sind sie automatisch wieder an.',
+  },
+  {
     title: 'Was sie nicht ist',
     body: 'Diese App ist keine Therapie und kein Ersatz dafür. Wenn es dir gerade sehr schlecht geht, sind die Telefonseelsorge (0800 111 0 111, kostenlos und rund um die Uhr) oder deine Hausärztin / dein Hausarzt gute erste Anlaufstellen.\n\nDie App kann begleiten — aber nicht heilen.',
   },
