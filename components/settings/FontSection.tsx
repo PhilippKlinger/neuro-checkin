@@ -10,10 +10,10 @@ interface FontSectionProps {
   onFontChange: (name: FontFamily) => void;
 }
 
-const FONT_OPTIONS: { key: FontFamily; label: string; heading: string; ui: string }[] = [
-  { key: 'inter', label: 'Inter', heading: fonts.inter.semibold, ui: fonts.inter.medium },
-  { key: 'nunitoSans', label: 'Nunito\nSans', heading: fonts.nunitoSans.semibold, ui: fonts.nunitoSans.medium },
-  { key: 'fraunces', label: 'Fraunces', heading: fonts.fraunces.semibold, ui: fonts.inter.medium },
+const FONT_OPTIONS: { key: FontFamily; label: string; subtitle: string; heading: string; ui: string }[] = [
+  { key: 'lexend', label: 'Lexend', subtitle: 'Lesefluenz', heading: fonts.lexend.semibold, ui: fonts.lexend.medium },
+  { key: 'atkinson', label: 'Atkinson', subtitle: 'Maximale Klarheit', heading: fonts.atkinson.semibold, ui: fonts.atkinson.regular },
+  { key: 'nunito', label: 'Nunito', subtitle: 'Ausgewogen', heading: fonts.nunito.semibold, ui: fonts.nunito.medium },
 ];
 
 export const FontSection = memo(function FontSection({
@@ -80,6 +80,12 @@ export const FontSection = memo(function FontSection({
                 style={{ textAlign: 'center', color: theme.colors.text }}
               >
                 {option.label}
+              </AppText>
+              <AppText
+                variant="hint"
+                style={{ textAlign: 'center', color: theme.colors.textSecondary, fontSize: 11 }}
+              >
+                {option.subtitle}
               </AppText>
             </Pressable>
           );

@@ -36,7 +36,7 @@ export async function getSettings(db: SQLiteDatabase): Promise<UserSettings> {
       lastActiveDate: null,
       detailViewIntroduced: false,
       exportDirectoryUri: null,
-      fontFamily: 'inter',
+      fontFamily: 'lexend',
     };
   }
 
@@ -55,7 +55,7 @@ export async function getSettings(db: SQLiteDatabase): Promise<UserSettings> {
     lastActiveDate: row.last_active_date ?? null,
     detailViewIntroduced: row.detail_view_introduced === 1,
     exportDirectoryUri: row.export_directory_uri ?? null,
-    fontFamily: (row.font_family as FontFamily) ?? 'inter',
+    fontFamily: (row.font_family as FontFamily) ?? 'lexend',
   };
 }
 

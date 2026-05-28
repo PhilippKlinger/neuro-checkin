@@ -53,20 +53,20 @@ interface FontFamilies {
 }
 
 const FONT_FAMILY_MAP: Record<FontFamily, FontFamilies> = {
-  inter: { heading: fonts.inter, body: fonts.nunitoSans, ui: fonts.inter, display: fonts.fraunces },
-  nunitoSans: {
-    heading: fonts.nunitoSans,
-    body: fonts.nunitoSans,
-    ui: fonts.nunitoSans,
-    display: fonts.fraunces,
+  lexend: { heading: fonts.lexend, body: fonts.lexend, ui: fonts.lexend, display: fonts.lexend },
+  atkinson: {
+    heading: fonts.atkinson,
+    body: fonts.atkinson,
+    ui: fonts.atkinson,
+    display: fonts.atkinson,
   },
-  fraunces: { heading: fonts.fraunces, body: fonts.fraunces, ui: fonts.inter, display: fonts.fraunces },
+  nunito: { heading: fonts.nunito, body: fonts.nunito, ui: fonts.nunito, display: fonts.nunito },
 };
 
 export function ThemeProvider({ children }: ThemeProviderProps) {
   const [themeName, setThemeName] = useState<ThemeName>(DEFAULT_THEME);
   const [colorMode, setColorMode] = useState<ColorMode>(DEFAULT_COLOR_MODE);
-  const [fontFamily, setFontFamily] = useState<FontFamily>('inter');
+  const [fontFamily, setFontFamily] = useState<FontFamily>('lexend');
   const systemColorScheme = useColorScheme();
 
   const resolvedTypography = useMemo(

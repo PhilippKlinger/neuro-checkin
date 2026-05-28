@@ -231,31 +231,32 @@ export const spacing = {
 // Typography
 // ---------------------------------------------------------------------------
 export const fonts = {
-  inter: {
-    regular: 'Inter_400Regular',
-    medium: 'Inter_500Medium',
-    semibold: 'Inter_600SemiBold',
-    bold: 'Inter_700Bold',
+  lexend: {
+    regular: 'Lexend_400Regular',
+    medium: 'Lexend_500Medium',
+    semibold: 'Lexend_600SemiBold',
+    bold: 'Lexend_700Bold',
   },
-  nunitoSans: {
-    regular: 'NunitoSans_400Regular',
-    medium: 'NunitoSans_500Medium',
-    semibold: 'NunitoSans_600SemiBold',
-    bold: 'NunitoSans_700Bold',
+  atkinson: {
+    regular: 'AtkinsonHyperlegible_400Regular',
+    medium: 'AtkinsonHyperlegible_400Regular',
+    semibold: 'AtkinsonHyperlegible_700Bold',
+    bold: 'AtkinsonHyperlegible_700Bold',
   },
-  fraunces: {
-    regular: 'Fraunces_400Regular',
-    medium: 'Fraunces_500Medium',
-    semibold: 'Fraunces_600SemiBold',
+  nunito: {
+    regular: 'Nunito_400Regular',
+    medium: 'Nunito_500Medium',
+    semibold: 'Nunito_600SemiBold',
+    bold: 'Nunito_700Bold',
   },
 } as const;
 
 export const typography = {
   families: {
-    heading: fonts.inter,
-    body: fonts.nunitoSans,
-    ui: fonts.inter,
-    display: fonts.fraunces,
+    heading: fonts.lexend,
+    body: fonts.lexend,
+    ui: fonts.lexend,
+    display: fonts.lexend,
   },
   sizes: {
     xs: 12,

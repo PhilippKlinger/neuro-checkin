@@ -1,6 +1,6 @@
 import type { SQLiteDatabase } from 'expo-sqlite';
 
-const SCHEMA_VERSION = 15;
+const SCHEMA_VERSION = 16;
 
 export async function migrateDatabase(db: SQLiteDatabase): Promise<void> {
   await db.execAsync(`PRAGMA journal_mode = WAL;`);
@@ -195,7 +195,13 @@ export async function migrateDatabase(db: SQLiteDatabase): Promise<void> {
 
   if (currentVersion < 15) {
     await db.execAsync(
-      `ALTER TABLE user_settings ADD COLUMN font_family TEXT NOT NULL DEFAULT 'inter';`
+      `ALTER TABLE user_settings ADD COLUMN font_family TEXT NOT NULL DEFAULT 'lexend';`
+    );
+  }
+
+  if (currentVersion < 16) {
+    await db.execAsync(
+      `UPDATE user_settings SET font_family = 'lexend' WHERE font_family IN ('inter', 'nunitoSans', 'fraunces');`
     );
   }
 

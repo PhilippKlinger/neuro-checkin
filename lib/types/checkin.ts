@@ -1,4 +1,4 @@
-export type FontFamily = 'inter' | 'nunitoSans' | 'fraunces';
+export type FontFamily = 'lexend' | 'atkinson' | 'nunito';
 
 export interface CheckIn {
   id: number;
