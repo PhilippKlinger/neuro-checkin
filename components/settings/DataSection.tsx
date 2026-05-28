@@ -80,8 +80,8 @@ export function DataSection({
     } catch (error) {
       console.error('deleteUserChips failed:', error);
       Alert.alert(
-        'Fehler',
-        'Eigene Chips konnten nicht gelöscht werden. Bitte versuche es erneut.'
+        'Hat nicht geklappt',
+        'Eigene Chips konnten nicht gelöscht werden. Versuch es nochmal.'
       );
     }
   }
@@ -96,7 +96,7 @@ export function DataSection({
       onChipsDeleteComplete();
     } catch (error) {
       console.error('deleteUserChipByLabel failed:', error);
-      Alert.alert('Fehler', 'Chip konnte nicht gelöscht werden. Bitte versuche es erneut.');
+      Alert.alert('Hat nicht geklappt', 'Chip konnte nicht gelöscht werden. Versuch es nochmal.');
     }
   }
 
@@ -108,7 +108,7 @@ export function DataSection({
       setShowDone(true);
     } catch (error) {
       console.error('deleteAllCheckIns failed:', error);
-      Alert.alert('Fehler', 'Daten konnten nicht gelöscht werden. Bitte versuche es erneut.');
+      Alert.alert('Hat nicht geklappt', 'Daten konnten nicht gelöscht werden. Versuch es nochmal.');
     }
   }
 
@@ -121,7 +121,10 @@ export function DataSection({
       setExportDirExpanded(false);
     } catch (error) {
       console.error('changeExportDirectory failed:', error);
-      Alert.alert('Fehler', 'Speicherort konnte nicht geändert werden. Bitte versuche es erneut.');
+      Alert.alert(
+        'Hat nicht geklappt',
+        'Speicherort konnte nicht geändert werden. Versuch es nochmal.'
+      );
     }
   }
 

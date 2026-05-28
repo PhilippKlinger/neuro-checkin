@@ -26,18 +26,18 @@ interface OnboardingStep {
 const STEPS: OnboardingStep[] = [
   {
     title: 'Willkommen',
-    body: 'Ein Check-in ist eine kurze Pause — ein Moment, um wahrzunehmen wie es dir gerade geht: Körper, Gefühle, Gedanken. Für gute Momente genauso wie für schwere.',
+    body: 'Ein Check-in ist eine kurze Pause. Ein Moment, um zu schauen, wie es dir gerade geht — Körper, Gefühle, Gedanken.',
     hint: 'Alles bleibt auf deinem Gerät — kein Konto, keine Cloud.',
   },
   {
     title: 'So funktioniert es',
-    body: 'Ein Check-in führt dich in 9 ruhigen Schritten durch Körper, Gefühle und Gedanken. Du entscheidest, wie tief du gehst.',
+    body: '9 Schritte durch Körper, Gefühle und Gedanken. Du entscheidest, wie tief du gehst.',
     hint: 'Du kannst jeden Schritt überspringen.',
   },
   {
     title: 'Für dich gemacht',
-    body: 'Keine Streaks, keine Punkte, kein Druck. Wähle eine Farbwelt, die sich für dich richtig anfühlt.',
-    hint: 'Farbe, Dark Mode und Erinnerungen lassen sich jederzeit in den Einstellungen anpassen.',
+    body: 'Keine Streaks, keine Punkte, kein Druck. Wähle deine Farbwelt.',
+    hint: 'Farbe, Dark Mode und Erinnerungen sind jederzeit in den Einstellungen anpassbar.',
   },
 ];
 
@@ -79,8 +79,8 @@ export default function OnboardingScreen() {
     } catch (error) {
       console.error('onboarding save failed:', error);
       Alert.alert(
-        'Fehler',
-        'Einstellungen konnten nicht gespeichert werden. Bitte versuche es erneut.'
+        'Hat nicht geklappt',
+        'Einstellungen konnten nicht gespeichert werden. Versuch es nochmal.'
       );
     }
   }
