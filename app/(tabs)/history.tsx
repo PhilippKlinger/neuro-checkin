@@ -89,7 +89,10 @@ export default function HistoryScreen() {
         scope.setTag('action', 'pdfExport');
         Sentry.captureException(error);
       });
-      Alert.alert('Hat nicht geklappt', 'Das PDF konnte nicht erstellt werden. Versuch es nochmal.');
+      Alert.alert(
+        'Hat nicht geklappt',
+        'Das PDF konnte nicht erstellt werden. Versuch es nochmal.'
+      );
     } finally {
       setIsExporting(false);
       exitSelectionMode();

@@ -121,7 +121,10 @@ export function DataSection({
       setExportDirExpanded(false);
     } catch (error) {
       console.error('changeExportDirectory failed:', error);
-      Alert.alert('Hat nicht geklappt', 'Speicherort konnte nicht geändert werden. Versuch es nochmal.');
+      Alert.alert(
+        'Hat nicht geklappt',
+        'Speicherort konnte nicht geändert werden. Versuch es nochmal.'
+      );
     }
   }
 
