@@ -35,11 +35,14 @@ const SLIDE_TITLES = [
 
 const STEP_LIST = [
   'Ankommen',
-  'Energie & Fokus',
+  'Energie-Level',
+  'Fokus-Level',
   'Körpersignale',
   'Gefühle',
-  'Stress & Gedanken',
+  'Stress-Level',
+  'Gedanken',
   'Selbstfürsorge',
+  'Zusammenfassung',
 ];
 
 const ENERGY_LABELS = ['Sehr wenig', 'Wenig', 'Mittel', 'Viel', 'Sehr viel'];
@@ -384,76 +387,80 @@ export default function OnboardingScreen() {
           Alle Check-ins auf einen Blick. Antippen für Details.
         </AppText>
 
-        <View style={{ gap: spacing.xs }}>
-          {/* Card 1 */}
-          <View
-            style={{
-              backgroundColor: theme.colors.card,
-              borderRadius: radii.md,
-              paddingHorizontal: spacing.md,
-              paddingVertical: spacing.sm,
-              borderWidth: 1,
-              borderColor: theme.colors.border,
-              ...shadows.md,
-            }}
-          >
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-              <AppText variant="label" size="sm">Heute</AppText>
-              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                <AppText variant="body" size="xs" color="secondary">09:15</AppText>
-                <AppText
-                  variant="label"
-                  style={{ color: theme.colors.border, marginLeft: spacing.xs }}
-                >
-                  ›
-                </AppText>
-              </View>
-            </View>
-            <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: spacing.xs, gap: spacing.md }}>
-              <View style={{ alignItems: 'center' }}>
-                <AppText variant="body" size="xs" color="secondary">Energie</AppText>
-                <AppText variant="label" weight="semibold" size="sm" color="accent">Wenig</AppText>
-              </View>
-              <View style={{ alignItems: 'center' }}>
-                <AppText variant="body" size="xs" color="secondary">Fokus</AppText>
-                <AppText variant="label" weight="semibold" size="sm" color="accent">Mittel</AppText>
-              </View>
+        {/* Card 1 — matches CheckInCard.tsx exactly */}
+        <View
+          style={{
+            backgroundColor: theme.colors.card,
+            borderRadius: radii.md,
+            paddingHorizontal: spacing.md,
+            paddingVertical: spacing.sm,
+            marginBottom: spacing.xs,
+            borderWidth: 1,
+            borderColor: theme.colors.border,
+            ...shadows.md,
+          }}
+        >
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+            <AppText variant="label" size="sm">Heute</AppText>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <AppText variant="body" size="xs" color="secondary">09:15</AppText>
+              <AppText
+                variant="label"
+                style={{ color: theme.colors.border, marginLeft: spacing.xs }}
+              >
+                ›
+              </AppText>
             </View>
           </View>
-
-          {/* Card 2 */}
-          <View
-            style={{
-              backgroundColor: theme.colors.card,
-              borderRadius: radii.md,
-              paddingHorizontal: spacing.md,
-              paddingVertical: spacing.sm,
-              borderWidth: 1,
-              borderColor: theme.colors.border,
-              ...shadows.md,
-            }}
-          >
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-              <AppText variant="label" size="sm">Gestern</AppText>
-              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                <AppText variant="body" size="xs" color="secondary">21:40</AppText>
-                <AppText
-                  variant="label"
-                  style={{ color: theme.colors.border, marginLeft: spacing.xs }}
-                >
-                  ›
-                </AppText>
-              </View>
+          <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: spacing.xs, gap: spacing.md }}>
+            <View style={{ alignItems: 'center' }}>
+              <AppText variant="body" size="xs" color="secondary">Energie</AppText>
+              <AppText variant="label" weight="semibold" size="sm" color="accent">Wenig</AppText>
             </View>
-            <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: spacing.xs, gap: spacing.md }}>
-              <View style={{ alignItems: 'center' }}>
-                <AppText variant="body" size="xs" color="secondary">Energie</AppText>
-                <AppText variant="label" weight="semibold" size="sm" color="accent">Mittel</AppText>
-              </View>
-              <View style={{ alignItems: 'center' }}>
-                <AppText variant="body" size="xs" color="secondary">Fokus</AppText>
-                <AppText variant="label" weight="semibold" size="sm" color="accent">Viel</AppText>
-              </View>
+            <View style={{ alignItems: 'center' }}>
+              <AppText variant="body" size="xs" color="secondary">Fokus</AppText>
+              <AppText variant="label" weight="semibold" size="sm" color="accent">Mittel</AppText>
+            </View>
+            <View style={{ alignItems: 'center' }}>
+              <AppText variant="body" size="xs" color="secondary">Signale</AppText>
+              <AppText variant="label" weight="semibold" size="sm" color="accent">3</AppText>
+            </View>
+          </View>
+        </View>
+
+        {/* Card 2 */}
+        <View
+          style={{
+            backgroundColor: theme.colors.card,
+            borderRadius: radii.md,
+            paddingHorizontal: spacing.md,
+            paddingVertical: spacing.sm,
+            marginBottom: spacing.xs,
+            borderWidth: 1,
+            borderColor: theme.colors.border,
+            ...shadows.md,
+          }}
+        >
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+            <AppText variant="label" size="sm">Gestern</AppText>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <AppText variant="body" size="xs" color="secondary">21:40</AppText>
+              <AppText
+                variant="label"
+                style={{ color: theme.colors.border, marginLeft: spacing.xs }}
+              >
+                ›
+              </AppText>
+            </View>
+          </View>
+          <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: spacing.xs, gap: spacing.md }}>
+            <View style={{ alignItems: 'center' }}>
+              <AppText variant="body" size="xs" color="secondary">Energie</AppText>
+              <AppText variant="label" weight="semibold" size="sm" color="accent">Mittel</AppText>
+            </View>
+            <View style={{ alignItems: 'center' }}>
+              <AppText variant="body" size="xs" color="secondary">Fokus</AppText>
+              <AppText variant="label" weight="semibold" size="sm" color="accent">Viel</AppText>
             </View>
           </View>
         </View>
@@ -496,20 +503,15 @@ export default function OnboardingScreen() {
           Alles anpassbar. Jederzeit.
         </AppText>
 
-        {/* Group: Erinnerungen */}
+        {/* Group: Aussehen — matches real SettingsGroup "Aussehen" */}
         <View style={{ marginBottom: spacing.lg }}>
           <AppText
             variant="label"
             size="sm"
             color="secondary"
-            style={{
-              textTransform: 'uppercase',
-              letterSpacing: 0.5,
-              marginBottom: spacing.sm,
-              paddingLeft: spacing.xs,
-            }}
+            style={styles.groupTitle}
           >
-            Erinnerungen
+            Aussehen
           </AppText>
           <View
             style={{
@@ -519,40 +521,112 @@ export default function OnboardingScreen() {
               ...shadows.sm,
             }}
           >
-            <SettingsRowMock
-              label="Morgens"
-              right={
-                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
-                  <AppText variant="body" size="sm" color="secondary">09:00</AppText>
-                  <ToggleMock active />
-                </View>
-              }
-              showDivider
-            />
-            <SettingsRowMock
-              label="Abends"
-              right={
-                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
-                  <AppText variant="body" size="sm" color="secondary">21:00</AppText>
-                  <ToggleMock active={false} />
-                </View>
-              }
-            />
+            <View style={{ padding: spacing.sm }}>
+              <AppText variant="label" style={{ paddingHorizontal: spacing.xs, marginBottom: spacing.xs }}>
+                Modus
+              </AppText>
+              <View style={{ flexDirection: 'row', gap: spacing.sm }}>
+                {(['Hell', 'Dunkel', 'System'] as const).map((label, i) => (
+                  <View
+                    key={label}
+                    style={{
+                      flex: 1,
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      backgroundColor: i === 0 ? theme.colors.accentSoft : theme.colors.surface,
+                      borderRadius: radii.md,
+                      padding: spacing.md,
+                      borderWidth: 2,
+                      borderColor: i === 0 ? theme.colors.accent : theme.colors.border,
+                    }}
+                  >
+                    <AppText variant="label" size="sm" style={{ textAlign: 'center' }}>{label}</AppText>
+                  </View>
+                ))}
+              </View>
+            </View>
+            <View style={{ borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: theme.colors.border }} />
+            <View style={{ padding: spacing.sm }}>
+              <AppText variant="label" style={{ paddingHorizontal: spacing.xs, marginBottom: spacing.xs }}>
+                Farbpalette
+              </AppText>
+              <View style={{ flexDirection: 'row', gap: spacing.sm }}>
+                {(['Warm\nEarth', 'Cool\nMist', 'Soft\nSage'] as const).map((label, i) => (
+                  <View
+                    key={label}
+                    style={{
+                      flex: 1,
+                      alignItems: 'center',
+                      borderRadius: radii.md,
+                      padding: spacing.md,
+                      backgroundColor: theme.colors.surface,
+                      borderWidth: 2,
+                      borderColor: i === 0 ? theme.colors.primary : theme.colors.border,
+                    }}
+                  >
+                    <AppText variant="label" size="sm" style={{ textAlign: 'center' }}>{label}</AppText>
+                  </View>
+                ))}
+              </View>
+            </View>
           </View>
         </View>
 
-        {/* Group: Check-in */}
+        {/* Group: Erinnerungen — matches real SlotCard layout */}
         <View style={{ marginBottom: spacing.lg }}>
           <AppText
             variant="label"
             size="sm"
             color="secondary"
+            style={styles.groupTitle}
+          >
+            Erinnerungen
+          </AppText>
+          {/* SlotCard 1 — enabled */}
+          <View
             style={{
-              textTransform: 'uppercase',
-              letterSpacing: 0.5,
+              backgroundColor: theme.colors.card,
+              borderRadius: radii.md,
+              padding: spacing.md,
               marginBottom: spacing.sm,
-              paddingLeft: spacing.xs,
+              borderWidth: 1,
+              borderColor: theme.colors.accent,
+              ...shadows.sm,
             }}
+          >
+            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+              <AppText variant="label" style={{ flex: 1 }}>Morgen-Erinnerung</AppText>
+              <ToggleMock active />
+            </View>
+            <AppText variant="body" size="sm" color="accent" style={{ marginTop: spacing.xs }}>
+              um 09:00, täglich
+            </AppText>
+          </View>
+          {/* SlotCard 2 — disabled */}
+          <View
+            style={{
+              backgroundColor: theme.colors.card,
+              borderRadius: radii.md,
+              padding: spacing.md,
+              borderWidth: 1,
+              borderColor: theme.colors.border,
+              ...shadows.sm,
+            }}
+          >
+            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+              <AppText variant="label" style={{ flex: 1 }}>Abend-Erinnerung</AppText>
+              <ToggleMock active={false} />
+            </View>
+          </View>
+        </View>
+
+        {/* Group: Check-in — matches real SettingsGroup "Check-in" */}
+        <View style={{ marginBottom: spacing.lg }}>
+          <AppText
+            variant="label"
+            size="sm"
+            color="secondary"
+            style={styles.groupTitle}
           >
             Check-in
           </AppText>
@@ -571,20 +645,15 @@ export default function OnboardingScreen() {
           </View>
         </View>
 
-        {/* Group: Daten */}
+        {/* Group: Info — matches real SettingsGroup "Info" */}
         <View style={{ marginBottom: spacing.lg }}>
           <AppText
             variant="label"
             size="sm"
             color="secondary"
-            style={{
-              textTransform: 'uppercase',
-              letterSpacing: 0.5,
-              marginBottom: spacing.sm,
-              paddingLeft: spacing.xs,
-            }}
+            style={styles.groupTitle}
           >
-            Daten
+            Info
           </AppText>
           <View
             style={{
@@ -595,14 +664,21 @@ export default function OnboardingScreen() {
             }}
           >
             <SettingsRowMock
-              label="PDF-Speicherort"
+              label="Was ist ein Check-in?"
               right={
                 <AppText variant="label" style={{ color: theme.colors.textSecondary }}>›</AppText>
               }
               showDivider
             />
             <SettingsRowMock
-              label="Eigene Chips verwalten"
+              label="Feedback senden"
+              right={
+                <AppText variant="label" style={{ color: theme.colors.textSecondary }}>›</AppText>
+              }
+              showDivider
+            />
+            <SettingsRowMock
+              label="Datenschutzerklärung"
               right={
                 <AppText variant="label" style={{ color: theme.colors.textSecondary }}>›</AppText>
               }
@@ -871,6 +947,12 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  groupTitle: {
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+    marginBottom: 8,
+    paddingLeft: 4,
   },
   appIcon: {
     width: 72,
