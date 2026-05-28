@@ -72,7 +72,7 @@ export function CheckInNavButtons({
           {
             minHeight: touchTarget.min,
             borderRadius: radii.md,
-            backgroundColor: isNextDisabled ? theme.colors.border : theme.colors.primary,
+            backgroundColor: isNextDisabled ? theme.colors.border : theme.colors.accent,
           },
           pressed && !isNextDisabled && { opacity: 0.75 },
         ]}

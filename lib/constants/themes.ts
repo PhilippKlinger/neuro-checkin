@@ -8,6 +8,7 @@
  *   primary    = neutral dark-gray ink — buttons/CTAs only (not near-black, not branded)
  *   accent     = palette identity signal — selected states, active indicators
  *   accentSoft = light tint of accent — selected backgrounds
+ *   card       = elevated surface — white/bright cards floating on background
  *
  * Palette accents match palette character:
  *   Warm Earth → warm earthy brown (#7A6344)
@@ -19,6 +20,7 @@ export interface ColorTokens {
   background: string;
   surface: string;
   surfaceHover: string;
+  card: string;
   primary: string;
   primarySoft: string;
   accent: string;
@@ -52,6 +54,7 @@ const warmEarthLight: ThemeTokens = {
     background: '#FAF8F5',
     surface: '#F0ECE6',
     surfaceHover: '#E8E2D9',
+    card: '#FFFFFF',
     primary: '#4A4540', // dark gray-brown — buttons/CTAs (softer than near-black)
     primarySoft: '#E8E3DD', // subtle pressed/hover tint
     accent: '#7A6344', // warm earthy brown — identity signal
@@ -77,6 +80,7 @@ const warmEarthDark: ThemeTokens = {
     background: '#1B1A18',
     surface: '#252321',
     surfaceHover: '#2F2C28',
+    card: '#2E2B28',
     primary: '#9A9088', // warm mid-gray — softer than near-white, avoids harsh glare in dark
     primarySoft: '#3A3733',
     accent: '#A88A65', // warm brown lighter — readable on dark bg
@@ -103,6 +107,7 @@ const coolMistLight: ThemeTokens = {
     background: '#F5F7FA',
     surface: '#EBEEF3',
     surfaceHover: '#E0E4EB',
+    card: '#FFFFFF',
     primary: '#3A4855', // dark navy-gray — buttons/CTAs
     primarySoft: '#E0E5EC',
     accent: '#4A6A89', // steel blue — identity signal (original WCAG-approved palette color)
@@ -128,6 +133,7 @@ const coolMistDark: ThemeTokens = {
     background: '#1A1E22',
     surface: '#222830',
     surfaceHover: '#2A3240',
+    card: '#2A3040',
     primary: '#8A98A8', // cool mid-gray — softer than near-white, avoids harsh glare in dark
     primarySoft: '#2E3540',
     accent: '#7AAFC8', // steel blue lighter — readable on dark bg
@@ -154,6 +160,7 @@ const softSageLight: ThemeTokens = {
     background: '#F7F8F5',
     surface: '#ECF0E8',
     surfaceHover: '#E2E8DC',
+    card: '#FFFFFF',
     primary: '#464B43', // dark sage-gray — buttons/CTAs
     primarySoft: '#E3E8E0',
     accent: '#527A58', // sage green — identity signal
@@ -179,6 +186,7 @@ const softSageDark: ThemeTokens = {
     background: '#1A1F1B',
     surface: '#222924',
     surfaceHover: '#2C352D',
+    card: '#2C342E',
     primary: '#8C9588', // sage mid-gray — softer than near-white, avoids harsh glare in dark
     primarySoft: '#303830',
     accent: '#80A885', // sage green lighter — readable on dark bg
@@ -235,6 +243,11 @@ export const fonts = {
     semibold: 'NunitoSans_600SemiBold',
     bold: 'NunitoSans_700Bold',
   },
+  fraunces: {
+    regular: 'Fraunces_400Regular',
+    medium: 'Fraunces_500Medium',
+    semibold: 'Fraunces_600SemiBold',
+  },
 } as const;
 
 export const typography = {
@@ -242,6 +255,7 @@ export const typography = {
     heading: fonts.inter,
     body: fonts.nunitoSans,
     ui: fonts.inter,
+    display: fonts.fraunces,
   },
   sizes: {
     xs: 12,
@@ -264,7 +278,7 @@ export const typography = {
 // ---------------------------------------------------------------------------
 export const radii = {
   sm: 8,
-  md: 12,
+  md: 14,
   lg: 16,
   xl: 24,
   full: 9999,
@@ -275,16 +289,16 @@ export const radii = {
 // ---------------------------------------------------------------------------
 export const shadows = {
   sm: {
-    shadowColor: '#000',
+    shadowColor: '#3D2E20',
     shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
+    shadowOpacity: 0.07,
     shadowRadius: 2,
     elevation: 1,
   },
   md: {
-    shadowColor: '#000',
+    shadowColor: '#3D2E20',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
+    shadowOpacity: 0.12,
     shadowRadius: 4,
     elevation: 2,
   },

@@ -295,7 +295,7 @@ export default function OnboardingScreen() {
               {
                 minHeight: touchTarget.min,
                 borderRadius: radii.md,
-                backgroundColor: theme.colors.primary,
+                backgroundColor: theme.colors.accent,
                 paddingHorizontal: spacing.xl,
               },
               pressed && { opacity: 0.75 },
@@ -321,7 +321,7 @@ export default function OnboardingScreen() {
               {
                 minHeight: touchTarget.min,
                 borderRadius: radii.md,
-                backgroundColor: theme.colors.primary,
+                backgroundColor: theme.colors.accent,
                 paddingHorizontal: spacing.xl,
               },
               pressed && { opacity: 0.75 },

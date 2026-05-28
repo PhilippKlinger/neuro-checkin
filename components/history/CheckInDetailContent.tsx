@@ -27,7 +27,7 @@ export function CheckInDetailContent({
   onExport,
   onSaveToDevice,
 }: CheckInDetailContentProps) {
-  const { theme, spacing, radii, touchTarget } = useTheme();
+  const { theme, spacing, radii, touchTarget, shadows } = useTheme();
   const insets = useSafeAreaInsets();
 
   const p = useMemo(() => presentCheckIn(checkIn), [checkIn]);
@@ -51,10 +51,11 @@ export function CheckInDetailContent({
           style={[
             styles.card,
             {
-              backgroundColor: theme.colors.surface,
+              backgroundColor: theme.colors.card,
               borderRadius: radii.md,
               padding: spacing.md,
               marginBottom: spacing.md,
+              ...shadows.sm,
             },
           ]}
         >
@@ -81,10 +82,11 @@ export function CheckInDetailContent({
             style={[
               styles.card,
               {
-                backgroundColor: theme.colors.surface,
+                backgroundColor: theme.colors.card,
                 borderRadius: radii.md,
                 padding: spacing.md,
                 marginBottom: spacing.md,
+                ...shadows.sm,
               },
             ]}
           >
@@ -107,10 +109,11 @@ export function CheckInDetailContent({
             style={[
               styles.card,
               {
-                backgroundColor: theme.colors.surface,
+                backgroundColor: theme.colors.card,
                 borderRadius: radii.md,
                 padding: spacing.md,
                 marginBottom: spacing.md,
+                ...shadows.sm,
               },
             ]}
           >
@@ -126,10 +129,11 @@ export function CheckInDetailContent({
             style={[
               styles.card,
               {
-                backgroundColor: theme.colors.surface,
+                backgroundColor: theme.colors.card,
                 borderRadius: radii.md,
                 padding: spacing.md,
                 marginBottom: spacing.md,
+                ...shadows.sm,
               },
             ]}
           >
@@ -150,10 +154,11 @@ export function CheckInDetailContent({
             style={[
               styles.card,
               {
-                backgroundColor: theme.colors.surface,
+                backgroundColor: theme.colors.card,
                 borderRadius: radii.md,
                 padding: spacing.md,
                 marginBottom: spacing.md,
+                ...shadows.sm,
               },
             ]}
           >
@@ -177,10 +182,11 @@ export function CheckInDetailContent({
             style={[
               styles.card,
               {
-                backgroundColor: theme.colors.surface,
+                backgroundColor: theme.colors.card,
                 borderRadius: radii.md,
                 padding: spacing.md,
                 marginBottom: spacing.md,
+                ...shadows.sm,
               },
             ]}
           >

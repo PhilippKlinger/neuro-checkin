@@ -26,7 +26,7 @@ export function ConfirmDialog({
   onConfirm,
   onCancel,
 }: ConfirmDialogProps) {
-  const { theme, spacing, radii, touchTarget } = useTheme();
+  const { theme, spacing, radii, touchTarget, shadows } = useTheme();
 
   return (
     <Modal
@@ -41,10 +41,11 @@ export function ConfirmDialog({
           style={[
             styles.dialog,
             {
-              backgroundColor: theme.colors.surface,
+              backgroundColor: theme.colors.card,
               borderRadius: radii.lg,
               padding: spacing.lg,
               margin: spacing.xl,
+              ...shadows.md,
             },
           ]}
           onStartShouldSetResponder={() => true}
@@ -89,7 +90,7 @@ export function ConfirmDialog({
                 styles.button,
                 {
                   borderRadius: radii.md,
-                  backgroundColor: destructive ? theme.colors.error : theme.colors.primary,
+                  backgroundColor: destructive ? theme.colors.error : theme.colors.accent,
                   paddingVertical: spacing.sm,
                   paddingHorizontal: spacing.md,
                   minHeight: touchTarget.min,

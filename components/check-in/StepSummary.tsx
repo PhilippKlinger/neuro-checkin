@@ -11,7 +11,7 @@ interface StepSummaryProps {
 }
 
 export function StepSummary({ draft, showPostFirstCheckinHint }: StepSummaryProps) {
-  const { theme, spacing, radii } = useTheme();
+  const { theme, spacing, radii, shadows } = useTheme();
   const p = presentCheckIn(draft);
   const activeSignals = p.bodySignals.filter((s) => s.active);
 
@@ -28,10 +28,11 @@ export function StepSummary({ draft, showPostFirstCheckinHint }: StepSummaryProp
         style={[
           styles.card,
           {
-            backgroundColor: theme.colors.surface,
+            backgroundColor: theme.colors.card,
             borderRadius: radii.md,
             padding: spacing.md,
             marginBottom: spacing.md,
+            ...shadows.sm,
           },
         ]}
       >
@@ -58,10 +59,11 @@ export function StepSummary({ draft, showPostFirstCheckinHint }: StepSummaryProp
           style={[
             styles.card,
             {
-              backgroundColor: theme.colors.surface,
+              backgroundColor: theme.colors.card,
               borderRadius: radii.md,
               padding: spacing.md,
               marginBottom: spacing.md,
+              ...shadows.sm,
             },
           ]}
         >
@@ -86,10 +88,11 @@ export function StepSummary({ draft, showPostFirstCheckinHint }: StepSummaryProp
           style={[
             styles.card,
             {
-              backgroundColor: theme.colors.surface,
+              backgroundColor: theme.colors.card,
               borderRadius: radii.md,
               padding: spacing.md,
               marginBottom: spacing.md,
+              ...shadows.sm,
             },
           ]}
         >
@@ -105,10 +108,11 @@ export function StepSummary({ draft, showPostFirstCheckinHint }: StepSummaryProp
           style={[
             styles.card,
             {
-              backgroundColor: theme.colors.surface,
+              backgroundColor: theme.colors.card,
               borderRadius: radii.md,
               padding: spacing.md,
               marginBottom: spacing.md,
+              ...shadows.sm,
             },
           ]}
         >
@@ -129,10 +133,11 @@ export function StepSummary({ draft, showPostFirstCheckinHint }: StepSummaryProp
           style={[
             styles.card,
             {
-              backgroundColor: theme.colors.surface,
+              backgroundColor: theme.colors.card,
               borderRadius: radii.md,
               padding: spacing.md,
               marginBottom: spacing.md,
+              ...shadows.sm,
             },
           ]}
         >
@@ -153,10 +158,11 @@ export function StepSummary({ draft, showPostFirstCheckinHint }: StepSummaryProp
           style={[
             styles.card,
             {
-              backgroundColor: theme.colors.surface,
+              backgroundColor: theme.colors.card,
               borderRadius: radii.md,
               padding: spacing.md,
               marginBottom: spacing.md,
+              ...shadows.sm,
             },
           ]}
         >

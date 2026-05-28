@@ -34,7 +34,7 @@ export function DataSection({
   onChipsDeleteComplete,
   onExportDirectoryChanged,
 }: DataSectionProps) {
-  const { theme, spacing, radii, touchTarget } = useTheme();
+  const { theme, spacing, radii, touchTarget, shadows } = useTheme();
   const [showStep1, setShowStep1] = useState(false);
   const [showStep2, setShowStep2] = useState(false);
   const [showDone, setShowDone] = useState(false);
@@ -139,12 +139,13 @@ export function DataSection({
       {Platform.OS === 'android' && (
         <View
           style={{
-            backgroundColor: theme.colors.surface,
+            backgroundColor: theme.colors.card,
             borderRadius: radii.md,
             borderWidth: 1,
             borderColor: theme.colors.border,
             marginBottom: spacing.sm,
             overflow: 'hidden',
+            ...shadows.sm,
           }}
         >
           <Pressable
@@ -274,13 +275,14 @@ export function DataSection({
 
       <View
         style={{
-          backgroundColor: theme.colors.surface,
+          backgroundColor: theme.colors.card,
           borderRadius: radii.md,
           borderWidth: 1,
           borderColor: theme.colors.border,
           marginTop: spacing.sm,
           overflow: 'hidden',
           opacity: chipCount === 0 ? 0.4 : 1,
+          ...shadows.sm,
         }}
       >
         <Pressable

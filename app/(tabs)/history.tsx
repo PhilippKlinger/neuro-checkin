@@ -252,7 +252,7 @@ export default function HistoryScreen() {
               {
                 minHeight: touchTarget.min,
                 borderRadius: radii.md,
-                backgroundColor: theme.colors.primary,
+                backgroundColor: theme.colors.accent,
               },
               pressed && { opacity: 0.75 },
             ]}
@@ -302,7 +302,7 @@ export default function HistoryScreen() {
               {
                 minHeight: touchTarget.min,
                 borderRadius: radii.md,
-                backgroundColor: isExporting ? theme.colors.border : theme.colors.primary,
+                backgroundColor: isExporting ? theme.colors.border : theme.colors.accent,
               },
               pressed && !isExporting && { opacity: 0.75 },
             ]}

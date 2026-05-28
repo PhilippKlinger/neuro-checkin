@@ -27,7 +27,7 @@ const SECTIONS = [
 ];
 
 export default function CheckInInfoScreen() {
-  const { theme, spacing, radii } = useTheme();
+  const { theme, spacing, radii, shadows } = useTheme();
   const insets = useSafeAreaInsets();
 
   return (
@@ -46,10 +46,11 @@ export default function CheckInInfoScreen() {
           style={[
             styles.card,
             {
-              backgroundColor: theme.colors.surface,
+              backgroundColor: theme.colors.card,
               borderRadius: radii.md,
               padding: spacing.md,
               marginBottom: index < SECTIONS.length - 1 ? spacing.md : 0,
+              ...shadows.sm,
             },
           ]}
         >

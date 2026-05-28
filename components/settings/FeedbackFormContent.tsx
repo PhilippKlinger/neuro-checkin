@@ -30,7 +30,7 @@ export function FeedbackSuccessContent({ onClose }: FeedbackSuccessContentProps)
         onPress={onClose}
         style={({ pressed }) => [
           {
-            backgroundColor: theme.colors.primary,
+            backgroundColor: theme.colors.accent,
             borderRadius: radii.md,
             padding: spacing.md,
             alignItems: 'center',
@@ -136,7 +136,7 @@ export function FeedbackFormContent({
             borderRadius: radii.md,
             padding: spacing.md,
             marginTop: spacing.md,
-            backgroundColor: isSubmitDisabled ? theme.colors.border : theme.colors.primary,
+            backgroundColor: isSubmitDisabled ? theme.colors.border : theme.colors.accent,
           },
           pressed && !isSubmitDisabled && { opacity: 0.75 },
         ]}

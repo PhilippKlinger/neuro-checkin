@@ -13,7 +13,7 @@ interface CheckInSuccessViewProps {
 }
 
 export function CheckInSuccessView({ onReset, energyLevel, focusLevel }: CheckInSuccessViewProps) {
-  const { theme, spacing, radii, touchTarget } = useTheme();
+  const { theme, spacing, radii, touchTarget, shadows } = useTheme();
   const router = useRouter();
   const insets = useSafeAreaInsets();
 
@@ -63,11 +63,12 @@ export function CheckInSuccessView({ onReset, energyLevel, focusLevel }: CheckIn
             style={[
               styles.summaryRow,
               {
-                backgroundColor: theme.colors.surface,
+                backgroundColor: theme.colors.card,
                 borderRadius: radii.md,
                 padding: spacing.md,
                 marginBottom: spacing.xl,
                 gap: spacing.lg,
+                ...shadows.md,
               },
             ]}
           >
@@ -119,7 +120,7 @@ export function CheckInSuccessView({ onReset, energyLevel, focusLevel }: CheckIn
             {
               minHeight: touchTarget.min,
               borderRadius: radii.md,
-              backgroundColor: theme.colors.primary,
+              backgroundColor: theme.colors.accent,
             },
             pressed && { opacity: 0.75 },
           ]}

@@ -14,7 +14,7 @@ interface SelectorOption {
 }
 
 export default function CheckInSelectorScreen() {
-  const { theme, spacing, radii, touchTarget } = useTheme();
+  const { theme, spacing, radii, touchTarget, shadows } = useTheme();
   const router = useRouter();
   const insets = useSafeAreaInsets();
 
@@ -67,10 +67,13 @@ export default function CheckInSelectorScreen() {
             style={({ pressed }) => [
               styles.card,
               {
-                backgroundColor: theme.colors.surface,
+                backgroundColor: theme.colors.card,
                 borderRadius: radii.md,
                 padding: spacing.lg,
                 minHeight: touchTarget.min,
+                borderWidth: 1,
+                borderColor: theme.colors.border,
+                ...shadows.md,
               },
               pressed && { opacity: 0.75 },
             ]}
