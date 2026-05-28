@@ -83,7 +83,7 @@ export default function QuickCheckInScreen() {
             onValueChange={actions.setFocus}
             skipped={draft.focusSkipped}
             onSkip={actions.skipFocus}
-            hint={guidedMode ? STEP_HINTS.focus : undefined}
+            hint={undefined}
           />
         );
       case 2:

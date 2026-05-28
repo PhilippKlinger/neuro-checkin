@@ -19,7 +19,7 @@ export function GuidedToggle({ enabled, onToggle }: GuidedToggleProps) {
         pressed && { opacity: 0.6 },
       ]}
       accessibilityRole="switch"
-      accessibilityLabel="Hinweise ein- oder ausschalten"
+      accessibilityLabel="Hilfe ein- oder ausschalten"
       accessibilityState={{ checked: enabled }}
       hitSlop={8}
     >

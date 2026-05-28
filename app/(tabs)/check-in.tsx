@@ -47,7 +47,6 @@ export default function CheckInScreen() {
     wasReset,
     isFirstCheckin,
     guidedMode,
-    showToggleIntroHint,
     feelingUserChips,
     selfCareUserChips,
     canGoBack,
@@ -84,7 +83,7 @@ export default function CheckInScreen() {
   function renderStep() {
     switch (step) {
       case 0:
-        return <StepArrival showHintIntro={showToggleIntroHint} />;
+        return <StepArrival />;
       case 1:
         return (
           <StepEnergy
@@ -102,7 +101,7 @@ export default function CheckInScreen() {
             onValueChange={actions.setFocus}
             skipped={draft.focusSkipped}
             onSkip={actions.skipFocus}
-            hint={guidedMode ? STEP_HINTS.focus : undefined}
+            hint={undefined}
           />
         );
       case 3:
@@ -131,7 +130,7 @@ export default function CheckInScreen() {
             distressNote={draft.distressNote}
             onLevelChange={actions.setDistressLevel}
             onNoteChange={actions.setDistressNote}
-            hint={guidedMode ? STEP_HINTS.distress : undefined}
+            hint={undefined}
           />
         );
       case 6:
@@ -149,7 +148,7 @@ export default function CheckInScreen() {
           <StepSelfCare
             value={draft.selfCareNote}
             onValueChange={actions.setSelfCare}
-            hint={guidedMode ? STEP_HINTS.selfCare : undefined}
+            hint={undefined}
             userChips={selfCareUserChips}
           />
         );
