@@ -1,0 +1,100 @@
+import { memo } from 'react';
+import { View, Pressable, StyleSheet } from 'react-native';
+import { useTheme } from '../../lib/hooks/useTheme';
+import { AppText } from '../ui/AppText';
+import { fonts } from '../../lib/constants/themes';
+import type { FontFamily } from '../../lib/types/checkin';
+
+interface FontSectionProps {
+  currentFont: FontFamily;
+  onFontChange: (name: FontFamily) => void;
+}
+
+const FONT_OPTIONS: { key: FontFamily; label: string; heading: string; ui: string }[] = [
+  { key: 'inter', label: 'Inter', heading: fonts.inter.semibold, ui: fonts.inter.medium },
+  { key: 'nunitoSans', label: 'Nunito\nSans', heading: fonts.nunitoSans.semibold, ui: fonts.nunitoSans.medium },
+  { key: 'fraunces', label: 'Fraunces', heading: fonts.fraunces.semibold, ui: fonts.inter.medium },
+];
+
+export const FontSection = memo(function FontSection({
+  currentFont,
+  onFontChange,
+}: FontSectionProps) {
+  const { theme, spacing, radii } = useTheme();
+
+  return (
+    <>
+      <AppText variant="title" size="lg" style={{ marginBottom: spacing.md }}>
+        Schriftart
+      </AppText>
+
+      <View style={[styles.grid, { gap: spacing.sm, marginBottom: spacing.xl }]}>
+        {FONT_OPTIONS.map((option) => {
+          const isSelected = currentFont === option.key;
+          return (
+            <Pressable
+              key={option.key}
+              onPress={() => onFontChange(option.key)}
+              style={({ pressed }) => [
+                styles.card,
+                {
+                  borderRadius: radii.md,
+                  padding: spacing.md,
+                  backgroundColor: theme.colors.surface,
+                  borderWidth: 2,
+                  borderColor: isSelected ? theme.colors.accent : theme.colors.border,
+                },
+                pressed && { opacity: 0.75 },
+              ]}
+              accessibilityRole="button"
+              accessibilityLabel={`Schriftart ${option.label}`}
+              accessibilityState={{ selected: isSelected }}
+            >
+              <AppText
+                variant="body"
+                style={{
+                  fontFamily: option.heading,
+                  fontSize: 20,
+                  textAlign: 'center',
+                  marginBottom: spacing.xs,
+                  color: theme.colors.text,
+                }}
+              >
+                Guten Morgen
+              </AppText>
+              <AppText
+                variant="body"
+                style={{
+                  fontFamily: option.ui,
+                  fontSize: 14,
+                  textAlign: 'center',
+                  marginBottom: spacing.sm,
+                  color: theme.colors.textSecondary,
+                }}
+              >
+                Beginnen
+              </AppText>
+              <AppText
+                variant="label"
+                size="sm"
+                style={{ textAlign: 'center', color: theme.colors.text }}
+              >
+                {option.label}
+              </AppText>
+            </Pressable>
+          );
+        })}
+      </View>
+    </>
+  );
+});
+
+const styles = StyleSheet.create({
+  grid: {
+    flexDirection: 'row',
+  },
+  card: {
+    flex: 1,
+    alignItems: 'center',
+  },
+});

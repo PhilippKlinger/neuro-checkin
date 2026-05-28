@@ -12,10 +12,10 @@ interface AppTextProps extends Omit<TextProps, 'maxFontSizeMultiplier'> {
 }
 
 export function AppText({ variant, color, size, weight, style, ...rest }: AppTextProps) {
-  const { theme } = useTheme();
+  const { theme, typography } = useTheme();
 
   const resolved = resolveTextStyle(
-    { variant, color, size, weight },
+    { variant, color, size, weight, families: typography.families },
     {
       text: theme.colors.text,
       textSecondary: theme.colors.textSecondary,

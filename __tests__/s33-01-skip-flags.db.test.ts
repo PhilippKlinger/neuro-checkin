@@ -82,10 +82,10 @@ describe('migrateDatabase — v10 adds energy_skipped and focus_skipped', () => 
     expect(db._execCalls.some((s) => s.includes('focus_skipped'))).toBe(true);
   });
 
-  it('sets user_version to 14 at the end', async () => {
+  it('sets user_version to 15 at the end', async () => {
     const db = makeSchemaMockDb(0);
     await migrateDatabase(db as any);
-    expect(db._execCalls.some((s) => s.includes('user_version = 14'))).toBe(true);
+    expect(db._execCalls.some((s) => s.includes('user_version = 15'))).toBe(true);
   });
 
   it('partial upgrade from v9 only runs v10 statements', async () => {
@@ -96,8 +96,8 @@ describe('migrateDatabase — v10 adds energy_skipped and focus_skipped', () => 
     expect(db._execCalls.some((s) => s.includes('guided_mode_enabled'))).toBe(false);
   });
 
-  it('already at v14 — no DDL executed', async () => {
-    const db = makeSchemaMockDb(14);
+  it('already at v15 — no DDL executed', async () => {
+    const db = makeSchemaMockDb(15);
     await migrateDatabase(db as any);
     const ddl = db._execCalls.filter(
       (s) => s.includes('CREATE TABLE') || s.includes('ALTER TABLE')
