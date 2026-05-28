@@ -1,7 +1,6 @@
 import { useState, useCallback, useRef } from 'react';
-import { Pressable, ScrollView, Switch, StyleSheet, Platform, View, Linking } from 'react-native';
+import { ScrollView, Switch, StyleSheet, Platform, View, Linking } from 'react-native';
 import { AppText } from '../../components/ui/AppText';
-import { Ionicons } from '@expo/vector-icons';
 import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
 import * as Sentry from '@sentry/react-native';
@@ -32,6 +31,8 @@ import { FontSection } from '../../components/settings/FontSection';
 import { NotificationsSection } from '../../components/settings/NotificationsSection';
 import { DataSection } from '../../components/settings/DataSection';
 import { FeedbackModal } from '../../components/settings/FeedbackModal';
+import { SettingsGroup } from '../../components/settings/SettingsGroup';
+import { SettingsRow } from '../../components/settings/SettingsRow';
 import { dateToTimeString } from '../../lib/utils/time';
 
 const DEFAULT_SLOTS: NotificationSlot[] = [
@@ -49,8 +50,6 @@ export default function SettingsScreen() {
     setColorMode,
     setFontFamily,
     spacing,
-    radii,
-    touchTarget,
   } = useTheme();
   const db = useDatabase();
   const router = useRouter();
@@ -66,8 +65,6 @@ export default function SettingsScreen() {
   const [guidedMode, setGuidedMode] = useState(false);
   const [, setNotificationPermission] = useState<boolean | null>(null);
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
-  const [dataOpen, setDataOpen] = useState(false);
-  const [aboutOpen, setAboutOpen] = useState(false);
   const [exportDirectoryUri, setExportDirectoryUri] = useState<string | null>(null);
 
   useFocusEffect(
@@ -249,169 +246,139 @@ export default function SettingsScreen() {
         style={[styles.container, { backgroundColor: theme.colors.background }]}
         contentContainerStyle={{ padding: spacing.lg, paddingBottom: spacing.xxl }}
       >
-        <AppearanceModeSection currentMode={colorMode} onModeChange={handleModeChange} />
-
-        <ThemeSection currentTheme={themeName} onThemeChange={handleThemeChange} />
-
-        <FontSection currentFont={fontFamily} onFontChange={handleFontChange} />
-
-        <NotificationsSection
-          slots={slots}
-          showTimePicker={showTimePicker}
-          isEmulator={isEmulator}
-          onToggle={handleSlotToggle}
-          onTimePress={handleTimePress}
-          onTimeChange={handleTimeChange}
-          onWeekdayToggle={handleWeekdayToggle}
-        />
-
-        <View style={[styles.guidedRow, { marginTop: spacing.xl }]}>
-          <View style={styles.guidedLabel}>
-            <Ionicons name="bulb-outline" size={16} color={theme.colors.textSecondary} />
-            <View>
-              <AppText variant="body">Hinweise im Check-in</AppText>
-              <AppText variant="body" size="sm" color="secondary">
-                Zeigt kurze Erklärungen in jedem Schritt
-              </AppText>
-            </View>
+        {/* --- Aussehen --- */}
+        <SettingsGroup title="Aussehen">
+          <View style={{ padding: spacing.sm }}>
+            <AppText
+              variant="label"
+              style={{ paddingHorizontal: spacing.xs, marginBottom: spacing.xs }}
+            >
+              Modus
+            </AppText>
+            <AppearanceModeSection
+              currentMode={colorMode}
+              onModeChange={handleModeChange}
+              hideTitle
+            />
           </View>
-          <Switch
-            value={guidedMode}
-            onValueChange={handleGuidedModeToggle}
-            trackColor={{ false: theme.colors.border, true: theme.colors.accent }}
-            thumbColor={theme.colors.background}
-            accessibilityRole="switch"
-            accessibilityLabel="Hinweise im Check-in"
-            accessibilityHint="Zeigt kurze Erklärungen in jedem Check-in-Schritt"
-            accessibilityState={{ checked: guidedMode }}
+          <View style={[styles.divider, { borderBottomColor: theme.colors.border }]} />
+          <View style={{ padding: spacing.sm }}>
+            <AppText
+              variant="label"
+              style={{ paddingHorizontal: spacing.xs, marginBottom: spacing.xs }}
+            >
+              Farbpalette
+            </AppText>
+            <ThemeSection currentTheme={themeName} onThemeChange={handleThemeChange} hideTitle />
+          </View>
+          <View style={[styles.divider, { borderBottomColor: theme.colors.border }]} />
+          <View style={{ padding: spacing.sm }}>
+            <AppText
+              variant="label"
+              style={{ paddingHorizontal: spacing.xs, marginBottom: spacing.xs }}
+            >
+              Schriftart
+            </AppText>
+            <FontSection currentFont={fontFamily} onFontChange={handleFontChange} hideTitle />
+          </View>
+        </SettingsGroup>
+
+        {/* --- Erinnerungen --- */}
+        <View style={{ marginBottom: spacing.lg }}>
+          <AppText
+            variant="label"
+            size="sm"
+            color="secondary"
+            style={[styles.sectionTitle, { marginBottom: spacing.sm, paddingLeft: spacing.xs }]}
+            accessibilityRole="header"
+          >
+            Erinnerungen
+          </AppText>
+          <NotificationsSection
+            slots={slots}
+            showTimePicker={showTimePicker}
+            isEmulator={isEmulator}
+            hideTitle
+            onToggle={handleSlotToggle}
+            onTimePress={handleTimePress}
+            onTimeChange={handleTimeChange}
+            onWeekdayToggle={handleWeekdayToggle}
           />
         </View>
 
-        {/* --- Meine Daten --- */}
-        <Pressable
-          onPress={() => setDataOpen((o) => !o)}
-          style={({ pressed }) => [
-            styles.sectionHeader,
-            { marginTop: spacing.xl, minHeight: touchTarget.min },
-            pressed && { opacity: 0.75 },
-          ]}
-          accessibilityRole="button"
-          accessibilityLabel="Meine Daten"
-          accessibilityHint={dataOpen ? 'Zuklappen' : 'Aufklappen'}
-          accessibilityState={{ expanded: dataOpen }}
-        >
-          <AppText variant="title">Meine Daten</AppText>
-          <Ionicons
-            name={dataOpen ? 'chevron-up' : 'chevron-down'}
-            size={18}
-            color={theme.colors.textSecondary}
-            accessibilityElementsHidden
+        {/* --- Check-in --- */}
+        <SettingsGroup title="Check-in">
+          <SettingsRow
+            label="Hinweise im Check-in"
+            hint="Kurze Erklärungen in jedem Schritt"
+            showDivider={false}
+            right={
+              <Switch
+                value={guidedMode}
+                onValueChange={handleGuidedModeToggle}
+                trackColor={{ false: theme.colors.border, true: theme.colors.accent }}
+                thumbColor={theme.colors.background}
+                accessibilityRole="switch"
+                accessibilityLabel="Hinweise im Check-in"
+                accessibilityHint="Zeigt kurze Erklärungen in jedem Check-in-Schritt"
+                accessibilityState={{ checked: guidedMode }}
+              />
+            }
           />
-        </Pressable>
-        {dataOpen && (
-          <View style={{ marginTop: spacing.sm, marginBottom: spacing.xl }}>
-            <DataSection
-              db={db}
-              checkInCount={checkInCount}
-              chipCount={chipCount}
-              exportDirectoryUri={exportDirectoryUri}
-              onDeleteComplete={() => setCheckInCount(0)}
-              onChipsDeleteComplete={async () => {
-                const count = await countUserChips(db);
-                setChipCount(count);
-              }}
-              onExportDirectoryChanged={setExportDirectoryUri}
-            />
-          </View>
-        )}
+        </SettingsGroup>
 
-        {/* --- Über die App --- */}
-        <Pressable
-          onPress={() => setAboutOpen((o) => !o)}
-          style={({ pressed }) => [
-            styles.sectionHeader,
-            { marginTop: dataOpen ? 0 : spacing.xl, minHeight: touchTarget.min },
-            pressed && { opacity: 0.75 },
-          ]}
-          accessibilityRole="button"
-          accessibilityLabel="Über die App"
-          accessibilityHint={aboutOpen ? 'Zuklappen' : 'Aufklappen'}
-          accessibilityState={{ expanded: aboutOpen }}
-        >
-          <AppText variant="title">Über die App</AppText>
-          <Ionicons
-            name={aboutOpen ? 'chevron-up' : 'chevron-down'}
-            size={18}
-            color={theme.colors.textSecondary}
-            accessibilityElementsHidden
+        {/* --- Daten --- */}
+        <View style={{ marginBottom: spacing.lg }}>
+          <AppText
+            variant="label"
+            size="sm"
+            color="secondary"
+            style={[styles.sectionTitle, { marginBottom: spacing.sm, paddingLeft: spacing.xs }]}
+            accessibilityRole="header"
+          >
+            Daten
+          </AppText>
+          <DataSection
+            db={db}
+            checkInCount={checkInCount}
+            chipCount={chipCount}
+            exportDirectoryUri={exportDirectoryUri}
+            onDeleteComplete={() => setCheckInCount(0)}
+            onChipsDeleteComplete={async () => {
+              const count = await countUserChips(db);
+              setChipCount(count);
+            }}
+            onExportDirectoryChanged={setExportDirectoryUri}
           />
-        </Pressable>
-        {aboutOpen && (
-          <View style={{ marginTop: spacing.sm, gap: spacing.sm }}>
-            <Pressable
-              onPress={() => router.push('/check-in-info')}
-              style={({ pressed }) => [
-                styles.listItem,
-                {
-                  backgroundColor: theme.colors.surface,
-                  borderRadius: radii.md,
-                  padding: spacing.md,
-                  minHeight: touchTarget.min,
-                  borderWidth: 1,
-                  borderColor: theme.colors.border,
-                },
-                pressed && { opacity: 0.75 },
-              ]}
-              accessibilityRole="button"
-              accessibilityLabel="Was ist ein Check-in? Mehr erfahren"
-            >
-              <AppText variant="label">Was ist ein Check-in?</AppText>
-            </Pressable>
+        </View>
 
-            <Pressable
-              onPress={() => setShowFeedbackModal(true)}
-              style={({ pressed }) => [
-                styles.listItem,
-                {
-                  backgroundColor: theme.colors.surface,
-                  borderRadius: radii.md,
-                  padding: spacing.md,
-                  minHeight: touchTarget.min,
-                  borderWidth: 1,
-                  borderColor: theme.colors.border,
-                },
-                pressed && { opacity: 0.75 },
-              ]}
-              testID="settings-feedback-open"
-              accessibilityRole="button"
-              accessibilityLabel="Feedback senden"
-              accessibilityHint="Öffnet ein Feedback-Formular"
-            >
-              <AppText variant="label">Feedback senden</AppText>
-            </Pressable>
+        {/* --- Info --- */}
+        <SettingsGroup title="Info">
+          <SettingsRow
+            label="Was ist ein Check-in?"
+            onPress={() => router.push('/check-in-info')}
+          />
+          <SettingsRow
+            label="Feedback senden"
+            onPress={() => setShowFeedbackModal(true)}
+            accessibilityHint="Öffnet ein Feedback-Formular"
+          />
+          <SettingsRow
+            label="Datenschutzerklärung"
+            onPress={() => Linking.openURL('https://neurocheckin.de/datenschutz')}
+            showDivider={false}
+            accessibilityHint="Öffnet die Datenschutzerklärung im Browser"
+          />
+        </SettingsGroup>
 
-            <Pressable
-              onPress={() => Linking.openURL('https://neurocheckin.de/datenschutz')}
-              style={({ pressed }) => [
-                styles.listItem,
-                {
-                  backgroundColor: theme.colors.surface,
-                  borderRadius: radii.md,
-                  padding: spacing.md,
-                  minHeight: touchTarget.min,
-                  borderWidth: 1,
-                  borderColor: theme.colors.border,
-                },
-                pressed && { opacity: 0.75 },
-              ]}
-              accessibilityRole="link"
-              accessibilityLabel="Datenschutzerklärung öffnen"
-              accessibilityHint="Öffnet die Datenschutzerklärung im Browser"
-            >
-              <AppText variant="label">Datenschutzerklärung</AppText>
-            </Pressable>
-          </View>
-        )}
+        <AppText
+          variant="body"
+          size="sm"
+          color="secondary"
+          style={{ textAlign: 'center', marginTop: spacing.sm }}
+        >
+          Neuro Check-in · v1.8.0
+        </AppText>
       </ScrollView>
 
       <FeedbackModal visible={showFeedbackModal} onClose={() => setShowFeedbackModal(false)} />
@@ -421,9 +388,11 @@ export default function SettingsScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  listItem: { justifyContent: 'center' },
-  infoRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  sectionHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  guidedRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  guidedLabel: { flexDirection: 'row', alignItems: 'center', gap: 6 },
+  divider: {
+    borderBottomWidth: StyleSheet.hairlineWidth,
+  },
+  sectionTitle: {
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
 });

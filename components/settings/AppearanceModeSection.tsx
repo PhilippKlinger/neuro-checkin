@@ -7,6 +7,7 @@ import { ColorMode } from '../../lib/constants/themes';
 interface AppearanceModeSectionProps {
   currentMode: ColorMode;
   onModeChange: (mode: ColorMode) => void;
+  hideTitle?: boolean;
 }
 
 const MODE_OPTIONS: { key: ColorMode; label: string }[] = [
@@ -18,17 +19,20 @@ const MODE_OPTIONS: { key: ColorMode; label: string }[] = [
 export const AppearanceModeSection = memo(function AppearanceModeSection({
   currentMode,
   onModeChange,
+  hideTitle,
 }: AppearanceModeSectionProps) {
   const { theme, spacing, radii } = useTheme();
 
   return (
     <>
-      <AppText variant="title" size="lg" style={{ marginBottom: spacing.md }}>
-        Erscheinungsbild
-      </AppText>
+      {!hideTitle && (
+        <AppText variant="title" size="lg" style={{ marginBottom: spacing.md }}>
+          Erscheinungsbild
+        </AppText>
+      )}
 
       <View
-        style={[styles.row, { gap: spacing.sm, marginBottom: spacing.xl }]}
+        style={[styles.row, { gap: spacing.sm, marginBottom: hideTitle ? 0 : spacing.xl }]}
         accessibilityRole="radiogroup"
         accessibilityLabel="Farbmodus wählen"
         accessibilityHint="Bestimmt ob die App hell, dunkel oder dem System folgend dargestellt wird"

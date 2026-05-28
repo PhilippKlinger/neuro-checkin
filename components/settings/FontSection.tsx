@@ -8,51 +8,41 @@ import type { FontFamily } from '../../lib/types/checkin';
 interface FontSectionProps {
   currentFont: FontFamily;
   onFontChange: (name: FontFamily) => void;
+  hideTitle?: boolean;
 }
 
 const FONT_OPTIONS: {
   key: FontFamily;
   label: string;
   subtitle: string;
-  heading: string;
-  ui: string;
+  fontFamily: string;
 }[] = [
-  {
-    key: 'lexend',
-    label: 'Lexend',
-    subtitle: 'Lesefluenz',
-    heading: fonts.lexend.semibold,
-    ui: fonts.lexend.medium,
-  },
+  { key: 'lexend', label: 'Lexend', subtitle: 'Lesefluenz', fontFamily: fonts.lexend.medium },
   {
     key: 'atkinson',
     label: 'Atkinson',
     subtitle: 'Maximale Klarheit',
-    heading: fonts.atkinson.semibold,
-    ui: fonts.atkinson.regular,
+    fontFamily: fonts.atkinson.regular,
   },
-  {
-    key: 'nunito',
-    label: 'Nunito',
-    subtitle: 'Ausgewogen',
-    heading: fonts.nunito.semibold,
-    ui: fonts.nunito.medium,
-  },
+  { key: 'nunito', label: 'Nunito', subtitle: 'Ausgewogen', fontFamily: fonts.nunito.medium },
 ];
 
 export const FontSection = memo(function FontSection({
   currentFont,
   onFontChange,
+  hideTitle,
 }: FontSectionProps) {
   const { theme, spacing, radii } = useTheme();
 
   return (
     <>
-      <AppText variant="title" size="lg" style={{ marginBottom: spacing.md }}>
-        Schriftart
-      </AppText>
+      {!hideTitle && (
+        <AppText variant="title" size="lg" style={{ marginBottom: spacing.md }}>
+          Schriftart
+        </AppText>
+      )}
 
-      <View style={[styles.grid, { gap: spacing.sm, marginBottom: spacing.xl }]}>
+      <View style={[styles.grid, { gap: spacing.sm, marginBottom: hideTitle ? 0 : spacing.xl }]}>
         {FONT_OPTIONS.map((option) => {
           const isSelected = currentFont === option.key;
           return (
@@ -75,39 +65,24 @@ export const FontSection = memo(function FontSection({
               accessibilityState={{ selected: isSelected }}
             >
               <AppText
-                variant="body"
-                style={{
-                  fontFamily: option.heading,
-                  fontSize: 20,
-                  textAlign: 'center',
-                  marginBottom: spacing.xs,
-                  color: theme.colors.text,
-                }}
-              >
-                Guten Morgen
-              </AppText>
-              <AppText
-                variant="body"
-                style={{
-                  fontFamily: option.ui,
-                  fontSize: 14,
-                  textAlign: 'center',
-                  marginBottom: spacing.sm,
-                  color: theme.colors.textSecondary,
-                }}
-              >
-                Beginnen
-              </AppText>
-              <AppText
                 variant="label"
                 size="sm"
-                style={{ textAlign: 'center', color: theme.colors.text }}
+                style={{
+                  textAlign: 'center',
+                  color: theme.colors.text,
+                  fontFamily: option.fontFamily,
+                }}
               >
                 {option.label}
               </AppText>
               <AppText
                 variant="hint"
-                style={{ textAlign: 'center', color: theme.colors.textSecondary, fontSize: 11 }}
+                style={{
+                  textAlign: 'center',
+                  color: theme.colors.textSecondary,
+                  fontSize: 11,
+                  fontFamily: option.fontFamily,
+                }}
               >
                 {option.subtitle}
               </AppText>

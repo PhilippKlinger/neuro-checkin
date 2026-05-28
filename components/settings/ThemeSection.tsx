@@ -7,6 +7,7 @@ import { themes, ThemeName } from '../../lib/constants/themes';
 interface ThemeSectionProps {
   currentTheme: ThemeName;
   onThemeChange: (name: ThemeName) => void;
+  hideTitle?: boolean;
 }
 
 const THEME_OPTIONS: { key: ThemeName; label: string }[] = [
@@ -18,16 +19,19 @@ const THEME_OPTIONS: { key: ThemeName; label: string }[] = [
 export const ThemeSection = memo(function ThemeSection({
   currentTheme,
   onThemeChange,
+  hideTitle,
 }: ThemeSectionProps) {
   const { spacing, radii, resolvedMode } = useTheme();
 
   return (
     <>
-      <AppText variant="title" size="lg" style={{ marginBottom: spacing.md }}>
-        Farbpalette
-      </AppText>
+      {!hideTitle && (
+        <AppText variant="title" size="lg" style={{ marginBottom: spacing.md }}>
+          Farbpalette
+        </AppText>
+      )}
 
-      <View style={[styles.grid, { gap: spacing.sm, marginBottom: spacing.xl }]}>
+      <View style={[styles.grid, { gap: spacing.sm, marginBottom: hideTitle ? 0 : spacing.xl }]}>
         {THEME_OPTIONS.map((option) => {
           const palette = themes[option.key][resolvedMode];
           const isSelected = currentTheme === option.key;

@@ -1,7 +1,7 @@
 /**
  * seed-checkins.js
  * Inserts 60 organic check-ins (30 days × 2/day) into the app DB via ADB + run-as.
- * Compatible with schema version 12 (v1.6.0+). Includes user_chips (UCL-01 limits: MAX 10/category).
+ * Compatible with schema version 16 (v1.8.0+). Includes user_chips (UCL-01 limits: MAX 10/category).
  * Works on Google Play emulator images (no adb root needed).
  * Requires: debug build installed (npx expo run:android), ADB in PATH.
  * Run via: npm run seed
@@ -256,9 +256,10 @@ try {
   const count = db.prepare('SELECT COUNT(*) AS n FROM check_ins').get().n;
   console.log(`     ✓ Check-ins in der Datenbank: ${count}`);
 
-  // — user chips
+  // — user chips (schema v13+: normalized_label NOT NULL, UNIQUE(category, normalized_label))
   const insertChip = db.prepare(
-    `INSERT OR IGNORE INTO user_chips (category, label, use_count) VALUES (@category, @label, @use_count)`
+    `INSERT OR IGNORE INTO user_chips (category, label, normalized_label, use_count)
+     VALUES (@category, @label, LOWER(TRIM(@label)), @use_count)`
   );
   const insertManyChips = db.transaction((rows) => {
     for (const row of rows) insertChip.run(row);
