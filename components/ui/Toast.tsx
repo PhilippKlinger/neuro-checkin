@@ -19,7 +19,7 @@ const DURATION = 2500;
 const FADE_MS = 200;
 
 export function ToastProvider() {
-  const { theme, spacing, radii } = useTheme();
+  const { theme, spacing, radii, shadows } = useTheme();
   const insets = useSafeAreaInsets();
   const [toast, setToast] = useState<ToastState | null>(null);
   const opacity = useRef(new Animated.Value(0)).current;
@@ -63,12 +63,13 @@ export function ToastProvider() {
         styles.container,
         {
           bottom: insets.bottom + spacing.xl,
-          backgroundColor: theme.colors.surface,
+          backgroundColor: theme.colors.card,
           borderRadius: radii.md,
           paddingHorizontal: spacing.md,
           paddingVertical: spacing.sm,
           borderWidth: 1,
           borderColor: theme.colors.border,
+          ...shadows.md,
           opacity,
         },
       ]}

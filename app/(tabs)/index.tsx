@@ -23,7 +23,7 @@ function getGreeting(): string {
 }
 
 export default function HomeScreen() {
-  const { theme, spacing, radii, touchTarget } = useTheme();
+  const { theme, spacing, radii, touchTarget, shadows } = useTheme();
   const db = useDatabase();
   const router = useRouter();
   const [latestCheckIn, setLatestCheckIn] = useState<CheckIn | null>(null);
@@ -71,11 +71,13 @@ export default function HomeScreen() {
             style={({ pressed }) => [
               styles.anchor,
               {
-                backgroundColor: theme.colors.surface,
+                backgroundColor: theme.colors.card,
                 borderRadius: radii.md,
                 padding: spacing.md,
+                borderWidth: 1,
                 borderColor: theme.colors.border,
                 minHeight: touchTarget.min,
+                ...shadows.md,
               },
               pressed && { opacity: 0.75 },
             ]}
@@ -110,7 +112,7 @@ export default function HomeScreen() {
           styles.cta,
           {
             borderRadius: radii.md,
-            backgroundColor: theme.colors.primary,
+            backgroundColor: theme.colors.accent,
             paddingHorizontal: spacing.xl,
             paddingVertical: spacing.lg,
           },

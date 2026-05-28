@@ -37,7 +37,7 @@ export function SlotCard({
   onTimeChange,
   onWeekdayToggle,
 }: SlotCardProps) {
-  const { theme, spacing, radii, touchTarget } = useTheme();
+  const { theme, spacing, radii, touchTarget, shadows } = useTheme();
   const [weekdayExpanded, setWeekdayExpanded] = useState(false);
   const pickerDate = timeStringToDate(slot.time);
 
@@ -46,12 +46,13 @@ export function SlotCard({
       style={[
         styles.card,
         {
-          backgroundColor: theme.colors.surface,
+          backgroundColor: theme.colors.card,
           borderRadius: radii.md,
           padding: spacing.md,
           marginBottom: spacing.sm,
           borderWidth: 1,
           borderColor: slot.enabled ? theme.colors.accent : theme.colors.border,
+          ...shadows.sm,
         },
       ]}
     >

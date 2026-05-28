@@ -20,7 +20,7 @@ export const CheckInCard = memo(function CheckInCard({
   selected = false,
   onToggle,
 }: CheckInCardProps) {
-  const { theme, spacing, radii } = useTheme();
+  const { theme, spacing, radii, shadows } = useTheme();
 
   const activeSignals = Object.values(checkIn.bodySignals).filter((v) => v === true).length;
 
@@ -30,13 +30,14 @@ export const CheckInCard = memo(function CheckInCard({
       style={({ pressed }) => [
         styles.card,
         {
-          backgroundColor: selected ? theme.colors.accentSoft : theme.colors.surface,
+          backgroundColor: selected ? theme.colors.accentSoft : theme.colors.card,
           borderRadius: radii.md,
           paddingHorizontal: spacing.md,
           paddingVertical: spacing.sm,
           marginBottom: spacing.xs,
-          borderWidth: selected ? 1 : 0,
-          borderColor: selected ? theme.colors.accent : 'transparent',
+          borderWidth: 1,
+          borderColor: selected ? theme.colors.accent : theme.colors.border,
+          ...(selected ? {} : shadows.md),
         },
         pressed && { opacity: 0.75 },
       ]}

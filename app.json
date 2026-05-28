@@ -52,7 +52,10 @@
             "./assets/fonts/NunitoSans_400Regular.ttf",
             "./assets/fonts/NunitoSans_500Medium.ttf",
             "./assets/fonts/NunitoSans_600SemiBold.ttf",
-            "./assets/fonts/NunitoSans_700Bold.ttf"
+            "./assets/fonts/NunitoSans_700Bold.ttf",
+            "./assets/fonts/Fraunces_400Regular.ttf",
+            "./assets/fonts/Fraunces_500Medium.ttf",
+            "./assets/fonts/Fraunces_600SemiBold.ttf"
           ]
         }
       ],

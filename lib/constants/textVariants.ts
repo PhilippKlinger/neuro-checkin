@@ -1,6 +1,6 @@
 import { typography } from './themes';
 
-export type TextVariant = 'title' | 'display' | 'body' | 'hint' | 'label';
+export type TextVariant = 'title' | 'display' | 'displaySerif' | 'body' | 'hint' | 'label';
 export type TextColor = 'primary' | 'secondary' | 'inverse' | 'accent' | 'success';
 export type TextFamily = keyof typeof typography.families;
 export type TextWeight = keyof typeof typography.families.body;
@@ -29,6 +29,14 @@ export const TEXT_VARIANTS: Record<TextVariant, TextVariantTokens> = {
   display: {
     family: 'heading',
     fontFamily: typography.families.heading.bold,
+    fontSize: typography.sizes.xl,
+    lineHeight: typography.sizes.xl * typography.lineHeights.tight,
+    maxFontSizeMultiplier: 1.2,
+    defaultColor: 'primary',
+  },
+  displaySerif: {
+    family: 'display',
+    fontFamily: typography.families.display.medium,
     fontSize: typography.sizes.xl,
     lineHeight: typography.sizes.xl * typography.lineHeights.tight,
     maxFontSizeMultiplier: 1.2,

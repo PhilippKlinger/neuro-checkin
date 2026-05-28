@@ -43,7 +43,8 @@ function resolveColor(color: TextColor, colors: ColorTokens): string {
 function resolveFontFamily(variant: TextVariant, weight: TextWeight | undefined): string {
   const tokens = TEXT_VARIANTS[variant];
   if (!weight) return tokens.fontFamily;
-  return typography.families[tokens.family][weight];
+  const family = typography.families[tokens.family] as Record<string, string>;
+  return family[weight] ?? tokens.fontFamily;
 }
 
 export function resolveTextStyle(
@@ -56,7 +57,9 @@ export function resolveTextStyle(
   const effectiveFontFamily = resolveFontFamily(options.variant, options.weight);
   const effectiveLineHeight = options.size
     ? effectiveFontSize *
-      (tokens.family === 'heading' ? typography.lineHeights.tight : typography.lineHeights.normal)
+      (tokens.family === 'heading' || tokens.family === 'display'
+        ? typography.lineHeights.tight
+        : typography.lineHeights.normal)
     : tokens.lineHeight;
 
   const result: ResolvedTextStyle = {
