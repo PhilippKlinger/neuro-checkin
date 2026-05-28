@@ -1,5 +1,5 @@
 import type { SQLiteDatabase } from 'expo-sqlite';
-import type { UserSettings } from '../types/checkin';
+import type { UserSettings, FontFamily } from '../types/checkin';
 
 export async function getSettings(db: SQLiteDatabase): Promise<UserSettings> {
   const row = await db.getFirstAsync<{
@@ -17,6 +17,7 @@ export async function getSettings(db: SQLiteDatabase): Promise<UserSettings> {
     last_active_date: string | null;
     detail_view_introduced: number;
     export_directory_uri: string | null;
+    font_family: string | null;
   }>('SELECT * FROM user_settings WHERE id = 1');
 
   if (!row) {
@@ -35,6 +36,7 @@ export async function getSettings(db: SQLiteDatabase): Promise<UserSettings> {
       lastActiveDate: null,
       detailViewIntroduced: false,
       exportDirectoryUri: null,
+      fontFamily: 'lexend',
     };
   }
 
@@ -53,6 +55,7 @@ export async function getSettings(db: SQLiteDatabase): Promise<UserSettings> {
     lastActiveDate: row.last_active_date ?? null,
     detailViewIntroduced: row.detail_view_introduced === 1,
     exportDirectoryUri: row.export_directory_uri ?? null,
+    fontFamily: (row.font_family as FontFamily) ?? 'lexend',
   };
 }
 
@@ -114,6 +117,10 @@ export async function updateSettings(
   if (settings.exportDirectoryUri !== undefined) {
     updates.push('export_directory_uri = ?');
     values.push(settings.exportDirectoryUri ?? null);
+  }
+  if (settings.fontFamily !== undefined) {
+    updates.push('font_family = ?');
+    values.push(settings.fontFamily);
   }
 
   if (updates.length > 0) {

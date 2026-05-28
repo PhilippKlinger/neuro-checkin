@@ -11,10 +11,10 @@ interface AppTextInputProps extends Omit<TextInputProps, 'maxFontSizeMultiplier'
 }
 
 export function AppTextInput({ variant = 'body', color, size, style, ...rest }: AppTextInputProps) {
-  const { theme } = useTheme();
+  const { theme, typography } = useTheme();
 
   const resolved = resolveTextStyle(
-    { variant, color, size },
+    { variant, color, size, families: typography.families },
     {
       text: theme.colors.text,
       textSecondary: theme.colors.textSecondary,

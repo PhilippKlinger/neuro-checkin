@@ -8,6 +8,7 @@ export type TextWeight = keyof typeof typography.families.body;
 export interface TextVariantTokens {
   family: TextFamily;
   fontFamily: string;
+  defaultWeight: TextWeight;
   fontSize: number;
   lineHeight: number;
   fontStyle?: 'italic';
@@ -21,6 +22,7 @@ export const TEXT_VARIANTS: Record<TextVariant, TextVariantTokens> = {
   title: {
     family: 'heading',
     fontFamily: typography.families.heading.semibold,
+    defaultWeight: 'semibold',
     fontSize: typography.sizes.lg,
     lineHeight: typography.sizes.lg * typography.lineHeights.tight,
     maxFontSizeMultiplier: 1.3,
@@ -29,6 +31,7 @@ export const TEXT_VARIANTS: Record<TextVariant, TextVariantTokens> = {
   display: {
     family: 'heading',
     fontFamily: typography.families.heading.bold,
+    defaultWeight: 'bold',
     fontSize: typography.sizes.xl,
     lineHeight: typography.sizes.xl * typography.lineHeights.tight,
     maxFontSizeMultiplier: 1.2,
@@ -37,6 +40,7 @@ export const TEXT_VARIANTS: Record<TextVariant, TextVariantTokens> = {
   displaySerif: {
     family: 'display',
     fontFamily: typography.families.display.medium,
+    defaultWeight: 'medium',
     fontSize: typography.sizes.xl,
     lineHeight: typography.sizes.xl * typography.lineHeights.tight,
     maxFontSizeMultiplier: 1.2,
@@ -45,6 +49,7 @@ export const TEXT_VARIANTS: Record<TextVariant, TextVariantTokens> = {
   body: {
     family: 'body',
     fontFamily: typography.families.body.regular,
+    defaultWeight: 'regular',
     fontSize: typography.sizes.md,
     lineHeight: typography.sizes.md * typography.lineHeights.normal,
     maxFontSizeMultiplier: 1.6,
@@ -53,6 +58,7 @@ export const TEXT_VARIANTS: Record<TextVariant, TextVariantTokens> = {
   hint: {
     family: 'body',
     fontFamily: typography.families.body.regular,
+    defaultWeight: 'regular',
     fontSize: typography.sizes.sm,
     lineHeight: typography.sizes.sm * typography.lineHeights.normal,
     fontStyle: 'italic',
@@ -62,6 +68,7 @@ export const TEXT_VARIANTS: Record<TextVariant, TextVariantTokens> = {
   label: {
     family: 'ui',
     fontFamily: typography.families.ui.medium,
+    defaultWeight: 'medium',
     fontSize: typography.sizes.md,
     lineHeight: typography.sizes.md * typography.lineHeights.normal,
     maxFontSizeMultiplier: 1.3,

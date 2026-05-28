@@ -21,8 +21,14 @@ import {
   cancelSingleSlot,
   scheduleAllSlots,
 } from '../../lib/notifications/notifications';
-import { type NotificationSlot, ALL_WEEKDAYS, WEEKDAY_BITS } from '../../lib/types/checkin';
+import {
+  type FontFamily,
+  type NotificationSlot,
+  ALL_WEEKDAYS,
+  WEEKDAY_BITS,
+} from '../../lib/types/checkin';
 import { ThemeSection } from '../../components/settings/ThemeSection';
+import { FontSection } from '../../components/settings/FontSection';
 import { NotificationsSection } from '../../components/settings/NotificationsSection';
 import { DataSection } from '../../components/settings/DataSection';
 import { FeedbackModal } from '../../components/settings/FeedbackModal';
@@ -34,8 +40,18 @@ const DEFAULT_SLOTS: NotificationSlot[] = [
 ];
 
 export default function SettingsScreen() {
-  const { theme, themeName, colorMode, setThemeName, setColorMode, spacing, radii, touchTarget } =
-    useTheme();
+  const {
+    theme,
+    themeName,
+    colorMode,
+    fontFamily,
+    setThemeName,
+    setColorMode,
+    setFontFamily,
+    spacing,
+    radii,
+    touchTarget,
+  } = useTheme();
   const db = useDatabase();
   const router = useRouter();
 
@@ -63,6 +79,7 @@ export default function SettingsScreen() {
           if (cancelled) return;
           setThemeName(settings.themeName as ThemeName);
           setColorMode(settings.colorMode);
+          setFontFamily(settings.fontFamily);
           setIsEmulator(!Device.isDevice);
 
           if (Device.isDevice) {
@@ -106,7 +123,7 @@ export default function SettingsScreen() {
       return () => {
         cancelled = true;
       };
-    }, [db, setThemeName, setColorMode])
+    }, [db, setThemeName, setColorMode, setFontFamily])
   );
 
   const handleSlotToggle = useCallback(
@@ -192,6 +209,20 @@ export default function SettingsScreen() {
     [db, themeName, setThemeName]
   );
 
+  const handleFontChange = useCallback(
+    async (name: FontFamily) => {
+      const previous = fontFamily;
+      setFontFamily(name);
+      try {
+        await updateSettings(db, { fontFamily: name });
+      } catch (error) {
+        console.error('updateSettings fontFamily failed:', error);
+        setFontFamily(previous);
+      }
+    },
+    [db, fontFamily, setFontFamily]
+  );
+
   const handleGuidedModeToggle = useCallback(
     async (value: boolean) => {
       const previous = guidedMode;
@@ -221,6 +252,8 @@ export default function SettingsScreen() {
         <AppearanceModeSection currentMode={colorMode} onModeChange={handleModeChange} />
 
         <ThemeSection currentTheme={themeName} onThemeChange={handleThemeChange} />
+
+        <FontSection currentFont={fontFamily} onFontChange={handleFontChange} />
 
         <NotificationsSection
           slots={slots}

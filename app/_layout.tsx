@@ -14,7 +14,7 @@ import { ToastProvider } from '../components/ui/Toast';
 initSentry();
 
 function AppStack() {
-  const { theme, typography, setThemeName, setColorMode } = useTheme();
+  const { theme, typography, setThemeName, setColorMode, setFontFamily } = useTheme();
   const db = useDatabase();
   const isReady = useDatabaseReady();
   const router = useRouter();
@@ -29,6 +29,7 @@ function AppStack() {
         const settings = await getSettings(db);
         setThemeName(settings.themeName as ThemeName);
         setColorMode(settings.colorMode);
+        setFontFamily(settings.fontFamily);
 
         const today = new Date().toISOString().slice(0, 10);
         const updates: Parameters<typeof updateSettings>[1] = { lastActiveDate: today };

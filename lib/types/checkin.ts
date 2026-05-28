@@ -1,3 +1,5 @@
+export type FontFamily = 'lexend' | 'atkinson' | 'nunito';
+
 export interface CheckIn {
   id: number;
   createdAt: string; // ISO 8601
@@ -44,6 +46,7 @@ export interface UserSettings {
   lastActiveDate: string | null; // YYYY-MM-DD
   detailViewIntroduced: boolean;
   exportDirectoryUri: string | null;
+  fontFamily: FontFamily;
 }
 
 /** A single configurable notification time slot (e.g. morning or evening). */
