@@ -309,8 +309,8 @@ export default function SettingsScreen() {
         {/* --- Check-in --- */}
         <SettingsGroup title="Check-in">
           <SettingsRow
-            label="Hinweise im Check-in"
-            hint="Kurze Erklärungen in jedem Schritt"
+            label="Hilfe im Check-in"
+            hint="Erklärungen wenn du sie brauchst"
             showDivider={false}
             right={
               <Switch
@@ -319,8 +319,8 @@ export default function SettingsScreen() {
                 trackColor={{ false: theme.colors.border, true: theme.colors.accent }}
                 thumbColor={theme.colors.background}
                 accessibilityRole="switch"
-                accessibilityLabel="Hinweise im Check-in"
-                accessibilityHint="Zeigt kurze Erklärungen in jedem Check-in-Schritt"
+                accessibilityLabel="Hilfe im Check-in"
+                accessibilityHint="Zeigt Mini-Erklärungen in einzelnen Schritten"
                 accessibilityState={{ checked: guidedMode }}
               />
             }

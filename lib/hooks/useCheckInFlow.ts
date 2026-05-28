@@ -44,7 +44,6 @@ export interface UseCheckInFlowResult {
   wasReset: boolean;
   isFirstCheckin: boolean;
   guidedMode: boolean;
-  showToggleIntroHint: boolean;
   feelingUserChips: string[];
   selfCareUserChips: string[];
   canGoBack: boolean;
@@ -72,7 +71,6 @@ export function useCheckInFlow(db: SQLiteDatabase): UseCheckInFlowResult {
   const [wasReset, setWasReset] = useState(false);
   const [isFirstCheckin, setIsFirstCheckin] = useState(false);
   const [guidedMode, setGuidedMode] = useState(true);
-  const [showToggleIntroHint, setShowToggleIntroHint] = useState(false);
   const [feelingUserChips, setFeelingUserChips] = useState<string[]>([]);
   const [selfCareUserChips, setSelfCareUserChips] = useState<string[]>([]);
 
@@ -98,7 +96,6 @@ export function useCheckInFlow(db: SQLiteDatabase): UseCheckInFlowResult {
           if (cancelled) return;
           setIsFirstCheckin(count === 0);
           setGuidedMode(settings.guidedModeEnabled);
-          setShowToggleIntroHint(!settings.guidedToggleIntroduced);
           setFeelingUserChips(feelingChips);
           setSelfCareUserChips(selfCareChips);
         } catch (error) {
@@ -147,12 +144,7 @@ export function useCheckInFlow(db: SQLiteDatabase): UseCheckInFlowResult {
   async function handleGuidedToggle(value: boolean) {
     setGuidedMode(value);
     try {
-      if (showToggleIntroHint) {
-        setShowToggleIntroHint(false);
-        await updateSettings(db, { guidedModeEnabled: value, guidedToggleIntroduced: true });
-      } else {
-        await updateSettings(db, { guidedModeEnabled: value });
-      }
+      await updateSettings(db, { guidedModeEnabled: value });
     } catch (error) {
       console.error('handleGuidedToggle failed:', error);
       setGuidedMode(!value);
@@ -249,7 +241,6 @@ export function useCheckInFlow(db: SQLiteDatabase): UseCheckInFlowResult {
     wasReset,
     isFirstCheckin,
     guidedMode,
-    showToggleIntroHint,
     feelingUserChips,
     selfCareUserChips,
     canGoBack: step > 0,

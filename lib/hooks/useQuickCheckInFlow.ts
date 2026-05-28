@@ -46,7 +46,6 @@ export interface UseQuickCheckInFlowResult {
   isSaving: boolean;
   isDone: boolean;
   guidedMode: boolean;
-  showToggleIntroHint: boolean;
   isLastStep: boolean;
   isStepBlocked: boolean;
   isNextDisabled: boolean;
@@ -71,7 +70,6 @@ export function useQuickCheckInFlow(
   const [isSaving, setIsSaving] = useState(false);
   const [isDone, setIsDone] = useState(false);
   const [guidedMode, setGuidedMode] = useState(true);
-  const [showToggleIntroHint, setShowToggleIntroHint] = useState(false);
   const [userFeelingChips, setUserFeelingChips] = useState<string[]>([]);
   const [feelingChipsAtLimit, setFeelingChipsAtLimit] = useState(false);
 
@@ -89,7 +87,6 @@ export function useQuickCheckInFlow(
           ]);
           if (cancelled) return;
           setGuidedMode(settings.guidedModeEnabled);
-          setShowToggleIntroHint(!settings.guidedToggleIntroduced);
           // Filter out standard chips so only user-created chips are shown
           const userOnly = chips.filter((c) => !FEELING_CHIPS.includes(c as never));
           setUserFeelingChips(userOnly);
@@ -108,12 +105,7 @@ export function useQuickCheckInFlow(
   async function handleGuidedToggle(value: boolean) {
     setGuidedMode(value);
     try {
-      if (showToggleIntroHint) {
-        setShowToggleIntroHint(false);
-        await updateSettings(db, { guidedModeEnabled: value, guidedToggleIntroduced: true });
-      } else {
-        await updateSettings(db, { guidedModeEnabled: value });
-      }
+      await updateSettings(db, { guidedModeEnabled: value });
     } catch (error) {
       console.error('quickCheckIn handleGuidedToggle failed:', error);
       setGuidedMode(!value);
@@ -197,7 +189,6 @@ export function useQuickCheckInFlow(
     isSaving,
     isDone,
     guidedMode,
-    showToggleIntroHint,
     isLastStep: step === TOTAL_STEPS - 1,
     isStepBlocked: blocked,
     isNextDisabled: isSaving || blocked,
