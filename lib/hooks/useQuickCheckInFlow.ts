@@ -164,7 +164,7 @@ export function useQuickCheckInFlow(
         scope.setTag('action', 'save');
         Sentry.captureException(error);
       });
-      Alert.alert('Fehler beim Speichern', 'Check-in konnte nicht gespeichert werden.');
+      Alert.alert('Hat nicht geklappt', 'Check-in konnte nicht gespeichert werden.');
     } finally {
       setIsSaving(false);
       savingRef.current = false;

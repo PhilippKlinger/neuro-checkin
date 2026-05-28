@@ -59,10 +59,7 @@ export default function CheckInDetailScreen() {
         scope.setTag('action', 'pdfExport');
         Sentry.captureException(error);
       });
-      Alert.alert(
-        'Export fehlgeschlagen',
-        'PDF konnte nicht erstellt werden. Bitte versuche es erneut.'
-      );
+      Alert.alert('Hat nicht geklappt', 'Das PDF konnte nicht erstellt werden. Versuch es nochmal.');
     }
   }
 
@@ -85,8 +82,8 @@ export default function CheckInDetailScreen() {
         Sentry.captureException(error);
       });
       Alert.alert(
-        'Speichern fehlgeschlagen',
-        'PDF konnte nicht gespeichert werden. Bitte versuche es erneut.'
+        'Hat nicht geklappt',
+        'Das PDF konnte nicht gespeichert werden. Versuch es nochmal.'
       );
     }
   }
@@ -99,7 +96,7 @@ export default function CheckInDetailScreen() {
       router.back();
     } catch (error) {
       console.error('deleteCheckIn failed:', error);
-      Alert.alert('Fehler', 'Check-in konnte nicht gelöscht werden. Bitte versuche es erneut.');
+      Alert.alert('Hat nicht geklappt', 'Check-in konnte nicht gelöscht werden. Versuch es nochmal.');
     }
   }
 

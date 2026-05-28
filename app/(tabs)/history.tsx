@@ -75,10 +75,7 @@ export default function HistoryScreen() {
   async function handleExportSelected() {
     if (selectedIds.size === 0 || isExporting) return;
     if (selectedIds.size > MAX_EXPORT_COUNT) {
-      Alert.alert(
-        'Zu viele ausgewählt',
-        `Maximal ${MAX_EXPORT_COUNT} Check-ins pro Export. Bitte wähle weniger aus.`
-      );
+      Alert.alert('Zu viele ausgewählt', `Maximal ${MAX_EXPORT_COUNT} Check-ins pro Export.`);
       return;
     }
     const toExport = checkIns.filter((c) => selectedIds.has(c.id));
@@ -92,10 +89,7 @@ export default function HistoryScreen() {
         scope.setTag('action', 'pdfExport');
         Sentry.captureException(error);
       });
-      Alert.alert(
-        'Export fehlgeschlagen',
-        'PDF konnte nicht erstellt werden. Bitte versuche es erneut.'
-      );
+      Alert.alert('Hat nicht geklappt', 'Das PDF konnte nicht erstellt werden. Versuch es nochmal.');
     } finally {
       setIsExporting(false);
       exitSelectionMode();
@@ -105,10 +99,7 @@ export default function HistoryScreen() {
   async function handleSaveToDevice() {
     if (selectedIds.size === 0 || isExporting) return;
     if (selectedIds.size > MAX_EXPORT_COUNT) {
-      Alert.alert(
-        'Zu viele ausgewählt',
-        `Maximal ${MAX_EXPORT_COUNT} Check-ins pro Export. Bitte wähle weniger aus.`
-      );
+      Alert.alert('Zu viele ausgewählt', `Maximal ${MAX_EXPORT_COUNT} Check-ins pro Export.`);
       return;
     }
     const toExport = checkIns.filter((c) => selectedIds.has(c.id));
@@ -130,8 +121,8 @@ export default function HistoryScreen() {
         Sentry.captureException(error);
       });
       Alert.alert(
-        'Speichern fehlgeschlagen',
-        'PDF konnte nicht gespeichert werden. Bitte versuche es erneut.'
+        'Hat nicht geklappt',
+        'Das PDF konnte nicht gespeichert werden. Versuch es nochmal.'
       );
     } finally {
       setIsExporting(false);

@@ -45,13 +45,13 @@ export const NotificationsSection = memo(function NotificationsSection({
 
       {!hideTitle && (
         <AppText variant="body" size="sm" color="secondary" style={{ marginBottom: spacing.md }}>
-          Du kannst eine oder zwei Erinnerungen einstellen — oder keine.
+          Eine, zwei oder keine Erinnerungen.
         </AppText>
       )}
 
       {isEmulator && anySlotEnabled && (
         <AppText variant="hint" size="xs" style={{ marginBottom: spacing.sm }}>
-          Hinweis: Benachrichtigungen funktionieren nur auf einem echten Gerät, nicht im Emulator.
+          Benachrichtigungen funktionieren nur auf einem echten Gerät.
         </AppText>
       )}
 
