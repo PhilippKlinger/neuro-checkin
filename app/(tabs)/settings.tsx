@@ -14,7 +14,6 @@ import { countCheckIns } from '../../lib/database/checkins';
 import { countUserChips } from '../../lib/database/userChips';
 import { getNotificationSlots, saveNotificationSlot } from '../../lib/database/notificationQueries';
 import { ThemeName, ColorMode } from '../../lib/constants/themes';
-import type { FontFamily } from '../../lib/types/checkin';
 import { AppearanceModeSection } from '../../components/settings/AppearanceModeSection';
 import {
   requestNotificationPermission,
@@ -22,7 +21,12 @@ import {
   cancelSingleSlot,
   scheduleAllSlots,
 } from '../../lib/notifications/notifications';
-import { type NotificationSlot, ALL_WEEKDAYS, WEEKDAY_BITS } from '../../lib/types/checkin';
+import {
+  type FontFamily,
+  type NotificationSlot,
+  ALL_WEEKDAYS,
+  WEEKDAY_BITS,
+} from '../../lib/types/checkin';
 import { ThemeSection } from '../../components/settings/ThemeSection';
 import { FontSection } from '../../components/settings/FontSection';
 import { NotificationsSection } from '../../components/settings/NotificationsSection';
