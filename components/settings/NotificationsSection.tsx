@@ -10,6 +10,7 @@ interface NotificationsSectionProps {
   slots: NotificationSlot[];
   showTimePicker: 0 | 1 | null;
   isEmulator: boolean;
+  hideTitle?: boolean;
   onToggle: (slotId: 0 | 1, value: boolean) => void;
   onTimePress: (slotId: 0 | 1) => void;
   onTimeChange: (slotId: 0 | 1, event: DateTimePickerEvent, date?: Date) => void;
@@ -25,6 +26,7 @@ export const NotificationsSection = memo(function NotificationsSection({
   slots,
   showTimePicker,
   isEmulator,
+  hideTitle,
   onToggle,
   onTimePress,
   onTimeChange,
@@ -35,13 +37,17 @@ export const NotificationsSection = memo(function NotificationsSection({
 
   return (
     <>
-      <AppText variant="title" size="lg" style={{ marginBottom: spacing.md }}>
-        Erinnerungen
-      </AppText>
+      {!hideTitle && (
+        <AppText variant="title" size="lg" style={{ marginBottom: spacing.md }}>
+          Erinnerungen
+        </AppText>
+      )}
 
-      <AppText variant="body" size="sm" color="secondary" style={{ marginBottom: spacing.md }}>
-        Du kannst eine oder zwei Erinnerungen einstellen — oder keine.
-      </AppText>
+      {!hideTitle && (
+        <AppText variant="body" size="sm" color="secondary" style={{ marginBottom: spacing.md }}>
+          Du kannst eine oder zwei Erinnerungen einstellen — oder keine.
+        </AppText>
+      )}
 
       {isEmulator && anySlotEnabled && (
         <AppText variant="hint" size="xs" style={{ marginBottom: spacing.sm }}>
