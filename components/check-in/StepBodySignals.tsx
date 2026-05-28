@@ -20,7 +20,7 @@ const SIGNALS: SignalItem[] = [
   { key: 'hunger', label: 'Hunger', description: 'Hast du Hunger?' },
   { key: 'thirst', label: 'Durst', description: 'Hast du Durst?' },
   { key: 'temperature', label: 'Temperatur', description: 'Ist dir zu warm oder zu kalt?' },
-  { key: 'pain', label: 'Schmerzen', description: 'Hast du irgendwo Schmerzen?' },
+  { key: 'pain', label: 'Schmerzen', description: 'Hast du Schmerzen?' },
   { key: 'restroom', label: 'Toilette', description: 'Musst du auf Toilette?' },
   { key: 'seating', label: 'Sitzposition', description: 'Sitzt du unbequem?' },
   {
@@ -40,7 +40,7 @@ export function StepBodySignals({ value, onValueChange, hint }: StepBodySignalsP
   }
 
   return (
-    <StepScaffold title="Körpersignale" subtitle="Was nimmt dein Körper gerade wahr?" hint={hint}>
+    <StepScaffold title="Körpersignale" subtitle="Was ist gerade in deinem Körper?" hint={hint}>
       <View style={[styles.signalList, { gap: spacing.sm }]}>
         {SIGNALS.map((signal) => {
           const state = value[signal.key];

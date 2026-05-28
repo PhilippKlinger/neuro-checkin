@@ -14,11 +14,11 @@ export function StepSelfCare({ value, onValueChange, hint, userChips }: StepSelf
   return (
     <ChipOrTextStep
       title="Selbstfürsorge"
-      subtitle="Was brauchst du gerade? Was würde dir jetzt gut tun?"
+      subtitle="Was würde dir jetzt gut tun?"
       chips={SELF_CARE_CHIPS}
       value={value}
       onValueChange={onValueChange}
-      textPlaceholder="Was würde dir jetzt gut tun?"
+      textPlaceholder="Eigenes Wort eintragen"
       textAccessibilityLabel="Selbstfürsorge-Notiz"
       maxLength={MAX_LABEL_LENGTH}
       hint={hint}

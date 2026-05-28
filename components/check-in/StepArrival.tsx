@@ -11,22 +11,13 @@ export function StepArrival({ showHintIntro }: StepArrivalProps) {
   const { spacing } = useTheme();
 
   return (
-    <StepScaffold
-      title="Ankommen"
-      subtitle="Wenn du magst, halte einen Moment inne — bevor es weitergeht."
-      centerContent
-    >
+    <StepScaffold title="Ankommen" subtitle="Einen Moment, bevor es losgeht." centerContent>
       <AppText variant="body" color="secondary" style={[styles.body, { marginBottom: spacing.md }]}>
-        Wenn du magst, bemerke wie du gerade atmest — oder wie du sitzt oder stehst.{'\n'}
-        Oder einfach, wie es dir in diesem Moment geht.
-      </AppText>
-      <AppText variant="hint" style={[styles.hint, { marginTop: spacing.xl }]}>
-        Es gibt kein Richtig oder Falsch. Einfach wahrnehmen, was da ist.
+        Atme einmal langsam aus.
       </AppText>
       {showHintIntro && (
         <AppText variant="hint" style={[styles.hint, { marginTop: spacing.xl }]}>
-          Bei jedem Schritt siehst du einen kurzen Hinweis. Ab dem nächsten Schritt kannst du sie
-          mit dem 💡-Symbol oben rechts ausschalten.
+          Hinweise kannst du mit 💡 oben rechts ausschalten.
         </AppText>
       )}
     </StepScaffold>
