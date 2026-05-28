@@ -25,7 +25,11 @@ export interface ThemeContextValue {
   setThemeName: (name: ThemeName) => void;
   setColorMode: (mode: ColorMode) => void;
   setFontFamily: (f: FontFamily) => void;
-  typography: { families: FontFamilies; sizes: typeof typography.sizes; lineHeights: typeof typography.lineHeights };
+  typography: {
+    families: FontFamilies;
+    sizes: typeof typography.sizes;
+    lineHeights: typeof typography.lineHeights;
+  };
   spacing: typeof spacing;
   radii: typeof radii;
   shadows: typeof shadows;

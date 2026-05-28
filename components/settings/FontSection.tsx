@@ -10,10 +10,34 @@ interface FontSectionProps {
   onFontChange: (name: FontFamily) => void;
 }
 
-const FONT_OPTIONS: { key: FontFamily; label: string; subtitle: string; heading: string; ui: string }[] = [
-  { key: 'lexend', label: 'Lexend', subtitle: 'Lesefluenz', heading: fonts.lexend.semibold, ui: fonts.lexend.medium },
-  { key: 'atkinson', label: 'Atkinson', subtitle: 'Maximale Klarheit', heading: fonts.atkinson.semibold, ui: fonts.atkinson.regular },
-  { key: 'nunito', label: 'Nunito', subtitle: 'Ausgewogen', heading: fonts.nunito.semibold, ui: fonts.nunito.medium },
+const FONT_OPTIONS: {
+  key: FontFamily;
+  label: string;
+  subtitle: string;
+  heading: string;
+  ui: string;
+}[] = [
+  {
+    key: 'lexend',
+    label: 'Lexend',
+    subtitle: 'Lesefluenz',
+    heading: fonts.lexend.semibold,
+    ui: fonts.lexend.medium,
+  },
+  {
+    key: 'atkinson',
+    label: 'Atkinson',
+    subtitle: 'Maximale Klarheit',
+    heading: fonts.atkinson.semibold,
+    ui: fonts.atkinson.regular,
+  },
+  {
+    key: 'nunito',
+    label: 'Nunito',
+    subtitle: 'Ausgewogen',
+    heading: fonts.nunito.semibold,
+    ui: fonts.nunito.medium,
+  },
 ];
 
 export const FontSection = memo(function FontSection({

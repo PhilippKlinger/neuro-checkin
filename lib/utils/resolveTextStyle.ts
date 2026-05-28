@@ -64,7 +64,13 @@ function resolveFontFamily(
   const familiesSource = families ?? typography.families;
   const effectiveWeight = weight ?? tokens.defaultWeight;
   const family = familiesSource[tokens.family] as Record<string, string>;
-  return family[effectiveWeight] ?? family['semibold'] ?? family['medium'] ?? family['regular'] ?? tokens.fontFamily;
+  return (
+    family[effectiveWeight] ??
+    family['semibold'] ??
+    family['medium'] ??
+    family['regular'] ??
+    tokens.fontFamily
+  );
 }
 
 export function resolveTextStyle(

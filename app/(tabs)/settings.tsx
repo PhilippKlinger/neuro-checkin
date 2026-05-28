@@ -36,8 +36,18 @@ const DEFAULT_SLOTS: NotificationSlot[] = [
 ];
 
 export default function SettingsScreen() {
-  const { theme, themeName, colorMode, fontFamily, setThemeName, setColorMode, setFontFamily, spacing, radii, touchTarget } =
-    useTheme();
+  const {
+    theme,
+    themeName,
+    colorMode,
+    fontFamily,
+    setThemeName,
+    setColorMode,
+    setFontFamily,
+    spacing,
+    radii,
+    touchTarget,
+  } = useTheme();
   const db = useDatabase();
   const router = useRouter();
 
