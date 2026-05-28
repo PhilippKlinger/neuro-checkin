@@ -68,8 +68,8 @@ export function StepDistress({
   return (
     <StepScaffold
       ref={scrollRef}
-      title="Stress-Level"
-      subtitle="Wie belastet oder angespannt bist du gerade?"
+      title="Stress"
+      subtitle="Wie belastet bist du gerade?"
       hint={hint}
       keyboardPersistTaps
       avoidKeyboard
@@ -149,7 +149,7 @@ export function StepDistress({
           accessibilityRole="button"
           accessibilityLabel="Notiz hinzufügen"
         >
-          <AppText variant="hint">Wenn du magst, schreib kurz dazu.</AppText>
+          <AppText variant="hint">Kurz dazu schreiben.</AppText>
         </Pressable>
       )}
 
