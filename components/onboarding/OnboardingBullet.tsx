@@ -49,10 +49,12 @@ interface TextSegment {
 
 function parseBoldSegments(text: string): TextSegment[] {
   const parts = text.split(/\*([^*]+)\*/);
-  return parts.map((part, i) => ({
-    content: part,
-    bold: i % 2 === 1,
-  })).filter((seg) => seg.content.length > 0);
+  return parts
+    .map((part, i) => ({
+      content: part,
+      bold: i % 2 === 1,
+    }))
+    .filter((seg) => seg.content.length > 0);
 }
 
 const styles = StyleSheet.create({

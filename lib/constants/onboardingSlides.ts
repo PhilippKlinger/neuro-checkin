@@ -65,9 +65,7 @@ export const ONBOARDING_SLIDES: OnboardingSlideContent[] = [
     kind: 'palette',
     title: 'Wähle deine Farbwelt.',
     body: 'Du kannst sie jederzeit in den Einstellungen ändern.',
-    bullets: [
-      { icon: '🔒', text: '*Alles bleibt auf deinem Gerät.* Kein Konto, keine Cloud.' },
-    ],
+    bullets: [{ icon: '🔒', text: '*Alles bleibt auf deinem Gerät.* Kein Konto, keine Cloud.' }],
     ctaLabel: 'Beginnen',
     hasSkip: false,
   },

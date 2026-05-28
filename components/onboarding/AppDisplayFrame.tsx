@@ -22,12 +22,7 @@ export function AppDisplayFrame({ children }: AppDisplayFrameProps) {
         shadows.md,
       ]}
     >
-      <View
-        style={[
-          styles.notch,
-          { backgroundColor: theme.colors.border },
-        ]}
-      />
+      <View style={[styles.notch, { backgroundColor: theme.colors.border }]} />
       {children}
     </View>
   );

@@ -21,7 +21,12 @@ export function NotificationMock() {
       ]}
     >
       <View style={[styles.row, { gap: spacing.sm }]}>
-        <View style={[styles.iconBox, { backgroundColor: theme.colors.accentSoft, borderRadius: radii.sm }]}>
+        <View
+          style={[
+            styles.iconBox,
+            { backgroundColor: theme.colors.accentSoft, borderRadius: radii.sm },
+          ]}
+        >
           <Svg width={20} height={20} viewBox="0 0 120 120">
             <Path
               d="M 60 18 Q 90 22 96 60 Q 98 92 60 100 Q 22 96 18 60 Q 19 28 50 18"

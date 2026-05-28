@@ -32,12 +32,18 @@ export function OnboardingScaffold({ slides, renderSlide, onFinish }: Onboarding
   }
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.colors.background, padding: spacing.lg }]}>
+    <View
+      style={[styles.container, { backgroundColor: theme.colors.background, padding: spacing.lg }]}
+    >
       <View style={[styles.skipRow, { paddingTop: spacing.md }]}>
         {current.hasSkip && !isLast ? (
           <Pressable
             onPress={onFinish}
-            style={({ pressed }) => [styles.skipButton, { padding: spacing.sm }, pressed && { opacity: 0.75 }]}
+            style={({ pressed }) => [
+              styles.skipButton,
+              { padding: spacing.sm },
+              pressed && { opacity: 0.75 },
+            ]}
             accessibilityRole="button"
             accessibilityLabel="Onboarding überspringen"
           >

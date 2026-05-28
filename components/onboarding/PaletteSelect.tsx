@@ -44,16 +44,29 @@ export function PaletteSelect({ currentTheme, onSelect }: PaletteSelectProps) {
           >
             <View style={[styles.swatches, { gap: spacing.xs, marginBottom: spacing.sm }]}>
               <View
-                style={[styles.swatch, { backgroundColor: palette.colors.primary, borderRadius: radii.full }]}
+                style={[
+                  styles.swatch,
+                  { backgroundColor: palette.colors.primary, borderRadius: radii.full },
+                ]}
               />
               <View
-                style={[styles.swatch, { backgroundColor: palette.colors.accent, borderRadius: radii.full }]}
+                style={[
+                  styles.swatch,
+                  { backgroundColor: palette.colors.accent, borderRadius: radii.full },
+                ]}
               />
               <View
-                style={[styles.swatch, { backgroundColor: palette.colors.background, borderRadius: radii.full }]}
+                style={[
+                  styles.swatch,
+                  { backgroundColor: palette.colors.background, borderRadius: radii.full },
+                ]}
               />
             </View>
-            <AppText variant="label" size="sm" style={{ textAlign: 'center', color: palette.colors.text }}>
+            <AppText
+              variant="label"
+              size="sm"
+              style={{ textAlign: 'center', color: palette.colors.text }}
+            >
               {PALETTE_LABELS[name]}
             </AppText>
           </Pressable>

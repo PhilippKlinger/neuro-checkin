@@ -130,7 +130,9 @@ export default function OnboardingScreen() {
                   },
                 ]}
               >
-                <AppText variant="label" size="sm">💡</AppText>
+                <AppText variant="label" size="sm">
+                  💡
+                </AppText>
               </View>
             </View>
             <AppText variant="hint" style={{ marginTop: 6, marginBottom: 10 }}>
@@ -152,7 +154,9 @@ export default function OnboardingScreen() {
                     },
                   ]}
                 >
-                  <AppText variant="body" size="sm">{chip}</AppText>
+                  <AppText variant="body" size="sm">
+                    {chip}
+                  </AppText>
                 </View>
               ))}
             </View>
@@ -171,11 +175,7 @@ export default function OnboardingScreen() {
   }
 
   return (
-    <OnboardingScaffold
-      slides={ONBOARDING_SLIDES}
-      renderSlide={renderSlide}
-      onFinish={finish}
-    />
+    <OnboardingScaffold slides={ONBOARDING_SLIDES} renderSlide={renderSlide} onFinish={finish} />
   );
 }
 
