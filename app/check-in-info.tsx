@@ -6,7 +6,7 @@ import { useTheme } from '../lib/hooks/useTheme';
 const SECTIONS = [
   {
     title: 'Was ist ein Check-in?',
-    body: 'Ein Check-in ist ein kurzer Moment, in dem du innehältst: Was spüre ich gerade? Was braucht mein Körper? Was geht mir durch den Kopf? Mehr nicht.',
+    body: 'Ein Check-in ist ein kurzer Moment, in dem du innehältst: Was spüre ich gerade? Was braucht mein Körper? Was geht mir durch den Kopf?',
   },
   {
     title: 'Was dir das bringen kann',
@@ -18,7 +18,7 @@ const SECTIONS = [
   },
   {
     title: 'Wie du sie nutzt',
-    body: 'Du entscheidest, wie oft. Du entscheidest, wie tief. Jeder Schritt ist freiwillig. Nichts muss perfekt sein. Es gibt keinen richtigen Check-in.\n\nWenn dir der volle Check-in zu viel ist, nimm den Schnell-Check-in — drei Schritte reichen.',
+    body: 'Du entscheidest, wie oft. Du entscheidest, wie tief. Jeder Schritt ist freiwillig.\n\nWenn der volle Check-in zu viel ist: nimm den Schnell-Check-in. Drei Schritte.',
   },
   {
     title: 'Was sie nicht ist',
