@@ -100,7 +100,7 @@ export default function HomeScreen() {
           </Pressable>
         ) : (
           <AppText variant="body" color="secondary" style={styles.emptyText}>
-            Bereit, wenn du es bist.
+            Noch kein Check-in heute.
           </AppText>
         ))}
 

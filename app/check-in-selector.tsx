@@ -20,20 +20,19 @@ export default function CheckInSelectorScreen() {
 
   const options: SelectorOption[] = [
     {
-      title: 'Ich nehme mir kurz Zeit',
+      title: 'Schnell-Check',
       subtitle: '3 Schritte · etwa 2 Minuten — Energie, Fokus, Gefühle',
-      context: 'Wenn du gerade wenig Kapazität hast oder es schnell gehen muss.',
-      accessibilityLabel:
-        'Ich nehme mir kurz Zeit, 3 Schritte, etwa 2 Minuten, Energie, Fokus, Gefühle',
+      context: 'Wenn die Kapazität gerade knapp ist.',
+      accessibilityLabel: 'Schnell-Check, 3 Schritte, etwa 2 Minuten, Energie, Fokus, Gefühle',
       testID: 'selector-quick-checkin',
       onPress: () => router.replace('/quick-check-in'),
     },
     {
-      title: 'Ich nehme mir Zeit',
-      subtitle: 'alle 9 Schritte · etwa 5 Minuten — Körper, Gefühle, Stress, Gedanken',
-      context: 'Wenn du dir bewusst Zeit nimmst und tiefer hinschauen möchtest.',
+      title: 'Voller Check',
+      subtitle: '9 Schritte · etwa 5 Minuten — Körper, Gefühle, Stress, Gedanken',
+      context: 'Wenn du tiefer hinschauen möchtest.',
       accessibilityLabel:
-        'Ich nehme mir Zeit, alle 9 Schritte, etwa 5 Minuten, Körper, Gefühle, Stress, Gedanken',
+        'Voller Check, 9 Schritte, etwa 5 Minuten, Körper, Gefühle, Stress, Gedanken',
       testID: 'selector-full-checkin',
       onPress: () => router.replace('/(tabs)/check-in'),
     },
@@ -56,7 +55,7 @@ export default function CheckInSelectorScreen() {
         accessibilityRole="header"
         style={{ textAlign: 'center', marginTop: spacing.xxl, marginBottom: spacing.xl }}
       >
-        Wie viel Raum hast du gerade?
+        Wie viel Zeit hast du?
       </AppText>
 
       <View style={[styles.options, { gap: spacing.md }]}>
