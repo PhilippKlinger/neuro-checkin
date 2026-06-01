@@ -47,6 +47,7 @@ const TAB_ICONS: Record<string, { active: IoniconName; inactive: IoniconName }> 
 export default function TabLayout() {
   const { theme, typography, spacing } = useTheme();
   const insets = useSafeAreaInsets();
+  const router = useRouter();
 
   return (
     <Tabs
@@ -96,6 +97,12 @@ export default function TabLayout() {
             <TabLabel label="Check-in" color={color} fontFamily={typography.families.ui.medium} />
           ),
           tabBarAccessibilityLabel: 'Check-in starten',
+        }}
+        listeners={{
+          tabPress: (e) => {
+            e.preventDefault();
+            router.push('/check-in-selector');
+          },
         }}
       />
       <Tabs.Screen
