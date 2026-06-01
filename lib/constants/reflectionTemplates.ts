@@ -42,7 +42,7 @@ export const REFLECTION_INTRO_EYEBROW = 'Deine Muster';
 export const REFLECTION_INTRO_LINE    = 'Nach ein paar Check-ins zeigt sich hier, was wiederkehrt.';
 
 // REFLECT-02 — Form-Zustände (kein dominantes Einzel-Muster, aber Form erkennbar)
-// Strings sind ENTWURF — vor Merge durch /nd-ux finalisieren.
+// Strings final via /nd-ux (Dr. Bergmann, 2026-06-01): wertfrei, im "Deine Tage …"-Rhythmus.
 export const REFLECTION_STEADY_LINE = 'Deine Tage waren sich ähnlich.';
 export const REFLECTION_VARIED_LINE = 'Deine Tage waren sehr unterschiedlich.';
-export const REFLECTION_HUMBLE_LINE = 'Kein wiederkehrendes Muster.';
+export const REFLECTION_HUMBLE_LINE = 'Deine Tage lassen sich gerade schwer zusammenfassen.';
