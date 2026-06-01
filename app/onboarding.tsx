@@ -19,14 +19,30 @@ import { AppText } from '../components/ui/AppText';
 import { AppearanceModeSection } from '../components/settings/AppearanceModeSection';
 import { ThemeSection } from '../components/settings/ThemeSection';
 import { FontSection } from '../components/settings/FontSection';
+import { ReflectionCard } from '../components/home/ReflectionCard';
 import { ENERGY_LABELS, FOCUS_LABELS } from '../lib/types/checkin';
+import type { ReflectionResult } from '../lib/utils/reflection';
 import type { ThemeName, ColorMode } from '../lib/constants/themes';
 import type { FontFamily } from '../lib/types/checkin';
 
-const TOTAL_SLIDES = 4;
+const TOTAL_SLIDES = 5;
 
 // Used only for the VoiceOver/TalkBack slide announcement on navigation.
-const SLIDE_TITLES = ['Neuro Check-in', 'Probier einen Schritt', 'Dein Verlauf', 'Aussehen wählen'];
+const SLIDE_TITLES = [
+  'Neuro Check-in',
+  'Probier einen Schritt',
+  'Dein Verlauf',
+  'Deine Muster',
+  'Aussehen wählen',
+];
+
+const DEMO_REFLECTION: ReflectionResult = {
+  state: 'active',
+  lines: [
+    { key: 'energyLow', text: 'Deine Energie war oft niedrig.' },
+    { key: 'externalStimuli', text: 'Reize waren oft viel für dich.' },
+  ],
+};
 
 // Static example check-ins for the history preview. Level indices map into the
 // real ENERGY_LABELS / FOCUS_LABELS arrays so the preview can never show a
@@ -120,6 +136,8 @@ export default function OnboardingScreen() {
       case 2:
         return <SlideHistory />;
       case 3:
+        return <SlidePatterns />;
+      case 4:
         return <SlidePersonalize />;
       default:
         return null;
@@ -406,7 +424,7 @@ export default function OnboardingScreen() {
           color="secondary"
           style={{ textAlign: 'center', marginTop: spacing.md }}
         >
-          Nach ein paar Check-ins zeigt sich, was sich wiederholt.
+          Alle Check-ins bleiben auf deinem Gerät.
         </AppText>
 
         <View
@@ -424,6 +442,47 @@ export default function OnboardingScreen() {
             Exportierbar als PDF — zum Teilen oder für dich.
           </AppText>
         </View>
+      </View>
+    );
+  }
+
+  function SlidePatterns() {
+    return (
+      <View style={styles.slideContent}>
+        <AppText
+          variant="title"
+          size="xl"
+          style={{ textAlign: 'center', marginBottom: spacing.sm }}
+          accessibilityRole="header"
+        >
+          Deine Muster
+        </AppText>
+        <AppText
+          variant="body"
+          color="secondary"
+          style={{ textAlign: 'center', marginBottom: spacing.lg }}
+        >
+          Nach ein paar Check-ins zeigt sich, was sich wiederholt.
+        </AppText>
+
+        <ReflectionCard result={DEMO_REFLECTION} />
+
+        <AppText
+          variant="body"
+          size="sm"
+          color="secondary"
+          style={{ textAlign: 'center', marginTop: spacing.lg }}
+        >
+          Keine Algorithmen. Nur zählen, was oft vorkommt.
+        </AppText>
+        <AppText
+          variant="body"
+          size="sm"
+          color="secondary"
+          style={{ textAlign: 'center', marginTop: spacing.xs }}
+        >
+          Jederzeit in den Einstellungen abschaltbar.
+        </AppText>
       </View>
     );
   }

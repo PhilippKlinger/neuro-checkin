@@ -18,6 +18,7 @@ export async function getSettings(db: SQLiteDatabase): Promise<UserSettings> {
     detail_view_introduced: number;
     export_directory_uri: string | null;
     font_family: string | null;
+    reflection_enabled: number;
   }>('SELECT * FROM user_settings WHERE id = 1');
 
   if (!row) {
@@ -37,6 +38,7 @@ export async function getSettings(db: SQLiteDatabase): Promise<UserSettings> {
       detailViewIntroduced: false,
       exportDirectoryUri: null,
       fontFamily: 'lexend',
+      reflectionEnabled: true,
     };
   }
 
@@ -56,6 +58,7 @@ export async function getSettings(db: SQLiteDatabase): Promise<UserSettings> {
     detailViewIntroduced: row.detail_view_introduced === 1,
     exportDirectoryUri: row.export_directory_uri ?? null,
     fontFamily: (row.font_family as FontFamily) ?? 'lexend',
+    reflectionEnabled: (row.reflection_enabled ?? 1) === 1,
   };
 }
 
@@ -121,6 +124,10 @@ export async function updateSettings(
   if (settings.fontFamily !== undefined) {
     updates.push('font_family = ?');
     values.push(settings.fontFamily);
+  }
+  if (settings.reflectionEnabled !== undefined) {
+    updates.push('reflection_enabled = ?');
+    values.push(settings.reflectionEnabled ? 1 : 0);
   }
 
   if (updates.length > 0) {

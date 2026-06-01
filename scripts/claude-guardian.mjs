@@ -20,8 +20,8 @@ function extractText(content) {
   if (typeof content === 'string') return content.toLowerCase();
   if (Array.isArray(content)) {
     return content
-      .filter(c => c?.type === 'text')
-      .map(c => c?.text ?? '')
+      .filter((c) => c?.type === 'text')
+      .map((c) => c?.text ?? '')
       .join(' ')
       .toLowerCase();
   }
@@ -44,19 +44,41 @@ if (event === 'UserPromptSubmit') {
     hints.push('Bugfix → /regression: Root Cause → Naht → Absicherung. Kein Fix ohne Ursache.');
   }
   if (/\b(feature|refactor|neue|add|bau|implement|erstell|umbau|sprint)\b/.test(prompt)) {
-    hints.push('Feature → DoD-Stufe beachten (Logic / UI / Native / Release). 1 logische Änderung pro Branch.');
+    hints.push(
+      'Feature → DoD-Stufe beachten (Logic / UI / Native / Release). 1 logische Änderung pro Branch.'
+    );
   }
   if (/\b(release|build|eas|play.?console|preview|production|publish|git.?tag)\b/.test(prompt)) {
-    hints.push('Release → /release-gate vor dem Build. Version-Sync: app.json / package.json / Git-Tag müssen übereinstimmen.');
+    hints.push(
+      'Release → /release-gate vor dem Build. Version-Sync: app.json / package.json / Git-Tag müssen übereinstimmen.'
+    );
   }
-  if (/\b(layout|scroll|safe.?area|padding|touch.?target|a11y|accessibility|dark.?mode|animation|overlay)\b/.test(prompt)) {
-    hints.push('UI → A11y (44px Targets, Labels, Roles), NAV_AREA_PADDING, insets.bottom, Dark/Light, Reduced Motion prüfen.');
+  if (
+    /\b(layout|scroll|safe.?area|padding|touch.?target|a11y|accessibility|dark.?mode|animation|overlay)\b/.test(
+      prompt
+    )
+  ) {
+    hints.push(
+      'UI → A11y (44px Targets, Labels, Roles), NAV_AREA_PADDING, insets.bottom, Dark/Light, Reduced Motion prüfen.'
+    );
   }
-  if (/\b(notification|sqlite|database|db|filesystem|pdf|print|permission|expo-print|expo-sqlite|expo-file)\b/.test(prompt)) {
-    hints.push('Native-API → Gerätetest Pflicht. DoD-Stufe = Native. Keine API in ihrem Verhaltenstest mocken.');
+  if (
+    /\b(notification|sqlite|database|db|filesystem|pdf|print|permission|expo-print|expo-sqlite|expo-file)\b/.test(
+      prompt
+    )
+  ) {
+    hints.push(
+      'Native-API → Gerätetest Pflicht. DoD-Stufe = Native. Keine API in ihrem Verhaltenstest mocken.'
+    );
   }
-  if (/\b(architektur|architecture|service|modul|module|deep|shallow|deletion.?test|naht|seam)\b/.test(prompt)) {
-    hints.push('Architektur → Decision-Log respektieren (A-33 renderStep-Switch, A-34 StepScaffold, K-3 NotificationSlot). Erst Deletion-Test.');
+  if (
+    /\b(architektur|architecture|service|modul|module|deep|shallow|deletion.?test|naht|seam)\b/.test(
+      prompt
+    )
+  ) {
+    hints.push(
+      'Architektur → Decision-Log respektieren (A-33 renderStep-Switch, A-34 StepScaffold, K-3 NotificationSlot). Erst Deletion-Test.'
+    );
   }
 
   if (hints.length > 0) {
@@ -74,13 +96,16 @@ if (event === 'Stop') {
 
   // P0-A: Bugfix ohne Regression-Gedanke
   const isBugfix = /\b(bug|fix|crash|finding|fehler)\b/.test(prompt);
-  const hasRegression = /\b(regression|root.?cause|naht|absicher)\b/.test(response) || response.includes('/regression');
+  const hasRegression =
+    /\b(regression|root.?cause|naht|absicher)\b/.test(response) || response.includes('/regression');
   if (isBugfix && !hasRegression) {
     warnings.push('P0: Bugfix ohne Regression-Gedanke — /regression-Schritt erwähnt?');
   }
 
   // P0-B: Native-API-Änderung ohne Gerätetest-Hinweis
-  const isNative = /\b(notification|sqlite|pdf|print|filesystem|file.rename|permission)\b/.test(prompt);
+  const isNative = /\b(notification|sqlite|pdf|print|filesystem|file.rename|permission)\b/.test(
+    prompt
+  );
   const hasDeviceTest = /\b(gerätetest|device.?test|emulator|physical|gerät)\b/.test(response);
   if (isNative && !hasDeviceTest) {
     warnings.push('P0: Native-API-Kontext ohne Gerätetest-Hinweis — DoD-Stufe Native beachten.');
@@ -90,7 +115,9 @@ if (event === 'Stop') {
   const isVersion = /\b(version|versioncode|app\.json|package\.json)\b/.test(prompt);
   const hasSync = /\b(sync|synchron|git.?tag|release.?gate)\b/.test(response);
   if (isVersion && !hasSync) {
-    warnings.push('P0: Versions-Änderung — Version-Sync geprüft (app.json / package.json / Git-Tag)?');
+    warnings.push(
+      'P0: Versions-Änderung — Version-Sync geprüft (app.json / package.json / Git-Tag)?'
+    );
   }
 
   if (warnings.length > 0) {
