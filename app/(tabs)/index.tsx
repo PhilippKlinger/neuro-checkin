@@ -5,9 +5,13 @@ import { useRouter, useFocusEffect } from 'expo-router';
 import { useTheme } from '../../lib/hooks/useTheme';
 import { useDatabase } from '../../lib/hooks/useDatabase';
 import { getCheckIns } from '../../lib/database/checkins';
+import { getSettings } from '../../lib/database/settings';
 import type { CheckIn } from '../../lib/types/checkin';
 import { ENERGY_LABELS, getLevelLabel } from '../../lib/types/checkin';
 import { formatDate, formatTime } from '../../lib/utils/format';
+import { computeReflection } from '../../lib/utils/reflection';
+import type { ReflectionResult } from '../../lib/utils/reflection';
+import { ReflectionCard } from '../../components/home/ReflectionCard';
 
 const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000;
 
@@ -27,6 +31,7 @@ export default function HomeScreen() {
   const db = useDatabase();
   const router = useRouter();
   const [latestCheckIn, setLatestCheckIn] = useState<CheckIn | null>(null);
+  const [reflection, setReflection] = useState<ReflectionResult | null>(null);
   const [isLoaded, setIsLoaded] = useState(false);
 
   useFocusEffect(
@@ -34,13 +39,17 @@ export default function HomeScreen() {
       let cancelled = false;
       async function load() {
         try {
-          const results = await getCheckIns(db, 1);
+          const [window, settings] = await Promise.all([
+            getCheckIns(db, 14),
+            getSettings(db),
+          ]);
           if (!cancelled) {
-            setLatestCheckIn(results[0] ?? null);
+            setLatestCheckIn(window[0] ?? null);
+            setReflection(settings.reflectionEnabled ? computeReflection(window) : null);
             setIsLoaded(true);
           }
         } catch (error) {
-          console.error('home getCheckIns failed:', error);
+          console.error('home load failed:', error);
           if (!cancelled) setIsLoaded(true);
         }
       }
@@ -106,6 +115,12 @@ export default function HomeScreen() {
 
       <View style={styles.spacer} />
 
+      {reflection && (
+        <View style={styles.reflectionWrapper}>
+          <ReflectionCard result={reflection} />
+        </View>
+      )}
+
       <Pressable
         onPress={() => router.push('/check-in-selector')}
         style={({ pressed }) => [
@@ -155,6 +170,9 @@ const styles = StyleSheet.create({
   },
   spacer: {
     flex: 1,
+  },
+  reflectionWrapper: {
+    marginBottom: 16,
   },
   cta: {
     alignItems: 'center',
