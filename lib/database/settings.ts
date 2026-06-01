@@ -1,5 +1,5 @@
 import type { SQLiteDatabase } from 'expo-sqlite';
-import type { UserSettings, FontFamily } from '../types/checkin';
+import type { UserSettings, FontFamily, HistoryViewMode } from '../types/checkin';
 
 export async function getSettings(db: SQLiteDatabase): Promise<UserSettings> {
   const row = await db.getFirstAsync<{
@@ -16,6 +16,7 @@ export async function getSettings(db: SQLiteDatabase): Promise<UserSettings> {
     export_directory_uri: string | null;
     font_family: string | null;
     reflection_enabled: number;
+    history_view_mode: string | null;
   }>('SELECT * FROM user_settings WHERE id = 1');
 
   if (!row) {
@@ -33,6 +34,7 @@ export async function getSettings(db: SQLiteDatabase): Promise<UserSettings> {
       exportDirectoryUri: null,
       fontFamily: 'lexend',
       reflectionEnabled: true,
+      historyViewMode: 'compact',
     };
   }
 
@@ -50,6 +52,7 @@ export async function getSettings(db: SQLiteDatabase): Promise<UserSettings> {
     exportDirectoryUri: row.export_directory_uri ?? null,
     fontFamily: (row.font_family as FontFamily) ?? 'lexend',
     reflectionEnabled: (row.reflection_enabled ?? 1) === 1,
+    historyViewMode: (row.history_view_mode as HistoryViewMode) ?? 'compact',
   };
 }
 
@@ -107,6 +110,10 @@ export async function updateSettings(
   if (settings.reflectionEnabled !== undefined) {
     updates.push('reflection_enabled = ?');
     values.push(settings.reflectionEnabled ? 1 : 0);
+  }
+  if (settings.historyViewMode !== undefined) {
+    updates.push('history_view_mode = ?');
+    values.push(settings.historyViewMode);
   }
 
   if (updates.length > 0) {

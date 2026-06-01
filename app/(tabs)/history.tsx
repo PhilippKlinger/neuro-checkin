@@ -1,13 +1,24 @@
-import { useState, useCallback } from 'react';
-import { View, FlatList, Pressable, StyleSheet, Alert, ListRenderItem } from 'react-native';
+import { useState, useCallback, useEffect } from 'react';
+import {
+  View,
+  SectionList,
+  Pressable,
+  StyleSheet,
+  Alert,
+  SectionListRenderItem,
+} from 'react-native';
 import { AppText } from '../../components/ui/AppText';
-import { useFocusEffect, useRouter } from 'expo-router';
+import { useRouter } from 'expo-router';
 import { useTheme } from '../../lib/hooks/useTheme';
 import { useDatabase } from '../../lib/hooks/useDatabase';
 import { getCheckIns } from '../../lib/database/checkins';
 import { getSettings, updateSettings } from '../../lib/database/settings';
-import { CheckIn } from '../../lib/types/checkin';
+import { CheckIn, HistoryViewMode } from '../../lib/types/checkin';
 import { CheckInCard } from '../../components/history/CheckInCard';
+import { CompactCheckInRow } from '../../components/history/CompactCheckInRow';
+import { HistorySectionHeader } from '../../components/history/HistorySectionHeader';
+import { usePagedCheckIns } from '../../lib/hooks/usePagedCheckIns';
+import type { HistorySection } from '../../lib/utils/groupByDate';
 import {
   exportCheckInsAsPdf,
   saveCheckInsPdfToDevice,
@@ -20,29 +31,28 @@ export default function HistoryScreen() {
   const { theme, spacing, radii, touchTarget } = useTheme();
   const db = useDatabase();
   const router = useRouter();
-  const [checkIns, setCheckIns] = useState<CheckIn[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [viewMode, setViewMode] = useState<HistoryViewMode>('compact');
   const [selectionMode, setSelectionMode] = useState(false);
   const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
   const [isExporting, setIsExporting] = useState(false);
 
-  useFocusEffect(
-    useCallback(() => {
-      async function load() {
-        setIsLoading(true);
-        try {
-          const data = await getCheckIns(db, 10000);
-          setCheckIns(data);
-        } catch (error) {
-          console.error('getCheckIns failed:', error);
-          setCheckIns([]);
-        } finally {
-          setIsLoading(false);
-        }
-      }
-      load();
-    }, [db])
+  const fetchPage = useCallback(
+    (limit: number, offset: number) => getCheckIns(db, limit, offset),
+    [db]
   );
+
+  const { items, sections, hasMore, isLoading, isLoadingMore, loadMore } =
+    usePagedCheckIns(fetchPage);
+
+  useEffect(() => {
+    getSettings(db).then((s) => setViewMode(s.historyViewMode));
+  }, [db]);
+
+  function toggleViewMode() {
+    const next: HistoryViewMode = viewMode === 'compact' ? 'cards' : 'compact';
+    setViewMode(next);
+    updateSettings(db, { historyViewMode: next });
+  }
 
   function enterSelectionMode() {
     setSelectionMode(true);
@@ -69,7 +79,7 @@ export default function HistoryScreen() {
 
   function selectAll() {
     if (isExporting) return;
-    setSelectedIds(new Set(checkIns.map((c) => c.id)));
+    setSelectedIds(new Set(items.map((c) => c.id)));
   }
 
   async function handleExportSelected() {
@@ -78,7 +88,7 @@ export default function HistoryScreen() {
       Alert.alert('Zu viele ausgewählt', `Maximal ${MAX_EXPORT_COUNT} Check-ins pro Export.`);
       return;
     }
-    const toExport = checkIns.filter((c) => selectedIds.has(c.id));
+    const toExport = items.filter((c) => selectedIds.has(c.id));
     setIsExporting(true);
     try {
       await exportCheckInsAsPdf(toExport);
@@ -105,7 +115,7 @@ export default function HistoryScreen() {
       Alert.alert('Zu viele ausgewählt', `Maximal ${MAX_EXPORT_COUNT} Check-ins pro Export.`);
       return;
     }
-    const toExport = checkIns.filter((c) => selectedIds.has(c.id));
+    const toExport = items.filter((c) => selectedIds.has(c.id));
     setIsExporting(true);
     try {
       const settings = await getSettings(db);
@@ -137,23 +147,66 @@ export default function HistoryScreen() {
     (id: number) => {
       router.push(`/history/${id}`);
     },
-    // router is a stable ref from expo-router
     // eslint-disable-next-line react-hooks/exhaustive-deps
     []
   );
 
-  const renderItem = useCallback<ListRenderItem<CheckIn>>(
-    ({ item }) => (
-      <CheckInCard
-        checkIn={item}
-        onPress={handlePress}
-        selectable={selectionMode}
-        selected={selectedIds.has(item.id)}
-        onToggle={toggleSelection}
-      />
-    ),
-    [handlePress, selectionMode, selectedIds, toggleSelection]
+  const renderItem: SectionListRenderItem<CheckIn, HistorySection> = useCallback(
+    ({ item, section }) => {
+      const isInTodayOrYesterday = section.title === 'Heute' || section.title === 'Gestern';
+
+      if (viewMode === 'compact') {
+        return (
+          <CompactCheckInRow
+            checkIn={item}
+            onPress={handlePress}
+            selectable={selectionMode}
+            selected={selectedIds.has(item.id)}
+            onToggle={toggleSelection}
+            showFullDate={!isInTodayOrYesterday}
+          />
+        );
+      }
+
+      return (
+        <CheckInCard
+          checkIn={item}
+          onPress={handlePress}
+          selectable={selectionMode}
+          selected={selectedIds.has(item.id)}
+          onToggle={toggleSelection}
+        />
+      );
+    },
+    [viewMode, handlePress, selectionMode, selectedIds, toggleSelection]
   );
+
+  const renderSectionHeader = useCallback(
+    ({ section }: { section: HistorySection }) => <HistorySectionHeader title={section.title} />,
+    []
+  );
+
+  const renderFooter = useCallback(() => {
+    if (isLoadingMore) {
+      return (
+        <View style={styles.footer}>
+          <AppText variant="body" size="xs" color="secondary">
+            Laden...
+          </AppText>
+        </View>
+      );
+    }
+    if (!hasMore && items.length > 0) {
+      return (
+        <View style={styles.footer}>
+          <AppText variant="body" size="xs" color="secondary">
+            Alle Check-ins geladen
+          </AppText>
+        </View>
+      );
+    }
+    return null;
+  }, [isLoadingMore, hasMore, items.length]);
 
   if (isLoading) {
     return (
@@ -165,7 +218,7 @@ export default function HistoryScreen() {
     );
   }
 
-  if (checkIns.length === 0) {
+  if (items.length === 0) {
     return (
       <View
         style={[styles.centered, { backgroundColor: theme.colors.background, padding: spacing.lg }]}
@@ -186,7 +239,7 @@ export default function HistoryScreen() {
 
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
-      {/* Selection mode header */}
+      {/* Header: selection mode or normal */}
       {selectionMode ? (
         <View
           style={[
@@ -234,10 +287,13 @@ export default function HistoryScreen() {
         </View>
       ) : (
         <View
-          style={{
-            paddingHorizontal: spacing.md,
-            paddingVertical: spacing.sm,
-          }}
+          style={[
+            styles.normalHeader,
+            {
+              paddingHorizontal: spacing.md,
+              paddingVertical: spacing.sm,
+            },
+          ]}
         >
           <Pressable
             onPress={enterSelectionMode}
@@ -247,6 +303,7 @@ export default function HistoryScreen() {
                 minHeight: touchTarget.min,
                 borderRadius: radii.md,
                 backgroundColor: theme.colors.accent,
+                flex: 1,
               },
               pressed && { opacity: 0.75 },
             ]}
@@ -257,15 +314,78 @@ export default function HistoryScreen() {
               Auswählen & Teilen
             </AppText>
           </Pressable>
+
+          {/* View toggle */}
+          <View
+            style={[
+              styles.toggleContainer,
+              {
+                backgroundColor: theme.colors.surface,
+                borderRadius: radii.sm,
+                borderWidth: 1,
+                borderColor: theme.colors.border,
+              },
+            ]}
+          >
+            <Pressable
+              onPress={viewMode === 'cards' ? toggleViewMode : undefined}
+              style={[
+                styles.toggleBtn,
+                viewMode === 'compact' && {
+                  backgroundColor: theme.colors.card,
+                  borderRadius: radii.sm - 2,
+                },
+              ]}
+              accessibilityRole="button"
+              accessibilityLabel="Kompaktansicht"
+              accessibilityState={{ selected: viewMode === 'compact' }}
+            >
+              <AppText
+                variant="label"
+                size="xs"
+                color={viewMode === 'compact' ? 'primary' : 'secondary'}
+              >
+                Kompakt
+              </AppText>
+            </Pressable>
+            <Pressable
+              onPress={viewMode === 'compact' ? toggleViewMode : undefined}
+              style={[
+                styles.toggleBtn,
+                viewMode === 'cards' && {
+                  backgroundColor: theme.colors.card,
+                  borderRadius: radii.sm - 2,
+                },
+              ]}
+              accessibilityRole="button"
+              accessibilityLabel="Kartenansicht"
+              accessibilityState={{ selected: viewMode === 'cards' }}
+            >
+              <AppText
+                variant="label"
+                size="xs"
+                color={viewMode === 'cards' ? 'primary' : 'secondary'}
+              >
+                Cards
+              </AppText>
+            </Pressable>
+          </View>
         </View>
       )}
 
-      <FlatList
-        data={checkIns}
+      <SectionList
+        sections={sections}
         keyExtractor={(item) => item.id.toString()}
         renderItem={renderItem}
+        renderSectionHeader={renderSectionHeader}
+        ListFooterComponent={renderFooter}
         contentContainerStyle={{ padding: spacing.md }}
-        extraData={selectionMode ? selectedIds : undefined}
+        stickySectionHeadersEnabled
+        onEndReached={loadMore}
+        onEndReachedThreshold={0.5}
+        initialNumToRender={20}
+        maxToRenderPerBatch={15}
+        extraData={selectionMode ? selectedIds : viewMode}
       />
 
       {/* Export confirm bar */}
@@ -339,7 +459,11 @@ export default function HistoryScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   centered: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+  normalHeader: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   selectionHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   exportBar: {},
   exportButton: { alignItems: 'center', justifyContent: 'center' },
+  toggleContainer: { flexDirection: 'row', padding: 2 },
+  toggleBtn: { paddingHorizontal: 10, paddingVertical: 6 },
+  footer: { alignItems: 'center', paddingVertical: 16 },
 });

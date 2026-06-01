@@ -1,5 +1,7 @@
 export type FontFamily = 'lexend' | 'atkinson' | 'nunito';
 
+export type HistoryViewMode = 'compact' | 'cards';
+
 export interface CheckIn {
   id: number;
   createdAt: string; // ISO 8601
@@ -43,6 +45,7 @@ export interface UserSettings {
   exportDirectoryUri: string | null;
   fontFamily: FontFamily;
   reflectionEnabled: boolean;
+  historyViewMode: HistoryViewMode;
 }
 
 /** A single configurable notification time slot (e.g. morning or evening). */
