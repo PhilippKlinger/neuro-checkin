@@ -19,33 +19,27 @@ import { AppText } from '../components/ui/AppText';
 import { AppearanceModeSection } from '../components/settings/AppearanceModeSection';
 import { ThemeSection } from '../components/settings/ThemeSection';
 import { FontSection } from '../components/settings/FontSection';
+import { ENERGY_LABELS, FOCUS_LABELS } from '../lib/types/checkin';
 import type { ThemeName, ColorMode } from '../lib/constants/themes';
 import type { FontFamily } from '../lib/types/checkin';
 
-const TOTAL_SLIDES = 6;
+const TOTAL_SLIDES = 4;
 
+// Used only for the VoiceOver/TalkBack slide announcement on navigation.
 const SLIDE_TITLES = [
   'Neuro Check-in',
-  'Die Schritte eines Check-ins',
-  'So sieht ein Schritt aus',
+  'Probier einen Schritt',
   'Dein Verlauf',
-  'Deine Einstellungen',
   'Aussehen wählen',
 ];
 
-const STEP_LIST = [
-  'Ankommen',
-  'Energie-Level',
-  'Fokus-Level',
-  'Körpersignale',
-  'Gefühle',
-  'Stress-Level',
-  'Gedanken',
-  'Selbstfürsorge',
-  'Zusammenfassung',
-];
-
-const ENERGY_LABELS = ['Sehr wenig', 'Wenig', 'Mittel', 'Viel', 'Sehr viel'];
+// Static example check-ins for the history preview. Level indices map into the
+// real ENERGY_LABELS / FOCUS_LABELS arrays so the preview can never show a
+// label the real app would not produce.
+const HISTORY_DEMO = [
+  { date: 'Mi., 28.05.2026', time: '09:15', energy: 2, focus: 3, signals: 3 },
+  { date: 'Di., 27.05.2026', time: '21:40', energy: 3, focus: 5, signals: 0 },
+] as const;
 
 export default function OnboardingScreen() {
   const {
@@ -68,6 +62,8 @@ export default function OnboardingScreen() {
   const [selectedTheme, setSelectedTheme] = useState<ThemeName>(themeName);
   const [selectedMode, setSelectedMode] = useState<ColorMode>(colorMode);
   const [selectedFont, setSelectedFont] = useState<FontFamily>(fontFamily);
+  // Local-only selection for the interactive demo step (level 1-5, default "Wenig").
+  const [demoEnergy, setDemoEnergy] = useState(2);
 
   const isLastSlide = step === TOTAL_SLIDES - 1;
   const hasBack = step > 0 && !isLastSlide;
@@ -125,14 +121,10 @@ export default function OnboardingScreen() {
       case 0:
         return <SlideWelcome />;
       case 1:
-        return <SlideSteps />;
+        return <SlideStep />;
       case 2:
-        return <SlideDetail />;
-      case 3:
         return <SlideHistory />;
-      case 4:
-        return <SlideSettings />;
-      case 5:
+      case 3:
         return <SlidePersonalize />;
       default:
         return null;
@@ -198,74 +190,99 @@ export default function OnboardingScreen() {
     );
   }
 
-  function SlideSteps() {
+  function SlideStep() {
     return (
       <View style={styles.slideContent}>
         <AppText
-          variant="title"
-          size="xl"
-          style={{ textAlign: 'center', marginBottom: spacing.md }}
-          accessibilityRole="header"
-        >
-          Die Schritte eines Check-ins
-        </AppText>
-        <AppText
-          variant="body"
+          variant="label"
+          size="sm"
           color="secondary"
-          style={{ textAlign: 'center', marginBottom: spacing.lg }}
+          style={{
+            textAlign: 'center',
+            textTransform: 'uppercase',
+            letterSpacing: 0.5,
+            marginBottom: spacing.lg,
+          }}
         >
-          9 Schritte beim vollen Check-in. 3 beim Schnell-Check.
+          Probier einen Schritt
         </AppText>
 
+        {/* Energy step — same styles + labels as the real StepEnergy / LevelSlider */}
         <View
           style={{
             backgroundColor: theme.colors.card,
             borderRadius: radii.md,
-            overflow: 'hidden',
+            borderWidth: 1,
+            borderColor: theme.colors.border,
+            padding: spacing.md,
             ...shadows.sm,
           }}
         >
-          {STEP_LIST.map((label, index) => (
-            <View key={label}>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  gap: spacing.sm,
-                  paddingVertical: spacing.sm,
-                  paddingHorizontal: spacing.md,
-                  minHeight: touchTarget.min,
-                }}
-              >
-                <AppText
-                  variant="label"
-                  size="sm"
-                  style={{ color: theme.colors.accent, minWidth: 16 }}
-                >
-                  {index + 1}
-                </AppText>
-                <AppText variant="label">{label}</AppText>
-              </View>
-              {index < STEP_LIST.length - 1 && (
-                <View
+          <AppText
+            variant="title"
+            size="xl"
+            style={{ textAlign: 'center', marginBottom: spacing.sm }}
+            accessibilityRole="header"
+          >
+            Energie
+          </AppText>
+          <AppText
+            variant="body"
+            color="secondary"
+            style={{ textAlign: 'center', marginBottom: spacing.sm }}
+          >
+            Wie viel Energie hast du gerade?
+          </AppText>
+          <AppText variant="hint" style={{ textAlign: 'center', marginBottom: spacing.lg }}>
+            Eine grobe Einschätzung reicht.
+          </AppText>
+
+          <View accessibilityRole="radiogroup" accessibilityLabel="Energie">
+            {ENERGY_LABELS.map((label, index) => {
+              const level = index + 1;
+              const isSelected = level === demoEnergy;
+              return (
+                <Pressable
+                  key={label}
+                  onPress={() => setDemoEnergy(level)}
                   style={{
-                    borderBottomWidth: StyleSheet.hairlineWidth,
-                    borderBottomColor: theme.colors.border,
-                    marginLeft: 16,
+                    minHeight: touchTarget.min,
+                    borderRadius: radii.md,
+                    backgroundColor: isSelected ? theme.colors.accentSoft : theme.colors.surface,
+                    borderWidth: 1,
+                    borderColor: isSelected ? theme.colors.accent : theme.colors.border,
+                    marginBottom: spacing.sm,
+                    paddingHorizontal: spacing.md,
+                    alignItems: 'center',
+                    justifyContent: 'center',
                   }}
-                />
-              )}
-            </View>
-          ))}
+                  accessibilityRole="radio"
+                  accessibilityLabel={label}
+                  accessibilityHint={`Energie auf „${label}" setzen`}
+                  accessibilityState={{ checked: isSelected }}
+                >
+                  <AppText variant="label">{label}</AppText>
+                </Pressable>
+              );
+            })}
+          </View>
         </View>
 
         <AppText
           variant="body"
           size="sm"
           color="secondary"
-          style={{ textAlign: 'center', marginTop: spacing.lg }}
+          style={{ textAlign: 'center', marginTop: spacing.md }}
         >
-          Jeder Schritt ist freiwillig.
+          Eine Auswahl antippen — fertig.
+        </AppText>
+        <AppText
+          variant="body"
+          size="sm"
+          color="secondary"
+          style={{ textAlign: 'center', marginTop: spacing.xs }}
+        >
+          9 Schritte beim vollen Check-in. 3 beim Schnell-Check. Jeder freiwillig.
         </AppText>
 
         <Pressable
@@ -295,79 +312,6 @@ export default function OnboardingScreen() {
     );
   }
 
-  function SlideDetail() {
-    return (
-      <View style={styles.slideContent}>
-        <AppText
-          variant="label"
-          size="sm"
-          color="secondary"
-          style={{
-            textAlign: 'center',
-            textTransform: 'uppercase',
-            letterSpacing: 0.5,
-            marginBottom: spacing.lg,
-          }}
-        >
-          So sieht ein Schritt aus
-        </AppText>
-
-        <View
-          style={{
-            backgroundColor: theme.colors.card,
-            borderRadius: radii.md,
-            borderWidth: 1,
-            borderColor: theme.colors.border,
-            padding: spacing.md,
-            ...shadows.sm,
-          }}
-        >
-          <AppText variant="title" size="xl" style={{ textAlign: 'center', marginBottom: spacing.sm }}>
-            Energie
-          </AppText>
-          <AppText
-            variant="body"
-            color="secondary"
-            style={{ textAlign: 'center', marginBottom: spacing.sm }}
-          >
-            Wie viel Energie hast du gerade?
-          </AppText>
-          <AppText variant="hint" style={{ textAlign: 'center', marginBottom: spacing.lg }}>
-            Eine grobe Einschätzung reicht.
-          </AppText>
-
-          {ENERGY_LABELS.map((label, index) => (
-            <View
-              key={label}
-              style={{
-                minHeight: touchTarget.min,
-                borderRadius: radii.md,
-                backgroundColor: index === 1 ? theme.colors.accentSoft : theme.colors.surface,
-                borderWidth: 1,
-                borderColor: index === 1 ? theme.colors.accent : theme.colors.border,
-                marginBottom: spacing.sm,
-                paddingHorizontal: spacing.md,
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            >
-              <AppText variant="label">{label}</AppText>
-            </View>
-          ))}
-        </View>
-
-        <AppText
-          variant="body"
-          size="sm"
-          color="secondary"
-          style={{ textAlign: 'center', marginTop: spacing.md }}
-        >
-          Eine Auswahl antippen — fertig.
-        </AppText>
-      </View>
-    );
-  }
-
   function SlideHistory() {
     return (
       <View style={styles.slideContent}>
@@ -384,86 +328,82 @@ export default function OnboardingScreen() {
           color="secondary"
           style={{ textAlign: 'center', marginBottom: spacing.lg }}
         >
-          Alle Check-ins auf einen Blick. Antippen für Details.
+          Alle Check-ins untereinander. Antippen für Details.
         </AppText>
 
-        {/* Card 1 — 1:1 CheckInCard.tsx: header (formatDate + formatTime + chevron), metricsRow */}
-        <View
-          style={{
-            backgroundColor: theme.colors.card,
-            borderRadius: radii.md,
-            paddingHorizontal: spacing.md,
-            paddingVertical: spacing.sm,
-            marginBottom: spacing.xs,
-            borderWidth: 1,
-            borderColor: theme.colors.border,
-            ...shadows.md,
-          }}
-        >
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-            <AppText variant="label" size="sm">Mi., 28.05.2026</AppText>
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <AppText variant="body" size="xs" color="secondary">09:15</AppText>
-              <AppText
-                variant="label"
-                style={{ color: theme.colors.border, marginLeft: spacing.xs }}
-              >
-                ›
+        {/* Static history cards — same styles as CheckInCard.tsx, labels derived
+            from the real label arrays so they always match the live app. */}
+        {HISTORY_DEMO.map((item) => (
+          <View
+            key={item.date}
+            style={{
+              backgroundColor: theme.colors.card,
+              borderRadius: radii.md,
+              paddingHorizontal: spacing.md,
+              paddingVertical: spacing.sm,
+              marginBottom: spacing.xs,
+              borderWidth: 1,
+              borderColor: theme.colors.border,
+              ...shadows.md,
+            }}
+          >
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+              <AppText variant="label" size="sm">
+                {item.date}
               </AppText>
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <AppText variant="body" size="xs" color="secondary">
+                  {item.time}
+                </AppText>
+                <AppText
+                  variant="label"
+                  style={{ color: theme.colors.border, marginLeft: spacing.xs }}
+                  accessibilityElementsHidden
+                  importantForAccessibility="no"
+                >
+                  ›
+                </AppText>
+              </View>
+            </View>
+            <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: spacing.xs, gap: spacing.md }}>
+              <View style={{ alignItems: 'center' }}>
+                <AppText variant="body" size="xs" color="secondary">
+                  Energie
+                </AppText>
+                <AppText variant="label" weight="semibold" size="sm" color="accent">
+                  {ENERGY_LABELS[item.energy - 1]}
+                </AppText>
+              </View>
+              <View style={{ alignItems: 'center' }}>
+                <AppText variant="body" size="xs" color="secondary">
+                  Fokus
+                </AppText>
+                <AppText variant="label" weight="semibold" size="sm" color="accent">
+                  {FOCUS_LABELS[item.focus - 1]}
+                </AppText>
+              </View>
+              {item.signals > 0 && (
+                <View style={{ alignItems: 'center' }}>
+                  <AppText variant="body" size="xs" color="secondary">
+                    Signale
+                  </AppText>
+                  <AppText variant="label" weight="semibold" size="sm" color="accent">
+                    {item.signals}
+                  </AppText>
+                </View>
+              )}
             </View>
           </View>
-          <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: spacing.xs, gap: spacing.md }}>
-            <View style={{ alignItems: 'center' }}>
-              <AppText variant="body" size="xs" color="secondary">Energie</AppText>
-              <AppText variant="label" weight="semibold" size="sm" color="accent">Wenig</AppText>
-            </View>
-            <View style={{ alignItems: 'center' }}>
-              <AppText variant="body" size="xs" color="secondary">Fokus</AppText>
-              <AppText variant="label" weight="semibold" size="sm" color="accent">Mittel</AppText>
-            </View>
-            <View style={{ alignItems: 'center' }}>
-              <AppText variant="body" size="xs" color="secondary">Signale</AppText>
-              <AppText variant="label" weight="semibold" size="sm" color="accent">3</AppText>
-            </View>
-          </View>
-        </View>
+        ))}
 
-        {/* Card 2 */}
-        <View
-          style={{
-            backgroundColor: theme.colors.card,
-            borderRadius: radii.md,
-            paddingHorizontal: spacing.md,
-            paddingVertical: spacing.sm,
-            marginBottom: spacing.xs,
-            borderWidth: 1,
-            borderColor: theme.colors.border,
-            ...shadows.md,
-          }}
+        <AppText
+          variant="body"
+          size="sm"
+          color="secondary"
+          style={{ textAlign: 'center', marginTop: spacing.md }}
         >
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-            <AppText variant="label" size="sm">Di., 27.05.2026</AppText>
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <AppText variant="body" size="xs" color="secondary">21:40</AppText>
-              <AppText
-                variant="label"
-                style={{ color: theme.colors.border, marginLeft: spacing.xs }}
-              >
-                ›
-              </AppText>
-            </View>
-          </View>
-          <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: spacing.xs, gap: spacing.md }}>
-            <View style={{ alignItems: 'center' }}>
-              <AppText variant="body" size="xs" color="secondary">Energie</AppText>
-              <AppText variant="label" weight="semibold" size="sm" color="accent">Mittel</AppText>
-            </View>
-            <View style={{ alignItems: 'center' }}>
-              <AppText variant="body" size="xs" color="secondary">Fokus</AppText>
-              <AppText variant="label" weight="semibold" size="sm" color="accent">Viel</AppText>
-            </View>
-          </View>
-        </View>
+          Mit der Zeit siehst du, welche Tage schwerer sind.
+        </AppText>
 
         <View
           style={{
@@ -480,204 +420,6 @@ export default function OnboardingScreen() {
             Exportiere Check-ins als PDF — zum Teilen oder für dich.
           </AppText>
         </View>
-      </View>
-    );
-  }
-
-  function SlideSettings() {
-    return (
-      <View style={styles.slideContent}>
-        <AppText
-          variant="title"
-          size="xl"
-          style={{ textAlign: 'center', marginBottom: spacing.sm }}
-          accessibilityRole="header"
-        >
-          Deine Einstellungen
-        </AppText>
-        <AppText
-          variant="body"
-          color="secondary"
-          style={{ textAlign: 'center', marginBottom: spacing.lg }}
-        >
-          Alles anpassbar. Jederzeit.
-        </AppText>
-
-        {/* Erinnerungen — 1:1 SlotCard from settings/SlotCard.tsx */}
-        <View style={{ marginBottom: spacing.lg }}>
-          <AppText
-            variant="label"
-            size="sm"
-            color="secondary"
-            style={styles.groupTitle}
-            accessibilityRole="header"
-          >
-            Erinnerungen
-          </AppText>
-          {/* SlotCard 1 — enabled */}
-          <View
-            style={{
-              backgroundColor: theme.colors.card,
-              borderRadius: radii.md,
-              padding: spacing.md,
-              marginBottom: spacing.sm,
-              borderWidth: 1,
-              borderColor: theme.colors.accent,
-              ...shadows.sm,
-            }}
-          >
-            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-              <AppText variant="label" style={{ flex: 1 }}>Morgen-Erinnerung</AppText>
-              <ToggleMock active />
-            </View>
-            <AppText variant="body" size="sm" color="accent" style={{ marginTop: spacing.xs }}>
-              um 09:00, täglich
-            </AppText>
-          </View>
-          {/* SlotCard 2 — disabled */}
-          <View
-            style={{
-              backgroundColor: theme.colors.card,
-              borderRadius: radii.md,
-              padding: spacing.md,
-              borderWidth: 1,
-              borderColor: theme.colors.border,
-              ...shadows.sm,
-            }}
-          >
-            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-              <AppText variant="label" style={{ flex: 1 }}>Abend-Erinnerung</AppText>
-              <ToggleMock active={false} />
-            </View>
-          </View>
-        </View>
-
-        {/* Check-in — 1:1 SettingsGroup "Check-in" with SettingsRow */}
-        <View style={{ marginBottom: spacing.lg }}>
-          <AppText
-            variant="label"
-            size="sm"
-            color="secondary"
-            style={styles.groupTitle}
-            accessibilityRole="header"
-          >
-            Check-in
-          </AppText>
-          <View
-            style={{
-              backgroundColor: theme.colors.card,
-              borderRadius: radii.md,
-              overflow: 'hidden',
-              ...shadows.sm,
-            }}
-          >
-            <View
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                paddingHorizontal: spacing.md,
-                paddingVertical: spacing.sm,
-                minHeight: touchTarget.min,
-              }}
-            >
-              <View style={{ flex: 1, gap: 2 }}>
-                <AppText variant="label">Hilfe im Check-in</AppText>
-                <AppText variant="body" size="sm" color="secondary">
-                  Erklärungen wenn du sie brauchst
-                </AppText>
-              </View>
-              <ToggleMock active />
-            </View>
-          </View>
-        </View>
-
-        {/* Daten — 1:1 DataSection layout */}
-        <View style={{ marginBottom: spacing.lg }}>
-          <AppText
-            variant="label"
-            size="sm"
-            color="secondary"
-            style={styles.groupTitle}
-            accessibilityRole="header"
-          >
-            Daten
-          </AppText>
-          {/* PDF-Speicherort — expandable card like DataSection */}
-          <View
-            style={{
-              backgroundColor: theme.colors.card,
-              borderRadius: radii.md,
-              borderWidth: 1,
-              borderColor: theme.colors.border,
-              marginBottom: spacing.sm,
-              overflow: 'hidden',
-              ...shadows.sm,
-            }}
-          >
-            <View
-              style={{
-                padding: spacing.md,
-                minHeight: touchTarget.min,
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-              }}
-            >
-              <AppText variant="label">PDF-Speicherort</AppText>
-              <AppText variant="body" size="sm" color="secondary">›</AppText>
-            </View>
-          </View>
-          {/* Eigene Chips — expandable card like DataSection */}
-          <View
-            style={{
-              backgroundColor: theme.colors.card,
-              borderRadius: radii.md,
-              borderWidth: 1,
-              borderColor: theme.colors.border,
-              overflow: 'hidden',
-              ...shadows.sm,
-            }}
-          >
-            <View
-              style={{
-                padding: spacing.md,
-                minHeight: touchTarget.min,
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-              }}
-            >
-              <AppText variant="label">Eigene Chips</AppText>
-              <AppText variant="body" size="sm" color="secondary">›</AppText>
-            </View>
-          </View>
-        </View>
-      </View>
-    );
-  }
-
-  function ToggleMock({ active }: { active: boolean }) {
-    return (
-      <View
-        style={{
-          width: 36,
-          height: 20,
-          borderRadius: 10,
-          backgroundColor: active ? theme.colors.accent : theme.colors.border,
-          justifyContent: 'center',
-          paddingHorizontal: 2,
-        }}
-      >
-        <View
-          style={{
-            width: 16,
-            height: 16,
-            borderRadius: 8,
-            backgroundColor: '#FFFFFF',
-            alignSelf: active ? 'flex-end' : 'flex-start',
-          }}
-        />
       </View>
     );
   }
@@ -716,7 +458,7 @@ export default function OnboardingScreen() {
           color="secondary"
           style={{ marginBottom: spacing.sm }}
         >
-          Farbwelt
+          Farbpalette
         </AppText>
         <ThemeSection
           currentTheme={selectedTheme}
@@ -874,12 +616,6 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  groupTitle: {
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
-    marginBottom: 8,
-    paddingLeft: 4,
   },
   appIcon: {
     width: 72,
