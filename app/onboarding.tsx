@@ -473,7 +473,7 @@ export default function OnboardingScreen() {
           color="secondary"
           style={{ textAlign: 'center', marginTop: spacing.lg }}
         >
-          Keine Algorithmen. Nur zählen, was oft vorkommt.
+          Keine KI. Nur zählen, was oft vorkommt.
         </AppText>
         <AppText
           variant="body"
