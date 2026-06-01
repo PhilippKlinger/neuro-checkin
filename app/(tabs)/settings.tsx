@@ -63,6 +63,7 @@ export default function SettingsScreen() {
   const [checkInCount, setCheckInCount] = useState(0);
   const [chipCount, setChipCount] = useState(0);
   const [guidedMode, setGuidedMode] = useState(false);
+  const [reflectionEnabled, setReflectionEnabled] = useState(true);
   const [, setNotificationPermission] = useState<boolean | null>(null);
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
   const [exportDirectoryUri, setExportDirectoryUri] = useState<string | null>(null);
@@ -100,6 +101,7 @@ export default function SettingsScreen() {
 
           if (cancelled) return;
           setGuidedMode(settings.guidedModeEnabled);
+          setReflectionEnabled(settings.reflectionEnabled);
           setExportDirectoryUri(settings.exportDirectoryUri);
 
           const count = await countCheckIns(db);
@@ -238,6 +240,24 @@ export default function SettingsScreen() {
     [db, guidedMode]
   );
 
+  const handleReflectionToggle = useCallback(
+    async (value: boolean) => {
+      const previous = reflectionEnabled;
+      setReflectionEnabled(value);
+      try {
+        await updateSettings(db, { reflectionEnabled: value });
+      } catch (e) {
+        Sentry.withScope((scope) => {
+          scope.setTag('screen', 'settings');
+          scope.setTag('action', 'reflectionToggle');
+          Sentry.captureException(e);
+        });
+        setReflectionEnabled(previous);
+      }
+    },
+    [db, reflectionEnabled]
+  );
+
   const handleTimePress = useCallback((id: 0 | 1) => setShowTimePicker(id), []);
 
   return (
@@ -311,7 +331,6 @@ export default function SettingsScreen() {
           <SettingsRow
             label="Hilfe im Check-in"
             hint="Erklärungen wenn du sie brauchst"
-            showDivider={false}
             right={
               <Switch
                 value={guidedMode}
@@ -322,6 +341,23 @@ export default function SettingsScreen() {
                 accessibilityLabel="Hilfe im Check-in"
                 accessibilityHint="Zeigt Mini-Erklärungen in einzelnen Schritten"
                 accessibilityState={{ checked: guidedMode }}
+              />
+            }
+          />
+          <SettingsRow
+            label="Spiegelung auf Home"
+            hint="Zeigt wiederkehrende Muster aus deinen Check-ins"
+            showDivider={false}
+            right={
+              <Switch
+                value={reflectionEnabled}
+                onValueChange={handleReflectionToggle}
+                trackColor={{ false: theme.colors.border, true: theme.colors.accent }}
+                thumbColor={theme.colors.background}
+                accessibilityRole="switch"
+                accessibilityLabel="Spiegelung auf Home"
+                accessibilityHint="Zeigt wiederkehrende Muster aus deinen Check-ins auf dem Startbildschirm"
+                accessibilityState={{ checked: reflectionEnabled }}
               />
             }
           />

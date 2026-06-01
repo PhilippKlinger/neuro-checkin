@@ -47,6 +47,7 @@ export interface UserSettings {
   detailViewIntroduced: boolean;
   exportDirectoryUri: string | null;
   fontFamily: FontFamily;
+  reflectionEnabled: boolean;
 }
 
 /** A single configurable notification time slot (e.g. morning or evening). */
