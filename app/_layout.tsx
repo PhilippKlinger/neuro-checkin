@@ -39,7 +39,6 @@ function AppStack() {
           const daysSince = Math.floor((Date.now() - last.getTime()) / (1000 * 60 * 60 * 24));
           if (isNaN(daysSince) || daysSince >= REENTRY_THRESHOLD_DAYS) {
             updates.guidedModeEnabled = true;
-            updates.guidedToggleIntroduced = false;
           }
         }
 

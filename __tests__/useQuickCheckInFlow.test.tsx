@@ -15,9 +15,7 @@ jest.mock('../lib/database/checkins', () => ({
   insertCheckIn: jest.fn().mockResolvedValue(undefined),
 }));
 jest.mock('../lib/database/settings', () => ({
-  getSettings: jest
-    .fn()
-    .mockResolvedValue({ guidedModeEnabled: true, guidedToggleIntroduced: false }),
+  getSettings: jest.fn().mockResolvedValue({ guidedModeEnabled: true }),
   updateSettings: jest.fn().mockResolvedValue(undefined),
 }));
 jest.mock('@sentry/react-native', () => ({ captureException: jest.fn() }));

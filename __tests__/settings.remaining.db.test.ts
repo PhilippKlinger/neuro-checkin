@@ -1,5 +1,5 @@
 // Covers updateSettings fields not reached in settings.db.test.ts:
-// reminderTime, language, tutorialOffered/Seen, guidedToggleIntroduced, detailViewIntroduced.
+// reminderTime, language, detailViewIntroduced.
 
 import { updateSettings } from '../lib/database/settings';
 
@@ -31,29 +31,6 @@ describe('updateSettings — remaining fields', () => {
     const sql: string = db.runAsync.mock.calls[0][0];
     expect(sql).toMatch(/language = \?/);
     expect(db.runAsync.mock.calls[0]).toContain('en');
-  });
-
-  it('sets tutorialOffered', async () => {
-    const db = makeDb();
-    await updateSettings(db as any, { tutorialOffered: true });
-    const sql: string = db.runAsync.mock.calls[0][0];
-    expect(sql).toMatch(/tutorial_offered = \?/);
-    expect(db.runAsync.mock.calls[0]).toContain(1);
-  });
-
-  it('sets tutorialSeen', async () => {
-    const db = makeDb();
-    await updateSettings(db as any, { tutorialSeen: false });
-    const sql: string = db.runAsync.mock.calls[0][0];
-    expect(sql).toMatch(/tutorial_seen = \?/);
-    expect(db.runAsync.mock.calls[0]).toContain(0);
-  });
-
-  it('sets guidedToggleIntroduced', async () => {
-    const db = makeDb();
-    await updateSettings(db as any, { guidedToggleIntroduced: true });
-    const sql: string = db.runAsync.mock.calls[0][0];
-    expect(sql).toMatch(/guided_toggle_introduced = \?/);
   });
 
   it('sets detailViewIntroduced', async () => {
