@@ -18,9 +18,7 @@ jest.mock('../lib/database/checkins', () => ({
   countCheckIns: jest.fn().mockResolvedValue(0),
 }));
 jest.mock('../lib/database/settings', () => ({
-  getSettings: jest
-    .fn()
-    .mockResolvedValue({ guidedModeEnabled: true, guidedToggleIntroduced: false }),
+  getSettings: jest.fn().mockResolvedValue({ guidedModeEnabled: true }),
   updateSettings: jest.fn().mockResolvedValue(undefined),
 }));
 jest.mock('../lib/database/userChips', () => ({

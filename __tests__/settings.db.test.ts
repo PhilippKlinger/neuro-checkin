@@ -17,10 +17,7 @@ const FULL_ROW = {
   reminder_time: '08:00',
   language: 'de',
   onboarding_completed: 1,
-  tutorial_offered: 0,
-  tutorial_seen: 0,
   guided_mode_enabled: 1,
-  guided_toggle_introduced: 1,
   last_active_date: '2026-05-18',
   detail_view_introduced: 1,
 };
@@ -41,7 +38,6 @@ describe('getSettings — no row exists', () => {
     expect(settings.language).toBe('de');
     expect(settings.onboardingCompleted).toBe(false);
     expect(settings.guidedModeEnabled).toBe(true);
-    expect(settings.guidedToggleIntroduced).toBe(false);
     expect(settings.lastActiveDate).toBeNull();
     expect(settings.detailViewIntroduced).toBe(false);
   });
@@ -62,7 +58,6 @@ describe('getSettings — row exists', () => {
     expect(settings.language).toBe('de');
     expect(settings.onboardingCompleted).toBe(true);
     expect(settings.guidedModeEnabled).toBe(true);
-    expect(settings.guidedToggleIntroduced).toBe(true);
     expect(settings.lastActiveDate).toBe('2026-05-18');
     expect(settings.detailViewIntroduced).toBe(true);
   });

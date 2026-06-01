@@ -10,10 +10,7 @@ export async function getSettings(db: SQLiteDatabase): Promise<UserSettings> {
     reminder_time: string | null;
     language: string;
     onboarding_completed: number;
-    tutorial_offered: number;
-    tutorial_seen: number;
     guided_mode_enabled: number;
-    guided_toggle_introduced: number;
     last_active_date: string | null;
     detail_view_introduced: number;
     export_directory_uri: string | null;
@@ -30,10 +27,7 @@ export async function getSettings(db: SQLiteDatabase): Promise<UserSettings> {
       reminderTime: null,
       language: 'de',
       onboardingCompleted: false,
-      tutorialOffered: false,
-      tutorialSeen: false,
       guidedModeEnabled: true,
-      guidedToggleIntroduced: false,
       lastActiveDate: null,
       detailViewIntroduced: false,
       exportDirectoryUri: null,
@@ -50,10 +44,7 @@ export async function getSettings(db: SQLiteDatabase): Promise<UserSettings> {
     reminderTime: row.reminder_time,
     language: row.language as 'de' | 'en',
     onboardingCompleted: row.onboarding_completed === 1,
-    tutorialOffered: row.tutorial_offered === 1,
-    tutorialSeen: row.tutorial_seen === 1,
     guidedModeEnabled: (row.guided_mode_enabled ?? 1) === 1,
-    guidedToggleIntroduced: row.guided_toggle_introduced === 1,
     lastActiveDate: row.last_active_date ?? null,
     detailViewIntroduced: row.detail_view_introduced === 1,
     exportDirectoryUri: row.export_directory_uri ?? null,
@@ -93,21 +84,9 @@ export async function updateSettings(
     updates.push('onboarding_completed = ?');
     values.push(settings.onboardingCompleted ? 1 : 0);
   }
-  if (settings.tutorialOffered !== undefined) {
-    updates.push('tutorial_offered = ?');
-    values.push(settings.tutorialOffered ? 1 : 0);
-  }
-  if (settings.tutorialSeen !== undefined) {
-    updates.push('tutorial_seen = ?');
-    values.push(settings.tutorialSeen ? 1 : 0);
-  }
   if (settings.guidedModeEnabled !== undefined) {
     updates.push('guided_mode_enabled = ?');
     values.push(settings.guidedModeEnabled ? 1 : 0);
-  }
-  if (settings.guidedToggleIntroduced !== undefined) {
-    updates.push('guided_toggle_introduced = ?');
-    values.push(settings.guidedToggleIntroduced ? 1 : 0);
   }
   if (settings.lastActiveDate !== undefined) {
     updates.push('last_active_date = ?');
