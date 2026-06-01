@@ -39,10 +39,7 @@ export default function HomeScreen() {
       let cancelled = false;
       async function load() {
         try {
-          const [window, settings] = await Promise.all([
-            getCheckIns(db, 14),
-            getSettings(db),
-          ]);
+          const [window, settings] = await Promise.all([getCheckIns(db, 14), getSettings(db)]);
           if (!cancelled) {
             setLatestCheckIn(window[0] ?? null);
             setReflection(settings.reflectionEnabled ? computeReflection(window) : null);

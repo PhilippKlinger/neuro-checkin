@@ -16,9 +16,9 @@ const { execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
-const ROOT    = path.join(__dirname, '..');
+const ROOT = path.join(__dirname, '..');
 const PACKAGE = 'com.philippklinger.neurocheckin';
-const DB_LOCAL     = path.join(ROOT, '_nc_pattern.db');
+const DB_LOCAL = path.join(ROOT, '_nc_pattern.db');
 const DB_LOCAL_WAL = DB_LOCAL + '-wal';
 const DB_LOCAL_SHM = DB_LOCAL + '-shm';
 
@@ -38,15 +38,20 @@ function dt(daysAgo, hour, minute) {
 
 function bs(o) {
   return JSON.stringify({
-    hunger: null, thirst: null, temperature: null,
-    pain: null, restroom: null, seating: null, externalStimuli: null,
+    hunger: null,
+    thirst: null,
+    temperature: null,
+    pain: null,
+    restroom: null,
+    seating: null,
+    externalStimuli: null,
     ...o,
   });
 }
 
 /** Build a full check_ins row from a compact spec, dated newest-first (2/day). */
 function row(idx, spec) {
-  const day  = Math.floor(idx / 2) + 1;             // 2 check-ins per day
+  const day = Math.floor(idx / 2) + 1; // 2 check-ins per day
   const [h, m] = idx % 2 === 0 ? [9, 0] : [20, 30];
   return {
     created_at: dt(day, h, m),
@@ -94,10 +99,7 @@ const DATASETS = {
 
   // STEADY → calm, similar days. 10×energy3 + 4×energy4 → energyHigh 4/14 (29%)
   // not dominant; range = 4−3 = 1 ≤ 1; no tense distress; few signals → 'steady'.
-  steady: build([
-    ...Array(10).fill({ energy: 3 }),
-    ...Array(4).fill({ energy: 4 }),
-  ]),
+  steady: build([...Array(10).fill({ energy: 3 }), ...Array(4).fill({ energy: 4 })]),
 };
 
 // ── main ─────────────────────────────────────────────────────────────────────
@@ -105,11 +107,15 @@ const DATASETS = {
 function main(mode) {
   const checkins = DATASETS[mode];
   if (!checkins) {
-    console.error(`\n[Fehler] Unbekannter Modus "${mode}". Erlaubt: ${Object.keys(DATASETS).join(', ')}\n`);
+    console.error(
+      `\n[Fehler] Unbekannter Modus "${mode}". Erlaubt: ${Object.keys(DATASETS).join(', ')}\n`
+    );
     process.exit(1);
   }
 
-  console.log(`\n[seed-patterns] Modus "${mode}" — ${checkins.length} Check-ins (check_ins wird zuerst geleert).\n`);
+  console.log(
+    `\n[seed-patterns] Modus "${mode}" — ${checkins.length} Check-ins (check_ins wird zuerst geleert).\n`
+  );
 
   // ensure better-sqlite3 (only when actually run)
   const bsqlPath = path.join(ROOT, 'node_modules', 'better-sqlite3');
@@ -128,9 +134,26 @@ function main(mode) {
     run(`adb shell am force-stop ${PACKAGE}`);
 
     console.log('[2/5] Datenbank vom Gerät streamen (db + wal + shm)...');
-    fs.writeFileSync(DB_LOCAL, execSync(`adb exec-out run-as ${PACKAGE} cat files/SQLite/neuro-checkin.db`));
-    try { fs.writeFileSync(DB_LOCAL_WAL, execSync(`adb exec-out run-as ${PACKAGE} cat files/SQLite/neuro-checkin.db-wal`)); } catch { /* optional */ }
-    try { fs.writeFileSync(DB_LOCAL_SHM, execSync(`adb exec-out run-as ${PACKAGE} cat files/SQLite/neuro-checkin.db-shm`)); } catch { /* optional */ }
+    fs.writeFileSync(
+      DB_LOCAL,
+      execSync(`adb exec-out run-as ${PACKAGE} cat files/SQLite/neuro-checkin.db`)
+    );
+    try {
+      fs.writeFileSync(
+        DB_LOCAL_WAL,
+        execSync(`adb exec-out run-as ${PACKAGE} cat files/SQLite/neuro-checkin.db-wal`)
+      );
+    } catch {
+      /* optional */
+    }
+    try {
+      fs.writeFileSync(
+        DB_LOCAL_SHM,
+        execSync(`adb exec-out run-as ${PACKAGE} cat files/SQLite/neuro-checkin.db-shm`)
+      );
+    } catch {
+      /* optional */
+    }
 
     console.log('[3/5] check_ins leeren + Pattern-Daten einfügen...');
     const db = new Database(DB_LOCAL);
@@ -147,7 +170,9 @@ function main(mode) {
          @body_signals, @feelings, @distress_level, @distress_note,
          @thoughts_type, @thoughts_note, @self_care_note, @inner_part, @note)
     `);
-    const insertMany = db.transaction((rows) => { for (const r of rows) insert.run(r); });
+    const insertMany = db.transaction((rows) => {
+      for (const r of rows) insert.run(r);
+    });
     insertMany(checkins);
 
     const count = db.prepare('SELECT COUNT(*) AS n FROM check_ins').get().n;
@@ -158,24 +183,48 @@ function main(mode) {
 
     console.log('[4/5] Datenbank zurückschreiben...');
     run(`adb push "${DB_LOCAL}" /data/local/tmp/_nc_pattern.db`);
-    run(`adb shell run-as ${PACKAGE} cp /data/local/tmp/_nc_pattern.db files/SQLite/neuro-checkin.db`);
-    try { run(`adb shell run-as ${PACKAGE} rm files/SQLite/neuro-checkin.db-wal`); } catch { /* ok */ }
-    try { run(`adb shell run-as ${PACKAGE} rm files/SQLite/neuro-checkin.db-shm`); } catch { /* ok */ }
+    run(
+      `adb shell run-as ${PACKAGE} cp /data/local/tmp/_nc_pattern.db files/SQLite/neuro-checkin.db`
+    );
+    try {
+      run(`adb shell run-as ${PACKAGE} rm files/SQLite/neuro-checkin.db-wal`);
+    } catch {
+      /* ok */
+    }
+    try {
+      run(`adb shell run-as ${PACKAGE} rm files/SQLite/neuro-checkin.db-shm`);
+    } catch {
+      /* ok */
+    }
 
     console.log('[5/5] Aufräumen...');
-    try { run(`adb shell rm /data/local/tmp/_nc_pattern.db`); } catch { /* ok */ }
+    try {
+      run(`adb shell rm /data/local/tmp/_nc_pattern.db`);
+    } catch {
+      /* ok */
+    }
     for (const f of [DB_LOCAL, DB_LOCAL_WAL, DB_LOCAL_SHM]) {
-      try { fs.unlinkSync(f); } catch { /* ok */ }
+      try {
+        fs.unlinkSync(f);
+      } catch {
+        /* ok */
+      }
     }
 
     console.log(`\n✓ Fertig. App neu starten — Home-Karte zeigt jetzt den "${mode}"-Zustand.\n`);
   } catch (e) {
     console.error('\n[Fehler]', e.message);
     if (e.message.includes('run-as')) {
-      console.log('\nHinweis: run-as funktioniert nur mit einem Debug-Build (npx expo run:android).\n');
+      console.log(
+        '\nHinweis: run-as funktioniert nur mit einem Debug-Build (npx expo run:android).\n'
+      );
     }
     for (const f of [DB_LOCAL, DB_LOCAL_WAL, DB_LOCAL_SHM]) {
-      try { fs.unlinkSync(f); } catch { /* ok */ }
+      try {
+        fs.unlinkSync(f);
+      } catch {
+        /* ok */
+      }
     }
   }
 }

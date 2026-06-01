@@ -37,8 +37,13 @@ function makeCheckIns(count: number, overrides: Partial<CheckIn> = {}): CheckIn[
 }
 
 const sig = (o: Partial<CheckIn['bodySignals']>): CheckIn['bodySignals'] => ({
-  hunger: null, thirst: null, temperature: null,
-  pain: null, restroom: null, seating: null, externalStimuli: null,
+  hunger: null,
+  thirst: null,
+  temperature: null,
+  pain: null,
+  restroom: null,
+  seating: null,
+  externalStimuli: null,
   ...o,
 });
 
@@ -127,7 +132,7 @@ test('includes at most 1 positive line', () => {
   expect(result.state).toBe('active');
   if (result.state === 'active') {
     const positiveLines = result.lines.filter(
-      (l) => l.key === 'energyHigh' || l.key === 'distressLow',
+      (l) => l.key === 'energyHigh' || l.key === 'distressLow'
     );
     expect(positiveLines.length).toBeLessThanOrEqual(1);
   }

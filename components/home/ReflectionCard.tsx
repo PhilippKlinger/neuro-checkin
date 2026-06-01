@@ -68,12 +68,7 @@ export function ReflectionCard({ result }: Props) {
       )}
 
       {showSourceHint && (
-        <AppText
-          variant="body"
-          size="xs"
-          color="secondary"
-          style={{ marginTop: spacing.sm }}
-        >
+        <AppText variant="body" size="xs" color="secondary" style={{ marginTop: spacing.sm }}>
           {REFLECTION_SOURCE_HINT}
         </AppText>
       )}
