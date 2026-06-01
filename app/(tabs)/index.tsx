@@ -70,53 +70,61 @@ export default function HomeScreen() {
         {getGreeting()}
       </AppText>
 
-      {isLoaded &&
-        (latestCheckIn ? (
-          <Pressable
-            onPress={() => router.push(`/history/${latestCheckIn.id}`)}
-            style={({ pressed }) => [
-              styles.anchor,
-              {
-                backgroundColor: theme.colors.card,
-                borderRadius: radii.md,
-                padding: spacing.md,
-                borderWidth: 1,
-                borderColor: theme.colors.border,
-                minHeight: touchTarget.min,
-                ...shadows.md,
-              },
-              pressed && { opacity: 0.75 },
-            ]}
-            accessibilityRole="button"
-            accessibilityLabel={`Letzter Check-in, ansehen`}
-          >
-            <AppText
-              variant="label"
-              size="sm"
-              color="secondary"
-              style={{ marginBottom: spacing.xs }}
+      {isLoaded && (
+        <View
+          style={[
+            styles.cardGroup,
+            {
+              backgroundColor: theme.colors.card,
+              borderRadius: radii.md,
+              borderWidth: 1,
+              borderColor: theme.colors.border,
+              ...shadows.md,
+            },
+          ]}
+        >
+          {latestCheckIn ? (
+            <Pressable
+              onPress={() => router.push(`/history/${latestCheckIn.id}`)}
+              style={({ pressed }) => [
+                { padding: spacing.md, minHeight: touchTarget.min },
+                pressed && { opacity: 0.75 },
+              ]}
+              accessibilityRole="button"
+              accessibilityLabel={`Letzter Check-in, ansehen`}
             >
-              Letzter Check-in
-            </AppText>
-            <AppText variant="body">
-              {isWithinSevenDays(latestCheckIn.createdAt)
-                ? `${formatDate(latestCheckIn.createdAt)}, ${formatTime(latestCheckIn.createdAt)}`
-                : `Energie: ${getLevelLabel(latestCheckIn.energyLevel, ENERGY_LABELS)}`}
-            </AppText>
-          </Pressable>
-        ) : (
-          <AppText variant="body" color="secondary" style={styles.emptyText}>
-            Noch kein Check-in heute.
-          </AppText>
-        ))}
+              <AppText
+                variant="label"
+                size="sm"
+                color="secondary"
+                style={{ marginBottom: spacing.xs }}
+              >
+                Letzter Check-in
+              </AppText>
+              <AppText variant="body">
+                {isWithinSevenDays(latestCheckIn.createdAt)
+                  ? `${formatDate(latestCheckIn.createdAt)}, ${formatTime(latestCheckIn.createdAt)}`
+                  : `Energie: ${getLevelLabel(latestCheckIn.energyLevel, ENERGY_LABELS)}`}
+              </AppText>
+            </Pressable>
+          ) : (
+            <View style={{ padding: spacing.md }}>
+              <AppText variant="body" color="secondary">
+                Noch kein Check-in heute.
+              </AppText>
+            </View>
+          )}
 
-      <View style={styles.spacer} />
-
-      {reflection && (
-        <View style={styles.reflectionWrapper}>
-          <ReflectionCard result={reflection} />
+          {reflection && (
+            <>
+              <View style={{ height: 1, backgroundColor: theme.colors.border }} />
+              <ReflectionCard result={reflection} embedded />
+            </>
+          )}
         </View>
       )}
+
+      <View style={styles.spacer} />
 
       <Pressable
         onPress={() => router.push('/check-in-selector')}
@@ -158,18 +166,11 @@ const styles = StyleSheet.create({
   greeting: {
     textAlign: 'center',
   },
-  anchor: {
-    borderWidth: 1,
-    justifyContent: 'center',
-  },
-  emptyText: {
-    textAlign: 'center',
+  cardGroup: {
+    overflow: 'hidden',
   },
   spacer: {
     flex: 1,
-  },
-  reflectionWrapper: {
-    marginBottom: 16,
   },
   cta: {
     alignItems: 'center',
