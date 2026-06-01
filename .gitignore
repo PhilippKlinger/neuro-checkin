@@ -63,3 +63,18 @@ store-assets/
 
 # Seed script temp files
 _nc_seed.db*
+
+# Project-docs boundary guard (these belong in nd_app_docs, not here)
+SPRINT.md
+BACKLOG*.md
+TODO.md
+IDEAS.md
+DECISIONS.md
+assumptions.md
+PROJECT_LOG.md
+WIKI.md
+MARKTBEOBACHTUNG.md
+CLAUDE.md
+docs/specs/
+_archiv/
+.superpowers/
