@@ -96,11 +96,7 @@ describe('groupCheckInsByDate', () => {
   });
 
   it('multiple entries on same day go into same section', () => {
-    const items = [
-      makeCheckIn(1, today(9)),
-      makeCheckIn(2, today(14)),
-      makeCheckIn(3, today(20)),
-    ];
+    const items = [makeCheckIn(1, today(9)), makeCheckIn(2, today(14)), makeCheckIn(3, today(20))];
     const sections = groupCheckInsByDate(items);
     expect(sections).toHaveLength(1);
     expect(sections[0].title).toBe('Heute');
@@ -108,11 +104,7 @@ describe('groupCheckInsByDate', () => {
   });
 
   it('preserves input order within sections', () => {
-    const items = [
-      makeCheckIn(1, today(20)),
-      makeCheckIn(2, today(14)),
-      makeCheckIn(3, today(9)),
-    ];
+    const items = [makeCheckIn(1, today(20)), makeCheckIn(2, today(14)), makeCheckIn(3, today(9))];
     const sections = groupCheckInsByDate(items);
     expect(sections[0].data.map((c) => c.id)).toEqual([1, 2, 3]);
   });

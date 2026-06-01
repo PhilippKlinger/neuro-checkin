@@ -1,5 +1,12 @@
 import { useState, useCallback, useEffect } from 'react';
-import { View, SectionList, Pressable, StyleSheet, Alert, SectionListRenderItem } from 'react-native';
+import {
+  View,
+  SectionList,
+  Pressable,
+  StyleSheet,
+  Alert,
+  SectionListRenderItem,
+} from 'react-native';
 import { AppText } from '../../components/ui/AppText';
 import { useRouter } from 'expo-router';
 import { useTheme } from '../../lib/hooks/useTheme';
@@ -146,8 +153,7 @@ export default function HistoryScreen() {
 
   const renderItem: SectionListRenderItem<CheckIn, HistorySection> = useCallback(
     ({ item, section }) => {
-      const isInTodayOrYesterday =
-        section.title === 'Heute' || section.title === 'Gestern';
+      const isInTodayOrYesterday = section.title === 'Heute' || section.title === 'Gestern';
 
       if (viewMode === 'compact') {
         return (
@@ -176,9 +182,7 @@ export default function HistoryScreen() {
   );
 
   const renderSectionHeader = useCallback(
-    ({ section }: { section: HistorySection }) => (
-      <HistorySectionHeader title={section.title} />
-    ),
+    ({ section }: { section: HistorySection }) => <HistorySectionHeader title={section.title} />,
     []
   );
 

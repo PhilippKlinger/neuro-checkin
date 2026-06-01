@@ -35,7 +35,8 @@ export const CompactCheckInRow = memo(function CompactCheckInRow({
   const parts: string[] = [];
   if (!checkIn.energySkipped) parts.push(getLevelLabel(checkIn.energyLevel, ENERGY_LABELS));
   if (!checkIn.focusSkipped) parts.push(getLevelLabel(checkIn.focusLevel, FOCUS_LABELS));
-  if (activeSignals > 0) parts.push(`${activeSignals} ${activeSignals === 1 ? 'Signal' : 'Signale'}`);
+  if (activeSignals > 0)
+    parts.push(`${activeSignals} ${activeSignals === 1 ? 'Signal' : 'Signale'}`);
   const subtitle = parts.join(' / ');
 
   return (
@@ -75,11 +76,7 @@ export const CompactCheckInRow = memo(function CompactCheckInRow({
           {subtitle}
         </AppText>
       </View>
-      <AppText
-        variant="label"
-        style={{ color: theme.colors.border }}
-        accessibilityElementsHidden
-      >
+      <AppText variant="label" style={{ color: theme.colors.border }} accessibilityElementsHidden>
         ›
       </AppText>
     </Pressable>

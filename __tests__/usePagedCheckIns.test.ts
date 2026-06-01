@@ -59,7 +59,9 @@ describe('createPagedLoader', () => {
 
   it('loadNext appends items and increments offset', async () => {
     const page1 = Array.from({ length: PAGE_SIZE }, (_, i) => makeCheckIn(i + 1, i));
-    const page2 = Array.from({ length: 15 }, (_, i) => makeCheckIn(i + PAGE_SIZE + 1, i + PAGE_SIZE));
+    const page2 = Array.from({ length: 15 }, (_, i) =>
+      makeCheckIn(i + PAGE_SIZE + 1, i + PAGE_SIZE)
+    );
     const fetcher = makePagedFetcher([page1, page2]);
     const loader = createPagedLoader(fetcher);
 
