@@ -1,6 +1,7 @@
 import { useState, useCallback, useRef } from 'react';
 import { ScrollView, Switch, StyleSheet, Platform, View, Linking } from 'react-native';
 import { AppText } from '../../components/ui/AppText';
+import Constants from 'expo-constants';
 import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
 import * as Sentry from '@sentry/react-native';
@@ -413,7 +414,7 @@ export default function SettingsScreen() {
           color="secondary"
           style={{ textAlign: 'center', marginTop: spacing.sm }}
         >
-          Neuro Check-in · v1.8.0
+          Neuro Check-in · v{Constants.expoConfig?.version ?? '?'}
         </AppText>
       </ScrollView>
 
