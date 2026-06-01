@@ -345,8 +345,8 @@ export default function SettingsScreen() {
             }
           />
           <SettingsRow
-            label="Spiegelung auf Home"
-            hint="Zeigt wiederkehrende Muster aus deinen Check-ins"
+            label="Deine Muster"
+            hint="Zeigt, was sich in deinen letzten Check-ins wiederholt"
             showDivider={false}
             right={
               <Switch
@@ -355,8 +355,8 @@ export default function SettingsScreen() {
                 trackColor={{ false: theme.colors.border, true: theme.colors.accent }}
                 thumbColor={theme.colors.background}
                 accessibilityRole="switch"
-                accessibilityLabel="Spiegelung auf Home"
-                accessibilityHint="Zeigt wiederkehrende Muster aus deinen Check-ins auf dem Startbildschirm"
+                accessibilityLabel="Deine Muster auf Home anzeigen"
+                accessibilityHint="Zeigt, was sich in deinen letzten Check-ins wiederholt"
                 accessibilityState={{ checked: reflectionEnabled }}
               />
             }

@@ -39,7 +39,10 @@ interface DimensionScore {
 }
 
 export function computeReflection(checkIns: CheckIn[]): ReflectionResult {
-  const window = checkIns.slice(-WINDOW);
+  const sorted = [...checkIns].sort(
+    (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
+  );
+  const window = sorted.slice(-WINDOW);
 
   if (window.length < MIN_CHECK_INS) {
     return { state: 'intro' };

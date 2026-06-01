@@ -4,8 +4,8 @@ import { useTheme } from '../../lib/hooks/useTheme';
 import type { ReflectionResult } from '../../lib/utils/reflection';
 import {
   REFLECTION_EYEBROW,
-  REFLECTION_INTRO_EYEBROW,
   REFLECTION_INTRO_LINE,
+  REFLECTION_SOURCE_HINT,
   REFLECTION_STEADY_LINE,
   REFLECTION_VARIED_LINE,
   REFLECTION_HUMBLE_LINE,
@@ -25,9 +25,7 @@ const FORM_TEXT: Record<'steady' | 'varied' | 'humble', string> = {
 export function ReflectionCard({ result }: Props) {
   const { theme, spacing, radii, shadows } = useTheme();
 
-  // Typography mirrors the "Letzter Check-in" anchor card exactly:
-  // eyebrow = label/sm/secondary (no uppercase), content = body (default).
-  const eyebrow = result.state === 'intro' ? REFLECTION_INTRO_EYEBROW : REFLECTION_EYEBROW;
+  const showSourceHint = result.state !== 'intro';
 
   return (
     <View
@@ -50,7 +48,7 @@ export function ReflectionCard({ result }: Props) {
         style={{ marginBottom: spacing.xs }}
         accessibilityRole="header"
       >
-        {eyebrow}
+        {REFLECTION_EYEBROW}
       </AppText>
 
       {result.state === 'intro' ? (
@@ -67,6 +65,17 @@ export function ReflectionCard({ result }: Props) {
         ))
       ) : (
         <AppText variant="body">{FORM_TEXT[result.state]}</AppText>
+      )}
+
+      {showSourceHint && (
+        <AppText
+          variant="body"
+          size="xs"
+          color="secondary"
+          style={{ marginTop: spacing.sm }}
+        >
+          {REFLECTION_SOURCE_HINT}
+        </AppText>
       )}
     </View>
   );
