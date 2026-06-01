@@ -29,7 +29,7 @@ export const REFLECTION_TEMPLATES: Record<ReflectionDimensionKey, ReflectionTemp
   energyHigh:      { text: 'Deine Energie war oft hoch.',             tier: 2, polarity: 'positive' },
   distressHigh:    { text: 'Du warst oft angespannt.',                tier: 2, polarity: 'neutral'  },
   distressLow:     { text: 'Du warst oft ruhig.',                     tier: 2, polarity: 'positive' },
-  focusLow:        { text: 'Dein Fokus war oft schwer zu fassen.',    tier: 2, polarity: 'neutral'  },
+  focusLow:        { text: 'Dein Fokus war oft niedrig.',             tier: 2, polarity: 'neutral'  },
 
   // Tier 3 — Komfort
   temperature:     { text: 'Dir war oft zu warm oder zu kalt.',       tier: 3, polarity: 'neutral'  },

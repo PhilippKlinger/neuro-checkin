@@ -63,10 +63,10 @@ test('returns intro when all fields are skipped / null', () => {
   expect(result).toEqual({ state: 'intro' });
 });
 
-// ─── Test 4: pattern exactly at threshold (≥40%, ≥3) → active ────────────────
+// ─── Test 4: pattern above threshold (≥50%, ≥3) → active ─────────────────────
 // 7 check-ins, thirst=true in 4 of them (4/7 ≈ 57 %) → meets threshold
 
-test('returns active with thirst line when signal present in ≥40% and ≥3 check-ins', () => {
+test('returns active with thirst line when signal present in ≥50% and ≥3 check-ins', () => {
   const checkIns: CheckIn[] = [
     ...makeCheckIns(4, { bodySignals: { ...BASE.bodySignals, thirst: true } }),
     ...makeCheckIns(3, { bodySignals: { ...BASE.bodySignals, thirst: false } }),
@@ -91,11 +91,12 @@ test('returns intro when signal count is below 3 even if ratio is high', () => {
   expect(result).toEqual({ state: 'intro' });
 });
 
-// ─── Test 6: more than 3 patterns → capped at 3, sorted tier asc ─────────────
-// Many signals active → only top 3 by tier+ratio appear
+// ─── Test 6: negativity cap — at most 2 negative lines (ND-UX calibration) ───
+// Even with 4 negative patterns above threshold, the card never stacks more
+// than 2 negatives. Avoids a "wall of suffering" on Home during a hard stretch.
 
-test('caps output at 3 lines, sorted by tier then ratio descending', () => {
-  // thirst (tier1), hunger (tier1), pain (tier1), externalStimuli (tier2) — all above threshold
+test('caps negative lines at 2 even when more negative patterns exist', () => {
+  // thirst (tier1), hunger (tier1), pain (tier1), externalStimuli (tier2) — all negative, all above threshold
   const checkIns: CheckIn[] = makeCheckIns(8, {
     bodySignals: {
       ...BASE.bodySignals,
@@ -108,12 +109,10 @@ test('caps output at 3 lines, sorted by tier then ratio descending', () => {
   const result = computeReflection(checkIns);
   expect(result.state).toBe('active');
   if (result.state === 'active') {
-    expect(result.lines.length).toBe(3);
-    // All returned lines should be tier 1 (higher priority)
+    expect(result.lines.length).toBe(2);
+    // The 2 shown lines are the higher-priority tier-1 needs, not the tier-2 signal
     const keys = result.lines.map((l) => l.key);
-    expect(keys).toContain('thirst');
-    expect(keys).toContain('hunger');
-    expect(keys).toContain('pain');
+    expect(keys.every((k) => ['thirst', 'hunger', 'pain'].includes(k))).toBe(true);
     expect(keys).not.toContain('externalStimuli');
   }
 });
@@ -164,5 +163,35 @@ test('only considers the last 14 check-ins', () => {
   const older: CheckIn[] = makeCheckIns(6, { bodySignals: { ...BASE.bodySignals, thirst: true } });
   const recent: CheckIn[] = makeCheckIns(14, { bodySignals: { ...BASE.bodySignals, thirst: false } });
   const result = computeReflection([...older, ...recent]);
+  expect(result).toEqual({ state: 'intro' });
+});
+
+// ─── Test 10: a positive line may balance 2 negatives → up to 3 lines ────────
+// The negativity cap (max 2) does not limit total length when a positive is present.
+
+test('shows 3 lines when a positive balances two negatives', () => {
+  // thirst + pain (negative, tier1) + energyHigh (positive, tier2)
+  const checkIns: CheckIn[] = makeCheckIns(8, {
+    energyLevel: 5, // energyHigh
+    bodySignals: { ...BASE.bodySignals, thirst: true, pain: true },
+  });
+  const result = computeReflection(checkIns);
+  expect(result.state).toBe('active');
+  if (result.state === 'active') {
+    expect(result.lines.length).toBe(3);
+    expect(result.lines.some((l) => l.key === 'energyHigh')).toBe(true);
+  }
+});
+
+// ─── Test 11: pattern below 50% no longer surfaces (ND-UX: "oft" must be true) ─
+// 9 check-ins, thirst=true in 4 (4/9 ≈ 44 %, count 4 ≥ 3) → under old 40% it
+// would have shown; under 50% it must not.
+
+test('does not surface a pattern below 50% ratio', () => {
+  const checkIns: CheckIn[] = [
+    ...makeCheckIns(4, { bodySignals: { ...BASE.bodySignals, thirst: true } }),
+    ...makeCheckIns(5, { bodySignals: { ...BASE.bodySignals, thirst: false } }),
+  ];
+  const result = computeReflection(checkIns);
   expect(result).toEqual({ state: 'intro' });
 });

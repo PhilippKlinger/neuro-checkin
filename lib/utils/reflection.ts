@@ -13,10 +13,14 @@ export type ReflectionResult =
 
 const MIN_CHECK_INS = 5;
 const WINDOW = 14;
-const THRESHOLD_RATIO = 0.4;
+const THRESHOLD_RATIO = 0.5; // ≥50% so the template word "oft" is literally true
 const THRESHOLD_COUNT = 3;
 const MAX_LINES = 3;
 const MAX_POSITIVE = 1;
+// ND-UX calibration: never stack more than 2 negative lines on Home. A positive
+// line may still fill the 3rd slot, but a pure hard-stretch is capped at 2 to
+// avoid a "wall of suffering" the moment the app is opened.
+const MAX_NEGATIVE = 2;
 
 interface DimensionScore {
   key: ReflectionDimensionKey;
@@ -95,15 +99,19 @@ function rankDimensions(checkIns: CheckIn[]): ReflectionLine[] {
   // Sort: tier asc, ratio desc within tier
   scores.sort((a, b) => a.tier !== b.tier ? a.tier - b.tier : b.ratio - a.ratio);
 
-  // Cap: max 3 lines, max 1 positive
+  // Caps: max 3 lines total, max 1 positive, max 2 negative
   const lines: ReflectionLine[] = [];
   let positiveCount = 0;
+  let negativeCount = 0;
 
   for (const s of scores) {
     if (lines.length >= MAX_LINES) break;
     if (s.polarity === 'positive') {
       if (positiveCount >= MAX_POSITIVE) continue;
       positiveCount++;
+    } else {
+      if (negativeCount >= MAX_NEGATIVE) continue;
+      negativeCount++;
     }
     lines.push({ key: s.key, text: REFLECTION_TEMPLATES[s.key].text });
   }
