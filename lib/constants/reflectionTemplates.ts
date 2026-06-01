@@ -37,7 +37,6 @@ export const REFLECTION_TEMPLATES: Record<ReflectionDimensionKey, ReflectionTemp
 };
 
 export const REFLECTION_EYEBROW = 'In letzter Zeit';
-export const REFLECTION_SOURCE  = 'Aus deinen letzten Check-ins.';
 export const REFLECTION_INTRO_EYEBROW = 'Deine Muster';
 export const REFLECTION_INTRO_LINE    = 'Nach ein paar Check-ins zeigt sich hier, was wiederkehrt.';
 
