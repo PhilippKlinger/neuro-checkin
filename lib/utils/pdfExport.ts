@@ -1,7 +1,6 @@
 import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
 import { File } from 'expo-file-system';
-// eslint-disable-next-line import/no-unresolved -- SDK 54 subpath export, works at runtime
 import { StorageAccessFramework, readAsStringAsync, EncodingType } from 'expo-file-system/legacy';
 import type { CheckIn } from '../types/checkin';
 import { buildPdfHtml } from './pdfTemplate';

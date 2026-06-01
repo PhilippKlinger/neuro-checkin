@@ -1,6 +1,5 @@
 import { Alert, Pressable, View, StyleSheet, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-// eslint-disable-next-line import/no-unresolved -- SDK 54 subpath export, works at runtime
 import { StorageAccessFramework } from 'expo-file-system/legacy';
 import { useTheme } from '../../lib/hooks/useTheme';
 import { AppText } from '../ui/AppText';
