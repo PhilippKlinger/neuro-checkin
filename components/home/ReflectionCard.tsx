@@ -5,7 +5,6 @@ import type { ReflectionResult } from '../../lib/utils/reflection';
 import {
   REFLECTION_EYEBROW,
   REFLECTION_INTRO_LINE,
-  REFLECTION_SOURCE_HINT,
   REFLECTION_STEADY_LINE,
   REFLECTION_VARIED_LINE,
   REFLECTION_HUMBLE_LINE,
@@ -13,34 +12,20 @@ import {
 
 interface Props {
   result: ReflectionResult;
+  embedded?: boolean;
 }
 
-// Single-sentence form states (REFLECT-02).
 const FORM_TEXT: Record<'steady' | 'varied' | 'humble', string> = {
   steady: REFLECTION_STEADY_LINE,
   varied: REFLECTION_VARIED_LINE,
   humble: REFLECTION_HUMBLE_LINE,
 };
 
-export function ReflectionCard({ result }: Props) {
+export function ReflectionCard({ result, embedded }: Props) {
   const { theme, spacing, radii, shadows } = useTheme();
 
-  const showSourceHint = result.state !== 'intro';
-
-  return (
-    <View
-      style={[
-        styles.card,
-        {
-          backgroundColor: theme.colors.card,
-          borderRadius: radii.md,
-          borderColor: theme.colors.border,
-          padding: spacing.md,
-          ...shadows.md,
-        },
-      ]}
-      accessibilityRole="summary"
-    >
+  const content = (
+    <>
       <AppText
         variant="label"
         size="sm"
@@ -66,12 +51,32 @@ export function ReflectionCard({ result }: Props) {
       ) : (
         <AppText variant="body">{FORM_TEXT[result.state]}</AppText>
       )}
+    </>
+  );
 
-      {showSourceHint && (
-        <AppText variant="body" size="xs" color="secondary" style={{ marginTop: spacing.sm }}>
-          {REFLECTION_SOURCE_HINT}
-        </AppText>
-      )}
+  if (embedded) {
+    return (
+      <View accessibilityRole="summary" style={{ padding: spacing.md }}>
+        {content}
+      </View>
+    );
+  }
+
+  return (
+    <View
+      style={[
+        styles.card,
+        {
+          backgroundColor: theme.colors.card,
+          borderRadius: radii.md,
+          borderColor: theme.colors.border,
+          padding: spacing.md,
+          ...shadows.md,
+        },
+      ]}
+      accessibilityRole="summary"
+    >
+      {content}
     </View>
   );
 }
