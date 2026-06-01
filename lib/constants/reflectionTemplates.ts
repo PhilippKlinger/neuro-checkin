@@ -40,3 +40,9 @@ export const REFLECTION_EYEBROW = 'In letzter Zeit';
 export const REFLECTION_SOURCE  = 'Aus deinen letzten Check-ins.';
 export const REFLECTION_INTRO_EYEBROW = 'Deine Muster';
 export const REFLECTION_INTRO_LINE    = 'Nach ein paar Check-ins zeigt sich hier, was wiederkehrt.';
+
+// REFLECT-02 — Form-Zustände (kein dominantes Einzel-Muster, aber Form erkennbar)
+// Strings sind ENTWURF — vor Merge durch /nd-ux finalisieren.
+export const REFLECTION_STEADY_LINE = 'Deine Tage waren sich ähnlich.';
+export const REFLECTION_VARIED_LINE = 'Deine Tage waren sehr unterschiedlich.';
+export const REFLECTION_HUMBLE_LINE = 'Kein wiederkehrendes Muster.';

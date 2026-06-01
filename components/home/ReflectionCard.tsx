@@ -7,11 +7,21 @@ import {
   REFLECTION_SOURCE,
   REFLECTION_INTRO_EYEBROW,
   REFLECTION_INTRO_LINE,
+  REFLECTION_STEADY_LINE,
+  REFLECTION_VARIED_LINE,
+  REFLECTION_HUMBLE_LINE,
 } from '../../lib/constants/reflectionTemplates';
 
 interface Props {
   result: ReflectionResult;
 }
+
+// Maps the three single-line form states to their text (REFLECT-02).
+const FORM_TEXT: Record<'steady' | 'varied' | 'humble', string> = {
+  steady:  REFLECTION_STEADY_LINE,
+  varied:  REFLECTION_VARIED_LINE,
+  humble:  REFLECTION_HUMBLE_LINE,
+};
 
 export function ReflectionCard({ result }: Props) {
   const { theme, spacing, radii, shadows } = useTheme();
@@ -31,6 +41,7 @@ export function ReflectionCard({ result }: Props) {
       accessibilityRole="summary"
     >
       {result.state === 'intro' ? (
+        // New user — not enough data yet
         <>
           <AppText
             variant="label"
@@ -45,7 +56,8 @@ export function ReflectionCard({ result }: Props) {
             {REFLECTION_INTRO_LINE}
           </AppText>
         </>
-      ) : (
+      ) : result.state === 'active' ? (
+        // Dominant dimension(s) found — show pattern lines
         <>
           <AppText
             variant="label"
@@ -75,6 +87,30 @@ export function ReflectionCard({ result }: Props) {
               </AppText>
             </View>
           ))}
+          <AppText
+            variant="body"
+            size="xs"
+            color="secondary"
+            style={[styles.source, { marginTop: spacing.sm }]}
+          >
+            {REFLECTION_SOURCE}
+          </AppText>
+        </>
+      ) : (
+        // Form states: steady | varied | humble — single honest sentence
+        <>
+          <AppText
+            variant="label"
+            size="sm"
+            color="secondary"
+            style={styles.eyebrow}
+            accessibilityRole="header"
+          >
+            {REFLECTION_EYEBROW}
+          </AppText>
+          <AppText variant="body" size="sm" color="secondary">
+            {FORM_TEXT[result.state]}
+          </AppText>
           <AppText
             variant="body"
             size="xs"

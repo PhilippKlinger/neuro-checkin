@@ -9,18 +9,27 @@ export interface ReflectionLine {
 
 export type ReflectionResult =
   | { state: 'intro' }
+  | { state: 'humble' }
+  | { state: 'steady' }
+  | { state: 'varied' }
   | { state: 'active'; lines: ReflectionLine[] };
 
-const MIN_CHECK_INS = 5;
-const WINDOW = 14;
-const THRESHOLD_RATIO = 0.5; // ≥50% so the template word "oft" is literally true
-const THRESHOLD_COUNT = 3;
-const MAX_LINES = 3;
-const MAX_POSITIVE = 1;
-// ND-UX calibration: never stack more than 2 negative lines on Home. A positive
-// line may still fill the 3rd slot, but a pure hard-stretch is capped at 2 to
-// avoid a "wall of suffering" the moment the app is opened.
-const MAX_NEGATIVE = 2;
+// ─── Dominanz-Schwellen ───────────────────────────────────────────────────────
+const MIN_CHECK_INS    = 5;
+const WINDOW           = 14;
+const THRESHOLD_RATIO  = 0.5; // ≥50% so the template word "oft" is literally true
+const THRESHOLD_COUNT  = 3;
+const MAX_LINES        = 3;
+const MAX_POSITIVE     = 1;
+// ND-UX calibration: never stack more than 2 negative lines on Home.
+const MAX_NEGATIVE     = 2;
+
+// ─── Form-Schwellen (Heuristik, kalibrierbar — assumptions A-44) ─────────────
+const FORM_MIN_ENERGY    = 3; // min answered energy values to classify form
+const FORM_SWING_COUNT   = 2; // ≥N low AND ≥N high → wechselhaft
+const FORM_BREADTH_TYPES = 4; // ≥N distinct signal types appeared → wechselhaft
+const FORM_STEADY_RANGE  = 1; // energy max−min ≤ N → ruhig
+const FORM_FEW_SIGNALS   = 2; // ≤N distinct signal types → ruhig
 
 interface DimensionScore {
   key: ReflectionDimensionKey;
@@ -38,12 +47,14 @@ export function computeReflection(checkIns: CheckIn[]): ReflectionResult {
 
   const lines = rankDimensions(window);
 
-  if (lines.length === 0) {
-    return { state: 'intro' };
+  if (lines.length > 0) {
+    return { state: 'active', lines };
   }
 
-  return { state: 'active', lines };
+  return classifyForm(window);
 }
+
+// ─── Dominanz-Ranking (unverändert gegenüber REFLECT-01) ─────────────────────
 
 function rankDimensions(checkIns: CheckIn[]): ReflectionLine[] {
   const scores: DimensionScore[] = [];
@@ -74,17 +85,13 @@ function rankDimensions(checkIns: CheckIn[]): ReflectionLine[] {
     }
   }
 
-  // Body signals — Tier 1
   evaluateBoolean('thirst',          checkIns.map((c) => c.bodySignals.thirst));
   evaluateBoolean('hunger',          checkIns.map((c) => c.bodySignals.hunger));
   evaluateBoolean('pain',            checkIns.map((c) => c.bodySignals.pain));
-
-  // Body signals — Tier 2 + 3
   evaluateBoolean('externalStimuli', checkIns.map((c) => c.bodySignals.externalStimuli));
   evaluateBoolean('temperature',     checkIns.map((c) => c.bodySignals.temperature));
   evaluateBoolean('seating',         checkIns.map((c) => c.bodySignals.seating));
 
-  // Derived numeric — Tier 2
   const energyValues = checkIns.map((c) => (!c.energySkipped && c.energyLevel > 0 ? c.energyLevel : null));
   evaluateNumeric('energyLow',    energyValues, (v) => v <= 2);
   evaluateNumeric('energyHigh',   energyValues, (v) => v >= 4);
@@ -96,10 +103,8 @@ function rankDimensions(checkIns: CheckIn[]): ReflectionLine[] {
   const focusValues = checkIns.map((c) => (!c.focusSkipped && c.focusLevel > 0 ? c.focusLevel : null));
   evaluateNumeric('focusLow',     focusValues, (v) => v <= 2);
 
-  // Sort: tier asc, ratio desc within tier
   scores.sort((a, b) => a.tier !== b.tier ? a.tier - b.tier : b.ratio - a.ratio);
 
-  // Caps: max 3 lines total, max 1 positive, max 2 negative
   const lines: ReflectionLine[] = [];
   let positiveCount = 0;
   let negativeCount = 0;
@@ -117,4 +122,55 @@ function rankDimensions(checkIns: CheckIn[]): ReflectionLine[] {
   }
 
   return lines;
+}
+
+// ─── Form-Klassifikation (REFLECT-02) ────────────────────────────────────────
+
+function classifyForm(checkIns: CheckIn[]): ReflectionResult {
+  const energyValues = checkIns
+    .map((c) => (!c.energySkipped && c.energyLevel > 0 ? c.energyLevel : null))
+    .filter((v): v is number => v !== null);
+
+  if (energyValues.length < FORM_MIN_ENERGY) {
+    return { state: 'humble' };
+  }
+
+  const distressValues = checkIns
+    .map((c) => c.distressLevel)
+    .filter((v): v is number => v !== null);
+
+  // Count distinct body-signal keys that were `true` in at least one check-in
+  const signalKeys: Array<keyof CheckIn['bodySignals']> = [
+    'hunger', 'thirst', 'temperature', 'pain', 'restroom', 'seating', 'externalStimuli',
+  ];
+  const signalTypes = signalKeys.filter((k) =>
+    checkIns.some((c) => c.bodySignals[k] === true),
+  ).length;
+
+  // VARIED — wechselhaft: Energie-Swing ODER Distress-Swing ODER viele verschiedene Signale
+  const energySwing =
+    energyValues.filter((v) => v <= 2).length >= FORM_SWING_COUNT &&
+    energyValues.filter((v) => v >= 4).length >= FORM_SWING_COUNT;
+
+  const distressSwing =
+    distressValues.filter((v) => v <= 2).length >= FORM_SWING_COUNT &&
+    distressValues.filter((v) => v >= 4).length >= FORM_SWING_COUNT;
+
+  const signalBreadth = signalTypes >= FORM_BREADTH_TYPES;
+
+  if (energySwing || distressSwing || signalBreadth) {
+    return { state: 'varied' };
+  }
+
+  // STEADY — ruhig: Energie eng beisammen, keine Anspannungs-Spitzen, wenig Signalbreite
+  const energyRange = Math.max(...energyValues) - Math.min(...energyValues);
+  const noTense     = distressValues.filter((v) => v >= 4).length === 0;
+  const fewSignals  = signalTypes <= FORM_FEW_SIGNALS;
+
+  if (energyRange <= FORM_STEADY_RANGE && noTense && fewSignals) {
+    return { state: 'steady' };
+  }
+
+  // Dazwischen: Bewegung, aber weder klarer Swing noch eng-ruhig
+  return { state: 'humble' };
 }
