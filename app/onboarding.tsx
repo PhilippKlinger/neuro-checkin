@@ -26,12 +26,7 @@ import type { FontFamily } from '../lib/types/checkin';
 const TOTAL_SLIDES = 4;
 
 // Used only for the VoiceOver/TalkBack slide announcement on navigation.
-const SLIDE_TITLES = [
-  'Neuro Check-in',
-  'Probier einen Schritt',
-  'Dein Verlauf',
-  'Aussehen wählen',
-];
+const SLIDE_TITLES = ['Neuro Check-in', 'Probier einen Schritt', 'Dein Verlauf', 'Aussehen wählen'];
 
 // Static example check-ins for the history preview. Level indices map into the
 // real ENERGY_LABELS / FOCUS_LABELS arrays so the preview can never show a
@@ -66,7 +61,7 @@ export default function OnboardingScreen() {
   const [demoEnergy, setDemoEnergy] = useState(2);
 
   const isLastSlide = step === TOTAL_SLIDES - 1;
-  const hasBack = step > 0 && !isLastSlide;
+  const hasBack = step > 0;
   const hasSkip = !isLastSlide;
 
   function handleThemeSelect(name: ThemeName) {
@@ -140,11 +135,7 @@ export default function OnboardingScreen() {
             style={[styles.appIcon, { borderRadius: 16 }]}
             accessibilityLabel="Neuro Check-in App-Icon"
           />
-          <AppText
-            variant="label"
-            size="md"
-            style={{ textAlign: 'center', marginTop: spacing.sm }}
-          >
+          <AppText variant="label" size="md" style={{ textAlign: 'center', marginTop: spacing.sm }}>
             Neuro Check-in
           </AppText>
           <AppText
@@ -347,7 +338,13 @@ export default function OnboardingScreen() {
               ...shadows.md,
             }}
           >
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}
+            >
               <AppText variant="label" size="sm">
                 {item.date}
               </AppText>
@@ -365,7 +362,14 @@ export default function OnboardingScreen() {
                 </AppText>
               </View>
             </View>
-            <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: spacing.xs, gap: spacing.md }}>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                marginTop: spacing.xs,
+                gap: spacing.md,
+              }}
+            >
               <View style={{ alignItems: 'center' }}>
                 <AppText variant="body" size="xs" color="secondary">
                   Energie
@@ -402,7 +406,7 @@ export default function OnboardingScreen() {
           color="secondary"
           style={{ textAlign: 'center', marginTop: spacing.md }}
         >
-          Mit der Zeit siehst du, welche Tage schwerer sind.
+          Nach ein paar Check-ins zeigt sich, was sich wiederholt.
         </AppText>
 
         <View
@@ -417,7 +421,7 @@ export default function OnboardingScreen() {
           }}
         >
           <AppText variant="body" size="sm" color="secondary" style={{ textAlign: 'center' }}>
-            Exportiere Check-ins als PDF — zum Teilen oder für dich.
+            Exportierbar als PDF — zum Teilen oder für dich.
           </AppText>
         </View>
       </View>
@@ -436,12 +440,7 @@ export default function OnboardingScreen() {
           Aussehen wählen
         </AppText>
 
-        <AppText
-          variant="label"
-          size="sm"
-          color="secondary"
-          style={{ marginBottom: spacing.sm }}
-        >
+        <AppText variant="label" size="sm" color="secondary" style={{ marginBottom: spacing.sm }}>
           Modus
         </AppText>
         <AppearanceModeSection
@@ -452,35 +451,17 @@ export default function OnboardingScreen() {
 
         <View style={{ height: spacing.lg }} />
 
-        <AppText
-          variant="label"
-          size="sm"
-          color="secondary"
-          style={{ marginBottom: spacing.sm }}
-        >
+        <AppText variant="label" size="sm" color="secondary" style={{ marginBottom: spacing.sm }}>
           Farbpalette
         </AppText>
-        <ThemeSection
-          currentTheme={selectedTheme}
-          onThemeChange={handleThemeSelect}
-          hideTitle
-        />
+        <ThemeSection currentTheme={selectedTheme} onThemeChange={handleThemeSelect} hideTitle />
 
         <View style={{ height: spacing.lg }} />
 
-        <AppText
-          variant="label"
-          size="sm"
-          color="secondary"
-          style={{ marginBottom: spacing.sm }}
-        >
+        <AppText variant="label" size="sm" color="secondary" style={{ marginBottom: spacing.sm }}>
           Schriftart
         </AppText>
-        <FontSection
-          currentFont={selectedFont}
-          onFontChange={handleFontChange}
-          hideTitle
-        />
+        <FontSection currentFont={selectedFont} onFontChange={handleFontChange} hideTitle />
 
         <AppText
           variant="body"
