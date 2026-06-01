@@ -212,15 +212,9 @@ export async function migrateDatabase(db: SQLiteDatabase): Promise<void> {
   }
 
   if (currentVersion < 18) {
-    await db.execAsync(
-      `ALTER TABLE user_settings DROP COLUMN tutorial_offered;`
-    );
-    await db.execAsync(
-      `ALTER TABLE user_settings DROP COLUMN tutorial_seen;`
-    );
-    await db.execAsync(
-      `ALTER TABLE user_settings DROP COLUMN guided_toggle_introduced;`
-    );
+    await db.execAsync(`ALTER TABLE user_settings DROP COLUMN tutorial_offered;`);
+    await db.execAsync(`ALTER TABLE user_settings DROP COLUMN tutorial_seen;`);
+    await db.execAsync(`ALTER TABLE user_settings DROP COLUMN guided_toggle_introduced;`);
   }
 
   // String interpolation intentional: PRAGMA does not support parameterized

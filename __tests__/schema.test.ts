@@ -151,9 +151,9 @@ describe('migrateDatabase — v18 drops orphaned settings columns', () => {
   it('drops guided_toggle_introduced column', async () => {
     const db = makeDb(17);
     await migrateDatabase(db as any);
-    expect(
-      db._execCalls.some((s) => s.includes('DROP COLUMN guided_toggle_introduced'))
-    ).toBe(true);
+    expect(db._execCalls.some((s) => s.includes('DROP COLUMN guided_toggle_introduced'))).toBe(
+      true
+    );
   });
 
   it('does NOT drop these columns when already at v18', async () => {
