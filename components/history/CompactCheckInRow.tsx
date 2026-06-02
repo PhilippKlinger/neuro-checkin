@@ -71,7 +71,7 @@ export const CompactCheckInRow = memo(function CompactCheckInRow({
       }
       accessibilityState={selectable ? { selected } : undefined}
     >
-      <View style={[styles.dot, { backgroundColor: energyColor ?? theme.colors.textTertiary }]} />
+      <View style={[styles.dot, { backgroundColor: energyColor ?? theme.colors.textSecondary }]} />
       <View style={styles.content}>
         <AppText variant="label" size="sm" numberOfLines={1}>
           {dateLabel}
