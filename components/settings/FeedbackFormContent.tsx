@@ -87,8 +87,8 @@ export function FeedbackFormContent({
         </Pressable>
       </View>
       <AppText variant="body" size="sm" color="secondary" style={{ marginBottom: spacing.md }}>
-        Was hat geholfen, was stört, was fehlt? Bitte nur App-Feedback — nicht zu deinem Befinden,
-        Gefühlen oder Check-in-Inhalten.
+        Was fällt dir auf? Nur App-Feedback — nicht zu deinem Befinden, Gefühlen oder
+        Check-in-Inhalten.
       </AppText>
       <AppText variant="hint" size="xs" style={{ marginTop: spacing.sm, marginBottom: spacing.md }}>
         Versand über Formspree (externer Dienst). Keine persönlichen Inhalte senden.

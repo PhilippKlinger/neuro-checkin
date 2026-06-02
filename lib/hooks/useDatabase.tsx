@@ -62,7 +62,7 @@ export function DatabaseProvider({ children }: DatabaseProviderProps) {
             color: colors.text,
           }}
         >
-          Datenbank konnte nicht geladen werden
+          App konnte nicht starten
         </Text>
         <Text
           maxFontSizeMultiplier={1.5}
@@ -72,8 +72,8 @@ export function DatabaseProvider({ children }: DatabaseProviderProps) {
             textAlign: 'center',
           }}
         >
-          Bitte starte die App neu. Falls das Problem weiterhin besteht, deinstalliere und
-          installiere die App erneut.
+          Starte die App neu. Falls das weiterhin passiert: App deinstallieren und neu
+          installieren.
         </Text>
       </View>
     );

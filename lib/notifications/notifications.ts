@@ -79,8 +79,7 @@ export async function scheduleSingleSlot(slot: NotificationSlot): Promise<void> 
     await Notifications.scheduleNotificationAsync({
       identifier: slotIdentifier(slot.id, i),
       content: {
-        title: 'Ein Moment für dich — wenn du magst.',
-        body: 'Nur wenn du möchtest.',
+        title: 'Dein Check-in.',
         sound: false,
       },
       trigger: {

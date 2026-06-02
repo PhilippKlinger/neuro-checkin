@@ -6,6 +6,7 @@ import { AppText } from '../ui/AppText';
 import { ConfirmDialog } from '../ui/ConfirmDialog';
 import { deleteAllCheckIns } from '../../lib/database/checkins';
 import { deleteUserChips, deleteUserChipByLabel, getUserChips } from '../../lib/database/userChips';
+import { MAX_USER_CHIPS_PER_CATEGORY } from '../../lib/constants/userChips';
 import { updateSettings } from '../../lib/database/settings';
 import { SQLiteDatabase } from 'expo-sqlite';
 import { useState, useCallback, useEffect } from 'react';
@@ -19,6 +20,8 @@ interface DataSectionProps {
   db: SQLiteDatabase;
   checkInCount: number;
   chipCount: number;
+  chipCountFeelings?: number;
+  chipCountSelfCare?: number;
   exportDirectoryUri: string | null;
   onDeleteComplete: () => void;
   onChipsDeleteComplete: () => void;
@@ -29,6 +32,8 @@ export function DataSection({
   db,
   checkInCount,
   chipCount,
+  chipCountFeelings,
+  chipCountSelfCare,
   exportDirectoryUri,
   onDeleteComplete,
   onChipsDeleteComplete,
@@ -304,13 +309,19 @@ export function DataSection({
             },
           ]}
           accessibilityRole="button"
-          accessibilityLabel={`Eigene Chips verwalten${chipCount > 0 ? ` (${chipCount})` : ''}`}
+          accessibilityLabel={`Eigene Chips verwalten${chipCount > 0 ? ` (${chipCount} gesamt)` : ''}`}
           accessibilityHint={
             chipsExpanded ? 'Chip-Liste einklappen' : 'Chip-Liste aufklappen zum einzelnen Löschen'
           }
           accessibilityState={{ disabled: chipCount === 0, expanded: chipsExpanded }}
         >
-          <AppText variant="label">Eigene Chips{chipCount > 0 ? ` (${chipCount})` : ''}</AppText>
+          <AppText variant="label">
+            {chipCount > 0 && chipCountFeelings != null && chipCountSelfCare != null
+              ? `Eigene Chips (${chipCountFeelings}/${MAX_USER_CHIPS_PER_CATEGORY} · ${chipCountSelfCare}/${MAX_USER_CHIPS_PER_CATEGORY})`
+              : chipCount > 0
+                ? `Eigene Chips (${chipCount})`
+                : 'Eigene Chips'}
+          </AppText>
           {chipCount > 0 && (
             <Ionicons
               name={chipsExpanded ? 'chevron-up' : 'chevron-down'}

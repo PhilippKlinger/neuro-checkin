@@ -159,3 +159,73 @@ describe('updateSettings', () => {
     expect(sql).toMatch(/guided_mode_enabled = \?/);
   });
 });
+
+// ---------------------------------------------------------------------------
+// getSettings — enum validation (PRA-05)
+// ---------------------------------------------------------------------------
+
+describe('getSettings — corrupt enum values fall back to defaults', () => {
+  const baseRow = {
+    id: 1,
+    theme_name: 'warmEarth',
+    color_mode: 'light',
+    reminder_enabled: 0,
+    reminder_time: null,
+    language: 'de',
+    onboarding_completed: 0,
+    guided_mode_enabled: 1,
+    last_active_date: null,
+    detail_view_introduced: 0,
+    export_directory_uri: null,
+    font_family: 'lexend',
+    reflection_enabled: 1,
+    history_view_mode: 'compact',
+  };
+
+  it('falls back to warmEarth for invalid theme_name', async () => {
+    const db = makeDb({ getFirstAsync: jest.fn().mockResolvedValue({ ...baseRow, theme_name: 'invalid' }) });
+    const settings = await getSettings(db as any);
+    expect(settings.themeName).toBe('warmEarth');
+  });
+
+  it('falls back to warmEarth for empty string theme_name', async () => {
+    const db = makeDb({ getFirstAsync: jest.fn().mockResolvedValue({ ...baseRow, theme_name: '' }) });
+    const settings = await getSettings(db as any);
+    expect(settings.themeName).toBe('warmEarth');
+  });
+
+  it('falls back to light for invalid color_mode', async () => {
+    const db = makeDb({ getFirstAsync: jest.fn().mockResolvedValue({ ...baseRow, color_mode: 'ultraDark' }) });
+    const settings = await getSettings(db as any);
+    expect(settings.colorMode).toBe('light');
+  });
+
+  it('falls back to lexend for invalid font_family', async () => {
+    const db = makeDb({ getFirstAsync: jest.fn().mockResolvedValue({ ...baseRow, font_family: 'comic-sans' }) });
+    const settings = await getSettings(db as any);
+    expect(settings.fontFamily).toBe('lexend');
+  });
+
+  it('falls back to compact for invalid history_view_mode', async () => {
+    const db = makeDb({ getFirstAsync: jest.fn().mockResolvedValue({ ...baseRow, history_view_mode: 'grid' }) });
+    const settings = await getSettings(db as any);
+    expect(settings.historyViewMode).toBe('compact');
+  });
+
+  it('accepts valid enum values without changing them', async () => {
+    const db = makeDb({
+      getFirstAsync: jest.fn().mockResolvedValue({
+        ...baseRow,
+        theme_name: 'softSage',
+        color_mode: 'dark',
+        font_family: 'atkinson',
+        history_view_mode: 'cards',
+      }),
+    });
+    const settings = await getSettings(db as any);
+    expect(settings.themeName).toBe('softSage');
+    expect(settings.colorMode).toBe('dark');
+    expect(settings.fontFamily).toBe('atkinson');
+    expect(settings.historyViewMode).toBe('cards');
+  });
+});
