@@ -13,16 +13,17 @@ interface StepBodySignalsProps {
 interface SignalItem {
   key: keyof BodySignals;
   label: string;
+  description?: string;
 }
 
 const SIGNALS: SignalItem[] = [
   { key: 'hunger', label: 'Hunger' },
   { key: 'thirst', label: 'Durst' },
-  { key: 'temperature', label: 'Temperatur' },
+  { key: 'temperature', label: 'Temperatur', description: 'Ist dir zu warm oder zu kalt?' },
   { key: 'pain', label: 'Schmerzen' },
-  { key: 'restroom', label: 'Toilette' },
-  { key: 'seating', label: 'Sitzposition' },
-  { key: 'externalStimuli', label: 'Reize' },
+  { key: 'restroom', label: 'Toilette', description: 'Musst du auf Toilette?' },
+  { key: 'seating', label: 'Sitzposition', description: 'Sitzt du unbequem?' },
+  { key: 'externalStimuli', label: 'Reize', description: 'Stören dich Licht, Geräusche oder Gerüche?' },
 ];
 
 export function StepBodySignals({ value, onValueChange, hint }: StepBodySignalsProps) {
@@ -55,10 +56,15 @@ export function StepBodySignals({ value, onValueChange, hint }: StepBodySignalsP
                   borderColor: state !== null ? theme.colors.accentSoft : theme.colors.border,
                 },
               ]}
-              accessibilityLabel={signal.label}
+              accessibilityLabel={signal.description ? `${signal.label}: ${signal.description}` : signal.label}
             >
               <View style={[styles.signalTextWrapper, { marginRight: spacing.sm }]}>
                 <AppText variant="label">{signal.label}</AppText>
+                {signal.description && (
+                  <AppText variant="caption" color="secondary">
+                    {signal.description}
+                  </AppText>
+                )}
               </View>
 
               <View style={[styles.buttonGroup, { gap: spacing.xs }]}>
