@@ -1,6 +1,7 @@
+import { useEffect } from 'react';
 import { View, Pressable, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
+import { useRouter, useNavigation } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../../lib/hooks/useTheme';
 import { AppText } from '../ui/AppText';
@@ -15,7 +16,12 @@ interface CheckInSuccessViewProps {
 export function CheckInSuccessView({ onReset, energyLevel, focusLevel }: CheckInSuccessViewProps) {
   const { theme, spacing, radii, touchTarget, shadows } = useTheme();
   const router = useRouter();
+  const navigation = useNavigation();
   const insets = useSafeAreaInsets();
+
+  useEffect(() => {
+    navigation.setOptions({ headerBackVisible: false });
+  }, [navigation]);
 
   function handleGoHome() {
     onReset();
