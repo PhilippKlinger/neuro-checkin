@@ -291,7 +291,7 @@ export default function OnboardingScreen() {
           color="secondary"
           style={{ textAlign: 'center', marginTop: spacing.xs }}
         >
-          9 Schritte beim vollen Check-in. 3 beim Schnell-Check. Jeder freiwillig.
+          9 Schritte beim vollen Check-in. 3 beim Schnell-Check-in. Jeder Schritt ist freiwillig.
         </AppText>
 
         <Pressable
@@ -465,7 +465,7 @@ export default function OnboardingScreen() {
           Nach ein paar Check-ins zeigt sich, was sich wiederholt.
         </AppText>
 
-        <ReflectionCard result={DEMO_REFLECTION} />
+        <ReflectionCard result={DEMO_REFLECTION} hideEyebrow />
 
         <AppText
           variant="body"
