@@ -49,8 +49,7 @@ export function normalizeCheckInInsert(data: CheckInInsert): CheckInInsert {
   }
 
   const thoughtsType =
-    data.thoughtsType &&
-    (VALID_THOUGHTS_TYPES as readonly string[]).includes(data.thoughtsType)
+    data.thoughtsType && (VALID_THOUGHTS_TYPES as readonly string[]).includes(data.thoughtsType)
       ? data.thoughtsType
       : null;
 

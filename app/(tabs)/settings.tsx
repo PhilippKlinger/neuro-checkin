@@ -142,9 +142,7 @@ export default function SettingsScreen() {
         setNotificationPermission(true);
       }
       const previous = slotsRef.current;
-      const updatedSlots = previous.map((s) =>
-        s.id === slotId ? { ...s, enabled: value } : s
-      );
+      const updatedSlots = previous.map((s) => (s.id === slotId ? { ...s, enabled: value } : s));
       setSlots(updatedSlots);
       try {
         const updated = updatedSlots.find((s) => s.id === slotId)!;

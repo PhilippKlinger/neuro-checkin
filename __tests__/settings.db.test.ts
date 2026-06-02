@@ -183,31 +183,41 @@ describe('getSettings — corrupt enum values fall back to defaults', () => {
   };
 
   it('falls back to warmEarth for invalid theme_name', async () => {
-    const db = makeDb({ getFirstAsync: jest.fn().mockResolvedValue({ ...baseRow, theme_name: 'invalid' }) });
+    const db = makeDb({
+      getFirstAsync: jest.fn().mockResolvedValue({ ...baseRow, theme_name: 'invalid' }),
+    });
     const settings = await getSettings(db as any);
     expect(settings.themeName).toBe('warmEarth');
   });
 
   it('falls back to warmEarth for empty string theme_name', async () => {
-    const db = makeDb({ getFirstAsync: jest.fn().mockResolvedValue({ ...baseRow, theme_name: '' }) });
+    const db = makeDb({
+      getFirstAsync: jest.fn().mockResolvedValue({ ...baseRow, theme_name: '' }),
+    });
     const settings = await getSettings(db as any);
     expect(settings.themeName).toBe('warmEarth');
   });
 
   it('falls back to light for invalid color_mode', async () => {
-    const db = makeDb({ getFirstAsync: jest.fn().mockResolvedValue({ ...baseRow, color_mode: 'ultraDark' }) });
+    const db = makeDb({
+      getFirstAsync: jest.fn().mockResolvedValue({ ...baseRow, color_mode: 'ultraDark' }),
+    });
     const settings = await getSettings(db as any);
     expect(settings.colorMode).toBe('light');
   });
 
   it('falls back to lexend for invalid font_family', async () => {
-    const db = makeDb({ getFirstAsync: jest.fn().mockResolvedValue({ ...baseRow, font_family: 'comic-sans' }) });
+    const db = makeDb({
+      getFirstAsync: jest.fn().mockResolvedValue({ ...baseRow, font_family: 'comic-sans' }),
+    });
     const settings = await getSettings(db as any);
     expect(settings.fontFamily).toBe('lexend');
   });
 
   it('falls back to compact for invalid history_view_mode', async () => {
-    const db = makeDb({ getFirstAsync: jest.fn().mockResolvedValue({ ...baseRow, history_view_mode: 'grid' }) });
+    const db = makeDb({
+      getFirstAsync: jest.fn().mockResolvedValue({ ...baseRow, history_view_mode: 'grid' }),
+    });
     const settings = await getSettings(db as any);
     expect(settings.historyViewMode).toBe('compact');
   });

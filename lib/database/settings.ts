@@ -6,7 +6,11 @@ const VALID_COLOR_MODES = ['light', 'dark', 'system'] as const;
 const VALID_FONTS = ['lexend', 'atkinson', 'nunito'] as const;
 const VALID_VIEW_MODES = ['compact', 'cards'] as const;
 
-function validateEnum<T extends string>(value: string | null | undefined, valid: readonly T[], fallback: T): T {
+function validateEnum<T extends string>(
+  value: string | null | undefined,
+  valid: readonly T[],
+  fallback: T
+): T {
   if (value && (valid as readonly string[]).includes(value)) return value as T;
   return fallback;
 }

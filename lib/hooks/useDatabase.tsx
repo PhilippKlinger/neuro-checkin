@@ -72,8 +72,7 @@ export function DatabaseProvider({ children }: DatabaseProviderProps) {
             textAlign: 'center',
           }}
         >
-          Starte die App neu. Falls das weiterhin passiert: App deinstallieren und neu
-          installieren.
+          Starte die App neu. Falls das weiterhin passiert: App deinstallieren und neu installieren.
         </Text>
       </View>
     );
