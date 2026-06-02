@@ -8,6 +8,7 @@ interface StepFeelingsProps {
   onValueChange: (value: string) => void;
   hint?: string;
   userChips?: string[];
+  userChipsAtLimit?: boolean;
   skipped?: boolean;
   onSkip?: () => void;
 }
@@ -17,6 +18,7 @@ export function StepFeelings({
   onValueChange,
   hint,
   userChips,
+  userChipsAtLimit,
   skipped,
   onSkip,
 }: StepFeelingsProps) {
@@ -32,6 +34,7 @@ export function StepFeelings({
       maxLength={MAX_LABEL_LENGTH}
       hint={hint}
       userChips={userChips}
+      userChipsAtLimit={userChipsAtLimit}
       skipped={skipped}
       onSkip={onSkip}
     />

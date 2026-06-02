@@ -12,7 +12,8 @@ import type { SQLiteDatabase } from 'expo-sqlite';
 import { CheckInDraft, BodySignals, EMPTY_DRAFT, EMPTY_BODY_SIGNALS } from '../types/checkin';
 import { insertCheckIn, countCheckIns } from '../database/checkins';
 import { getSettings, updateSettings } from '../database/settings';
-import { saveUserChips, getUserChips } from '../database/userChips';
+import { saveUserChips, getUserChips, countUserChipsByCategory } from '../database/userChips';
+import { MAX_USER_CHIPS_PER_CATEGORY } from '../constants/userChips';
 import { saveDraft, loadDraft, clearDraft } from '../database/checkInDraft';
 import { FEELING_CHIPS, SELF_CARE_CHIPS } from '../constants/chips';
 import { isStepBlocked as checkStepBlocked } from '../utils/checkInFlow';
@@ -46,6 +47,8 @@ export interface UseCheckInFlowResult {
   guidedMode: boolean;
   feelingUserChips: string[];
   selfCareUserChips: string[];
+  feelingsAtLimit: boolean;
+  selfCareAtLimit: boolean;
   canGoBack: boolean;
   isLastStep: boolean;
   isStepBlocked: boolean;
@@ -77,6 +80,8 @@ export function useCheckInFlow(db: SQLiteDatabase): UseCheckInFlowResult {
   const [feelingUserChips, setFeelingUserChips] = useState<string[]>([]);
   const [selfCareUserChips, setSelfCareUserChips] = useState<string[]>([]);
   const [resumeDialogVisible, setResumeDialogVisible] = useState(false);
+  const [feelingsAtLimit, setFeelingsAtLimit] = useState(false);
+  const [selfCareAtLimit, setSelfCareAtLimit] = useState(false);
 
   const stepRef = useRef(step);
   const savingRef = useRef(false);
@@ -91,11 +96,21 @@ export function useCheckInFlow(db: SQLiteDatabase): UseCheckInFlowResult {
       let cancelled = false;
       async function loadState() {
         try {
-          const [settings, count, feelingChips, selfCareChips, savedDraft] = await Promise.all([
+          const [
+            settings,
+            count,
+            feelingChips,
+            selfCareChips,
+            feelingCount,
+            selfCareCount,
+            savedDraft,
+          ] = await Promise.all([
             getSettings(db),
             countCheckIns(db),
             getUserChips(db, 'feelings'),
             getUserChips(db, 'self_care'),
+            countUserChipsByCategory(db, 'feelings'),
+            countUserChipsByCategory(db, 'self_care'),
             loadDraft(db),
           ]);
           if (cancelled) return;
@@ -103,6 +118,8 @@ export function useCheckInFlow(db: SQLiteDatabase): UseCheckInFlowResult {
           setGuidedMode(settings.guidedModeEnabled);
           setFeelingUserChips(feelingChips);
           setSelfCareUserChips(selfCareChips);
+          setFeelingsAtLimit(feelingCount >= MAX_USER_CHIPS_PER_CATEGORY);
+          setSelfCareAtLimit(selfCareCount >= MAX_USER_CHIPS_PER_CATEGORY);
 
           if (savedDraft && stepRef.current === 0) {
             pendingResumeDraftRef.current = savedDraft;
@@ -244,6 +261,8 @@ export function useCheckInFlow(db: SQLiteDatabase): UseCheckInFlowResult {
     guidedMode,
     feelingUserChips,
     selfCareUserChips,
+    feelingsAtLimit,
+    selfCareAtLimit,
     canGoBack: step > 0,
     isLastStep: step === TOTAL_STEPS - 1,
     isStepBlocked: blocked,

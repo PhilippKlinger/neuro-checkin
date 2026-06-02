@@ -60,6 +60,8 @@ export default function FullCheckInScreen() {
     guidedMode,
     feelingUserChips,
     selfCareUserChips,
+    feelingsAtLimit,
+    selfCareAtLimit,
     canGoBack,
     isLastStep,
     isNextDisabled,
@@ -144,6 +146,7 @@ export default function FullCheckInScreen() {
             onValueChange={actions.setFeelings}
             hint={guidedMode ? STEP_HINTS.feelings : undefined}
             userChips={feelingUserChips}
+            userChipsAtLimit={feelingsAtLimit}
             skipped={draft.feelingsSkipped}
             onSkip={actions.skipFeelings}
           />
@@ -175,6 +178,7 @@ export default function FullCheckInScreen() {
             onValueChange={actions.setSelfCare}
             hint={undefined}
             userChips={selfCareUserChips}
+            userChipsAtLimit={selfCareAtLimit}
           />
         );
       case 8:
