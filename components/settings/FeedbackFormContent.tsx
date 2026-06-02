@@ -91,8 +91,7 @@ export function FeedbackFormContent({
         Gefühlen oder Check-in-Inhalten.
       </AppText>
       <AppText variant="hint" size="xs" style={{ marginTop: spacing.sm, marginBottom: spacing.md }}>
-        Bitte keine persönlichen Inhalte senden. Mit dem Absenden überträgst du deinen Text über
-        Formspree (externer Dienst, EU-Datenschutz).
+        Versand über Formspree (externer Dienst). Keine persönlichen Inhalte senden.
       </AppText>
       <AppTextInput
         value={feedbackText}
