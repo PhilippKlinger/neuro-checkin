@@ -1,10 +1,9 @@
-import { useState, useRef, useEffect } from 'react';
-import { View, Pressable, ScrollView, StyleSheet } from 'react-native';
+import { useState } from 'react';
+import { View, Pressable, StyleSheet } from 'react-native';
 import { useTheme } from '../../lib/hooks/useTheme';
-import { useReducedMotion } from '../../lib/hooks/useReducedMotion';
 import { AppText } from '../ui/AppText';
 import { AppTextInput } from '../ui/AppTextInput';
-import { DISTRESS_LABELS, DISTRESS_NOTE_THRESHOLD } from '../../lib/types/checkin';
+import { DISTRESS_LABELS } from '../../lib/types/checkin';
 import { StepScaffold } from './StepScaffold';
 
 interface StepDistressProps {
@@ -28,46 +27,21 @@ export function StepDistress({
   hint,
 }: StepDistressProps) {
   const { theme, spacing, radii, touchTarget } = useTheme();
-  const reducedMotion = useReducedMotion();
   const [cannotSay, setCannotSay] = useState(false);
-  const [noteOpen, setNoteOpen] = useState(distressNote !== '');
-  const scrollRef = useRef<ScrollView>(null);
-  const scrollTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  useEffect(() => {
-    return () => {
-      if (scrollTimerRef.current) clearTimeout(scrollTimerRef.current);
-    };
-  }, []);
-
-  function scheduleScrollToEnd() {
-    if (scrollTimerRef.current) clearTimeout(scrollTimerRef.current);
-    scrollTimerRef.current = setTimeout(
-      () => scrollRef.current?.scrollToEnd({ animated: !reducedMotion }),
-      300
-    );
-  }
 
   function handleLevelSelect(level: number) {
     setCannotSay(false);
     const newLevel = distressLevel === level ? null : level;
     onLevelChange(newLevel);
-    if (newLevel !== null && newLevel < DISTRESS_NOTE_THRESHOLD) {
-      setNoteOpen(false);
-    }
   }
 
   function handleCannotSay() {
     setCannotSay(true);
     onLevelChange(null);
-    setNoteOpen(false);
   }
-
-  const showNoteToggle = distressLevel !== null && distressLevel >= DISTRESS_NOTE_THRESHOLD;
 
   return (
     <StepScaffold
-      ref={scrollRef}
       title="Stress"
       subtitle="Wie belastet bist du gerade?"
       hint={hint}
@@ -137,46 +111,27 @@ export function StepDistress({
         </AppText>
       </Pressable>
 
-      {showNoteToggle && !noteOpen && (
-        <Pressable
-          onPress={() => {
-            setNoteOpen(true);
-            scheduleScrollToEnd();
-          }}
-          style={({ pressed }) => [
-            { marginTop: spacing.lg, alignItems: 'center', opacity: pressed ? 0.6 : 1 },
-          ]}
-          accessibilityRole="button"
-          accessibilityLabel="Notiz hinzufügen"
-        >
-          <AppText variant="hint">Kurz dazu schreiben.</AppText>
-        </Pressable>
-      )}
-
-      {noteOpen && (
-        <AppTextInput
-          value={distressNote}
-          onChangeText={(text) => onNoteChange(text.slice(0, 200))}
-          placeholder="(optional)"
-          placeholderTextColor={theme.colors.textSecondary}
-          multiline
-          maxLength={200}
-          textAlignVertical="top"
-          onFocus={scheduleScrollToEnd}
-          style={[
-            styles.noteInput,
-            {
-              backgroundColor: theme.colors.surface,
-              borderColor: theme.colors.border,
-              borderRadius: radii.md,
-              padding: spacing.md,
-              marginTop: spacing.lg,
-            },
-          ]}
-          accessibilityLabel="Stress-Notiz"
-        />
-      )}
-      {noteOpen && distressNote.length >= 180 && (
+      <AppTextInput
+        value={distressNote}
+        onChangeText={(text) => onNoteChange(text.slice(0, 200))}
+        placeholder="Notiz (optional)"
+        placeholderTextColor={theme.colors.textSecondary}
+        multiline
+        maxLength={200}
+        textAlignVertical="top"
+        style={[
+          styles.noteInput,
+          {
+            backgroundColor: theme.colors.surface,
+            borderColor: theme.colors.border,
+            borderRadius: radii.md,
+            padding: spacing.md,
+            marginTop: spacing.lg,
+          },
+        ]}
+        accessibilityLabel="Stress-Notiz"
+      />
+      {distressNote.length >= 180 && (
         <AppText
           variant="label"
           size="xs"
