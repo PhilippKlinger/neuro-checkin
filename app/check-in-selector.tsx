@@ -34,7 +34,7 @@ export default function CheckInSelectorScreen() {
       accessibilityLabel:
         'Voller Check, 9 Schritte, etwa 5 Minuten, Körper, Gefühle, Stress, Gedanken',
       testID: 'selector-full-checkin',
-      onPress: () => router.replace('/(tabs)/check-in'),
+      onPress: () => router.replace('/full-check-in'),
     },
   ];
 

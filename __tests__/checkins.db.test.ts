@@ -336,6 +336,71 @@ describe('getCheckInsByIds', () => {
 });
 
 // ---------------------------------------------------------------------------
+// prepareAsync retry (B2 regression)
+// ---------------------------------------------------------------------------
+
+describe('prepareAsync retry', () => {
+  const prepareError = new Error('NativeDatabase.prepareAsync rejected (NullPointerException)');
+
+  it('getCheckIns retries once after prepareAsync error and returns rows', async () => {
+    let calls = 0;
+    const db = {
+      getAllAsync: jest.fn().mockImplementation(() => {
+        calls++;
+        if (calls === 1) return Promise.reject(prepareError);
+        return Promise.resolve([SAMPLE_ROW]);
+      }),
+      getFirstAsync: jest.fn().mockResolvedValue({ n: 1 }),
+    };
+    const result = await getCheckIns(db as any);
+    expect(result).toHaveLength(1);
+    expect(db.getAllAsync).toHaveBeenCalledTimes(2);
+    expect(db.getFirstAsync).toHaveBeenCalledTimes(1);
+  });
+
+  it('getCheckInById retries once after prepareAsync error and returns row', async () => {
+    let calls = 0;
+    const db = {
+      getFirstAsync: jest.fn().mockImplementation((...args: unknown[]) => {
+        const sql = args[0] as string;
+        if (sql.includes('SELECT ? AS n')) return Promise.resolve({ n: 1 });
+        calls++;
+        if (calls === 1) return Promise.reject(prepareError);
+        return Promise.resolve(SAMPLE_ROW);
+      }),
+    };
+    const result = await getCheckInById(db as any, 7);
+    expect(result).not.toBeNull();
+    expect(result!.id).toBe(7);
+  });
+
+  it('countCheckIns retries once after prepareAsync error and returns count', async () => {
+    let calls = 0;
+    const db = {
+      getFirstAsync: jest.fn().mockImplementation((...args: unknown[]) => {
+        const sql = args[0] as string;
+        if (sql.includes('SELECT ? AS n')) return Promise.resolve({ n: 1 });
+        calls++;
+        if (calls === 1) return Promise.reject(prepareError);
+        return Promise.resolve({ count: 5 });
+      }),
+    };
+    const count = await countCheckIns(db as any);
+    expect(count).toBe(5);
+  });
+
+  it('rethrows non-prepareAsync errors without retrying', async () => {
+    const otherError = new Error('SQLITE_CONSTRAINT: UNIQUE');
+    const db = {
+      getAllAsync: jest.fn().mockRejectedValue(otherError),
+      getFirstAsync: jest.fn(),
+    };
+    await expect(getCheckIns(db as any)).rejects.toThrow('SQLITE_CONSTRAINT');
+    expect(db.getFirstAsync).not.toHaveBeenCalled();
+  });
+});
+
+// ---------------------------------------------------------------------------
 // parseBodySignals edge cases (tested via getCheckIns)
 // ---------------------------------------------------------------------------
 
