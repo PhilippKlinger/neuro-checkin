@@ -64,7 +64,7 @@ describe('presentCheckIn — energy & focus', () => {
 
   it('formats focus as "level/5 — label"', () => {
     const p = presentCheckIn(FULL_CHECKIN);
-    expect(p.focus).toBe('4/5 — Gut');
+    expect(p.focus).toBe('4/5 — Viel');
   });
 
   it('returns null for energy when skipped', () => {

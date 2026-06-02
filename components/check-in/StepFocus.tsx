@@ -13,7 +13,7 @@ export function StepFocus({ value, onValueChange, skipped, onSkip, hint }: StepF
   return (
     <LevelSlider
       title="Fokus"
-      subtitle="Wie klar ist dein Kopf gerade?"
+      subtitle="Wie viel Fokus hast du gerade?"
       value={value}
       onValueChange={onValueChange}
       labels={FOCUS_LABELS}
