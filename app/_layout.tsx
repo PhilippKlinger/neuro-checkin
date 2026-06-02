@@ -98,6 +98,19 @@ function AppStack() {
         }}
       />
       <Stack.Screen
+        name="full-check-in"
+        options={{
+          headerShown: true,
+          title: 'Voller Check-in',
+          headerStyle: { backgroundColor: theme.colors.background },
+          headerTintColor: theme.colors.text,
+          headerTitleStyle: {
+            fontFamily: typography.families.heading.semibold,
+            fontSize: typography.sizes.lg,
+          },
+        }}
+      />
+      <Stack.Screen
         name="check-in-selector"
         options={{
           headerShown: true,
@@ -151,7 +164,7 @@ function RootLayout() {
       const id = response.notification.request.identifier;
       if (handledNotificationId.current === id) return;
       handledNotificationId.current = id;
-      router.navigate('/(tabs)/check-in');
+      router.navigate('/check-in-selector');
     }
 
     Notifications.getLastNotificationResponseAsync().then((r) => {
