@@ -13,6 +13,7 @@ import {
 interface Props {
   result: ReflectionResult;
   embedded?: boolean;
+  hideEyebrow?: boolean;
 }
 
 const FORM_TEXT: Record<'steady' | 'varied' | 'humble', string> = {
@@ -21,20 +22,22 @@ const FORM_TEXT: Record<'steady' | 'varied' | 'humble', string> = {
   humble: REFLECTION_HUMBLE_LINE,
 };
 
-export function ReflectionCard({ result, embedded }: Props) {
+export function ReflectionCard({ result, embedded, hideEyebrow }: Props) {
   const { theme, spacing, radii, shadows } = useTheme();
 
   const content = (
     <>
-      <AppText
-        variant="label"
-        size="sm"
-        color="secondary"
-        style={{ marginBottom: spacing.xs }}
-        accessibilityRole="header"
-      >
-        {REFLECTION_EYEBROW}
-      </AppText>
+      {!hideEyebrow && (
+        <AppText
+          variant="label"
+          size="sm"
+          color="secondary"
+          style={{ marginBottom: spacing.xs }}
+          accessibilityRole="header"
+        >
+          {REFLECTION_EYEBROW}
+        </AppText>
+      )}
 
       {result.state === 'intro' ? (
         <AppText variant="body">{REFLECTION_INTRO_LINE}</AppText>

@@ -20,19 +20,19 @@ export default function CheckInSelectorScreen() {
 
   const options: SelectorOption[] = [
     {
-      title: 'Schnell-Check',
+      title: 'Schnell-Check-in',
       subtitle: '3 Schritte · etwa 2 Minuten — Energie, Fokus, Gefühle',
-      context: 'Wenn die Kapazität gerade knapp ist.',
-      accessibilityLabel: 'Schnell-Check, 3 Schritte, etwa 2 Minuten, Energie, Fokus, Gefühle',
+      context: 'Wenig Zeit oder Energie.',
+      accessibilityLabel: 'Schnell-Check-in, 3 Schritte, etwa 2 Minuten, Energie, Fokus, Gefühle',
       testID: 'selector-quick-checkin',
       onPress: () => router.replace('/quick-check-in'),
     },
     {
-      title: 'Voller Check',
+      title: 'Voller Check-in',
       subtitle: '9 Schritte · etwa 5 Minuten — Körper, Gefühle, Stress, Gedanken',
       context: 'Wenn du tiefer hinschauen möchtest.',
       accessibilityLabel:
-        'Voller Check, 9 Schritte, etwa 5 Minuten, Körper, Gefühle, Stress, Gedanken',
+        'Voller Check-in, 9 Schritte, etwa 5 Minuten, Körper, Gefühle, Stress, Gedanken',
       testID: 'selector-full-checkin',
       onPress: () => router.replace('/full-check-in'),
     },
