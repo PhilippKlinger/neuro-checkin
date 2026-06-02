@@ -102,7 +102,7 @@ export const EMPTY_BODY_SIGNALS: BodySignals = {
 export const ENERGY_LABELS = ['Sehr wenig', 'Wenig', 'Mittel', 'Viel', 'Sehr viel'] as const;
 
 /** Semantic labels for the 5-step focus scale (index 0 = level 1). */
-export const FOCUS_LABELS = ['Kaum', 'Wenig', 'Mittel', 'Gut', 'Voll'] as const;
+export const FOCUS_LABELS = ['Sehr wenig', 'Wenig', 'Mittel', 'Viel', 'Sehr viel'] as const;
 
 /** Semantic labels for the 5-step stress scale (index 0 = level 1). */
 export const DISTRESS_LABELS = ['Kaum', 'Wenig', 'Mittel', 'Viel', 'Sehr viel'] as const;
