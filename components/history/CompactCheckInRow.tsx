@@ -25,19 +25,23 @@ export const CompactCheckInRow = memo(function CompactCheckInRow({
 }: CompactCheckInRowProps) {
   const { theme, spacing, radii, shadows } = useTheme();
 
-  const energyColor = ENERGY_COLORS[checkIn.energyLevel - 1] ?? ENERGY_COLORS[2];
+  const energyMissing = checkIn.energySkipped || checkIn.energyLevel === 0;
+  const energyColor = energyMissing
+    ? undefined
+    : (ENERGY_COLORS[checkIn.energyLevel - 1] ?? ENERGY_COLORS[2]);
   const activeSignals = Object.values(checkIn.bodySignals).filter((v) => v === true).length;
 
   const dateLabel = showFullDate
     ? `${formatDate(checkIn.createdAt)} — ${formatTime(checkIn.createdAt)}`
     : formatTime(checkIn.createdAt);
 
-  const parts: string[] = [];
-  if (!checkIn.energySkipped) parts.push(getLevelLabel(checkIn.energyLevel, ENERGY_LABELS));
-  if (!checkIn.focusSkipped) parts.push(getLevelLabel(checkIn.focusLevel, FOCUS_LABELS));
-  if (activeSignals > 0)
-    parts.push(`${activeSignals} ${activeSignals === 1 ? 'Signal' : 'Signale'}`);
-  const subtitle = parts.join(' / ');
+  const energyLabel = energyMissing ? '—' : getLevelLabel(checkIn.energyLevel, ENERGY_LABELS);
+  const focusLabel =
+    checkIn.focusSkipped || checkIn.focusLevel === 0
+      ? '—'
+      : getLevelLabel(checkIn.focusLevel, FOCUS_LABELS);
+  const signalsLabel = `${activeSignals} ${activeSignals === 1 ? 'Signal' : 'Signale'}`;
+  const subtitle = `${energyLabel} / ${focusLabel} / ${signalsLabel}`;
 
   return (
     <Pressable
@@ -67,7 +71,9 @@ export const CompactCheckInRow = memo(function CompactCheckInRow({
       }
       accessibilityState={selectable ? { selected } : undefined}
     >
-      <View style={[styles.dot, { backgroundColor: energyColor }]} />
+      <View
+        style={[styles.dot, { backgroundColor: energyColor ?? theme.colors.textTertiary }]}
+      />
       <View style={styles.content}>
         <AppText variant="label" size="sm" numberOfLines={1}>
           {dateLabel}

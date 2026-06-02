@@ -302,15 +302,17 @@ export default function HistoryScreen() {
               {
                 minHeight: touchTarget.min,
                 borderRadius: radii.md,
-                backgroundColor: theme.colors.accent,
-                flex: 1,
+                backgroundColor: theme.colors.surface,
+                borderWidth: 1,
+                borderColor: theme.colors.border,
+                paddingHorizontal: spacing.md,
               },
               pressed && { opacity: 0.75 },
             ]}
             accessibilityRole="button"
             accessibilityLabel="Check-ins zum Teilen auswählen"
           >
-            <AppText variant="label" weight="semibold" color="inverse">
+            <AppText variant="label" weight="semibold">
               Auswählen & Teilen
             </AppText>
           </Pressable>
@@ -366,7 +368,7 @@ export default function HistoryScreen() {
                 size="xs"
                 color={viewMode === 'cards' ? 'primary' : 'secondary'}
               >
-                Cards
+                Karten
               </AppText>
             </Pressable>
           </View>
