@@ -111,9 +111,7 @@ export default function QuickCheckInScreen() {
         <View style={styles.indicatorSpacer} />
         <StepIndicator totalSteps={TOTAL_STEPS} currentStep={step} />
         <View style={styles.indicatorSpacer}>
-          {step < TOTAL_STEPS - 1 && (
-            <GuidedToggle enabled={guidedMode} onToggle={handleGuidedToggle} />
-          )}
+          {step === 0 && <GuidedToggle enabled={guidedMode} onToggle={handleGuidedToggle} />}
         </View>
       </View>
 

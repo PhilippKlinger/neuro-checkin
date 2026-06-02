@@ -21,6 +21,9 @@ import { StepSelfCare } from '../components/check-in/StepSelfCare';
 import { StepSummary } from '../components/check-in/StepSummary';
 import { STEP_HINTS } from '../lib/constants/hintConfig';
 
+// Steps that have a guided hint — toggle is only useful when a hint exists
+const STEPS_WITH_HINTS = new Set([1, 3, 4, 6]); // energy, bodySignals, feelings, thoughts
+
 const STEP_NAMES = [
   'Ankommen',
   'Energie-Level',
@@ -168,7 +171,7 @@ export default function FullCheckInScreen() {
         <View style={styles.indicatorSpacer} />
         <StepIndicator totalSteps={TOTAL_STEPS} currentStep={step} />
         <View style={styles.indicatorSpacer}>
-          {step > 0 && step < TOTAL_STEPS - 1 && (
+          {STEPS_WITH_HINTS.has(step) && (
             <GuidedToggle enabled={guidedMode} onToggle={handleGuidedToggle} />
           )}
         </View>
