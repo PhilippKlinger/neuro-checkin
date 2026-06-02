@@ -23,7 +23,11 @@ const SIGNALS: SignalItem[] = [
   { key: 'pain', label: 'Schmerzen' },
   { key: 'restroom', label: 'Toilette', description: 'Musst du auf Toilette?' },
   { key: 'seating', label: 'Sitzposition', description: 'Sitzt du unbequem?' },
-  { key: 'externalStimuli', label: 'Reize', description: 'Stören dich Licht, Geräusche oder Gerüche?' },
+  {
+    key: 'externalStimuli',
+    label: 'Reize',
+    description: 'Stören dich Licht, Geräusche oder Gerüche?',
+  },
 ];
 
 export function StepBodySignals({ value, onValueChange, hint }: StepBodySignalsProps) {
@@ -56,7 +60,9 @@ export function StepBodySignals({ value, onValueChange, hint }: StepBodySignalsP
                   borderColor: state !== null ? theme.colors.accentSoft : theme.colors.border,
                 },
               ]}
-              accessibilityLabel={signal.description ? `${signal.label}: ${signal.description}` : signal.label}
+              accessibilityLabel={
+                signal.description ? `${signal.label}: ${signal.description}` : signal.label
+              }
             >
               <View style={[styles.signalTextWrapper, { marginRight: spacing.sm }]}>
                 <AppText variant="label">{signal.label}</AppText>
