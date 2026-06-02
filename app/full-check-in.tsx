@@ -1,6 +1,5 @@
 import { useEffect, useRef } from 'react';
 import { View, StyleSheet, AccessibilityInfo, findNodeHandle } from 'react-native';
-import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../lib/hooks/useTheme';
 import { useDatabase } from '../lib/hooks/useDatabase';
@@ -37,7 +36,6 @@ const STEP_NAMES = [
 export default function FullCheckInScreen() {
   const { theme, spacing, radii } = useTheme();
   const db = useDatabase();
-  const router = useRouter();
   const insets = useSafeAreaInsets();
   const stepContentRef = useRef<View>(null);
 
