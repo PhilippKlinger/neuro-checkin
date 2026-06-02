@@ -1,5 +1,6 @@
 import type { SQLiteDatabase } from 'expo-sqlite';
 import type { UserSettings } from '../types/checkin';
+import { withDbRetry } from './withDbRetry';
 
 const VALID_THEMES = ['warmEarth', 'coolMist', 'softSage'] as const;
 const VALID_COLOR_MODES = ['light', 'dark', 'system'] as const;
@@ -16,22 +17,24 @@ function validateEnum<T extends string>(
 }
 
 export async function getSettings(db: SQLiteDatabase): Promise<UserSettings> {
-  const row = await db.getFirstAsync<{
-    id: number;
-    theme_name: string;
-    color_mode: string | null;
-    reminder_enabled: number;
-    reminder_time: string | null;
-    language: string;
-    onboarding_completed: number;
-    guided_mode_enabled: number;
-    last_active_date: string | null;
-    detail_view_introduced: number;
-    export_directory_uri: string | null;
-    font_family: string | null;
-    reflection_enabled: number;
-    history_view_mode: string | null;
-  }>('SELECT * FROM user_settings WHERE id = 1');
+  const row = await withDbRetry(db, () =>
+    db.getFirstAsync<{
+      id: number;
+      theme_name: string;
+      color_mode: string | null;
+      reminder_enabled: number;
+      reminder_time: string | null;
+      language: string;
+      onboarding_completed: number;
+      guided_mode_enabled: number;
+      last_active_date: string | null;
+      detail_view_introduced: number;
+      export_directory_uri: string | null;
+      font_family: string | null;
+      reflection_enabled: number;
+      history_view_mode: string | null;
+    }>('SELECT * FROM user_settings WHERE id = 1')
+  );
 
   if (!row) {
     return {
@@ -131,6 +134,8 @@ export async function updateSettings(
   }
 
   if (updates.length > 0) {
-    await db.runAsync(`UPDATE user_settings SET ${updates.join(', ')} WHERE id = 1`, ...values);
+    await withDbRetry(db, () =>
+      db.runAsync(`UPDATE user_settings SET ${updates.join(', ')} WHERE id = 1`, ...values)
+    );
   }
 }
