@@ -1,5 +1,19 @@
 import type { SQLiteDatabase } from 'expo-sqlite';
-import type { UserSettings, FontFamily, HistoryViewMode } from '../types/checkin';
+import type { UserSettings } from '../types/checkin';
+
+const VALID_THEMES = ['warmEarth', 'coolMist', 'softSage'] as const;
+const VALID_COLOR_MODES = ['light', 'dark', 'system'] as const;
+const VALID_FONTS = ['lexend', 'atkinson', 'nunito'] as const;
+const VALID_VIEW_MODES = ['compact', 'cards'] as const;
+
+function validateEnum<T extends string>(
+  value: string | null | undefined,
+  valid: readonly T[],
+  fallback: T
+): T {
+  if (value && (valid as readonly string[]).includes(value)) return value as T;
+  return fallback;
+}
 
 export async function getSettings(db: SQLiteDatabase): Promise<UserSettings> {
   const row = await db.getFirstAsync<{
@@ -40,8 +54,8 @@ export async function getSettings(db: SQLiteDatabase): Promise<UserSettings> {
 
   return {
     id: row.id,
-    themeName: row.theme_name,
-    colorMode: (row.color_mode as UserSettings['colorMode']) ?? 'light',
+    themeName: validateEnum(row.theme_name, VALID_THEMES, 'warmEarth'),
+    colorMode: validateEnum(row.color_mode, VALID_COLOR_MODES, 'light'),
     reminderEnabled: row.reminder_enabled === 1,
     reminderTime: row.reminder_time,
     language: row.language as 'de' | 'en',
@@ -50,9 +64,9 @@ export async function getSettings(db: SQLiteDatabase): Promise<UserSettings> {
     lastActiveDate: row.last_active_date ?? null,
     detailViewIntroduced: row.detail_view_introduced === 1,
     exportDirectoryUri: row.export_directory_uri ?? null,
-    fontFamily: (row.font_family as FontFamily) ?? 'lexend',
+    fontFamily: validateEnum(row.font_family, VALID_FONTS, 'lexend'),
     reflectionEnabled: (row.reflection_enabled ?? 1) === 1,
-    historyViewMode: (row.history_view_mode as HistoryViewMode) ?? 'compact',
+    historyViewMode: validateEnum(row.history_view_mode, VALID_VIEW_MODES, 'compact'),
   };
 }
 

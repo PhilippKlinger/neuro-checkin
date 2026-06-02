@@ -11,7 +11,7 @@ import { useTheme } from '../../lib/hooks/useTheme';
 import { useDatabase } from '../../lib/hooks/useDatabase';
 import { getSettings, updateSettings } from '../../lib/database/settings';
 import { countCheckIns } from '../../lib/database/checkins';
-import { countUserChips } from '../../lib/database/userChips';
+import { countUserChipsByCategory } from '../../lib/database/userChips';
 import { getNotificationSlots, saveNotificationSlot } from '../../lib/database/notificationQueries';
 import { ThemeName, ColorMode } from '../../lib/constants/themes';
 import { AppearanceModeSection } from '../../components/settings/AppearanceModeSection';
@@ -62,7 +62,8 @@ export default function SettingsScreen() {
   const [showTimePicker, setShowTimePicker] = useState<0 | 1 | null>(null);
   const [isEmulator, setIsEmulator] = useState(false);
   const [checkInCount, setCheckInCount] = useState(0);
-  const [chipCount, setChipCount] = useState(0);
+  const [chipCountFeelings, setChipCountFeelings] = useState(0);
+  const [chipCountSelfCare, setChipCountSelfCare] = useState(0);
   const [guidedMode, setGuidedMode] = useState(false);
   const [reflectionEnabled, setReflectionEnabled] = useState(true);
   const [, setNotificationPermission] = useState<boolean | null>(null);
@@ -108,9 +109,13 @@ export default function SettingsScreen() {
           const count = await countCheckIns(db);
           if (cancelled) return;
           setCheckInCount(count);
-          const chips = await countUserChips(db);
+          const [feelings, selfCare] = await Promise.all([
+            countUserChipsByCategory(db, 'feelings'),
+            countUserChipsByCategory(db, 'self_care'),
+          ]);
           if (cancelled) return;
-          setChipCount(chips);
+          setChipCountFeelings(feelings);
+          setChipCountSelfCare(selfCare);
         } catch (e) {
           Sentry.withScope((scope) => {
             scope.setTag('screen', 'settings');
@@ -136,15 +141,23 @@ export default function SettingsScreen() {
         }
         setNotificationPermission(true);
       }
-      const updatedSlots = slotsRef.current.map((s) =>
-        s.id === slotId ? { ...s, enabled: value } : s
-      );
+      const previous = slotsRef.current;
+      const updatedSlots = previous.map((s) => (s.id === slotId ? { ...s, enabled: value } : s));
       setSlots(updatedSlots);
-      const updated = updatedSlots.find((s) => s.id === slotId)!;
-      await saveNotificationSlot(db, updated);
-      if (Device.isDevice) {
-        if (value) await scheduleSingleSlot(updated);
-        else await cancelSingleSlot(slotId);
+      try {
+        const updated = updatedSlots.find((s) => s.id === slotId)!;
+        await saveNotificationSlot(db, updated);
+        if (Device.isDevice) {
+          if (value) await scheduleSingleSlot(updated);
+          else await cancelSingleSlot(slotId);
+        }
+      } catch (error) {
+        console.error('handleSlotToggle failed:', error);
+        setSlots(previous);
+        Sentry.withScope((scope) => {
+          scope.setTag('action', 'slotToggle');
+          Sentry.captureException(error);
+        });
       }
     },
     [db]
@@ -154,29 +167,49 @@ export default function SettingsScreen() {
     async (slotId: 0 | 1, _event: DateTimePickerEvent, selected?: Date) => {
       if (Platform.OS === 'android') setShowTimePicker(null);
       if (!selected) return;
+      const previous = slotsRef.current;
       const time = dateToTimeString(selected);
-      const updatedSlots = slotsRef.current.map((s) => (s.id === slotId ? { ...s, time } : s));
+      const updatedSlots = previous.map((s) => (s.id === slotId ? { ...s, time } : s));
       setSlots(updatedSlots);
-      const updated = updatedSlots.find((s) => s.id === slotId)!;
-      await saveNotificationSlot(db, updated);
-      if (updated.enabled && Device.isDevice) await scheduleSingleSlot(updated);
+      try {
+        const updated = updatedSlots.find((s) => s.id === slotId)!;
+        await saveNotificationSlot(db, updated);
+        if (updated.enabled && Device.isDevice) await scheduleSingleSlot(updated);
+      } catch (error) {
+        console.error('handleTimeChange failed:', error);
+        setSlots(previous);
+        Sentry.withScope((scope) => {
+          scope.setTag('action', 'timeChange');
+          Sentry.captureException(error);
+        });
+      }
     },
     [db]
   );
 
   const handleWeekdayToggle = useCallback(
     async (slotId: 0 | 1, bitIndex: number) => {
+      const previous = slotsRef.current;
       const bit = WEEKDAY_BITS[bitIndex];
-      const updatedSlots = slotsRef.current.map((s) => {
+      const updatedSlots = previous.map((s) => {
         if (s.id !== slotId) return s;
         const newWeekdays = s.weekdays & bit ? s.weekdays & ~bit : s.weekdays | bit;
         if (newWeekdays === 0) return s;
         return { ...s, weekdays: newWeekdays };
       });
       setSlots(updatedSlots);
-      const updated = updatedSlots.find((s) => s.id === slotId)!;
-      await saveNotificationSlot(db, updated);
-      if (updated.enabled && Device.isDevice) await scheduleSingleSlot(updated);
+      try {
+        const updated = updatedSlots.find((s) => s.id === slotId)!;
+        await saveNotificationSlot(db, updated);
+        if (updated.enabled && Device.isDevice) await scheduleSingleSlot(updated);
+      } catch (error) {
+        console.error('handleWeekdayToggle failed:', error);
+        setSlots(previous);
+        Sentry.withScope((scope) => {
+          scope.setTag('action', 'weekdayToggle');
+          Sentry.captureException(error);
+        });
+      }
     },
     [db]
   );
@@ -378,12 +411,18 @@ export default function SettingsScreen() {
           <DataSection
             db={db}
             checkInCount={checkInCount}
-            chipCount={chipCount}
+            chipCount={chipCountFeelings + chipCountSelfCare}
+            chipCountFeelings={chipCountFeelings}
+            chipCountSelfCare={chipCountSelfCare}
             exportDirectoryUri={exportDirectoryUri}
             onDeleteComplete={() => setCheckInCount(0)}
             onChipsDeleteComplete={async () => {
-              const count = await countUserChips(db);
-              setChipCount(count);
+              const [f, s] = await Promise.all([
+                countUserChipsByCategory(db, 'feelings'),
+                countUserChipsByCategory(db, 'self_care'),
+              ]);
+              setChipCountFeelings(f);
+              setChipCountSelfCare(s);
             }}
             onExportDirectoryChanged={setExportDirectoryUri}
           />

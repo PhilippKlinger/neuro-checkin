@@ -64,7 +64,7 @@ const warmEarthLight: ThemeTokens = {
     textInverse: '#FFFFFF',
     border: '#E0D9CF',
     borderFocus: '#7A6344',
-    error: '#C4736C',
+    error: '#B35B54', // WCAG AA ≥4.5:1 on white (4.62:1)
     errorSoft: '#F0D5D2',
     success: '#6B8F71', // semantic green — independent of accent
     successSoft: '#D4E8D7',
@@ -117,7 +117,7 @@ const coolMistLight: ThemeTokens = {
     textInverse: '#FFFFFF',
     border: '#D6DCE4',
     borderFocus: '#4A6A89',
-    error: '#B86B6B',
+    error: '#A45C5C', // WCAG AA ≥4.5:1 on white (4.93:1)
     errorSoft: '#EED5D5',
     success: '#6B9E84', // semantic green — independent of accent
     successSoft: '#C8E0D4',
@@ -170,7 +170,7 @@ const softSageLight: ThemeTokens = {
     textInverse: '#FFFFFF',
     border: '#D9DFD4',
     borderFocus: '#527A58',
-    error: '#B06A5E',
+    error: '#A46052', // WCAG AA ≥4.5:1 on white (4.80:1)
     errorSoft: '#F0D8D2',
     success: '#527A58', // = accent for Soft Sage (sage green is also success)
     successSoft: '#C0D8C4',

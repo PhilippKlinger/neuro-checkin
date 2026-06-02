@@ -1,6 +1,7 @@
 import { Modal, View, Pressable, StyleSheet } from 'react-native';
 import { AppText } from './AppText';
 import { useTheme } from '../../lib/hooks/useTheme';
+import { useReducedMotion } from '../../lib/hooks/useReducedMotion';
 import { OVERLAY_COLOR } from '../../lib/constants/themes';
 
 interface ConfirmDialogProps {
@@ -27,12 +28,13 @@ export function ConfirmDialog({
   onCancel,
 }: ConfirmDialogProps) {
   const { theme, spacing, radii, touchTarget, shadows } = useTheme();
+  const reducedMotion = useReducedMotion();
 
   return (
     <Modal
       visible={visible}
       transparent
-      animationType="fade"
+      animationType={reducedMotion ? 'none' : 'fade'}
       onRequestClose={onCancel}
       accessibilityViewIsModal
     >

@@ -57,12 +57,18 @@ export function usePagedCheckIns(fetchPage: FetchPage) {
     useCallback(() => {
       let cancelled = false;
       setIsLoading(true);
-      loader.loadFirst().then((result) => {
-        if (cancelled) return;
-        setItems(result.items);
-        setHasMore(result.hasMore);
-        setIsLoading(false);
-      });
+      loader
+        .loadFirst()
+        .then((result) => {
+          if (cancelled) return;
+          setItems(result.items);
+          setHasMore(result.hasMore);
+          setIsLoading(false);
+        })
+        .catch((err) => {
+          console.error('usePagedCheckIns loadFirst failed:', err);
+          if (!cancelled) setIsLoading(false);
+        });
       return () => {
         cancelled = true;
       };
@@ -72,20 +78,32 @@ export function usePagedCheckIns(fetchPage: FetchPage) {
   const loadMore = useCallback(() => {
     if (!hasMore || isLoadingMore) return;
     setIsLoadingMore(true);
-    loader.loadNext().then((result) => {
-      setItems(result.items);
-      setHasMore(result.hasMore);
-      setIsLoadingMore(false);
-    });
+    loader
+      .loadNext()
+      .then((result) => {
+        setItems(result.items);
+        setHasMore(result.hasMore);
+        setIsLoadingMore(false);
+      })
+      .catch((err) => {
+        console.error('usePagedCheckIns loadNext failed:', err);
+        setIsLoadingMore(false);
+      });
   }, [hasMore, isLoadingMore, loader]);
 
   const refresh = useCallback(() => {
     setIsLoading(true);
-    loader.reset().then((result) => {
-      setItems(result.items);
-      setHasMore(result.hasMore);
-      setIsLoading(false);
-    });
+    loader
+      .reset()
+      .then((result) => {
+        setItems(result.items);
+        setHasMore(result.hasMore);
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        console.error('usePagedCheckIns refresh failed:', err);
+        setIsLoading(false);
+      });
   }, [loader]);
 
   return { items, sections, hasMore, isLoading, isLoadingMore, loadMore, refresh };
