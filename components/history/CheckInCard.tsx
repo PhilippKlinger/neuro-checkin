@@ -23,6 +23,16 @@ export const CheckInCard = memo(function CheckInCard({
   const { theme, spacing, radii, shadows } = useTheme();
 
   const activeSignals = Object.values(checkIn.bodySignals).filter((v) => v === true).length;
+  // Always render the same three slots so the grid stays consistent across rows,
+  // even when energy/focus were skipped or no body signals are active.
+  const energyLabel =
+    checkIn.energySkipped || checkIn.energyLevel === 0
+      ? '—'
+      : getLevelLabel(checkIn.energyLevel, ENERGY_LABELS);
+  const focusLabel =
+    checkIn.focusSkipped || checkIn.focusLevel === 0
+      ? '—'
+      : getLevelLabel(checkIn.focusLevel, FOCUS_LABELS);
 
   return (
     <Pressable
@@ -76,7 +86,7 @@ export const CheckInCard = memo(function CheckInCard({
             Energie
           </AppText>
           <AppText variant="label" weight="semibold" size="sm" color="accent">
-            {getLevelLabel(checkIn.energyLevel, ENERGY_LABELS)}
+            {energyLabel}
           </AppText>
         </View>
 
@@ -85,20 +95,18 @@ export const CheckInCard = memo(function CheckInCard({
             Fokus
           </AppText>
           <AppText variant="label" weight="semibold" size="sm" color="accent">
-            {getLevelLabel(checkIn.focusLevel, FOCUS_LABELS)}
+            {focusLabel}
           </AppText>
         </View>
 
-        {activeSignals > 0 && (
-          <View style={styles.metric}>
-            <AppText variant="body" size="xs" color="secondary">
-              Signale
-            </AppText>
-            <AppText variant="label" weight="semibold" size="sm" color="accent">
-              {activeSignals}
-            </AppText>
-          </View>
-        )}
+        <View style={styles.metric}>
+          <AppText variant="body" size="xs" color="secondary">
+            Signale
+          </AppText>
+          <AppText variant="label" weight="semibold" size="sm" color="accent">
+            {activeSignals}
+          </AppText>
+        </View>
       </View>
     </Pressable>
   );
