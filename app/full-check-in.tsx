@@ -1,9 +1,11 @@
 import { useEffect, useRef } from 'react';
-import { View, StyleSheet, AccessibilityInfo, findNodeHandle } from 'react-native';
+import { View, StyleSheet, AccessibilityInfo, findNodeHandle, Alert } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useNavigation } from 'expo-router';
 import { useTheme } from '../lib/hooks/useTheme';
 import { useDatabase } from '../lib/hooks/useDatabase';
 import { useCheckInFlow, TOTAL_STEPS } from '../lib/hooks/useCheckInFlow';
+import { clearDraft } from '../lib/database/checkInDraft';
 import { FadeView } from '../components/ui/FadeView';
 import { AppText } from '../components/ui/AppText';
 import { CheckInNavButtons } from '../components/check-in/CheckInNavButtons';
@@ -40,6 +42,7 @@ export default function FullCheckInScreen() {
   const { theme, spacing, radii } = useTheme();
   const db = useDatabase();
   const insets = useSafeAreaInsets();
+  const navigation = useNavigation();
   const stepContentRef = useRef<View>(null);
 
   const {
@@ -61,6 +64,26 @@ export default function FullCheckInScreen() {
     handleBack,
     handleReset,
   } = useCheckInFlow(db);
+
+  // Intercept back navigation to offer resume on next open
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('beforeRemove', (e: any) => {
+      if (step === 0 || isDone) return; // nothing to protect
+      e.preventDefault();
+      Alert.alert('Check-in beenden?', 'Dein Fortschritt wird gespeichert.', [
+        { text: 'Hierbleiben', style: 'cancel' },
+        {
+          text: 'Beenden',
+          style: 'destructive',
+          onPress: () => {
+            clearDraft(db).catch(console.error);
+            navigation.dispatch(e.data.action);
+          },
+        },
+      ]);
+    });
+    return unsubscribe;
+  }, [navigation, step, isDone, db]);
 
   useEffect(() => {
     AccessibilityInfo.announceForAccessibility(
