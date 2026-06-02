@@ -171,6 +171,13 @@ export default function OnboardingScreen() {
           >
             Für Menschen, die nicht immer leichten Zugang dazu haben.
           </AppText>
+          <AppText
+            variant="body"
+            color="secondary"
+            style={{ textAlign: 'center', marginTop: spacing.sm }}
+          >
+            2 Minuten. Du siehst, was gerade da ist.
+          </AppText>
         </View>
         <View
           style={{
@@ -454,7 +461,7 @@ export default function OnboardingScreen() {
           color="secondary"
           style={{ textAlign: 'center', marginBottom: spacing.lg }}
         >
-          Nach ein paar Check-ins zeigt sich, was sich wiederholt.
+          Mach ein paar Check-ins. Dann zeigt sich hier, was wiederkehrt.
         </AppText>
 
         <ReflectionCard result={DEMO_REFLECTION} hideEyebrow />

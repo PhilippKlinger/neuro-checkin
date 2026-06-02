@@ -81,11 +81,11 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Heute',
+          title: 'Übersicht',
           tabBarLabel: ({ color }) => (
-            <TabLabel label="Heute" color={color} fontFamily={typography.families.ui.medium} />
+            <TabLabel label="Übersicht" color={color} fontFamily={typography.families.ui.medium} />
           ),
-          tabBarAccessibilityLabel: 'Heute',
+          tabBarAccessibilityLabel: 'Übersicht',
           headerRight: () => <CheckInInfoButton color={theme.colors.textSecondary} />,
         }}
       />
