@@ -285,14 +285,6 @@ export default function OnboardingScreen() {
         >
           Eine Auswahl antippen — fertig.
         </AppText>
-        <AppText
-          variant="body"
-          size="sm"
-          color="secondary"
-          style={{ textAlign: 'center', marginTop: spacing.xs }}
-        >
-          9 Schritte beim vollen Check-in. 3 beim Schnell-Check-in. Jeder Schritt ist freiwillig.
-        </AppText>
 
         <Pressable
           onPress={() => router.push('/check-in-info')}
