@@ -103,30 +103,28 @@ export function StepSummary({ draft, showPostFirstCheckinHint }: StepSummaryProp
         </View>
       )}
 
-      {(p.distress || draft.distressNote.trim() !== '') && (
-        <View
-          style={[
-            styles.card,
-            {
-              backgroundColor: theme.colors.card,
-              borderRadius: radii.md,
-              padding: spacing.md,
-              marginBottom: spacing.md,
-              ...shadows.sm,
-            },
-          ]}
-        >
-          <AppText variant="label" color="accent" style={{ marginBottom: spacing.sm }}>
-            Stress-Level
+      <View
+        style={[
+          styles.card,
+          {
+            backgroundColor: theme.colors.card,
+            borderRadius: radii.md,
+            padding: spacing.md,
+            marginBottom: spacing.md,
+            ...shadows.sm,
+          },
+        ]}
+      >
+        <AppText variant="label" color="accent" style={{ marginBottom: spacing.sm }}>
+          Stress-Level
+        </AppText>
+        <AppText variant="body">{p.distress ?? 'Nicht angegeben'}</AppText>
+        {draft.distressNote.trim() !== '' && (
+          <AppText variant="hint" style={{ marginTop: spacing.xs }}>
+            {draft.distressNote}
           </AppText>
-          {p.distress && <AppText variant="body">{p.distress}</AppText>}
-          {draft.distressNote.trim() !== '' && (
-            <AppText variant="hint" style={{ marginTop: p.distress ? spacing.xs : 0 }}>
-              {draft.distressNote}
-            </AppText>
-          )}
-        </View>
-      )}
+        )}
+      </View>
 
       {(p.thoughtsType || p.thoughtsNote) && (
         <View

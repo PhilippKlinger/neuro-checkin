@@ -140,12 +140,9 @@ export function CheckInDetailContent({
             <AppText variant="label" size="sm" color="accent" style={{ marginBottom: spacing.sm }}>
               Stress-Level
             </AppText>
-            {p.distress && <AppText variant="body">{p.distress}</AppText>}
+            <AppText variant="body">{p.distress ?? 'Nicht angegeben'}</AppText>
             {checkIn.distressNote && checkIn.distressNote.trim() !== '' && (
-              <AppText
-                variant="body"
-                style={{ marginTop: p.distress ? spacing.xs : 0, fontStyle: 'italic' }}
-              >
+              <AppText variant="body" style={{ marginTop: spacing.xs, fontStyle: 'italic' }}>
                 {checkIn.distressNote}
               </AppText>
             )}
