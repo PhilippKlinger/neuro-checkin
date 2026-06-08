@@ -50,6 +50,9 @@ export interface UseCheckInFlowResult {
   isLastStep: boolean;
   isStepBlocked: boolean;
   isNextDisabled: boolean;
+  resumeDialogVisible: boolean;
+  handleResumeDraft: () => void;
+  handleDiscardDraft: () => void;
   /** @deprecated Use actions instead */
   setDraft: Dispatch<SetStateAction<CheckInDraft>>;
   setWasReset: Dispatch<SetStateAction<boolean>>;
@@ -73,9 +76,11 @@ export function useCheckInFlow(db: SQLiteDatabase): UseCheckInFlowResult {
   const [guidedMode, setGuidedMode] = useState(true);
   const [feelingUserChips, setFeelingUserChips] = useState<string[]>([]);
   const [selfCareUserChips, setSelfCareUserChips] = useState<string[]>([]);
+  const [resumeDialogVisible, setResumeDialogVisible] = useState(false);
 
   const stepRef = useRef(step);
   const savingRef = useRef(false);
+  const pendingResumeDraftRef = useRef<{ draft: CheckInDraft; step: number } | null>(null);
 
   useEffect(() => {
     stepRef.current = step;
@@ -100,23 +105,8 @@ export function useCheckInFlow(db: SQLiteDatabase): UseCheckInFlowResult {
           setSelfCareUserChips(selfCareChips);
 
           if (savedDraft && stepRef.current === 0) {
-            Alert.alert('Weitermachen?', 'Du hast einen angefangenen Check-in.', [
-              {
-                text: 'Weitermachen',
-                style: 'default',
-                onPress: () => {
-                  setDraft(savedDraft.draft);
-                  setStep(savedDraft.step);
-                },
-              },
-              {
-                text: 'Neu beginnen',
-                style: 'destructive',
-                onPress: () => {
-                  clearDraft(db).catch(console.error);
-                },
-              },
-            ]);
+            pendingResumeDraftRef.current = savedDraft;
+            setResumeDialogVisible(true);
           }
         } catch (error) {
           console.error('useCheckInFlow loadState failed:', error);
@@ -134,6 +124,21 @@ export function useCheckInFlow(db: SQLiteDatabase): UseCheckInFlowResult {
     if (step === 0 || isDone) return;
     saveDraft(db, draft, step).catch((err) => console.error('saveDraft failed:', err));
   }, [step]); // intentional: save on step change only, not on every keystroke
+
+  function handleResumeDraft() {
+    if (pendingResumeDraftRef.current) {
+      setDraft(pendingResumeDraftRef.current.draft);
+      setStep(pendingResumeDraftRef.current.step);
+      pendingResumeDraftRef.current = null;
+    }
+    setResumeDialogVisible(false);
+  }
+
+  function handleDiscardDraft() {
+    pendingResumeDraftRef.current = null;
+    setResumeDialogVisible(false);
+    clearDraft(db).catch(console.error);
+  }
 
   async function handleGuidedToggle(value: boolean) {
     setGuidedMode(value);
@@ -243,6 +248,9 @@ export function useCheckInFlow(db: SQLiteDatabase): UseCheckInFlowResult {
     isLastStep: step === TOTAL_STEPS - 1,
     isStepBlocked: blocked,
     isNextDisabled: isSaving || blocked,
+    resumeDialogVisible,
+    handleResumeDraft,
+    handleDiscardDraft,
     setDraft,
     setWasReset,
     handleGuidedToggle,
