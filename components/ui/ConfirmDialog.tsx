@@ -1,4 +1,12 @@
-import { Modal, View, Pressable, StyleSheet } from 'react-native';
+import { useState, useEffect, useCallback } from 'react';
+import {
+  Modal,
+  View,
+  Pressable,
+  StyleSheet,
+  type NativeSyntheticEvent,
+  type TextLayoutEventData,
+} from 'react-native';
 import { AppText } from './AppText';
 import { useTheme } from '../../lib/hooks/useTheme';
 import { useReducedMotion } from '../../lib/hooks/useReducedMotion';
@@ -30,6 +38,18 @@ export function ConfirmDialog({
   const { theme, spacing, radii, touchTarget, shadows } = useTheme();
   const reducedMotion = useReducedMotion();
 
+  // Stack buttons vertically when a label wraps to a second line (long labels
+  // or wide fonts via the font picker). Measured, not guessed — adapts to any
+  // font/size combination. One-way latch, reset when labels or visibility change.
+  const [stacked, setStacked] = useState(false);
+  useEffect(() => {
+    setStacked(false);
+  }, [confirmLabel, cancelLabel, visible]);
+
+  const handleLabelLayout = useCallback((e: NativeSyntheticEvent<TextLayoutEventData>) => {
+    if (e.nativeEvent.lines.length > 1) setStacked(true);
+  }, []);
+
   return (
     <Modal
       visible={visible}
@@ -60,12 +80,15 @@ export function ConfirmDialog({
             {message}
           </AppText>
 
-          <View style={[styles.buttons, { gap: spacing.sm }]}>
+          <View
+            style={[styles.buttons, { gap: spacing.sm, flexDirection: stacked ? 'column' : 'row' }]}
+          >
             {!hideCancel && (
               <Pressable
                 onPress={onCancel}
                 style={({ pressed }) => [
                   styles.button,
+                  stacked ? styles.buttonStacked : styles.buttonRow,
                   {
                     borderRadius: radii.md,
                     borderWidth: 1,
@@ -80,7 +103,11 @@ export function ConfirmDialog({
                 accessibilityRole="button"
                 accessibilityLabel={cancelLabel}
               >
-                <AppText variant="label" style={{ textAlign: 'center' }}>
+                <AppText
+                  variant="label"
+                  onTextLayout={handleLabelLayout}
+                  style={{ textAlign: 'center' }}
+                >
                   {cancelLabel}
                 </AppText>
               </Pressable>
@@ -90,6 +117,7 @@ export function ConfirmDialog({
               onPress={onConfirm}
               style={({ pressed }) => [
                 styles.button,
+                stacked ? styles.buttonStacked : styles.buttonRow,
                 {
                   borderRadius: radii.md,
                   backgroundColor: destructive ? theme.colors.error : theme.colors.accent,
@@ -106,6 +134,7 @@ export function ConfirmDialog({
                 variant="label"
                 weight="semibold"
                 color="inverse"
+                onTextLayout={handleLabelLayout}
                 style={{ textAlign: 'center' }}
               >
                 {confirmLabel}
@@ -128,11 +157,16 @@ const styles = StyleSheet.create({
     // shadow handled inline via theme
   },
   buttons: {
-    flexDirection: 'row',
+    // flexDirection set inline (row by default, column when a label wraps)
   },
   button: {
-    flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  buttonRow: {
+    flex: 1,
+  },
+  buttonStacked: {
+    alignSelf: 'stretch',
   },
 });
