@@ -79,7 +79,7 @@ export default function HistoryScreen() {
 
   function selectAll() {
     if (isExporting) return;
-    setSelectedIds(new Set(items.map((c) => c.id)));
+    setSelectedIds(new Set(items.slice(0, MAX_EXPORT_COUNT).map((c) => c.id)));
   }
 
   async function handleExportSelected() {

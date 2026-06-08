@@ -191,9 +191,21 @@ export function ChipOrTextStep({
             ]}
             accessibilityLabel={textAccessibilityLabel}
           />
-          <AppText variant="hint" size="xs" style={{ marginTop: spacing.xs }}>
-            Wird als eigener Chip gespeichert. Kurzer Begriff.
-          </AppText>
+          {userChipsAtLimit ? (
+            <AppText
+              variant="hint"
+              size="xs"
+              color="secondary"
+              style={{ marginTop: spacing.xs }}
+              accessibilityRole="text"
+            >
+              Liste voll (10/10). Diese Eingabe gilt nur für diesen Check-in — nicht gespeichert.
+            </AppText>
+          ) : (
+            <AppText variant="hint" size="xs" style={{ marginTop: spacing.xs }}>
+              Wird als eigener Chip gespeichert. Kurzer Begriff.
+            </AppText>
+          )}
           {value.length >= counterThreshold && (
             <AppText
               variant="label"

@@ -8,9 +8,16 @@ interface StepSelfCareProps {
   onValueChange: (value: string) => void;
   hint?: string;
   userChips?: string[];
+  userChipsAtLimit?: boolean;
 }
 
-export function StepSelfCare({ value, onValueChange, hint, userChips }: StepSelfCareProps) {
+export function StepSelfCare({
+  value,
+  onValueChange,
+  hint,
+  userChips,
+  userChipsAtLimit,
+}: StepSelfCareProps) {
   return (
     <ChipOrTextStep
       title="Selbstfürsorge"
@@ -23,6 +30,7 @@ export function StepSelfCare({ value, onValueChange, hint, userChips }: StepSelf
       maxLength={MAX_LABEL_LENGTH}
       hint={hint}
       userChips={userChips}
+      userChipsAtLimit={userChipsAtLimit}
     />
   );
 }

@@ -1242,8 +1242,8 @@ try {
 
   // — user chips (schema v13+: normalized_label NOT NULL, UNIQUE(category, normalized_label))
   const insertChip = db.prepare(
-    `INSERT OR IGNORE INTO user_chips (category, label, normalized_label, use_count)
-     VALUES (@category, @label, LOWER(TRIM(@label)), @use_count)`
+    `INSERT OR IGNORE INTO user_chips (category, label, normalized_label, use_count, last_used_at)
+     VALUES (@category, @label, LOWER(TRIM(@label)), @use_count, datetime('now'))`
   );
   const insertManyChips = db.transaction((rows) => {
     for (const row of rows) insertChip.run(row);
