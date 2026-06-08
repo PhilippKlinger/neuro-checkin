@@ -1,11 +1,14 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { View, StyleSheet, AccessibilityInfo, findNodeHandle } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useNavigation } from 'expo-router';
 import { useTheme } from '../lib/hooks/useTheme';
 import { useDatabase } from '../lib/hooks/useDatabase';
 import { useCheckInFlow, TOTAL_STEPS } from '../lib/hooks/useCheckInFlow';
+import { clearDraft } from '../lib/database/checkInDraft';
 import { FadeView } from '../components/ui/FadeView';
 import { AppText } from '../components/ui/AppText';
+import { ConfirmDialog } from '../components/ui/ConfirmDialog';
 import { CheckInNavButtons } from '../components/check-in/CheckInNavButtons';
 import { StepIndicator } from '../components/check-in/StepIndicator';
 import { GuidedToggle } from '../components/check-in/GuidedToggle';
@@ -40,7 +43,11 @@ export default function FullCheckInScreen() {
   const { theme, spacing, radii } = useTheme();
   const db = useDatabase();
   const insets = useSafeAreaInsets();
+  const navigation = useNavigation();
   const stepContentRef = useRef<View>(null);
+
+  const [confirmLeaveVisible, setConfirmLeaveVisible] = useState(false);
+  const pendingLeaveAction = useRef<any>(null);
 
   const {
     step,
@@ -56,11 +63,25 @@ export default function FullCheckInScreen() {
     canGoBack,
     isLastStep,
     isNextDisabled,
+    resumeDialogVisible,
+    handleResumeDraft,
+    handleDiscardDraft,
     handleGuidedToggle,
     handleNext,
     handleBack,
     handleReset,
   } = useCheckInFlow(db);
+
+  // Intercept back navigation — show branded ConfirmDialog instead of system Alert
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('beforeRemove', (e: any) => {
+      if (step === 0 || isDone) return;
+      e.preventDefault();
+      pendingLeaveAction.current = e.data.action;
+      setConfirmLeaveVisible(true);
+    });
+    return unsubscribe;
+  }, [navigation, step, isDone]);
 
   useEffect(() => {
     AccessibilityInfo.announceForAccessibility(
@@ -215,6 +236,37 @@ export default function FullCheckInScreen() {
         isLastStep={isLastStep}
         isSaving={isSaving}
         paddingBottom={Math.max(spacing.xl, insets.bottom + spacing.md)}
+      />
+
+      <ConfirmDialog
+        visible={confirmLeaveVisible}
+        title="Check-in beenden?"
+        message="Der aktuelle Fortschritt geht verloren."
+        confirmLabel="Beenden"
+        cancelLabel="Hierbleiben"
+        destructive
+        onConfirm={() => {
+          setConfirmLeaveVisible(false);
+          clearDraft(db).catch(console.error);
+          if (pendingLeaveAction.current) {
+            navigation.dispatch(pendingLeaveAction.current);
+            pendingLeaveAction.current = null;
+          }
+        }}
+        onCancel={() => {
+          setConfirmLeaveVisible(false);
+          pendingLeaveAction.current = null;
+        }}
+      />
+
+      <ConfirmDialog
+        visible={resumeDialogVisible}
+        title="Weitermachen?"
+        message="Du hast einen angefangenen Check-in."
+        confirmLabel="Weitermachen"
+        cancelLabel="Neu beginnen"
+        onConfirm={handleResumeDraft}
+        onCancel={handleDiscardDraft}
       />
     </View>
   );

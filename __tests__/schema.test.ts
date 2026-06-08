@@ -78,10 +78,10 @@ describe('migrateDatabase — fresh install (v0)', () => {
     expect(db._execCalls.some((s) => s.includes('notification_slots'))).toBe(true);
   });
 
-  it('sets user_version to 19 at the end', async () => {
+  it('sets user_version to 20 at the end', async () => {
     const db = makeDb(0);
     await migrateDatabase(db as any);
-    expect(db._execCalls.some((s) => s.includes('user_version = 19'))).toBe(true);
+    expect(db._execCalls.some((s) => s.includes('user_version = 20'))).toBe(true);
   });
 
   it('adds distress columns (v7)', async () => {
@@ -109,14 +109,22 @@ describe('migrateDatabase — fresh install (v0)', () => {
 // Already at latest version — idempotent
 // ---------------------------------------------------------------------------
 
-describe('migrateDatabase — already at v19 (idempotent)', () => {
-  it('runs without throwing', async () => {
+describe('migrateDatabase — v20 adds check_in_drafts', () => {
+  it('creates check_in_drafts table when upgrading from v19', async () => {
     const db = makeDb(19);
+    await migrateDatabase(db as any);
+    expect(db._execCalls.some((s) => s.includes('check_in_drafts'))).toBe(true);
+  });
+});
+
+describe('migrateDatabase — already at v20 (idempotent)', () => {
+  it('runs without throwing', async () => {
+    const db = makeDb(20);
     await expect(migrateDatabase(db as any)).resolves.toBeUndefined();
   });
 
   it('does not execute any CREATE TABLE or ALTER TABLE statements', async () => {
-    const db = makeDb(19);
+    const db = makeDb(20);
     await migrateDatabase(db as any);
     const ddl = db._execCalls.filter(
       (s) => s.includes('CREATE TABLE') || s.includes('ALTER TABLE')
@@ -125,9 +133,9 @@ describe('migrateDatabase — already at v19 (idempotent)', () => {
   });
 
   it('still sets the user_version pragma', async () => {
-    const db = makeDb(19);
+    const db = makeDb(20);
     await migrateDatabase(db as any);
-    expect(db._execCalls.some((s) => s.includes('user_version = 19'))).toBe(true);
+    expect(db._execCalls.some((s) => s.includes('user_version = 20'))).toBe(true);
   });
 });
 
@@ -156,8 +164,8 @@ describe('migrateDatabase — v18 drops orphaned settings columns', () => {
     );
   });
 
-  it('does NOT drop these columns when already at v19', async () => {
-    const db = makeDb(19);
+  it('does NOT drop these columns when already at v20', async () => {
+    const db = makeDb(20);
     await migrateDatabase(db as any);
     expect(db._execCalls.some((s) => s.includes('DROP COLUMN'))).toBe(false);
   });

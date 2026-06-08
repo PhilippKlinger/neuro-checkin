@@ -13,9 +13,9 @@ import { CheckInDraft, BodySignals, EMPTY_DRAFT, EMPTY_BODY_SIGNALS } from '../t
 import { insertCheckIn, countCheckIns } from '../database/checkins';
 import { getSettings, updateSettings } from '../database/settings';
 import { saveUserChips, getUserChips } from '../database/userChips';
+import { saveDraft, loadDraft, clearDraft } from '../database/checkInDraft';
 import { FEELING_CHIPS, SELF_CARE_CHIPS } from '../constants/chips';
-import { INACTIVITY_TIMEOUT_MS } from '../constants/timing';
-import { isStepBlocked as checkStepBlocked, isInactivityExpired } from '../utils/checkInFlow';
+import { isStepBlocked as checkStepBlocked } from '../utils/checkInFlow';
 import * as Sentry from '@sentry/react-native';
 
 export const TOTAL_STEPS = 9;
@@ -50,6 +50,9 @@ export interface UseCheckInFlowResult {
   isLastStep: boolean;
   isStepBlocked: boolean;
   isNextDisabled: boolean;
+  resumeDialogVisible: boolean;
+  handleResumeDraft: () => void;
+  handleDiscardDraft: () => void;
   /** @deprecated Use actions instead */
   setDraft: Dispatch<SetStateAction<CheckInDraft>>;
   setWasReset: Dispatch<SetStateAction<boolean>>;
@@ -73,10 +76,11 @@ export function useCheckInFlow(db: SQLiteDatabase): UseCheckInFlowResult {
   const [guidedMode, setGuidedMode] = useState(true);
   const [feelingUserChips, setFeelingUserChips] = useState<string[]>([]);
   const [selfCareUserChips, setSelfCareUserChips] = useState<string[]>([]);
+  const [resumeDialogVisible, setResumeDialogVisible] = useState(false);
 
   const stepRef = useRef(step);
-  const leftAtRef = useRef<number | null>(null);
   const savingRef = useRef(false);
+  const pendingResumeDraftRef = useRef<{ draft: CheckInDraft; step: number } | null>(null);
 
   useEffect(() => {
     stepRef.current = step;
@@ -87,17 +91,23 @@ export function useCheckInFlow(db: SQLiteDatabase): UseCheckInFlowResult {
       let cancelled = false;
       async function loadState() {
         try {
-          const [settings, count, feelingChips, selfCareChips] = await Promise.all([
+          const [settings, count, feelingChips, selfCareChips, savedDraft] = await Promise.all([
             getSettings(db),
             countCheckIns(db),
             getUserChips(db, 'feelings'),
             getUserChips(db, 'self_care'),
+            loadDraft(db),
           ]);
           if (cancelled) return;
           setIsFirstCheckin(count === 0);
           setGuidedMode(settings.guidedModeEnabled);
           setFeelingUserChips(feelingChips);
           setSelfCareUserChips(selfCareChips);
+
+          if (savedDraft && stepRef.current === 0) {
+            pendingResumeDraftRef.current = savedDraft;
+            setResumeDialogVisible(true);
+          }
         } catch (error) {
           console.error('useCheckInFlow loadState failed:', error);
         }
@@ -109,37 +119,26 @@ export function useCheckInFlow(db: SQLiteDatabase): UseCheckInFlowResult {
     }, [db])
   );
 
-  useFocusEffect(
-    useCallback(() => {
-      if (leftAtRef.current !== null && stepRef.current > 0) {
-        if (isInactivityExpired(leftAtRef.current, Date.now(), INACTIVITY_TIMEOUT_MS)) {
-          Alert.alert('Du warst eine Weile weg', 'Weitermachen oder neu beginnen?', [
-            {
-              text: 'Weitermachen',
-              style: 'default',
-            },
-            {
-              text: 'Neu beginnen',
-              style: 'destructive',
-              onPress: () => {
-                setStep(0);
-                setDraft(freshDraft);
-                setIsDone(false);
-                setWasReset(true);
-              },
-            },
-          ]);
-        }
-      }
-      leftAtRef.current = null;
+  // Persist draft to SQLite whenever step advances (step > 0 and not yet done)
+  useEffect(() => {
+    if (step === 0 || isDone) return;
+    saveDraft(db, draft, step).catch((err) => console.error('saveDraft failed:', err));
+  }, [step]); // intentional: save on step change only, not on every keystroke
 
-      return () => {
-        if (stepRef.current > 0) {
-          leftAtRef.current = Date.now();
-        }
-      };
-    }, [])
-  );
+  function handleResumeDraft() {
+    if (pendingResumeDraftRef.current) {
+      setDraft(pendingResumeDraftRef.current.draft);
+      setStep(pendingResumeDraftRef.current.step);
+      pendingResumeDraftRef.current = null;
+    }
+    setResumeDialogVisible(false);
+  }
+
+  function handleDiscardDraft() {
+    pendingResumeDraftRef.current = null;
+    setResumeDialogVisible(false);
+    clearDraft(db).catch(console.error);
+  }
 
   async function handleGuidedToggle(value: boolean) {
     setGuidedMode(value);
@@ -190,6 +189,7 @@ export function useCheckInFlow(db: SQLiteDatabase): UseCheckInFlowResult {
       await Promise.all([
         saveUserChips(db, 'feelings', draft.feelings, [...FEELING_CHIPS]),
         saveUserChips(db, 'self_care', draft.selfCareNote, [...SELF_CARE_CHIPS]),
+        clearDraft(db),
       ]);
       setIsDone(true);
     } catch (error) {
@@ -213,6 +213,7 @@ export function useCheckInFlow(db: SQLiteDatabase): UseCheckInFlowResult {
     setDraft(freshDraft);
     setIsDone(false);
     setWasReset(false);
+    clearDraft(db).catch(console.error);
   }
 
   const actions: DraftActions = {
@@ -247,6 +248,9 @@ export function useCheckInFlow(db: SQLiteDatabase): UseCheckInFlowResult {
     isLastStep: step === TOTAL_STEPS - 1,
     isStepBlocked: blocked,
     isNextDisabled: isSaving || blocked,
+    resumeDialogVisible,
+    handleResumeDraft,
+    handleDiscardDraft,
     setDraft,
     setWasReset,
     handleGuidedToggle,
