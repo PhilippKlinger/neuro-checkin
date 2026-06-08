@@ -37,7 +37,8 @@ export const REFLECTION_TEMPLATES: Record<ReflectionDimensionKey, ReflectionTemp
 };
 
 export const REFLECTION_EYEBROW = 'Deine Muster';
-export const REFLECTION_INTRO_LINE = 'Nach ein paar Check-ins zeigt sich hier, was wiederkehrt.';
+export const REFLECTION_INTRO_LINE =
+  'Mach ein paar Check-ins. Dann zeigt sich hier, was wiederkehrt.';
 
 // REFLECT-02 — Form-Zustände (kein dominantes Einzel-Muster, aber Form erkennbar)
 // Strings final via /nd-ux (Dr. Bergmann, 2026-06-01): wertfrei, im "Deine Tage …"-Rhythmus.

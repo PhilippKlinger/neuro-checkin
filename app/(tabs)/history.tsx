@@ -302,9 +302,7 @@ export default function HistoryScreen() {
               {
                 minHeight: touchTarget.min,
                 borderRadius: radii.md,
-                backgroundColor: theme.colors.surface,
-                borderWidth: 1,
-                borderColor: theme.colors.border,
+                backgroundColor: theme.colors.accent,
                 paddingHorizontal: spacing.md,
               },
               pressed && { opacity: 0.75 },
@@ -312,7 +310,7 @@ export default function HistoryScreen() {
             accessibilityRole="button"
             accessibilityLabel="Check-ins zum Teilen auswählen"
           >
-            <AppText variant="label" weight="semibold">
+            <AppText variant="label" weight="semibold" color="inverse">
               Auswählen & Teilen
             </AppText>
           </Pressable>
@@ -322,6 +320,7 @@ export default function HistoryScreen() {
             style={[
               styles.toggleContainer,
               {
+                minHeight: touchTarget.min,
                 backgroundColor: theme.colors.surface,
                 borderRadius: radii.sm,
                 borderWidth: 1,
@@ -461,7 +460,7 @@ export default function HistoryScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   centered: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  normalHeader: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  normalHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   selectionHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   exportBar: {},
   exportButton: { alignItems: 'center', justifyContent: 'center' },

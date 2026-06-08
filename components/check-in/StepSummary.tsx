@@ -44,7 +44,7 @@ export function StepSummary({ draft, showPostFirstCheckinHint }: StepSummaryProp
             {p.energy ?? 'Nicht angegeben'}
           </AppText>
         </View>
-        <View style={styles.row}>
+        <View style={[styles.row, { marginBottom: spacing.sm }]}>
           <AppText variant="body" color="secondary">
             Fokus
           </AppText>
@@ -52,6 +52,19 @@ export function StepSummary({ draft, showPostFirstCheckinHint }: StepSummaryProp
             {p.focus ?? 'Nicht angegeben'}
           </AppText>
         </View>
+        <View style={styles.row}>
+          <AppText variant="body" color="secondary">
+            Stress
+          </AppText>
+          <AppText variant="label" weight="semibold">
+            {p.distress ?? 'Nicht angegeben'}
+          </AppText>
+        </View>
+        {draft.distressNote.trim() !== '' && (
+          <AppText variant="hint" style={{ marginTop: spacing.sm }}>
+            {draft.distressNote}
+          </AppText>
+        )}
       </View>
 
       {activeSignals.length > 0 && (
@@ -100,31 +113,6 @@ export function StepSummary({ draft, showPostFirstCheckinHint }: StepSummaryProp
             Gefühle
           </AppText>
           <AppText variant="body">{p.feelings}</AppText>
-        </View>
-      )}
-
-      {p.distress && (
-        <View
-          style={[
-            styles.card,
-            {
-              backgroundColor: theme.colors.card,
-              borderRadius: radii.md,
-              padding: spacing.md,
-              marginBottom: spacing.md,
-              ...shadows.sm,
-            },
-          ]}
-        >
-          <AppText variant="label" color="accent" style={{ marginBottom: spacing.sm }}>
-            Stress-Level
-          </AppText>
-          <AppText variant="body">{p.distress}</AppText>
-          {draft.distressNote.trim() !== '' && (
-            <AppText variant="hint" style={{ marginTop: spacing.xs }}>
-              {draft.distressNote}
-            </AppText>
-          )}
         </View>
       )}
 

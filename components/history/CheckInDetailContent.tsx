@@ -67,7 +67,7 @@ export function CheckInDetailContent({
               {p.energy ?? 'Nicht angegeben'}
             </AppText>
           </View>
-          <View style={styles.row}>
+          <View style={[styles.row, { marginBottom: spacing.sm }]}>
             <AppText variant="body" color="secondary">
               Fokus
             </AppText>
@@ -75,6 +75,19 @@ export function CheckInDetailContent({
               {p.focus ?? 'Nicht angegeben'}
             </AppText>
           </View>
+          <View style={styles.row}>
+            <AppText variant="body" color="secondary">
+              Stress
+            </AppText>
+            <AppText variant="label" weight="semibold">
+              {p.distress ?? 'Nicht angegeben'}
+            </AppText>
+          </View>
+          {checkIn.distressNote && checkIn.distressNote.trim() !== '' && (
+            <AppText variant="body" style={{ marginTop: spacing.sm, fontStyle: 'italic' }}>
+              {checkIn.distressNote}
+            </AppText>
+          )}
         </View>
 
         {(activeSignals.length > 0 || inactiveSignals.length > 0) && (
@@ -121,31 +134,6 @@ export function CheckInDetailContent({
               Gefühle
             </AppText>
             <AppText variant="body">{p.feelings}</AppText>
-          </View>
-        )}
-
-        {p.distress && (
-          <View
-            style={[
-              styles.card,
-              {
-                backgroundColor: theme.colors.card,
-                borderRadius: radii.md,
-                padding: spacing.md,
-                marginBottom: spacing.md,
-                ...shadows.sm,
-              },
-            ]}
-          >
-            <AppText variant="label" size="sm" color="accent" style={{ marginBottom: spacing.sm }}>
-              Stress-Level
-            </AppText>
-            <AppText variant="body">{p.distress}</AppText>
-            {checkIn.distressNote && checkIn.distressNote.trim() !== '' && (
-              <AppText variant="body" style={{ marginTop: spacing.xs, fontStyle: 'italic' }}>
-                {checkIn.distressNote}
-              </AppText>
-            )}
           </View>
         )}
 

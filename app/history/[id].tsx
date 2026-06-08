@@ -14,13 +14,12 @@ import * as Sentry from '@sentry/react-native';
 
 export default function CheckInDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const { theme, spacing } = useTheme();
+  const { theme } = useTheme();
   const db = useDatabase();
   const router = useRouter();
   const [checkIn, setCheckIn] = useState<CheckIn | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-  const [showDetailHint, setShowDetailHint] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -31,13 +30,9 @@ export default function CheckInDetailScreen() {
         return;
       }
       try {
-        const [data, settings] = await Promise.all([getCheckInById(db, parsedId), getSettings(db)]);
+        const data = await getCheckInById(db, parsedId);
         if (cancelled) return;
         setCheckIn(data);
-        if (!settings.detailViewIntroduced) {
-          setShowDetailHint(true);
-          await updateSettings(db, { detailViewIntroduced: true });
-        }
       } finally {
         if (!cancelled) setIsLoading(false);
       }
@@ -118,18 +113,6 @@ export default function CheckInDetailScreen() {
 
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
-      {showDetailHint && (
-        <AppText
-          variant="hint"
-          style={{
-            textAlign: 'center',
-            paddingHorizontal: spacing.lg,
-            paddingVertical: spacing.md,
-          }}
-        >
-          Einzelne Check-ins können über das Papierkorb-Symbol unten gelöscht werden.
-        </AppText>
-      )}
       <CheckInDetailContent
         checkIn={checkIn}
         showDeleteDialog={showDeleteDialog}
