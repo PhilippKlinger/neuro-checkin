@@ -124,7 +124,7 @@ export function CheckInDetailContent({
           </View>
         )}
 
-        {p.distress && (
+        {(p.distress || (checkIn.distressNote && checkIn.distressNote.trim() !== '')) && (
           <View
             style={[
               styles.card,
@@ -140,9 +140,12 @@ export function CheckInDetailContent({
             <AppText variant="label" size="sm" color="accent" style={{ marginBottom: spacing.sm }}>
               Stress-Level
             </AppText>
-            <AppText variant="body">{p.distress}</AppText>
+            {p.distress && <AppText variant="body">{p.distress}</AppText>}
             {checkIn.distressNote && checkIn.distressNote.trim() !== '' && (
-              <AppText variant="body" style={{ marginTop: spacing.xs, fontStyle: 'italic' }}>
+              <AppText
+                variant="body"
+                style={{ marginTop: p.distress ? spacing.xs : 0, fontStyle: 'italic' }}
+              >
                 {checkIn.distressNote}
               </AppText>
             )}

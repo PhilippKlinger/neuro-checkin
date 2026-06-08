@@ -460,7 +460,7 @@ export default function HistoryScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   centered: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  normalHeader: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  normalHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   selectionHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   exportBar: {},
   exportButton: { alignItems: 'center', justifyContent: 'center' },

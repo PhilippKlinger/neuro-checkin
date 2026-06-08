@@ -103,7 +103,7 @@ export function StepSummary({ draft, showPostFirstCheckinHint }: StepSummaryProp
         </View>
       )}
 
-      {p.distress && (
+      {(p.distress || draft.distressNote.trim() !== '') && (
         <View
           style={[
             styles.card,
@@ -119,9 +119,9 @@ export function StepSummary({ draft, showPostFirstCheckinHint }: StepSummaryProp
           <AppText variant="label" color="accent" style={{ marginBottom: spacing.sm }}>
             Stress-Level
           </AppText>
-          <AppText variant="body">{p.distress}</AppText>
+          {p.distress && <AppText variant="body">{p.distress}</AppText>}
           {draft.distressNote.trim() !== '' && (
-            <AppText variant="hint" style={{ marginTop: spacing.xs }}>
+            <AppText variant="hint" style={{ marginTop: p.distress ? spacing.xs : 0 }}>
               {draft.distressNote}
             </AppText>
           )}

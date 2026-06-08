@@ -14,7 +14,7 @@ import * as Sentry from '@sentry/react-native';
 
 export default function CheckInDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const { theme, spacing } = useTheme();
+  const { theme } = useTheme();
   const db = useDatabase();
   const router = useRouter();
   const [checkIn, setCheckIn] = useState<CheckIn | null>(null);
