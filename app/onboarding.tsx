@@ -171,13 +171,6 @@ export default function OnboardingScreen() {
           >
             Für Menschen, die nicht immer leichten Zugang dazu haben.
           </AppText>
-          <AppText
-            variant="body"
-            color="secondary"
-            style={{ textAlign: 'center', marginTop: spacing.sm }}
-          >
-            2 Minuten. Du siehst, was gerade da ist.
-          </AppText>
         </View>
         <View
           style={{
@@ -293,6 +286,10 @@ export default function OnboardingScreen() {
           Eine Auswahl antippen — fertig.
         </AppText>
 
+        <AppText variant="body" style={{ textAlign: 'center', marginTop: spacing.md }}>
+          Ein Check-in macht sichtbar, was gerade in dir vorgeht.
+        </AppText>
+
         <Pressable
           onPress={() => router.push('/check-in-info')}
           style={({ pressed }) => [
@@ -310,10 +307,10 @@ export default function OnboardingScreen() {
             pressed && { opacity: 0.6 },
           ]}
           accessibilityRole="button"
-          accessibilityLabel="Mehr über einen Check-in erfahren"
+          accessibilityLabel="Was bringt mir ein Check-in?"
         >
           <AppText variant="label" size="sm">
-            Mehr über einen Check-in erfahren
+            Was bringt mir ein Check-in?
           </AppText>
         </Pressable>
       </View>

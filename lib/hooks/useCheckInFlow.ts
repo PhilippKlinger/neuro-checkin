@@ -162,8 +162,14 @@ export function useCheckInFlow(db: SQLiteDatabase): UseCheckInFlowResult {
     try {
       await updateSettings(db, { guidedModeEnabled: value });
     } catch (error) {
-      console.error('handleGuidedToggle failed:', error);
-      setGuidedMode(!value);
+      // Guided mode is low-stakes display state. Keep the optimistic value rather
+      // than rolling back (which caused a confusing "flicker" when the write hit a
+      // transient prepareAsync error); the next getSettings reconciles it.
+      Sentry.withScope((scope) => {
+        scope.setTag('screen', 'checkIn');
+        scope.setTag('action', 'guidedModeToggle');
+        Sentry.captureException(error);
+      });
     }
   }
 

@@ -42,6 +42,8 @@ export async function requestNotificationPermission(): Promise<boolean | 'emulat
       importance: Notifications.AndroidImportance.HIGH,
       vibrationPattern: [0, 250, 250, 250],
       sound: null,
+      // Show the reminder on the lock screen so it is visible without unlocking.
+      lockscreenVisibility: Notifications.AndroidNotificationVisibility.PUBLIC,
     });
   }
 
@@ -79,7 +81,8 @@ export async function scheduleSingleSlot(slot: NotificationSlot): Promise<void> 
     await Notifications.scheduleNotificationAsync({
       identifier: slotIdentifier(slot.id, i),
       content: {
-        title: 'Dein Check-in.',
+        title: 'Dein Check-in',
+        body: 'Nimm dir kurz einen Moment für dich.',
         sound: false,
       },
       trigger: {

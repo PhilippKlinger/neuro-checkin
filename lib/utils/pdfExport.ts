@@ -7,8 +7,11 @@ import { buildPdfHtml } from './pdfTemplate';
 
 export const MAX_EXPORT_COUNT = 30;
 
+// Spaces are included: the new expo-file-system (SDK 54) parses the file path as a
+// URI and rejects spaces ("Illegal character"), which broke PDF sharing. Whitespace
+// is replaced alongside the path-dangerous characters.
 export function sanitizeFileName(name: string): string {
-  return name.replace(/[/\\:*?"<>|]/g, '_');
+  return name.replace(/[/\\:*?"<>|\s]/g, '_');
 }
 
 export function buildFileName(checkIns: CheckIn[]): string {
@@ -17,9 +20,13 @@ export function buildFileName(checkIns: CheckIn[]): string {
   const formatDate = (iso: string) => iso.split(' ')[0] ?? iso;
   const formatTime = (iso: string) =>
     (iso.split(' ')[1] ?? '00:00:00').slice(0, 5).replace(':', '-');
+  const formatTimeWithSeconds = (iso: string) =>
+    (iso.split(' ')[1] ?? '00:00:00').slice(0, 8).replace(/:/g, '-');
 
   if (checkIns.length === 1) {
-    return `Check-in ${formatDate(checkIns[0].createdAt)} ${formatTime(checkIns[0].createdAt)}`;
+    // Seconds keep single-export names unique even within the same minute, so the
+    // same check-in can be saved/shared repeatedly without a name collision.
+    return `Check-in ${formatDate(checkIns[0].createdAt)} ${formatTimeWithSeconds(checkIns[0].createdAt)}`;
   }
 
   const sorted = [...checkIns].sort((a, b) => a.createdAt.localeCompare(b.createdAt));

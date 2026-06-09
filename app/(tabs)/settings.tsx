@@ -258,20 +258,21 @@ export default function SettingsScreen() {
 
   const handleGuidedModeToggle = useCallback(
     async (value: boolean) => {
-      const previous = guidedMode;
       setGuidedMode(value);
       try {
         await updateSettings(db, { guidedModeEnabled: value });
       } catch (e) {
+        // Keep the optimistic value rather than rolling back — a transient
+        // prepareAsync write error must not make the toggle snap back. The next
+        // getSettings reconciles the stored value.
         Sentry.withScope((scope) => {
           scope.setTag('screen', 'settings');
           scope.setTag('action', 'guidedModeToggle');
           Sentry.captureException(e);
         });
-        setGuidedMode(previous);
       }
     },
-    [db, guidedMode]
+    [db]
   );
 
   const handleReflectionToggle = useCallback(
