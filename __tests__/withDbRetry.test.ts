@@ -41,14 +41,43 @@ describe('withDbRetry', () => {
     expect(warmup).not.toHaveBeenCalled();
   });
 
-  it('rethrows if retry also fails', async () => {
-    const db = makeDb();
+  it('retries across multiple attempts and succeeds on the third', async () => {
+    const warmup = jest.fn().mockResolvedValue({ n: 1 });
+    const db = makeDb(warmup);
     const fn = jest
       .fn()
       .mockRejectedValueOnce(new Error('NativeDatabase.prepareAsync returned null'))
-      .mockRejectedValueOnce(new Error('NativeDatabase.prepareAsync returned null'));
+      .mockRejectedValueOnce(new Error('NativeDatabase.prepareAsync returned null'))
+      .mockResolvedValueOnce('third-time');
+
+    const result = await withDbRetry(db as SQLiteDatabase, fn);
+    expect(result).toBe('third-time');
+    expect(fn).toHaveBeenCalledTimes(3);
+    expect(warmup).toHaveBeenCalledTimes(2);
+  });
+
+  it('keeps retrying even when the warmup query itself throws prepareAsync', async () => {
+    const warmup = jest
+      .fn()
+      .mockRejectedValue(new Error('NativeDatabase.prepareAsync returned null'));
+    const db = makeDb(warmup);
+    const fn = jest
+      .fn()
+      .mockRejectedValueOnce(new Error('NativeDatabase.prepareAsync returned null'))
+      .mockResolvedValueOnce('recovered');
+
+    const result = await withDbRetry(db as SQLiteDatabase, fn);
+    expect(result).toBe('recovered');
+    expect(fn).toHaveBeenCalledTimes(2);
+  });
+
+  it('rethrows after exhausting all attempts', async () => {
+    const db = makeDb();
+    const fn = jest
+      .fn()
+      .mockRejectedValue(new Error('NativeDatabase.prepareAsync returned null'));
 
     await expect(withDbRetry(db as SQLiteDatabase, fn)).rejects.toThrow('prepareAsync');
-    expect(fn).toHaveBeenCalledTimes(2);
+    expect(fn).toHaveBeenCalledTimes(3);
   });
 });
