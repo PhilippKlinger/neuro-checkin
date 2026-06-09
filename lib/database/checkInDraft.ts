@@ -2,6 +2,7 @@ import type { SQLiteDatabase } from 'expo-sqlite';
 import type { CheckInDraft } from '../types/checkin';
 import { EMPTY_DRAFT, EMPTY_BODY_SIGNALS } from '../types/checkin';
 import { INACTIVITY_TIMEOUT_MS } from '../constants/timing';
+import { withDbRetry } from './withDbRetry';
 
 export const DRAFT_TTL_MS = INACTIVITY_TIMEOUT_MS; // 15 min
 
@@ -10,12 +11,14 @@ export async function saveDraft(
   draft: CheckInDraft,
   step: number
 ): Promise<void> {
-  await db.runAsync(
-    `INSERT OR REPLACE INTO check_in_drafts (id, draft_json, step, saved_at)
-     VALUES (1, ?, ?, ?)`,
-    JSON.stringify(draft),
-    step,
-    new Date().toISOString()
+  await withDbRetry(db, () =>
+    db.runAsync(
+      `INSERT OR REPLACE INTO check_in_drafts (id, draft_json, step, saved_at)
+       VALUES (1, ?, ?, ?)`,
+      JSON.stringify(draft),
+      step,
+      new Date().toISOString()
+    )
   );
 }
 
@@ -23,11 +26,13 @@ export async function loadDraft(
   db: SQLiteDatabase,
   now = Date.now()
 ): Promise<{ draft: CheckInDraft; step: number } | null> {
-  const row = await db.getFirstAsync<{
-    draft_json: string;
-    step: number;
-    saved_at: string;
-  }>('SELECT draft_json, step, saved_at FROM check_in_drafts WHERE id = 1');
+  const row = await withDbRetry(db, () =>
+    db.getFirstAsync<{
+      draft_json: string;
+      step: number;
+      saved_at: string;
+    }>('SELECT draft_json, step, saved_at FROM check_in_drafts WHERE id = 1')
+  );
 
   if (!row) return null;
 
@@ -64,5 +69,5 @@ export async function loadDraft(
 }
 
 export async function clearDraft(db: SQLiteDatabase): Promise<void> {
-  await db.runAsync('DELETE FROM check_in_drafts WHERE id = 1');
+  await withDbRetry(db, () => db.runAsync('DELETE FROM check_in_drafts WHERE id = 1'));
 }

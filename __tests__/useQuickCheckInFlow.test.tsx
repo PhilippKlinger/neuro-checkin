@@ -18,7 +18,16 @@ jest.mock('../lib/database/settings', () => ({
   getSettings: jest.fn().mockResolvedValue({ guidedModeEnabled: true }),
   updateSettings: jest.fn().mockResolvedValue(undefined),
 }));
-jest.mock('@sentry/react-native', () => ({ captureException: jest.fn() }));
+// Quick flow loads chips + per-category counts on focus — mock so the real load
+// path runs instead of throwing on an empty db (S5).
+jest.mock('../lib/database/userChips', () => ({
+  getUserChips: jest.fn().mockResolvedValue([]),
+  countUserChipsByCategory: jest.fn().mockResolvedValue(0),
+}));
+jest.mock('@sentry/react-native', () => ({
+  captureException: jest.fn(),
+  withScope: jest.fn((cb: (scope: { setTag: jest.Mock }) => void) => cb({ setTag: jest.fn() })),
+}));
 jest.mock('react-native/Libraries/Alert/Alert', () => ({ alert: jest.fn() }));
 
 // ---------------------------------------------------------------------------
@@ -53,6 +62,13 @@ beforeEach(() => {
 // ---------------------------------------------------------------------------
 
 describe('initial state', () => {
+  it('mounts without logging errors (load path runs with all deps mocked)', async () => {
+    const errorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    await mount();
+    expect(errorSpy).not.toHaveBeenCalled();
+    errorSpy.mockRestore();
+  });
+
   it('starts at step 0', async () => {
     const r = await mount();
     expect(r.step).toBe(0);

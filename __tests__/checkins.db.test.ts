@@ -18,6 +18,7 @@ interface MockDb {
   runAsync: jest.Mock;
   getAllAsync: jest.Mock;
   getFirstAsync: jest.Mock;
+  withTransactionAsync: jest.Mock;
 }
 
 function makeDb(overrides: Partial<MockDb> = {}): MockDb {
@@ -25,6 +26,9 @@ function makeDb(overrides: Partial<MockDb> = {}): MockDb {
     runAsync: jest.fn().mockResolvedValue({ lastInsertRowId: 1, changes: 1 }),
     getAllAsync: jest.fn().mockResolvedValue([]),
     getFirstAsync: jest.fn().mockResolvedValue(null),
+    withTransactionAsync: jest.fn(async (cb: () => Promise<void>) => {
+      await cb();
+    }),
     ...overrides,
   };
 }
@@ -286,10 +290,22 @@ describe('countCheckIns', () => {
 // ---------------------------------------------------------------------------
 
 describe('deleteAllCheckIns', () => {
-  it('calls runAsync with DELETE FROM check_ins', async () => {
+  it('deletes from check_ins', async () => {
     const db = makeDb();
     await deleteAllCheckIns(db as any);
     expect(db.runAsync).toHaveBeenCalledWith(expect.stringMatching(/DELETE FROM check_ins/));
+  });
+
+  it('also clears check_in_drafts so no sensitive draft survives delete-all', async () => {
+    const db = makeDb();
+    await deleteAllCheckIns(db as any);
+    expect(db.runAsync).toHaveBeenCalledWith(expect.stringMatching(/DELETE FROM check_in_drafts/));
+  });
+
+  it('runs both deletes inside a single transaction (atomic)', async () => {
+    const db = makeDb();
+    await deleteAllCheckIns(db as any);
+    expect(db.withTransactionAsync).toHaveBeenCalledTimes(1);
   });
 });
 

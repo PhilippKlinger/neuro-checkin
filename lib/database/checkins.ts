@@ -178,7 +178,7 @@ export async function getCheckInsByIds(db: SQLiteDatabase, ids: number[]): Promi
 }
 
 export async function deleteCheckIn(db: SQLiteDatabase, id: number): Promise<void> {
-  await db.runAsync('DELETE FROM check_ins WHERE id = ?', id);
+  await withDbRetry(db, () => db.runAsync('DELETE FROM check_ins WHERE id = ?', id));
 }
 
 export async function countCheckIns(db: SQLiteDatabase): Promise<number> {
@@ -188,8 +188,16 @@ export async function countCheckIns(db: SQLiteDatabase): Promise<number> {
   return row?.count ?? 0;
 }
 
+// Clears both check_ins and the in-progress draft in one transaction. The draft
+// holds the same sensitive content as a check-in, so "delete all" must remove it
+// too — otherwise it could resurface later as a resume prompt.
 export async function deleteAllCheckIns(db: SQLiteDatabase): Promise<void> {
-  await db.runAsync('DELETE FROM check_ins');
+  await withDbRetry(db, () =>
+    db.withTransactionAsync(async () => {
+      await db.runAsync('DELETE FROM check_ins');
+      await db.runAsync('DELETE FROM check_in_drafts');
+    })
+  );
 }
 
 function parseBodySignals(raw: string): BodySignals {

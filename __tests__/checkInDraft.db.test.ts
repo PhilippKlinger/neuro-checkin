@@ -149,3 +149,44 @@ describe('clearDraft', () => {
     expect(sql).toContain('check_in_drafts');
   });
 });
+
+// ---------------------------------------------------------------------------
+// prepareAsync retry guard (withDbRetry) — draft reads/writes run on every
+// full-check-in mount, so they need the same guard as checkins.ts
+// ---------------------------------------------------------------------------
+
+describe('prepareAsync retry', () => {
+  const prepareError = new Error('NativeDatabase.prepareAsync rejected (NullPointerException)');
+
+  it('saveDraft retries once after a prepareAsync error', async () => {
+    let calls = 0;
+    const db = {
+      runAsync: jest.fn().mockImplementation(() => {
+        calls++;
+        if (calls === 1) return Promise.reject(prepareError);
+        return Promise.resolve({ changes: 1 });
+      }),
+      getFirstAsync: jest.fn().mockResolvedValue({ n: 1 }), // warmup query
+    };
+    await saveDraft(db as any, DRAFT, 1);
+    expect(db.runAsync).toHaveBeenCalledTimes(2);
+    expect(db.getFirstAsync).toHaveBeenCalledTimes(1);
+  });
+
+  it('loadDraft retries once after a prepareAsync error', async () => {
+    let calls = 0;
+    const db = {
+      runAsync: jest.fn().mockResolvedValue({ changes: 1 }),
+      getFirstAsync: jest.fn().mockImplementation((...args: unknown[]) => {
+        const sql = args[0] as string;
+        if (sql.includes('SELECT ? AS n')) return Promise.resolve({ n: 1 }); // warmup
+        calls++;
+        if (calls === 1) return Promise.reject(prepareError);
+        return Promise.resolve(null);
+      }),
+    };
+    const result = await loadDraft(db as any, NOW_MS);
+    expect(result).toBeNull();
+    expect(calls).toBe(2);
+  });
+});

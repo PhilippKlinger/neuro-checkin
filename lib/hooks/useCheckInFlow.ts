@@ -203,11 +203,20 @@ export function useCheckInFlow(db: SQLiteDatabase): UseCheckInFlowResult {
         innerPart: draft.innerPart || null,
         note: draft.note || null,
       });
+      // Insert is committed — the check-in is saved. Chip persistence and draft
+      // cleanup are best-effort: a failure here must NOT report the saved
+      // check-in as failed, which would invite a duplicate save on retry.
       await Promise.all([
         saveUserChips(db, 'feelings', draft.feelings, [...FEELING_CHIPS]),
         saveUserChips(db, 'self_care', draft.selfCareNote, [...SELF_CARE_CHIPS]),
         clearDraft(db),
-      ]);
+      ]).catch((error) => {
+        Sentry.withScope((scope) => {
+          scope.setTag('screen', 'checkIn');
+          scope.setTag('action', 'save-cleanup');
+          Sentry.captureException(error);
+        });
+      });
       setIsDone(true);
     } catch (error) {
       Sentry.withScope((scope) => {

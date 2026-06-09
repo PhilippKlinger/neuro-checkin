@@ -3,6 +3,7 @@ import { Modal, View, KeyboardAvoidingView, Platform, StyleSheet, Pressable } fr
 import { AppText } from '../ui/AppText';
 import Constants from 'expo-constants';
 import { useTheme } from '../../lib/hooks/useTheme';
+import { useReducedMotion } from '../../lib/hooks/useReducedMotion';
 import { FORMSPREE_URL } from '../../lib/constants/config';
 import { OVERLAY_COLOR } from '../../lib/constants/themes';
 import { FeedbackFormContent, FeedbackSuccessContent } from './FeedbackFormContent';
@@ -16,6 +17,7 @@ interface FeedbackModalProps {
 
 export function FeedbackModal({ visible, onClose }: FeedbackModalProps) {
   const { theme, spacing, radii } = useTheme();
+  const reducedMotion = useReducedMotion();
   const [feedbackText, setFeedbackText] = useState('');
   const [feedbackSubmitting, setFeedbackSubmitting] = useState(false);
   const [feedbackError, setFeedbackError] = useState(false);
@@ -63,7 +65,12 @@ export function FeedbackModal({ visible, onClose }: FeedbackModalProps) {
   }
 
   return (
-    <Modal visible={visible} transparent animationType="fade" onRequestClose={handleClose}>
+    <Modal
+      visible={visible}
+      transparent
+      animationType={reducedMotion ? 'none' : 'fade'}
+      onRequestClose={handleClose}
+    >
       {/* Full-screen background — separate from KeyboardAvoidingView so it
           covers the entire screen including nav bar on edge-to-edge Android */}
       <Pressable
