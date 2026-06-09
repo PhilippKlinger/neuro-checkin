@@ -102,6 +102,7 @@ export function ConfirmDialog({
                 ]}
                 accessibilityRole="button"
                 accessibilityLabel={cancelLabel}
+                accessibilityHint="Schließt den Dialog ohne Änderung"
               >
                 <AppText
                   variant="label"

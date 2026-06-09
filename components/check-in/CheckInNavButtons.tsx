@@ -79,6 +79,7 @@ export function CheckInNavButtons({
         testID="nav-next"
         accessibilityRole="button"
         accessibilityLabel={nextLabel}
+        accessibilityHint={isLastStep ? 'Speichert deinen Check-in' : 'Geht zum nächsten Schritt'}
         accessibilityState={{ disabled: isNextDisabled }}
       >
         <AppText variant="label" weight="semibold" color="inverse">

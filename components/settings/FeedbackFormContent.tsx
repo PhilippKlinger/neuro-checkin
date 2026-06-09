@@ -123,7 +123,7 @@ export function FeedbackFormContent({
       )}
       {feedbackError && (
         <AppText variant="body" size="sm" style={{ marginTop: spacing.sm }}>
-          Senden hat nicht geklappt. Bitte versuche es später nochmal.
+          Senden hat nicht geklappt. Versuch es später nochmal.
         </AppText>
       )}
       <Pressable
