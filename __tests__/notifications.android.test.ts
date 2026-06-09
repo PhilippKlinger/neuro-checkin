@@ -10,6 +10,7 @@ jest.mock('expo-notifications', () => ({
   requestPermissionsAsync: jest.fn().mockResolvedValue({ status: 'granted' }),
   setNotificationChannelAsync: jest.fn().mockResolvedValue(undefined),
   AndroidImportance: { HIGH: 4 },
+  AndroidNotificationVisibility: { PUBLIC: 1 },
   SchedulableTriggerInputTypes: { WEEKLY: 'weekly' },
   scheduleNotificationAsync: jest.fn().mockResolvedValue('ok'),
   cancelScheduledNotificationAsync: jest.fn().mockResolvedValue(undefined),
@@ -38,6 +39,15 @@ describe('requestNotificationPermission — Android', () => {
     expect(setChannel).toHaveBeenCalledWith(
       'check-in-reminder',
       expect.objectContaining({ importance: 4 })
+    );
+  });
+
+  it('creates the channel with PUBLIC lockscreen visibility', async () => {
+    (Notifications.getPermissionsAsync as jest.Mock).mockResolvedValue({ status: 'granted' });
+    await requestNotificationPermission();
+    expect(setChannel).toHaveBeenCalledWith(
+      'check-in-reminder',
+      expect.objectContaining({ lockscreenVisibility: 1 })
     );
   });
 
