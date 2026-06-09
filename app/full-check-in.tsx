@@ -286,7 +286,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   indicatorSpacer: {
+    // Fixed 44x44 so the header row keeps the same height whether or not the
+    // guided-help bulb renders on a given step (no vertical content shift).
     width: 44,
+    height: 44,
     alignItems: 'center',
     justifyContent: 'center',
   },
