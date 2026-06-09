@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { View, Pressable, StyleSheet } from 'react-native';
 import { useTheme } from '../../lib/hooks/useTheme';
 import { AppText } from '../ui/AppText';
-import { AppTextInput } from '../ui/AppTextInput';
+import { NoteField } from '../ui/NoteField';
 import { DISTRESS_LABELS } from '../../lib/types/checkin';
 import { StepScaffold } from './StepScaffold';
 
@@ -111,36 +111,15 @@ export function StepDistress({
         </AppText>
       </Pressable>
 
-      <AppTextInput
+      <NoteField
         value={distressNote}
         onChangeText={(text) => onNoteChange(text.slice(0, 200))}
+        title="Notiz zu deinem Stress"
         placeholder="Notiz (optional)"
-        placeholderTextColor={theme.colors.textSecondary}
-        multiline
         maxLength={200}
-        textAlignVertical="top"
-        style={[
-          styles.noteInput,
-          {
-            backgroundColor: theme.colors.surface,
-            borderColor: theme.colors.border,
-            borderRadius: radii.md,
-            padding: spacing.md,
-            marginTop: spacing.lg,
-          },
-        ]}
         accessibilityLabel="Stress-Notiz"
+        style={{ marginTop: spacing.lg }}
       />
-      {distressNote.length >= 180 && (
-        <AppText
-          variant="label"
-          size="xs"
-          color={distressNote.length >= 200 ? 'success' : 'secondary'}
-          style={{ textAlign: 'right', marginTop: spacing.xs }}
-        >
-          {distressNote.length >= 200 ? '✓' : `${distressNote.length} / 200`}
-        </AppText>
-      )}
     </StepScaffold>
   );
 }
@@ -157,9 +136,5 @@ const styles = StyleSheet.create({
   cannotSayButton: {
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  noteInput: {
-    minHeight: 80,
-    borderWidth: 1,
   },
 });
