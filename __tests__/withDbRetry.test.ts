@@ -73,9 +73,7 @@ describe('withDbRetry', () => {
 
   it('rethrows after exhausting all attempts', async () => {
     const db = makeDb();
-    const fn = jest
-      .fn()
-      .mockRejectedValue(new Error('NativeDatabase.prepareAsync returned null'));
+    const fn = jest.fn().mockRejectedValue(new Error('NativeDatabase.prepareAsync returned null'));
 
     await expect(withDbRetry(db as SQLiteDatabase, fn)).rejects.toThrow('prepareAsync');
     expect(fn).toHaveBeenCalledTimes(3);
