@@ -66,7 +66,7 @@ export function StepBodySignals({ value, onValueChange, hint }: StepBodySignalsP
             >
               <View style={[styles.signalTextWrapper, { marginRight: spacing.sm }]}>
                 <AppText variant="label">{signal.label}</AppText>
-                {signal.description && hint !== undefined && (
+                {signal.description && (
                   <AppText variant="hint" color="secondary">
                     {signal.description}
                   </AppText>

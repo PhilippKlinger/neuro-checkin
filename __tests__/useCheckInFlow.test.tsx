@@ -24,11 +24,27 @@ jest.mock('../lib/database/settings', () => ({
 jest.mock('../lib/database/userChips', () => ({
   getUserChips: jest.fn().mockResolvedValue([]),
   saveUserChips: jest.fn().mockResolvedValue(undefined),
+  countUserChipsByCategory: jest.fn().mockResolvedValue(0),
 }));
-jest.mock('@sentry/react-native', () => ({ captureException: jest.fn() }));
+// Draft persistence is part of the initial load path (loadDraft) and of save
+// (clearDraft) — mock it so the real path runs instead of throwing on an empty db.
+jest.mock('../lib/database/checkInDraft', () => ({
+  saveDraft: jest.fn().mockResolvedValue(undefined),
+  loadDraft: jest.fn().mockResolvedValue(null),
+  clearDraft: jest.fn().mockResolvedValue(undefined),
+}));
+jest.mock('@sentry/react-native', () => ({
+  captureException: jest.fn(),
+  withScope: jest.fn((cb: (scope: { setTag: jest.Mock }) => void) => cb({ setTag: jest.fn() })),
+}));
 
-// Patch Alert without wiping react-native (only override what we need)
-jest.mock('react-native/Libraries/Alert/Alert', () => ({ alert: jest.fn() }));
+import { Alert } from 'react-native';
+import { insertCheckIn } from '../lib/database/checkins';
+import { saveUserChips } from '../lib/database/userChips';
+
+const mockInsertCheckIn = insertCheckIn as jest.Mock;
+const mockSaveUserChips = saveUserChips as jest.Mock;
+let mockAlert: jest.SpyInstance;
 
 // ---------------------------------------------------------------------------
 // Test harness
@@ -55,6 +71,11 @@ async function mount() {
 
 beforeEach(() => {
   jest.clearAllMocks();
+  mockAlert = jest.spyOn(Alert, 'alert').mockImplementation(() => {});
+});
+
+afterEach(() => {
+  mockAlert.mockRestore();
 });
 
 // ---------------------------------------------------------------------------
@@ -331,5 +352,63 @@ describe('isNextDisabled', () => {
     await mount();
     act(() => snapshot.handleNext()); // step → 1, blocked
     expect(snapshot.isNextDisabled).toBe(true);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// initial load path (S5 — all db deps mocked, no swallowed errors)
+// ---------------------------------------------------------------------------
+
+describe('initial load path', () => {
+  it('mounts without logging errors', async () => {
+    const errorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    await mount();
+    expect(errorSpy).not.toHaveBeenCalled();
+    errorSpy.mockRestore();
+  });
+
+  it('shows no resume dialog when no draft exists', async () => {
+    const r = await mount();
+    expect(r.resumeDialogVisible).toBe(false);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// handleSave — idempotency (B3): a saved check-in must never be reported failed
+// ---------------------------------------------------------------------------
+
+describe('handleSave', () => {
+  async function reachSaveAndSubmit() {
+    await mount();
+    for (let i = 0; i < 8; i++) {
+      act(() => snapshot.handleNext()); // advance to last step (8)
+    }
+    await act(async () => {
+      snapshot.handleNext(); // on the last step this triggers handleSave()
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+  }
+
+  it('marks the check-in done after a successful insert', async () => {
+    await reachSaveAndSubmit();
+    expect(mockInsertCheckIn).toHaveBeenCalledTimes(1);
+    expect(snapshot.isDone).toBe(true);
+    expect(mockAlert).not.toHaveBeenCalled();
+  });
+
+  it('keeps the check-in saved (done, no alert) when chip cleanup fails', async () => {
+    mockSaveUserChips.mockRejectedValueOnce(new Error('chip save failed'));
+    await reachSaveAndSubmit();
+    expect(mockInsertCheckIn).toHaveBeenCalledTimes(1);
+    expect(snapshot.isDone).toBe(true); // saved despite cleanup failure
+    expect(mockAlert).not.toHaveBeenCalled(); // no misleading "failed" message
+  });
+
+  it('reports failure and does not mark done when the insert itself fails', async () => {
+    mockInsertCheckIn.mockRejectedValueOnce(new Error('insert failed'));
+    await reachSaveAndSubmit();
+    expect(snapshot.isDone).toBe(false);
+    expect(mockAlert).toHaveBeenCalledTimes(1);
   });
 });
