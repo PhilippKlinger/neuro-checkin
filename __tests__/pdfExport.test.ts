@@ -103,8 +103,8 @@ describe('buildFileName — GT-08: unique filenames with time', () => {
     expect(buildFileName([])).toBe('Check-in Export');
   });
 
-  it('includes time (HH-MM) for single check-in', () => {
-    expect(buildFileName([SAMPLE])).toBe('Check-in 2026-05-19 10-00');
+  it('includes time with seconds (HH-MM-SS) for single check-in', () => {
+    expect(buildFileName([SAMPLE])).toBe('Check-in 2026-05-19 10-00-00');
   });
 
   it('returns date range for multiple check-ins on different days', () => {
@@ -146,8 +146,12 @@ describe('MAX_EXPORT_COUNT', () => {
 // ---------------------------------------------------------------------------
 
 describe('sanitizeFileName', () => {
-  it('returns name unchanged when no special characters', () => {
-    expect(sanitizeFileName('Check-in 2026-05-19')).toBe('Check-in 2026-05-19');
+  it('returns name unchanged when no special characters or spaces', () => {
+    expect(sanitizeFileName('Check-in_2026-05-19')).toBe('Check-in_2026-05-19');
+  });
+
+  it('replaces spaces (URI-illegal in the new file-system API)', () => {
+    expect(sanitizeFileName('Check-in 2026-05-19 10-00-00')).toBe('Check-in_2026-05-19_10-00-00');
   });
 
   it('replaces forward slashes', () => {
@@ -195,15 +199,15 @@ describe('exportCheckInsAsPdf', () => {
     expect(arg.html).toContain('<!DOCTYPE html>');
   });
 
-  it('renames file via File.rename with descriptive filename', async () => {
+  it('renames file via File.rename with a space-free filename', async () => {
     await exportCheckInsAsPdf([SAMPLE]);
-    expect(mockRename).toHaveBeenCalledWith('Check-in 2026-05-19 10-00.pdf');
+    expect(mockRename).toHaveBeenCalledWith('Check-in_2026-05-19_10-00-00.pdf');
   });
 
   it('shares renamed file with correct mime type', async () => {
     await exportCheckInsAsPdf([SAMPLE]);
     expect(mockShareAsync).toHaveBeenCalledWith(
-      'file:///tmp/Check-in 2026-05-19 10-00.pdf',
+      'file:///tmp/Check-in_2026-05-19_10-00-00.pdf',
       expect.objectContaining({ mimeType: 'application/pdf' })
     );
   });
@@ -221,17 +225,19 @@ describe('exportCheckInsAsPdf', () => {
 
   it('handles multiple check-ins with date range filename', async () => {
     await exportCheckInsAsPdf([SAMPLE, SAMPLE_2]);
-    expect(mockRename).toHaveBeenCalledWith('Check-ins 2026-05-19 bis 2026-05-21.pdf');
+    expect(mockRename).toHaveBeenCalledWith('Check-ins_2026-05-19_bis_2026-05-21.pdf');
   });
 
   // H2-01 regression: same-day duplicate export must not crash with FileAlreadyExistsException
   it('deletes existing target file before rename on same-day duplicate export', async () => {
-    mockExists.mockImplementation((uri: string) => uri.endsWith('Check-in 2026-05-19 10-00.pdf'));
+    mockExists.mockImplementation((uri: string) =>
+      uri.endsWith('Check-in_2026-05-19_10-00-00.pdf')
+    );
 
     await exportCheckInsAsPdf([SAMPLE]);
 
-    expect(mockDelete).toHaveBeenCalledWith('file:///tmp/Check-in 2026-05-19 10-00.pdf');
-    expect(mockRename).toHaveBeenCalledWith('Check-in 2026-05-19 10-00.pdf');
+    expect(mockDelete).toHaveBeenCalledWith('file:///tmp/Check-in_2026-05-19_10-00-00.pdf');
+    expect(mockRename).toHaveBeenCalledWith('Check-in_2026-05-19_10-00-00.pdf');
     expect(mockShareAsync).toHaveBeenCalled();
   });
 
@@ -301,7 +307,7 @@ describe('saveCheckInsPdfToDevice', () => {
     await saveCheckInsPdfToDevice([SAMPLE]);
     expect(mockCreateFileAsync).toHaveBeenCalledWith(
       'content://com.android.externalstorage.documents/tree/primary%3ADownload',
-      'Check-in 2026-05-19 10-00',
+      'Check-in_2026-05-19_10-00-00',
       'application/pdf'
     );
   });
@@ -342,7 +348,7 @@ describe('saveCheckInsPdfToDevice', () => {
     await saveCheckInsPdfToDevice([SAMPLE, SAMPLE_2]);
     expect(mockCreateFileAsync).toHaveBeenCalledWith(
       expect.any(String),
-      'Check-ins 2026-05-19 bis 2026-05-21',
+      'Check-ins_2026-05-19_bis_2026-05-21',
       'application/pdf'
     );
   });
@@ -371,7 +377,7 @@ describe('saveCheckInsPdfToDevice', () => {
       expect(mockRequestDirectoryPermissionsAsync).not.toHaveBeenCalled();
       expect(mockCreateFileAsync).toHaveBeenCalledWith(
         SAVED_URI,
-        'Check-in 2026-05-19 10-00',
+        'Check-in_2026-05-19_10-00-00',
         'application/pdf'
       );
     });
