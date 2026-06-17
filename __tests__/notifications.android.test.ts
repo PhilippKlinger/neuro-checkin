@@ -9,6 +9,7 @@ jest.mock('expo-notifications', () => ({
   getPermissionsAsync: jest.fn().mockResolvedValue({ status: 'granted' }),
   requestPermissionsAsync: jest.fn().mockResolvedValue({ status: 'granted' }),
   setNotificationChannelAsync: jest.fn().mockResolvedValue(undefined),
+  deleteNotificationChannelAsync: jest.fn().mockResolvedValue(undefined),
   AndroidImportance: { HIGH: 4 },
   AndroidNotificationVisibility: { PUBLIC: 1 },
   SchedulableTriggerInputTypes: { WEEKLY: 'weekly' },
@@ -37,7 +38,7 @@ describe('requestNotificationPermission — Android', () => {
     (Notifications.getPermissionsAsync as jest.Mock).mockResolvedValue({ status: 'granted' });
     await requestNotificationPermission();
     expect(setChannel).toHaveBeenCalledWith(
-      'check-in-reminder',
+      'check-in-reminder-v2',
       expect.objectContaining({ importance: 4 })
     );
   });
@@ -46,9 +47,15 @@ describe('requestNotificationPermission — Android', () => {
     (Notifications.getPermissionsAsync as jest.Mock).mockResolvedValue({ status: 'granted' });
     await requestNotificationPermission();
     expect(setChannel).toHaveBeenCalledWith(
-      'check-in-reminder',
+      'check-in-reminder-v2',
       expect.objectContaining({ lockscreenVisibility: 1 })
     );
+  });
+
+  it('deletes the legacy channel so its frozen old settings stop applying', async () => {
+    const deleteChannel = Notifications.deleteNotificationChannelAsync as jest.Mock;
+    await requestNotificationPermission();
+    expect(deleteChannel).toHaveBeenCalledWith('check-in-reminder');
   });
 
   it('creates the channel before checking permissions', async () => {
@@ -79,11 +86,19 @@ describe('requestNotificationPermission — Android', () => {
 // ---------------------------------------------------------------------------
 
 describe('scheduleSingleSlot — Android trigger fields (EAD-01 + C-03)', () => {
-  it('sets channelId to check-in-reminder on Android trigger', async () => {
+  it('sets channelId to check-in-reminder-v2 on Android trigger', async () => {
     const scheduleAsync = Notifications.scheduleNotificationAsync as jest.Mock;
     await scheduleSingleSlot(makeSlot({ weekdays: 1 })); // Monday only — 1 call
     const trigger = scheduleAsync.mock.calls[0][0].trigger;
-    expect(trigger.channelId).toBe('check-in-reminder');
+    expect(trigger.channelId).toBe('check-in-reminder-v2');
+  });
+
+  it('ensures the channel exists before scheduling (covers scheduleAllSlots load path)', async () => {
+    await scheduleSingleSlot(makeSlot({ weekdays: 1 }));
+    expect(setChannel).toHaveBeenCalledWith(
+      'check-in-reminder-v2',
+      expect.objectContaining({ importance: 4 })
+    );
   });
 
   it('does not set exact on the Android trigger (exact is a No-Op in WeeklyTriggerInput)', async () => {
