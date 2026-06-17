@@ -4,7 +4,36 @@ import { Platform } from 'react-native';
 import type { NotificationSlot } from '../types/checkin';
 import { WEEKDAY_BITS } from '../types/checkin';
 
-const CHANNEL_ID = 'check-in-reminder';
+// Channel behaviour (importance, vibration, lock-screen visibility) is FROZEN by
+// Android once a channel is first created — later edits via setNotificationChannelAsync
+// are ignored. Devices that installed earlier versions still carry the original
+// 'check-in-reminder' channel with its old (silent, low-importance) settings, so the
+// HIGH-importance + vibration config below never took effect there. Bumping the channel
+// id forces Android to apply the intended behaviour on every device; the stale channel
+// is deleted so users do not end up with two "Check-in" channels in system settings.
+const CHANNEL_ID = 'check-in-reminder-v2';
+const LEGACY_CHANNEL_ID = 'check-in-reminder';
+
+/**
+ * Ensures the reminder channel exists with the intended behaviour. Idempotent and
+ * safe to call on every schedule path (scheduling to a non-existent channel would
+ * otherwise drop the notification on Android O+). Vibration only, no sound, by
+ * design (reizarm) — users can enable sound in the Android channel settings.
+ */
+async function ensureNotificationChannel(): Promise<void> {
+  if (Platform.OS !== 'android') return;
+  await Notifications.deleteNotificationChannelAsync(LEGACY_CHANNEL_ID);
+  await Notifications.setNotificationChannelAsync(CHANNEL_ID, {
+    name: 'Check-in Erinnerung',
+    // HIGH importance: heads-up + vibration so the reminder is noticeable without
+    // forcing the screen on (that would need a full-screen-intent / alarm path,
+    // which is Play-policy-restricted and contradicts the calm, low-stimulation UX).
+    importance: Notifications.AndroidImportance.HIGH,
+    vibrationPattern: [0, 250, 250, 250],
+    sound: null,
+    lockscreenVisibility: Notifications.AndroidNotificationVisibility.PUBLIC,
+  });
+}
 
 // expo-notifications WEEKLY trigger: weekday 1=Sunday, 2=Monday, ..., 7=Saturday
 // Our bitmask: Mon=1, Tue=2, Wed=4, Thu=8, Fri=16, Sat=32, Sun=64 (index 0=Mon)
@@ -35,17 +64,7 @@ export async function requestNotificationPermission(): Promise<boolean | 'emulat
     return 'emulator';
   }
 
-  if (Platform.OS === 'android') {
-    await Notifications.setNotificationChannelAsync(CHANNEL_ID, {
-      name: 'Check-in Erinnerung',
-      // HIGH importance reduces Doze-related delays on Android
-      importance: Notifications.AndroidImportance.HIGH,
-      vibrationPattern: [0, 250, 250, 250],
-      sound: null,
-      // Show the reminder on the lock screen so it is visible without unlocking.
-      lockscreenVisibility: Notifications.AndroidNotificationVisibility.PUBLIC,
-    });
-  }
+  await ensureNotificationChannel();
 
   const { status: existingStatus } = await Notifications.getPermissionsAsync();
   if (existingStatus === 'granted') return true;
@@ -72,6 +91,11 @@ export async function scheduleSingleSlot(slot: NotificationSlot): Promise<void> 
   const hour = parseInt(hourStr, 10);
   const minute = parseInt(minuteStr, 10);
   if (isNaN(hour) || isNaN(minute)) return;
+
+  // Guarantee the channel exists with the intended config before scheduling — this
+  // path also runs on app/settings load (scheduleAllSlots) without a fresh
+  // permission request, so the channel cannot be assumed to exist yet.
+  await ensureNotificationChannel();
 
   for (let i = 0; i < WEEKDAY_BITS.length; i++) {
     if ((slot.weekdays & WEEKDAY_BITS[i]) === 0) continue;
