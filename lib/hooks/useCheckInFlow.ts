@@ -1,11 +1,4 @@
-import {
-  useState,
-  useRef,
-  useEffect,
-  useCallback,
-  type Dispatch,
-  type SetStateAction,
-} from 'react';
+import { useState, useRef, useCallback, type Dispatch, type SetStateAction } from 'react';
 import { Alert } from 'react-native';
 import { useFocusEffect } from 'expo-router';
 import type { SQLiteDatabase } from 'expo-sqlite';
@@ -14,7 +7,6 @@ import { insertCheckIn, countCheckIns } from '../database/checkins';
 import { getSettings, updateSettings } from '../database/settings';
 import { saveUserChips, getUserChips, countUserChipsByCategory } from '../database/userChips';
 import { MAX_USER_CHIPS_PER_CATEGORY } from '../constants/userChips';
-import { saveDraft, loadDraft, clearDraft } from '../database/checkInDraft';
 import { FEELING_CHIPS, SELF_CARE_CHIPS } from '../constants/chips';
 import { isStepBlocked as checkStepBlocked } from '../utils/checkInFlow';
 import * as Sentry from '@sentry/react-native';
@@ -53,9 +45,6 @@ export interface UseCheckInFlowResult {
   isLastStep: boolean;
   isStepBlocked: boolean;
   isNextDisabled: boolean;
-  resumeDialogVisible: boolean;
-  handleResumeDraft: () => void;
-  handleDiscardDraft: () => void;
   /** @deprecated Use actions instead */
   setDraft: Dispatch<SetStateAction<CheckInDraft>>;
   setWasReset: Dispatch<SetStateAction<boolean>>;
@@ -79,40 +68,25 @@ export function useCheckInFlow(db: SQLiteDatabase): UseCheckInFlowResult {
   const [guidedMode, setGuidedMode] = useState(true);
   const [feelingUserChips, setFeelingUserChips] = useState<string[]>([]);
   const [selfCareUserChips, setSelfCareUserChips] = useState<string[]>([]);
-  const [resumeDialogVisible, setResumeDialogVisible] = useState(false);
   const [feelingsAtLimit, setFeelingsAtLimit] = useState(false);
   const [selfCareAtLimit, setSelfCareAtLimit] = useState(false);
 
-  const stepRef = useRef(step);
   const savingRef = useRef(false);
-  const pendingResumeDraftRef = useRef<{ draft: CheckInDraft; step: number } | null>(null);
-
-  useEffect(() => {
-    stepRef.current = step;
-  }, [step]);
 
   useFocusEffect(
     useCallback(() => {
       let cancelled = false;
       async function loadState() {
         try {
-          const [
-            settings,
-            count,
-            feelingChips,
-            selfCareChips,
-            feelingCount,
-            selfCareCount,
-            savedDraft,
-          ] = await Promise.all([
-            getSettings(db),
-            countCheckIns(db),
-            getUserChips(db, 'feelings'),
-            getUserChips(db, 'self_care'),
-            countUserChipsByCategory(db, 'feelings'),
-            countUserChipsByCategory(db, 'self_care'),
-            loadDraft(db),
-          ]);
+          const [settings, count, feelingChips, selfCareChips, feelingCount, selfCareCount] =
+            await Promise.all([
+              getSettings(db),
+              countCheckIns(db),
+              getUserChips(db, 'feelings'),
+              getUserChips(db, 'self_care'),
+              countUserChipsByCategory(db, 'feelings'),
+              countUserChipsByCategory(db, 'self_care'),
+            ]);
           if (cancelled) return;
           setIsFirstCheckin(count === 0);
           setGuidedMode(settings.guidedModeEnabled);
@@ -120,11 +94,6 @@ export function useCheckInFlow(db: SQLiteDatabase): UseCheckInFlowResult {
           setSelfCareUserChips(selfCareChips);
           setFeelingsAtLimit(feelingCount >= MAX_USER_CHIPS_PER_CATEGORY);
           setSelfCareAtLimit(selfCareCount >= MAX_USER_CHIPS_PER_CATEGORY);
-
-          if (savedDraft && stepRef.current === 0) {
-            pendingResumeDraftRef.current = savedDraft;
-            setResumeDialogVisible(true);
-          }
         } catch (error) {
           console.error('useCheckInFlow loadState failed:', error);
         }
@@ -135,27 +104,6 @@ export function useCheckInFlow(db: SQLiteDatabase): UseCheckInFlowResult {
       };
     }, [db])
   );
-
-  // Persist draft to SQLite whenever step advances (step > 0 and not yet done)
-  useEffect(() => {
-    if (step === 0 || isDone) return;
-    saveDraft(db, draft, step).catch((err) => console.error('saveDraft failed:', err));
-  }, [step]); // intentional: save on step change only, not on every keystroke
-
-  function handleResumeDraft() {
-    if (pendingResumeDraftRef.current) {
-      setDraft(pendingResumeDraftRef.current.draft);
-      setStep(pendingResumeDraftRef.current.step);
-      pendingResumeDraftRef.current = null;
-    }
-    setResumeDialogVisible(false);
-  }
-
-  function handleDiscardDraft() {
-    pendingResumeDraftRef.current = null;
-    setResumeDialogVisible(false);
-    clearDraft(db).catch(console.error);
-  }
 
   async function handleGuidedToggle(value: boolean) {
     setGuidedMode(value);
@@ -209,13 +157,12 @@ export function useCheckInFlow(db: SQLiteDatabase): UseCheckInFlowResult {
         innerPart: draft.innerPart || null,
         note: draft.note || null,
       });
-      // Insert is committed — the check-in is saved. Chip persistence and draft
-      // cleanup are best-effort: a failure here must NOT report the saved
-      // check-in as failed, which would invite a duplicate save on retry.
+      // Insert is committed — the check-in is saved. Chip persistence is
+      // best-effort: a failure here must NOT report the saved check-in as
+      // failed, which would invite a duplicate save on retry.
       await Promise.all([
         saveUserChips(db, 'feelings', draft.feelings, [...FEELING_CHIPS]),
         saveUserChips(db, 'self_care', draft.selfCareNote, [...SELF_CARE_CHIPS]),
-        clearDraft(db),
       ]).catch((error) => {
         Sentry.withScope((scope) => {
           scope.setTag('screen', 'checkIn');
@@ -245,7 +192,6 @@ export function useCheckInFlow(db: SQLiteDatabase): UseCheckInFlowResult {
     setDraft(freshDraft);
     setIsDone(false);
     setWasReset(false);
-    clearDraft(db).catch(console.error);
   }
 
   const actions: DraftActions = {
@@ -282,9 +228,6 @@ export function useCheckInFlow(db: SQLiteDatabase): UseCheckInFlowResult {
     isLastStep: step === TOTAL_STEPS - 1,
     isStepBlocked: blocked,
     isNextDisabled: isSaving || blocked,
-    resumeDialogVisible,
-    handleResumeDraft,
-    handleDiscardDraft,
     setDraft,
     setWasReset,
     handleGuidedToggle,

@@ -26,13 +26,6 @@ jest.mock('../lib/database/userChips', () => ({
   saveUserChips: jest.fn().mockResolvedValue(undefined),
   countUserChipsByCategory: jest.fn().mockResolvedValue(0),
 }));
-// Draft persistence is part of the initial load path (loadDraft) and of save
-// (clearDraft) — mock it so the real path runs instead of throwing on an empty db.
-jest.mock('../lib/database/checkInDraft', () => ({
-  saveDraft: jest.fn().mockResolvedValue(undefined),
-  loadDraft: jest.fn().mockResolvedValue(null),
-  clearDraft: jest.fn().mockResolvedValue(undefined),
-}));
 jest.mock('@sentry/react-native', () => ({
   captureException: jest.fn(),
   withScope: jest.fn((cb: (scope: { setTag: jest.Mock }) => void) => cb({ setTag: jest.fn() })),
@@ -367,9 +360,12 @@ describe('initial load path', () => {
     errorSpy.mockRestore();
   });
 
-  it('shows no resume dialog when no draft exists', async () => {
+  it('always starts fresh — never restores a draft across mount', async () => {
+    // Durable-draft resume was removed: a killed/relaunched check-in starts over,
+    // so a cold mount is always step 0 with an empty draft (no DB restore path).
     const r = await mount();
-    expect(r.resumeDialogVisible).toBe(false);
+    expect(r.step).toBe(0);
+    expect(r.draft).toEqual({ ...EMPTY_DRAFT, bodySignals: { ...EMPTY_BODY_SIGNALS } });
   });
 });
 
