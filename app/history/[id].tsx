@@ -67,7 +67,19 @@ export default function CheckInDetailScreen() {
       const settings = await getSettings(db);
       await saveCheckInsPdfToDevice([checkIn], {
         savedDirectoryUri: settings.exportDirectoryUri,
-        onDirectoryChosen: (uri) => updateSettings(db, { exportDirectoryUri: uri }),
+        onDirectoryChosen: (uri) => {
+          // Persisting the chosen directory must not block or fail the export — the
+          // PDF is already written. Catch the write so a transient DB error becomes a
+          // logged warning (dir just won't be remembered) instead of an unhandled
+          // rejection while we still report success.
+          updateSettings(db, { exportDirectoryUri: uri }).catch((error) => {
+            Sentry.withScope((scope) => {
+              scope.setTag('screen', 'checkInDetail');
+              scope.setTag('action', 'persistExportDir');
+              Sentry.captureException(error);
+            });
+          });
+        },
       });
       showToast('PDF gespeichert');
     } catch (error) {

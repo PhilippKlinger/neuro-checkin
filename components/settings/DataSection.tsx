@@ -134,9 +134,17 @@ export function DataSection({
   }
 
   async function handleResetExportDir() {
-    await updateSettings(db, { exportDirectoryUri: null });
-    onExportDirectoryChanged(null);
-    setExportDirExpanded(false);
+    try {
+      await updateSettings(db, { exportDirectoryUri: null });
+      onExportDirectoryChanged(null);
+      setExportDirExpanded(false);
+    } catch (error) {
+      console.error('resetExportDirectory failed:', error);
+      Alert.alert(
+        'Hat nicht geklappt',
+        'Speicherort konnte nicht zurückgesetzt werden. Versuch es nochmal.'
+      );
+    }
   }
 
   const feelingsChips = chipList.filter((c) => c.category === 'feelings');

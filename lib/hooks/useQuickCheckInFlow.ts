@@ -107,8 +107,15 @@ export function useQuickCheckInFlow(
     try {
       await updateSettings(db, { guidedModeEnabled: value });
     } catch (error) {
-      console.error('quickCheckIn handleGuidedToggle failed:', error);
-      setGuidedMode(!value);
+      // Guided mode is low-stakes display state. Keep the optimistic value rather
+      // than rolling back (which caused a confusing "flicker" when the write hit a
+      // transient prepareAsync error); the next getSettings reconciles it. Mirrors
+      // useCheckInFlow so the quick and full flows behave the same.
+      Sentry.withScope((scope) => {
+        scope.setTag('screen', 'quickCheckIn');
+        scope.setTag('action', 'guidedModeToggle');
+        Sentry.captureException(error);
+      });
     }
   }
 
