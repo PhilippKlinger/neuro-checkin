@@ -6,6 +6,7 @@ import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
 import * as Sentry from '@sentry/react-native';
 import { useFocusEffect, useRouter } from 'expo-router';
+import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { useTheme } from '../../lib/hooks/useTheme';
 import { useDatabase } from '../../lib/hooks/useDatabase';
@@ -54,6 +55,7 @@ export default function SettingsScreen() {
   } = useTheme();
   const db = useDatabase();
   const router = useRouter();
+  const tabBarHeight = useBottomTabBarHeight();
 
   const [slots, setSlots] = useState<NotificationSlot[]>(DEFAULT_SLOTS);
   const slotsRef = useRef(slots);
@@ -299,7 +301,7 @@ export default function SettingsScreen() {
     <>
       <ScrollView
         style={[styles.container, { backgroundColor: theme.colors.background }]}
-        contentContainerStyle={{ padding: spacing.lg, paddingBottom: spacing.xxl }}
+        contentContainerStyle={{ padding: spacing.lg, paddingBottom: tabBarHeight + spacing.md }}
       >
         {/* --- Aussehen --- */}
         <SettingsGroup title="Aussehen">

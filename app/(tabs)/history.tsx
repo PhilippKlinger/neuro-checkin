@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import { AppText } from '../../components/ui/AppText';
 import { useRouter } from 'expo-router';
+import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import { useTheme } from '../../lib/hooks/useTheme';
 import { useDatabase } from '../../lib/hooks/useDatabase';
 import { getCheckIns } from '../../lib/database/checkins';
@@ -31,6 +32,7 @@ export default function HistoryScreen() {
   const { theme, spacing, radii, touchTarget } = useTheme();
   const db = useDatabase();
   const router = useRouter();
+  const tabBarHeight = useBottomTabBarHeight();
   const [viewMode, setViewMode] = useState<HistoryViewMode>('compact');
   const [selectionMode, setSelectionMode] = useState(false);
   const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
@@ -392,7 +394,7 @@ export default function HistoryScreen() {
         renderItem={renderItem}
         renderSectionHeader={renderSectionHeader}
         ListFooterComponent={renderFooter}
-        contentContainerStyle={{ padding: spacing.md }}
+        contentContainerStyle={{ padding: spacing.md, paddingBottom: tabBarHeight + spacing.md }}
         stickySectionHeadersEnabled
         onEndReached={loadMore}
         onEndReachedThreshold={0.5}
