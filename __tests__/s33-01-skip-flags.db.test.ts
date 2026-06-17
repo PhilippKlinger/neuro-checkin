@@ -48,6 +48,9 @@ function makeSchemaMockDb(currentVersion = 0) {
       execCalls.push(sql);
       return Promise.resolve();
     }),
+    withTransactionAsync: jest.fn(async (task: () => Promise<void>) => {
+      await task();
+    }),
     runAsync: jest.fn((sql: string) => {
       runCalls.push(sql);
       return Promise.resolve({ lastInsertRowId: 0, changes: 0 });
