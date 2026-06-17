@@ -238,12 +238,9 @@ export default function OnboardingScreen() {
           <AppText
             variant="body"
             color="secondary"
-            style={{ textAlign: 'center', marginBottom: spacing.sm }}
+            style={{ textAlign: 'center', marginBottom: spacing.lg }}
           >
             Wie viel Energie hast du gerade?
-          </AppText>
-          <AppText variant="hint" style={{ textAlign: 'center', marginBottom: spacing.lg }}>
-            Eine grobe Einschätzung reicht.
           </AppText>
 
           <View accessibilityRole="radiogroup" accessibilityLabel="Energie">
