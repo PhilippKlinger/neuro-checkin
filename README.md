@@ -1,6 +1,6 @@
 # Neuro Check-in
 
-![Version](https://img.shields.io/badge/version-1.5.8-6C4FF0?logo=github&logoColor=white)
+![Version](https://img.shields.io/github/v/release/PhilippKlinger/neuro-checkin?label=version&logo=github&logoColor=white)
 ![Expo SDK](https://img.shields.io/badge/Expo-SDK%2054-4630EB?logo=expo&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178C6?logo=typescript&logoColor=white)
 ![Platform](https://img.shields.io/badge/Platform-Android-3DDC84?logo=android&logoColor=white)
@@ -15,7 +15,6 @@ Designed for people with autism, ADHD, or high inner complexity who need a calm,
 ## Table of Contents
 
 - [Features](#features)
-- [Screenshots](#screenshots)
 - [Prerequisites](#prerequisites)
 - [Quickstart](#quickstart)
 - [Project Structure](#project-structure)
@@ -23,7 +22,6 @@ Designed for people with autism, ADHD, or high inner complexity who need a calm,
 - [Scripts](#scripts)
 - [Tests](#tests)
 - [Security Notes](#security-notes)
-- [Status](#status)
 - [Product Principles](#product-principles)
 - [License](#license)
 
@@ -41,12 +39,6 @@ Designed for people with autism, ADHD, or high inner complexity who need a calm,
 - **Dark mode** — three palette options (Calm / Warm / Sage) in light and dark variants
 - **Accessible** — WCAG AA contrast, 44 px touch targets, screen-reader labels, reduced-motion support throughout
 - **Neurodivergence-first UX** — no streaks, no gamification, no pressure language; alexithymia-safe "can't say" options on every emotional step
-
----
-
-## Screenshots
-
-> Screenshots will be added before the public release.
 
 ---
 
@@ -178,14 +170,6 @@ CI runs lint, type checks, and the full test suite on every push and pull reques
 - Sentry is configured with a recursive `beforeSend` scrubber that strips all health-related fields from event payloads, contexts, and breadcrumbs before transmission — at any nesting depth. The scrubber is implemented in `lib/observability/sentry.ts` and covered by unit tests.
 - Sentry is disabled in development (`enabled: !__DEV__`).
 - All SQLite queries use parameterised statements. No string concatenation with user input.
-
----
-
-## Status
-
-Neuro Check-in is at **v1.5.9** and preparing for public release on Google Play.
-
-Screenshots will be added before the public release.
 
 ---
 
