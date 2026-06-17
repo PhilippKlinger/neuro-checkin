@@ -227,3 +227,29 @@ describe('isNextDisabled', () => {
     expect(snapshot.isNextDisabled).toBe(false);
   });
 });
+
+// ---------------------------------------------------------------------------
+// handleGuidedToggle — must match useCheckInFlow (no rollback flicker)
+// ---------------------------------------------------------------------------
+
+describe('handleGuidedToggle', () => {
+  it('toggles optimistically', async () => {
+    await mount(); // guidedMode starts true (getSettings mock)
+    await act(async () => {
+      await snapshot.handleGuidedToggle(false);
+    });
+    expect(snapshot.guidedMode).toBe(false);
+  });
+
+  it('keeps the optimistic value when the settings write fails (no rollback)', async () => {
+    const { updateSettings } = require('../lib/database/settings');
+    updateSettings.mockRejectedValueOnce(new Error('prepareAsync NPE'));
+    await mount();
+    await act(async () => {
+      await snapshot.handleGuidedToggle(false);
+    });
+    // Stays at the new value instead of flickering back to true — the transient
+    // DB error is reported to Sentry, not surfaced as a visual rollback.
+    expect(snapshot.guidedMode).toBe(false);
+  });
+});
