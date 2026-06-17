@@ -33,8 +33,11 @@ export function CheckInSuccessView({ onReset, energyLevel, focusLevel }: CheckIn
     router.replace('/(tabs)/history');
   }
 
-  const showSummary = energyLevel !== undefined && energyLevel > 0;
+  // Energy and focus are shown independently so skipping one ("Kann ich gerade
+  // nicht sagen") never hides the other — skipping must stay equivalent.
+  const showEnergy = energyLevel !== undefined && energyLevel > 0;
   const showFocus = focusLevel !== undefined && focusLevel > 0;
+  const showSummary = showEnergy || showFocus;
 
   return (
     <View
@@ -78,22 +81,26 @@ export function CheckInSuccessView({ onReset, energyLevel, focusLevel }: CheckIn
               },
             ]}
           >
-            <View style={styles.summaryItem}>
-              <AppText
-                variant="label"
-                color="secondary"
-                size="xs"
-                style={{ textTransform: 'uppercase', marginBottom: spacing.xs }}
-              >
-                Energie
-              </AppText>
-              <AppText variant="display" size="lg" color="accent">
-                {getLevelLabel(energyLevel!, ENERGY_LABELS)}
-              </AppText>
-            </View>
+            {showEnergy && (
+              <View style={styles.summaryItem}>
+                <AppText
+                  variant="label"
+                  color="secondary"
+                  size="xs"
+                  style={{ textTransform: 'uppercase', marginBottom: spacing.xs }}
+                >
+                  Energie
+                </AppText>
+                <AppText variant="display" size="lg" color="accent">
+                  {getLevelLabel(energyLevel!, ENERGY_LABELS)}
+                </AppText>
+              </View>
+            )}
             {showFocus && (
               <>
-                <View style={[styles.summaryDivider, { backgroundColor: theme.colors.border }]} />
+                {showEnergy && (
+                  <View style={[styles.summaryDivider, { backgroundColor: theme.colors.border }]} />
+                )}
                 <View style={styles.summaryItem}>
                   <AppText
                     variant="label"
