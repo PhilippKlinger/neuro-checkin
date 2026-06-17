@@ -5,7 +5,6 @@ import { useNavigation } from 'expo-router';
 import { useTheme } from '../lib/hooks/useTheme';
 import { useDatabase } from '../lib/hooks/useDatabase';
 import { useCheckInFlow, TOTAL_STEPS } from '../lib/hooks/useCheckInFlow';
-import { clearDraft } from '../lib/database/checkInDraft';
 import { FadeView } from '../components/ui/FadeView';
 import { AppText } from '../components/ui/AppText';
 import { ConfirmDialog } from '../components/ui/ConfirmDialog';
@@ -65,9 +64,6 @@ export default function FullCheckInScreen() {
     canGoBack,
     isLastStep,
     isNextDisabled,
-    resumeDialogVisible,
-    handleResumeDraft,
-    handleDiscardDraft,
     handleGuidedToggle,
     handleNext,
     handleBack,
@@ -251,7 +247,6 @@ export default function FullCheckInScreen() {
         destructive
         onConfirm={() => {
           setConfirmLeaveVisible(false);
-          clearDraft(db).catch(console.error);
           if (pendingLeaveAction.current) {
             navigation.dispatch(pendingLeaveAction.current);
             pendingLeaveAction.current = null;
@@ -261,16 +256,6 @@ export default function FullCheckInScreen() {
           setConfirmLeaveVisible(false);
           pendingLeaveAction.current = null;
         }}
-      />
-
-      <ConfirmDialog
-        visible={resumeDialogVisible}
-        title="Weitermachen?"
-        message="Du hast einen angefangenen Check-in."
-        confirmLabel="Weitermachen"
-        cancelLabel="Neu beginnen"
-        onConfirm={handleResumeDraft}
-        onCancel={handleDiscardDraft}
       />
     </View>
   );
