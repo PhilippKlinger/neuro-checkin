@@ -29,7 +29,7 @@ class ExactAlarmModule : Module() {
     // There is no in-app allow/deny dialog for this access on Android.
     Function("openExactAlarmSettings") {
       if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
-        return@Function
+        return@Function Unit
       }
       val context = appContext.reactContext ?: throw Exceptions.ReactContextLost()
       val intent = Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM).apply {
