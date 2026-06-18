@@ -33,6 +33,9 @@ import { FontSection } from '../../components/settings/FontSection';
 import { NotificationsSection } from '../../components/settings/NotificationsSection';
 import { DataSection } from '../../components/settings/DataSection';
 import { FeedbackModal } from '../../components/settings/FeedbackModal';
+import { ConfirmDialog } from '../../components/ui/ConfirmDialog';
+import { isExactAlarmAllowed, openExactAlarmSettings } from '../../lib/notifications/exactAlarm';
+import { shouldPromptExactAlarm } from '../../lib/notifications/exactAlarmPrompt';
 import { SettingsGroup } from '../../components/settings/SettingsGroup';
 import { SettingsRow } from '../../components/settings/SettingsRow';
 import { dateToTimeString } from '../../lib/utils/time';
@@ -69,6 +72,7 @@ export default function SettingsScreen() {
   const [guidedMode, setGuidedMode] = useState(false);
   const [reflectionEnabled, setReflectionEnabled] = useState(true);
   const [, setNotificationPermission] = useState<boolean | null>(null);
+  const [showExactAlarmDialog, setShowExactAlarmDialog] = useState(false);
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
   const [exportDirectoryUri, setExportDirectoryUri] = useState<string | null>(null);
 
@@ -160,6 +164,20 @@ export default function SettingsScreen() {
           scope.setTag('action', 'slotToggle');
           Sentry.captureException(error);
         });
+        return;
+      }
+      // Just-in-time exact-alarm opt-in: only when enabling, only on a real device,
+      // only while the SCHEDULE_EXACT_ALARM special access is still missing. Once
+      // granted it never asks again — no permanent settings hint.
+      if (
+        value &&
+        shouldPromptExactAlarm({
+          platform: Platform.OS,
+          isDevice: Device.isDevice,
+          exactAllowed: isExactAlarmAllowed(),
+        })
+      ) {
+        setShowExactAlarmDialog(true);
       }
     },
     [db]
@@ -461,6 +479,19 @@ export default function SettingsScreen() {
       </ScrollView>
 
       <FeedbackModal visible={showFeedbackModal} onClose={() => setShowFeedbackModal(false)} />
+
+      <ConfirmDialog
+        visible={showExactAlarmDialog}
+        title="Pünktliche Erinnerungen"
+        message="Android liefert Erinnerungen sonst einige Minuten später. Für genaue Zeiten brauchst du eine Freigabe."
+        confirmLabel="Freigeben"
+        cancelLabel="Später"
+        onConfirm={() => {
+          setShowExactAlarmDialog(false);
+          openExactAlarmSettings();
+        }}
+        onCancel={() => setShowExactAlarmDialog(false)}
+      />
     </>
   );
 }

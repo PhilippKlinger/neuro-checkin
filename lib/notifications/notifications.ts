@@ -115,7 +115,9 @@ export async function scheduleSingleSlot(slot: NotificationSlot): Promise<void> 
         minute,
         weekday: expoWeekday,
         // Route to the HIGH-importance channel on Android (C-03 fix).
-        // USE_EXACT_ALARM permission (app.json) makes this trigger fire exactly.
+        // Exact firing depends on the SCHEDULE_EXACT_ALARM special access: Expo fires
+        // this trigger exactly once the user has granted it (see modules/exact-alarm),
+        // otherwise it falls back to inexact scheduling. No trigger flag controls this.
         ...(Platform.OS === 'android' ? { channelId: CHANNEL_ID } : {}),
       },
     });
