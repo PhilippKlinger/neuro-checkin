@@ -40,6 +40,9 @@ yarn-error.*
 /ios
 /android
 
+# local native module gradle build output (generated; source lives in src/)
+modules/*/android/build/
+
 # Environment
 .env
 .env.local
