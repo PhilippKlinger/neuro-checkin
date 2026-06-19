@@ -61,7 +61,10 @@ export const TEXT_VARIANTS: Record<TextVariant, TextVariantTokens> = {
     defaultWeight: 'regular',
     fontSize: typography.sizes.sm,
     lineHeight: typography.sizes.sm * typography.lineHeights.normal,
-    fontStyle: 'italic',
+    // No italic: no italic font is bundled, so faux italic gets synthesized and
+    // Android/Fabric clips the last word (prod v1.11.1 hint truncation). The hint
+    // stays de-emphasized via smaller size + secondary color. Bundle a real
+    // italic font before reintroducing fontStyle here. See fauxItalicGuard.test.ts.
     maxFontSizeMultiplier: 1.4,
     defaultColor: 'secondary',
   },

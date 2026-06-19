@@ -84,7 +84,7 @@ export function CheckInDetailContent({
             </AppText>
           </View>
           {checkIn.distressNote && checkIn.distressNote.trim() !== '' && (
-            <AppText variant="body" style={{ marginTop: spacing.sm, fontStyle: 'italic' }}>
+            <AppText variant="body" color="secondary" style={{ marginTop: spacing.sm }}>
               {checkIn.distressNote}
             </AppText>
           )}
@@ -157,7 +157,8 @@ export function CheckInDetailContent({
             {p.thoughtsNote && (
               <AppText
                 variant="body"
-                style={{ marginTop: p.thoughtsType ? spacing.xs : 0, fontStyle: 'italic' }}
+                color="secondary"
+                style={{ marginTop: p.thoughtsType ? spacing.xs : 0 }}
               >
                 {p.thoughtsNote}
               </AppText>
