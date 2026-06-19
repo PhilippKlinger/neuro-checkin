@@ -26,9 +26,9 @@ describe('resolveTextStyle — variant resolution', () => {
     expect(result.maxFontSizeMultiplier).toBe(TEXT_VARIANTS.body.maxFontSizeMultiplier);
   });
 
-  it('resolves hint variant with italic fontStyle', () => {
+  it('resolves hint variant without italic (no italic font bundled → faux italic clips on Android)', () => {
     const result = resolveTextStyle({ variant: 'hint' }, MOCK_COLORS);
-    expect(result.fontStyle).toBe('italic');
+    expect(result.fontStyle).toBeUndefined();
     expect(result.fontFamily).toBe(TEXT_VARIANTS.hint.fontFamily);
   });
 

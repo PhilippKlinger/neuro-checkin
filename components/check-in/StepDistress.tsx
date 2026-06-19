@@ -43,7 +43,7 @@ export function StepDistress({
   return (
     <StepScaffold
       title="Stress"
-      subtitle="Wie belastet bist du gerade?"
+      subtitle="Wie gestresst bist du gerade?"
       hint={hint}
       keyboardPersistTaps
       avoidKeyboard
