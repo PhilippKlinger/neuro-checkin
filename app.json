@@ -3,7 +3,7 @@
     "name": "Neuro Check-in",
     "slug": "neuro-checkin",
     "scheme": "neuro-checkin",
-    "version": "1.11.1",
+    "version": "1.11.2",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
